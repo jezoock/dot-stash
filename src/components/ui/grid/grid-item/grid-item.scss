@@ -1,0 +1,26 @@
+ds-grid-item {
+  display: inline-block;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ds-grid-item {
+  &__content {
+    background: #ffffff;
+    box-shadow: 10px 10px 20px #ebebeb, -10px -10px 20px #ffffff;
+    border-radius: 5px;
+  }
+  &.--with-ratio {
+    padding: 100% 0 0 0;
+    position: relative;
+    & .ds-grid-item {
+      &__content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
+  }
+}

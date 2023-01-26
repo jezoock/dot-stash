@@ -1,0 +1,41 @@
+
+.ds-grid {
+  &__row {
+
+  }
+  &.--fixed {
+
+  }
+  &.--fluid {
+    & .ds-grid {
+      &__row {
+        display: flex;
+        flex-wrap: wrap;
+        
+        &[ds-align='start'] {
+          justify-content: flex-start;
+        }
+
+        &[ds-align='center'] {
+          justify-content: center;
+        }
+        
+        &[ds-align='end'] {
+          justify-content: flex-end;
+        }
+
+        &[ds-v-align='start'] {
+          align-items: flex-start;
+        }
+
+        &[ds-v-align='center'] {
+          align-items: center;
+        }
+
+        &[ds-v-align='end'] {
+          align-items: flex-end;
+        }
+      }
+    }
+  }
+}

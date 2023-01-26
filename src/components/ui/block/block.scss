@@ -1,0 +1,26 @@
+.ds-block {
+  &.--modal {
+    & .gbx-block {
+      &__header {
+      }
+      &__content {
+        padding: 0 0 1rem 0;
+      }
+      &__footer {
+        & > menu {
+          text-align: right;
+          & .ds-button {
+            margin: 0 0 0 1rem;
+          }
+        }
+      }
+    }
+  }
+  &.--post {
+    & .ds-block {
+      &__content {
+        text-align: center;
+      }
+    }
+  }
+}

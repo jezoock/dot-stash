@@ -1,0 +1,88 @@
+.ds-button {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  margin: 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:not([disabled]) {
+    cursor: pointer;
+  }
+
+  &.--xs {
+    padding: 0.125rem 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  &.--sm {
+    padding: 0.25rem 0.375rem;
+    font-size: 0.875rem;
+  }
+  
+  &.--md {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+  
+  &.--lg {
+    padding: 1rem 1.75rem;
+    font-size: 1.5rem;
+  }
+  
+  &.--xl {
+    padding: 1.5rem 2.5rem;
+    font-size: 2.25rem;
+  }
+
+  &.--solid {
+    text-align: center;
+    &:not([disabled]) {
+      &.--primary {
+        @include ds-colorset-styles('solid', 'primary');
+      }
+      &.--secondary {
+        @include ds-colorset-styles('solid', 'secondary');
+      }
+    }
+    &[disabled] {
+      &.--primary,
+      &.--secondary {
+        @include ds-colorset-styles('solid', 'disabled');
+      }
+    }
+  }
+
+  &.--outlined {
+    border-style: solid;
+    border-width: 1px;
+    
+    &:not([disabled]) {
+      &.--primary {
+        @include ds-colorset-styles('outlined', 'primary');
+      }
+      &.--secondary {
+        @include ds-colorset-styles('outlined', 'secondary');
+      }
+    }
+    &[disabled] {
+      &.--primary,
+      &.--secondary {
+        @include ds-colorset-styles('outlined', 'disabled');
+      }
+    }
+  }
+
+  &.--naked {
+  }
+
+  &.--shady {
+  }
+
+  &.--rounded {
+    border-radius: 5px;
+  }
+}

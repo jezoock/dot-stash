@@ -1,0 +1,52 @@
+// *** Functions *** //
+
+@function ds-font-style($prop: null, $type: null, $variant: null) {
+  @if ($prop != null) {
+    $requestedStyle: map-get(map-get($font-styles, 'default'), $prop); 
+    $typeDefaultStyle: map-get(map-get(map-get($font-styles, $type), 'default'), $prop);
+  
+    @if ($typeDefaultStyle != null) {
+      $requestedStyle: $typeDefaultStyle; 
+    }
+  
+    @if ($variant != null) {
+      $variantStyle: map-get(map-get(map-get($font-styles, $type), $variant), $prop);
+
+      @if ($variantStyle != null) {
+        $requestedStyle: $variantStyle;
+      }
+    } 
+  
+    @return $requestedStyle;
+  }
+}
+
+@function ds-font-family($type: 'default') {
+  @return ds-font-style('family', $type);
+}
+
+@function ds-font-weight($type: 'default') {
+  @return ds-font-style('weight', $type);
+}
+
+@function ds-font-decoration($type: 'default') {
+  @return ds-font-style('decoration', $type);
+}
+
+@function ds-font-size($type: 'default') {
+  @return ds-font-style('size', $type);
+}
+
+// *** Mixins *** //
+
+@mixin ds-font-styles($type: 'page', $variant: null) {
+  $family: ds-font-style('family', $type, $variant);
+  $weight: ds-font-style('weight', $type, $variant);
+  $size: ds-font-style('size', $type, $variant);
+  $decoration: ds-font-style('decoration', $type, $variant);
+
+  font-family: $family;
+  font-size: $size;
+  font-weight: $weight;
+  text-decoration: $decoration;
+}

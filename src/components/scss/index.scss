@@ -1,0 +1,12 @@
+
+@import './theme.scss';
+
+@mixin --icon($var,$var2) {
+  
+}
+
+body {
+  &::before {
+    @include ds-theme();
+  }
+}

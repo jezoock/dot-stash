@@ -1,0 +1,18 @@
+[data-text='p'] {
+  @include ds-font-styles(text, paragraph);
+}
+[data-text='span'] {
+  @include ds-font-styles(text, span);
+}
+[data-text='note'] {
+  @include ds-font-styles(text, note);
+}
+[data-text='quote'] {
+  @include ds-font-styles(text, quote);
+}
+[data-text='code'] {
+  @include ds-font-styles(text, code);
+}
+[data-text='pre'] {
+  @include ds-font-styles(text, pre);
+}

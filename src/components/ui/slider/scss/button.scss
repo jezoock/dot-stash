@@ -1,0 +1,33 @@
+.ds-button {
+  &.--slider {
+    &.--prev,
+    &.--next {
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      background: transparent;
+      &:before {
+        content: '';
+        display: block;
+        width: 75px;
+        height: 75px;
+        filter: invert(100%);
+        @media (max-width: $grid-md-max) {
+          width: 1.75rem;
+          height: 1.75rem;
+        }
+      }
+    }
+    &.--prev {
+      &:before {
+        background: url($assets-path + 'images/arrow-left.svg') no-repeat center;
+      }
+    }
+    &.--next {
+      &:before {
+        background: url($assets-path + 'images/arrow-right.svg') no-repeat center;
+      }
+    }
+  }
+}

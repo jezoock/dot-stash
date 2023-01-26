@@ -1,0 +1,213 @@
+.customTabs {
+  & .MuiTabs-root {
+    margin-bottom: 22px;
+
+    & .MuiTabs-flexContainer {
+      border-bottom: 2px solid #707071;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+
+    & .MuiButtonBase-root {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0px;
+      color: ds-color(gray, black);
+      min-width: 187px;
+      text-transform: initial;
+
+      &:first-child {
+        margin-left: 20px;
+      }
+      margin-right: 4px;
+      border-radius: 4px 4px 0px 0px;
+      border-bottom: none;
+      background: #c8c8c8 0% 0% no-repeat padding-box;
+
+      &.Mui-selected {
+        border: 2px solid ds-color(gray, dark);
+        border-bottom: none;
+        background: ds-color(gray, white);
+        color: ds-color(gray, black);
+      }
+    }
+
+    & .MuiTabs-indicator {
+      background-color: ds-color(gray, lighter);
+      transition: none;
+    }
+  }
+}
+
+@include break-p(null, md) {
+/* @media (max-width: 850px) { */
+  .customTabs {
+    & .MuiTabs-root {
+      & .MuiTabs-flexContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        width: 30vw;
+        border-bottom: none
+      }
+
+      & .MuiButtonBase-root {
+        align-items: flex-start;
+        color: gray;
+        background-color: ds-color(gray, lighter);
+        &:first-child {
+          margin-left: 0px;
+        }
+
+        &.Mui-selected {
+          border: none;
+          border-bottom: none;
+          background: ds-color(gray, lighter);
+          color: ds-color(gray, black);
+        }
+
+      }
+
+    }
+  }
+}
+
+.customRecentActivityTabs {
+  & .MuiTabs-root {
+    & .MuiButtonBase-root {
+      font-size: 14px;
+      font-weight: bold;
+      color: ds-color(gray);
+      text-transform: capitalize;
+      &.Mui-selected {
+        color: ds-color(primary);
+      }
+    }
+
+    & .MuiTabs-indicator {
+      display: flex;
+      justify-content: center;
+      background-color: ds-color(primary);
+      transition: none;
+      max-width: 40px;
+      width: 100%;
+      margin: 0px 0px 10px 26px;
+    }
+  }
+}
+
+.customUsageAmountPerDepartmentsTabs {
+  & .MuiTabs-root {
+    margin-left: 37px;
+    & .MuiButtonBase-root {
+      margin-right: 16px;
+      margin-top: 15px;
+      width: 109px;
+      height: 28px;
+      font-size: 14px;
+      color: ds-color(gray);
+      text-transform: capitalize;
+      font-weight: normal;
+      &.Mui-selected {
+        color: ds-color(gray, white);
+        background-color: ds-color(primary);
+        border-radius: 14px;
+        font-weight: bold;
+      }
+    }
+
+    & .MuiTabs-indicator {
+      background-color: transparent;
+      transition: none;
+    }
+  }
+}
+
+.MuiDataGrid-root {
+  & .MuiDataGrid-columnHeaders {
+    & .MuiDataGrid-columnHeaderTitle {
+      font-weight: bold;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+  & .MuiDataGrid-cell:focus {
+    outline: none;
+  }
+}
+
+.MuiPaper-root {
+  overflow: absolute;
+  filter: drop-shadow(0px 2px 8px rgba(0,0,0,0.0));
+  margin-top: 10px;
+  margin-left: 10px;
+
+  & .MuiMenuItem-root {
+    width: 146px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+  }
+}
+
+.upload-logo {
+  & .snk-button {
+    width: 176px;
+    height: 42px;
+    background-color: #6F7070;
+    border: 1px solid white;
+    font-weight: bold;
+  }
+}
+
+.save-button {
+  & .snk-button {
+    width: 57px;
+    height: 41px;
+  }
+}
+
+.MuiOutlinedInput-root {
+  background: ds-color(gray, lighter);
+  border-radius: 2px 2px 0 0;
+  border: none;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+
+.MuiCircularProgress-circle,
+.MuiCircularProgress-circleIndeterminate,
+.MuiCircularProgress-colorPrimary {
+  color: ds-color(gray, white);
+}
+
+.MenuLanguage {
+  .MuiPaper-root .MuiMenuItem-root {
+    width: 50px;
+  }
+}
+
+.MuiModal-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.btb-timepicker {
+  width: 100%;
+  & > .MuiInputBase-root {
+    height: 52px;
+    line-height: 52px;
+    & .MuiInputBase-input {
+      padding: 0 0.875rem;
+    }
+  }
+}

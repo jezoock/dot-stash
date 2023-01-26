@@ -1,0 +1,11 @@
+.btb-link {
+  &.--default {
+    color: ds-color(primary, base);
+    text-decoration: underline;
+  }
+  &.--main-menu {
+    color: ds-color(primary, base);
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,14 @@
+@function ds-get-theme() {
+  $themeBreakpoints: '"breakpoints": #{ds-breakpoints-to-json()}';
+  $themeColors: '"palettes": {"primary": { "base": "#{ds-color(primary, base)}"} }';
+  $theme: '{ #{$themeBreakpoints}, #{$themeColors} }';
+
+  @return $theme;
+}
+
+@mixin ds-theme() {
+  content: ds-get-theme();
+  height: 0;
+  display: block;
+  overflow: hidden;
+}

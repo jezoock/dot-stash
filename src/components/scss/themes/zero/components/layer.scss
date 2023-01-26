@@ -1,0 +1,9 @@
+$layers: (
+  top: 4,
+  animation: 2,
+  background: 0,
+);
+
+@function snk-layer($layer-name) {
+  @return map-get($layers, $layer-name);
+}

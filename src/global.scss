@@ -1,0 +1,7 @@
+@import "../src/components/scss/theme.scss";
+
+body {
+  &::before {
+    @include ds-theme();
+  }
+}

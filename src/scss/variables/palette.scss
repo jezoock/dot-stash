@@ -1,0 +1,85 @@
+/* TODO */
+/* Add individual color definition */
+
+$colors: (
+  primary: (
+    darker: #e60a784d,
+    dark: #cd0878,
+    base: #e60078,
+    light: #f7d4e3,
+  ),
+  gray: (
+    white: #ffffff,
+    lightest: #fafafa,
+    lighter: #f2f2f5,
+    light: #e2e2e2,
+    base: #c8c8c8,
+    dark: #6d6d6d,
+    black: #000000,
+  ),
+  status: (
+    success: #0a9872,
+    error: #ea0000,
+    info: #3b86ff,
+    busy: #c8c8c8,
+    disabled: #6d6d6d,
+  ),
+  input: (
+    caret: #5294f2,
+  ),
+  shadow: (
+    base: #00000029,
+  ),
+);
+
+$colorset: (
+  default: (
+    text: map-get(map-get($colors, 'primary'), 'base'),
+    border: transparent,
+    background: transparent,
+  ),
+  solid: (
+    default: (
+      text: #fff,
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: map-get(map-get($colors, 'primary'), 'base'),
+    ),
+    primary: (
+      text: #fff,
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: map-get(map-get($colors, 'primary'), 'base'),
+    ),
+    secondary: (
+      text: #f00,
+      border: #f00,
+      background: #fff,
+    ),
+    disabled: (
+      text: #555,
+      border: #555,
+      background: #fff,
+    ),
+  ),
+  outlined: (
+    default: (
+      text: map-get(map-get($colors, 'primary'), 'base'),
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: #fff,
+    ),
+    primary: (
+      text: map-get(map-get($colors, 'primary'), 'base'),
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: #fff,
+    ),
+    secondary: (
+      text: #f00,
+      border: #f00,
+      background: #fff,
+    ),
+    disabled: (
+      text: #555,
+      border: #555,
+      background: #fff,
+    ),
+  ),
+);

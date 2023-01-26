@@ -1,0 +1,28 @@
+.btb-field {
+  &.--default {
+    & .btb-field {
+      &__label {
+        @include ds-font-styles('form', 'label');
+      }
+      &__input {
+        @include ds-font-styles('form', 'input');
+      }
+    }
+  }
+}
+
+[data-layout='field'] {
+  & > [data-layout='label'] {
+    display: block;
+    padding: 0 0 1.25rem 0;
+  }
+  & > [data-layout='input'] {
+    padding: 0 0 1.25rem 0;
+  }
+  /* @include break-p(lg, xl) {
+    max-width: 385px;
+  }
+  @include break-p(xxl) {
+    max-width: 22vw;
+  } */
+}

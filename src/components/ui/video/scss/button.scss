@@ -1,0 +1,20 @@
+.ds-button {
+  &.--video {
+    &.--play {
+      font-size: 10rem;
+      &:before {
+        color: #fff;
+        @include --icon(arrow-right);
+        cursor: pointer;
+      }
+    }
+    &.--pause {
+      font-size: 10rem;
+      &:before {
+        color: #fff;
+        @include --icon(close);
+        cursor: pointer;
+      }
+    }
+  }
+}

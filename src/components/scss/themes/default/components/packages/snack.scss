@@ -1,0 +1,79 @@
+.input--startlabel {
+  & .snk-input {
+    padding-left: 135px;
+  }
+}
+
+.input--icon {
+  & .snk-input {
+    padding-left: 65px;
+  }
+}
+
+.input-chf {
+  & .snk-input {
+    padding-left: 60px;
+  }
+}
+
+.snk-map {
+  min-height: 203px;
+}
+.delimiteur-input {
+  & .snk-input {
+    width: 80px;
+  }
+}
+
+.snk-toast--bg-primary {
+  background-color: #FF0000 !important;
+}
+
+.snk-dropdown__select {
+  min-width: 200px;
+}
+
+.dropdown-custom > .snk-dropdown__select {
+  background: white;
+}
+
+.snk-button {
+  width: initial;
+  display: inline-flex;
+  &--button {
+    padding: 0 0.75rem;
+    line-height: 2.375rem;
+    font-size: 0.875rem;
+    justify-content: center;
+    letter-spacing: normal;
+  }
+  &.--compact {
+    min-height: 2.5rem;
+    @include break-p(null, md) {
+      font-size: 0;
+    }
+    @include break-p(lg) {
+      & > svg {
+        margin: 0 0.5rem 0 0;
+      }
+    }
+  }
+  &.--outlined {
+    background-color: transparent;
+    color: ds-color(primary, base);
+    border-color: ds-color(primary, base);
+  }
+  &.--icon-only {
+    font-size: 0;
+    color: ds-color(primary, base);
+    background-color: transparent;
+    border-color: transparent;
+  }
+  &.--text {
+    padding: 0 0.5rem;
+    line-height: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: normal;
+    border-radius: 6px;
+  }
+}
