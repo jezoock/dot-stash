@@ -109,13 +109,13 @@ export class DSVideo {
           this.isPlaying ? (
             <ds-button
               class="ds-video__pause-button"        
-              dsMods={['video', 'pause']}
+              mods={['video', 'pause']}
               onClick={this.pauseButtonclickHandler}
             />
           ) : (
             <ds-button
               class="ds-video__play-button"        
-              dsMods={['video', 'play']}
+              mods={['video', 'play']}
               onClick={this.playButtonclickHandler}
             />
           )

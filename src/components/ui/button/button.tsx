@@ -1,43 +1,81 @@
-import { Component, h, Prop, Watch } from '@stencil/core';
+import { Component, h, Prop, Watch, Event } from '@stencil/core';
+import { EventEmitter } from '@stencil/core/internal';
 import _ds from '../../../dot-stash';
+
+export type DSButtonType = 'button' | 'submit' | 'trigger';
+export type ButtonType = 'button' | 'submit';
 
 @Component({
   tag: 'ds-button',
   styleUrl: 'button.scss',
 })
 export class DSButton {
-  @Prop() dsType = 'button';
-  @Prop() dsMods: string | string[] = [];
-  @Prop() dsUrl: string;
-  @Prop() dsStyle: string;
-  @Prop() dsColor: string;
+  @Prop() type: DSButtonType = 'button';
+  @Prop() mods: string | string[] = [];
+  @Prop() url: string;
+  @Prop() styles: string;
+  @Prop() color: string;
+  @Prop() disabled: string | boolean;
 
-  CSSClassList: any;
+  CSSClassList: Record<string, boolean>;
+  buttonType: ButtonType;
+  isDisabled: boolean;
 
-  @Watch('dsMods')
-  dsModsWatcher(newMods) {
-    this.CSSClassList = _ds.props.toClassList('ds-button', newMods);
+  @Watch('disabled')
+  disabledPropChangeHandler(newDisabled: string | boolean) {
+    this.isDisabled = _ds.props.isTrue(newDisabled);
   }
+
+  @Watch('mods')
+  modsPropChangeHanler(newMods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList(
+      'ds-button',
+      [
+        ..._ds.props.toArray(newMods),
+        this.styles,
+        this.color
+      ]
+    );
+  }
+
+  @Event() dsButtonClick: EventEmitter;
 
   constructor() {
     this.buttonClickHandler = this.buttonClickHandler.bind(this);
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-button', [..._ds.props.toArray(this.dsMods), this.dsStyle, this.dsColor]);
+    this.CSSClassList = _ds.props.toClassList(
+      'ds-button',
+      [
+        ..._ds.props.toArray(this.mods),
+        this.styles,
+        this.color,
+      ]
+    );
+    this.buttonType = this.type === 'trigger' ? 'button' : this.type;
+    this.isDisabled = _ds.props.isTrue(this.disabled);
   }
 
-  buttonClickHandler(event) {
-    if (this.dsUrl) {
+  buttonClickHandler(event: MouseEvent) {
+    this.dsButtonClick.emit();
+    if (this.buttonType === 'button') {
       event.preventDefault();
       event.stopPropagation();
-      window.location.href = this.dsUrl;
+      if (this.url) {
+        window.location.href = this.url;
+      }
     }
   }
 
   render() {
     return (
-      <button type={this.dsType} class={this.CSSClassList} onClick={this.buttonClickHandler}>
+      <button 
+        class={this.CSSClassList}
+        type={this.buttonType}
+        disabled={this.isDisabled}
+        onClick={this.buttonClickHandler}
+      >
         <slot name="before" />
         <slot />
         <slot name="after" />

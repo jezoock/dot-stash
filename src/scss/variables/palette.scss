@@ -55,9 +55,9 @@ $colorset: (
       background: #fff,
     ),
     disabled: (
-      text: #555,
+      text: #fff,
       border: #555,
-      background: #fff,
+      background: #555,
     ),
   ),
   outlined: (
@@ -81,5 +81,23 @@ $colorset: (
       border: #555,
       background: #fff,
     ),
+  ),
+);
+
+$gradients: (
+  color-1: (
+    fallback: #fff,
+    from: #f96874,
+    to: #fdd9d7,
+  ),
+  color-2: (
+    fallback: #34ada0,
+    from: rgba(52, 173, 160, 1) 0%,
+    to: rgba(204, 227, 148, 1) 100%,
+  ),
+  white: (
+    fallback: #fff,
+    from: rgba(255, 255, 255, 1) 0%,
+    to: rgba(255, 255, 255, 0) 100%,
   ),
 );

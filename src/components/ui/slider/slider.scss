@@ -1,4 +1,5 @@
-/* @import './scss/button.scss'; */
+@import './scss/button.scss';
+
 .ds-slider {
   position: relative;
 
@@ -30,76 +31,5 @@
     z-index: 10;
   }
 
-  &.--vacances,
-  &.--soiree,
-  &.--maison {
-    margin: 0 auto;
-    & .ds-slider {
-      &__prev-button,
-      &__next-button {
-        top: 50%;
-        display: block;
-      }
-      &__prev-button {
-        left: -5rem;
-      }
-      &__next-button {
-        right: -5rem;
-      }
-      @media (max-width: $grid-md-max) {
-        &__prev-button {
-          left: -2rem;
-        }
-        &__next-button {
-          right: -2rem;
-        }
-      }
-    }
-  }
-
-  &.--vacances,
-  &.--maison {
-    max-width: 1320px;
-    & .ds-slider {
-      &__item {
-        padding: 0 0.5rem;
-      }
-    }
-    & img {
-      max-height: 360px;
-    }
-  }
-
-  &.--soiree {
-    max-width: 1220px;
-    margin: 0 auto;
-    & .ds-slider {
-      &__item {
-        padding: 0 1.5rem;
-        @media (max-width: $grid-md-max) {
-          width: 50%;
-          padding: 0 0.5rem;
-        }
-      }
-      &__next-button,
-      &__prev-button {
-        display: block;
-        & button {
-          &:before {
-            filter: invert(31%) sepia(22%) saturate(6878%) hue-rotate(309deg) brightness(95%) contrast(85%);
-          }
-        }
-      }
-      &__list {
-        margin: 0 auto;
-      }
-    }
-  }
-
-  @media (max-width: $grid-md-max) {
-  }
-
-  @media (min-width: $grid-lg-min) {
-  }
 }
 

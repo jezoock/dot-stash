@@ -22,21 +22,25 @@ const _ds = {
   },
   
   props: {
-    isTrue: ( prop: string|boolean ): boolean => typeof prop === 'boolean' ? prop : prop.toLowerCase() === 'true' || prop.toLowerCase() === '',
+    isTrue: ( prop: string|boolean ): boolean => typeof prop === 'undefined'
+      ? false
+      : typeof prop === 'boolean'
+        ? prop
+        : prop.toLowerCase() === 'true' || prop.toLowerCase() === '',
     toNumber: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseInt(prop, 10),
     toFloat: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseFloat(prop),
     toArray: ( prop: string|any[] ): any[] => typeof prop === 'string' ? (prop as string).split(',') : prop,
     fromJSON: ( prop: string | Record<string, unknown>, rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : prop[rootKey],
     toClassList: ( mainClass: string, mods: string|string[] ): any => {
       const classList = {};
-      if( !!mainClass ) {
+      if( mainClass && mainClass.trim() !== '' ) {
         classList[`${mainClass}`] = true;
       }
       if( mods.length ) {
         const modsList = _ds.props.toArray(mods);
         modsList.forEach( CSSClass => {
-          if (!!CSSClass) {
-          classList[`--${CSSClass.trim()}`] = true;
+          if (CSSClass && CSSClass.trim() !== '') {
+            classList[`--${CSSClass.trim()}`] = true;
           }
         });
       }
@@ -128,7 +132,7 @@ const _ds = {
     },
   },
   tools: {
-    scrollTo: (element: string, offset: number = 100): void => {
+    scrollTo: (element: string, offset = 100): void => {
       const scrollY = (document.querySelector(element) as AnyHTMLElement).offsetTop - offset;
       window.scroll(0, scrollY);
     },
@@ -177,8 +181,8 @@ const _ds = {
               element[prop] = value;
               return;
             }
-            let initial = element[prop];
-            let delta = value - element[prop];
+            const initial = element[prop];
+            const delta = value - element[prop];
     
             function scroll() {
               const now =
@@ -250,10 +254,10 @@ const _ds = {
       };
     },
     waitUntil: (
-      func: Function,
-      pollingRate: number = 100,
-      leading: boolean = false,
-      maxIterations: number = 1000,
+      func: () => void,
+      pollingRate = 100,
+      leading = false,
+      maxIterations = 1000,
       context?: any
     ): Promise<any> => {
       return new Promise((resolve, reject) => {
@@ -263,7 +267,7 @@ const _ds = {
         const rFunc = async () => {
           try {
             const result = await func.apply(ctx/* , args */);
-            if (!!result) {
+            if (result) {
               return resolve(result);
             }
           } catch (e) {

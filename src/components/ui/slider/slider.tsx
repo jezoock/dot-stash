@@ -475,8 +475,8 @@ export class DSSlider {
         {(this.dsParams.loop || this.currentItem.index) > 0 && (
           <ds-button
             class="ds-slider__prev-button"
-            dsMods={['slider', 'prev']}
-            onClick={this.handlePrevButtonClickHandler}
+            mods={['slider', 'prev']}
+            onDsButtonClick={this.handlePrevButtonClickHandler}
           />
         )}
 
@@ -490,8 +490,8 @@ export class DSSlider {
         {(this.dsParams.loop || this.currentItem.index + this.dspItems < this.listLen) && ( 
           <ds-button
             class="ds-slider__next-button"
-            dsMods={['slider', 'next']}
-            onClick={this.handleNextButtonClickHandler}
+            mods={['slider', 'next']}
+            onDsButtonClick={this.handleNextButtonClickHandler}
           />
         )}
 

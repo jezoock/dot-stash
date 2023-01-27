@@ -5,22 +5,23 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { DSButtonType } from "./components/ui/button/button";
 import { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
+export { DSButtonType } from "./components/ui/button/button";
 export { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
 export namespace Components {
     interface DsBlock {
         "dsMods": string | string[];
         "dsTag": string;
         "dsType": string;
-        "withFooter": string | boolean;
-        "withHeader": string | boolean;
     }
     interface DsButton {
-        "dsColor": string;
-        "dsMods": string | string[];
-        "dsStyle": string;
-        "dsType": string;
-        "dsUrl": string;
+        "color": string;
+        "disabled": string | boolean;
+        "mods": string | string[];
+        "styles": string;
+        "type": DSButtonType;
+        "url": string;
     }
     interface DsGrid {
         "dsAlign": DSGridAlignment;
@@ -76,6 +77,10 @@ export namespace Components {
         "dsSources": string | string[];
         "dsUseControls": string | boolean;
     }
+}
+export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtonElement;
 }
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -185,15 +190,15 @@ declare namespace LocalJSX {
         "dsMods"?: string | string[];
         "dsTag"?: string;
         "dsType"?: string;
-        "withFooter"?: string | boolean;
-        "withHeader"?: string | boolean;
     }
     interface DsButton {
-        "dsColor"?: string;
-        "dsMods"?: string | string[];
-        "dsStyle"?: string;
-        "dsType"?: string;
-        "dsUrl"?: string;
+        "color"?: string;
+        "disabled"?: string | boolean;
+        "mods"?: string | string[];
+        "onDsButtonClick"?: (event: DsButtonCustomEvent<any>) => void;
+        "styles"?: string;
+        "type"?: DSButtonType;
+        "url"?: string;
     }
     interface DsGrid {
         "dsAlign"?: DSGridAlignment;

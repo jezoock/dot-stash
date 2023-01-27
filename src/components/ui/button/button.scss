@@ -13,6 +13,17 @@
     cursor: pointer;
   }
 
+  &:has([slot="before"]),
+  &:has([slot="after"]) {
+    display: flex;
+    align-items: center;
+    & > :not([slot="before"]):not([slot="after"]) {
+      flex-grow: 1;
+    }
+  }
+
+  /* Theme related */
+
   &.--xs {
     padding: 0.125rem 0.25rem;
     font-size: 0.75rem;
