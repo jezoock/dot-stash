@@ -7,8 +7,12 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./components/ui/button/button";
 import { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
+import { AnyHTMLElement } from "@stencil/core/internal";
+import { Breakpoint } from "./components/ui/responsive/responsive";
 export { DSButtonType } from "./components/ui/button/button";
 export { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
+export { AnyHTMLElement } from "@stencil/core/internal";
+export { Breakpoint } from "./components/ui/responsive/responsive";
 export namespace Components {
     interface DsBlock {
         "dsMods": string | string[];
@@ -46,7 +50,9 @@ export namespace Components {
     interface DsRsp {
         "breakpointsFromProp": string | Record<string, unknown>;
         "debounceDelay": number;
+        "getData": () => Promise<{ breakpoints: Breakpoint[]; }>;
         "propertyName": string;
+        "subscribe": (target: AnyHTMLElement) => Promise<number>;
         "subscriberSelector": string;
     }
     interface DsSection {

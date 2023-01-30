@@ -1,21 +1,41 @@
 import { Component, h, Prop, Watch, Event } from '@stencil/core';
-import { EventEmitter } from '@stencil/core/internal';
+import { Element, EventEmitter, Host } from '@stencil/core/internal';
 import _ds from '../../../dot-stash';
+import Breakpoint from '../../../interfaces/breakpoint';
 
 export type DSButtonType = 'button' | 'submit' | 'trigger';
 export type ButtonType = 'button' | 'submit';
+
+const Breakpoints: () => PropertyDecorator = () => {
+  return (target: any, propertyKey: string) => {
+    const rspComponent = document.querySelector("ds-rsp");
+    target[propertyKey] = async (): Promise<{ breakpoints: Breakpoint[]; }> => { return await rspComponent.getData(); };
+  };
+};
+
+const Responsive: () => PropertyDecorator = () => {
+  return (target: any, propertyKey: string) => {
+    const rspComponent = document.querySelector("ds-rsp");
+    target[propertyKey] = async (element: HTMLDsButtonElement) => { return await rspComponent.subscribe(element); };
+  };
+};
 
 @Component({
   tag: 'ds-button',
   styleUrl: 'button.scss',
 })
 export class DSButton {
+  @Element() button: any;
+
   @Prop() type: DSButtonType = 'button';
   @Prop() mods: string | string[] = [];
   @Prop() url: string;
   @Prop() styles: string;
   @Prop() color: string;
   @Prop() disabled: string | boolean;
+
+  @Breakpoints() breakpoints: any;
+  @Responsive() subscribeResponsive: any;
 
   CSSClassList: Record<string, boolean>;
   buttonType: ButtonType;
@@ -57,8 +77,13 @@ export class DSButton {
     this.isDisabled = _ds.props.isTrue(this.disabled);
   }
 
+  componentDidLoad() {
+    this.subscribeResponsive(this.button);
+  }
+
   buttonClickHandler(event: MouseEvent) {
     this.dsButtonClick.emit();
+    console.log(this.breakpoints());
     if (this.buttonType === 'button') {
       event.preventDefault();
       event.stopPropagation();
@@ -70,6 +95,7 @@ export class DSButton {
 
   render() {
     return (
+      <Host>
       <button 
         class={this.CSSClassList}
         type={this.buttonType}
@@ -79,7 +105,7 @@ export class DSButton {
         <slot name="before" />
         <slot />
         <slot name="after" />
-      </button>
+      </button></Host>
     );
   }
 }
