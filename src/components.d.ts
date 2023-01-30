@@ -7,11 +7,9 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./components/ui/button/button";
 import { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
-import { AnyHTMLElement } from "@stencil/core/internal";
 import { Breakpoint } from "./components/ui/responsive/responsive";
 export { DSButtonType } from "./components/ui/button/button";
 export { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
-export { AnyHTMLElement } from "@stencil/core/internal";
 export { Breakpoint } from "./components/ui/responsive/responsive";
 export namespace Components {
     interface DsBlock {
@@ -21,6 +19,7 @@ export namespace Components {
     }
     interface DsButton {
         "color": string;
+        "dataUseRsp": boolean;
         "disabled": string | boolean;
         "mods": string | string[];
         "styles": string;
@@ -51,8 +50,9 @@ export namespace Components {
         "breakpointsFromProp": string | Record<string, unknown>;
         "debounceDelay": number;
         "getData": () => Promise<{ breakpoints: Breakpoint[]; }>;
+        "getSubscribers": () => Promise<Element[]>;
         "propertyName": string;
-        "subscribe": (target: AnyHTMLElement) => Promise<number>;
+        "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
     }
     interface DsSection {
@@ -199,6 +199,7 @@ declare namespace LocalJSX {
     }
     interface DsButton {
         "color"?: string;
+        "dataUseRsp"?: boolean;
         "disabled"?: string | boolean;
         "mods"?: string | string[];
         "onDsButtonClick"?: (event: DsButtonCustomEvent<any>) => void;

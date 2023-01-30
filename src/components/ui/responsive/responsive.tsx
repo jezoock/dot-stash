@@ -1,5 +1,5 @@
 import { Component, h, Host } from '@stencil/core';
-import { AnyHTMLElement, Method, Prop } from '@stencil/core/internal';
+import { Method, Prop } from '@stencil/core/internal';
 import { getBreakpoint, getStylesJSON } from '../../../tools/sass';
 import debounce from '../../../tools/debounce';
 import _ds from '../../../dot-stash';
@@ -16,21 +16,27 @@ export interface Breakpoint {
 export class DSRsp {
   breakpoints: Breakpoint[];
   currentBreakpoint: Breakpoint;
-  subscribers: AnyHTMLElement[] = [];
+  subscribers: Element[] = [];
+  waitingSubscribers: Element[] = [];
 
   @Prop() debounceDelay = 200;
-  @Prop() subscriberSelector = '[data-use-rsp]';
+  @Prop() subscriberSelector = '[data-use-rsp]:not([data-rsp-init])';
   @Prop() propertyName = 'data-rsp';
   @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: string | Record<string, unknown>;
 
   @Method()
-  async subscribe(target: AnyHTMLElement) {
-    return await this.subscribers.push(target);
+  async subscribe(target: Element) {
+    return await this.waitingSubscribers.push(target);
   }
 
   @Method()
-  async getData() {
+  async getData(): Promise<{ breakpoints: Breakpoint[]}> {
     return await { breakpoints: this.breakpoints };
+  }
+
+  @Method()
+  async getSubscribers() {
+    return await Array.from(document.querySelectorAll("[data-use-rsp]"));
   }
 
   constructor() {
@@ -46,24 +52,31 @@ export class DSRsp {
     const { breakpoints } = getStylesJSON();
     this.breakpoints = breakpoints;
     window.addEventListener('resize', this.notifySubscribers, false);
-    const subscribers = [ ...Array.from(document.querySelectorAll(this.subscriberSelector)), ...this.subscribers ];
-    this.initSubscribers(subscribers);
     this.notifySubscribers();
   }
-
-  initSubscribers(subscribers: Element[]) {
-    subscribers.forEach(subscriber => subscriber.addEventListener('breakpointChange', this.breakpointChangeHandler, false));
+  
+  initSubscribers() {
+    const allSubscribers = [
+      ...Array.from(document.querySelectorAll(this.subscriberSelector)),
+      ...this.waitingSubscribers
+    ];
+    allSubscribers.forEach(subscriber => {
+      subscriber.setAttribute("data-use-rsp", "true");
+      subscriber["data-rsp-init"] = "true";
+      subscriber.addEventListener('breakpointChange', this.breakpointChangeHandler, false)
+    });
+    this.subscribers = [ ...allSubscribers ];
+    this.waitingSubscribers = [];
   }
   
   disconnectedCallback() {
     window.removeEventListener('resize', this.notifySubscribers);
-    const subscribers = document.querySelectorAll(this.subscriberSelector);
+    const subscribers = document.querySelectorAll("[data-use-rsp]");
     subscribers.forEach(subscriber => subscriber.removeEventListener('breakpointChange', this.breakpointChangeHandler));
   }
   
   notifySubscribers = debounce((): void => {
-    /* Should check for already initialized subscribers otherwise too many bindings */
-    this.initSubscribers(this.subscribers);
+    this.initSubscribers();
 
     this.currentBreakpoint = getBreakpoint(this.breakpoints);
     const eventDetails = {
@@ -71,18 +84,18 @@ export class DSRsp {
       all: this.breakpoints,
     };
     const event = new CustomEvent('breakpointChange', { detail: eventDetails });
-    const subscribers = [ ...Array.from(document.querySelectorAll(this.subscriberSelector)), ...this.subscribers ];
+    const subscribers = document.querySelectorAll("[data-use-rsp]");
 
     subscribers.forEach(element => element.dispatchEvent(event));
   }, this.debounceDelay);
 
-  breakpointChangeHandler(event: CustomEvent) {
+  breakpointChangeHandler(event: CustomEvent): void {
     const {
       target: element,
       detail: { current },
     } = event;
-    const attributeValue = (element as AnyHTMLElement).getAttribute(this.propertyName);
-    const params: Record<string, unknown> = (typeof attributeValue === 'string' ? JSON.parse(attributeValue) : attributeValue) || {};
+    const attributeValue = (element as Element).getAttribute(this.propertyName);
+    const params: Record<string, unknown> = _ds.props.fromJSON(attributeValue) || {};
     const breakpointParams = params[current.label];
 
     if (breakpointParams) {

@@ -33,6 +33,7 @@ export class DSButton {
   @Prop() styles: string;
   @Prop() color: string;
   @Prop() disabled: string | boolean;
+  @Prop() dataUseRsp: boolean;
 
   @Breakpoints() breakpoints: any;
   @Responsive() subscribeResponsive: any;

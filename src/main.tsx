@@ -57,7 +57,24 @@ export class DSMainTest {
             }`}
             mods={['solid', 'primary', 'lg']}
           >Mods Click me !</ds-button>
-        <ds-block>
+        <ds-button
+            data-rsp={`{
+              "xs": {
+                "mods": ["outlined", "secondary", "sm"]
+              },
+              "sm": {
+                "mods": ["solid", "disabled", "sm"]
+              },
+              "md": {
+                "mods": ["solid", "primary", "md"]
+              },
+              "lg": {
+                "mods": ["solid", "primary", "lg"]
+              }
+            }`}
+            mods={['solid', 'primary', 'lg']}
+          >Mods Click me too!</ds-button>
+        {/* <ds-block>
           <ds-title>
             Buttons
           </ds-title>
@@ -112,7 +129,7 @@ export class DSMainTest {
               <ds-button mods={["outlined", "primary", "xl"]}>Click me !</ds-button>
             </ds-grid-item>
           </ds-grid>
-        </ds-block>
+        </ds-block> */}
         </ds-rsp>
       </div>
     );
