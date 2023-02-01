@@ -36,28 +36,29 @@ export class DSMainTest {
     console.log(event);
   };
 
-  componentDidLoad() {
-  }
+  componentDidLoad() { }
 
   render() {
     return (
       <div class="ds-components-demo">
         <ds-rsp>
-        <ds-button
+          <ds-button
             data-rsp={`{
-              "sm": {
-                "mods": ["solid", "primary", "sm"]
-              },
-              "md": {
-                "mods": ["solid", "primary", "md"]
-              },
-              "lg": {
-                "mods": ["solid", "primary", "lg"]
-              }
-            }`}
+            "sm": {
+              "mods": ["solid", "primary", "sm"]
+            },
+            "md": {
+              "mods": ["solid", "primary", "md"]
+            },
+            "lg": {
+              "mods": ["solid", "primary", "lg"]
+            }
+          }`}
             mods={['solid', 'primary', 'lg']}
-          >Mods Click me !</ds-button>
-        <ds-button
+          >
+            Mods Click me !
+          </ds-button>
+          <ds-button
             data-rsp={`{
               "xs": {
                 "mods": ["outlined", "secondary", "sm"]
@@ -73,8 +74,14 @@ export class DSMainTest {
               }
             }`}
             mods={['solid', 'primary', 'lg']}
-          >Mods Click me too!</ds-button>
-        {/* <ds-block>
+          >
+            
+            
+            
+            
+            Mods Click me too!
+          </ds-button>
+          {/* <ds-block>
           <ds-title>
             Buttons
           </ds-title>
