@@ -6,9 +6,11 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./components/ui/button/button";
+import { DSButtonType as DSButtonType1 } from "../www/button copy/button";
 import { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
 import { Breakpoint } from "./components/ui/responsive/responsive";
 export { DSButtonType } from "./components/ui/button/button";
+export { DSButtonType as DSButtonType1 } from "../www/button copy/button";
 export { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
 export { Breakpoint } from "./components/ui/responsive/responsive";
 export namespace Components {
@@ -19,11 +21,19 @@ export namespace Components {
     }
     interface DsButton {
         "color": string;
-        "dataUseRsp": boolean;
         "disabled": string | boolean;
         "mods": string | string[];
         "styles": string;
         "type": DSButtonType;
+        "url": string;
+    }
+    interface DsButtonds {
+        "color": string;
+        "dataUseRsp": boolean;
+        "disabled": string | boolean;
+        "mods": string | string[];
+        "styles": string;
+        "type": DSButtonType1;
         "url": string;
     }
     interface DsGrid {
@@ -88,6 +98,10 @@ export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
 }
+export interface DsButtondsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsButtondsElement;
+}
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
@@ -108,6 +122,12 @@ declare global {
     var HTMLDsButtonElement: {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
+    };
+    interface HTMLDsButtondsElement extends Components.DsButtonds, HTMLStencilElement {
+    }
+    var HTMLDsButtondsElement: {
+        prototype: HTMLDsButtondsElement;
+        new (): HTMLDsButtondsElement;
     };
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
@@ -178,6 +198,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
+        "ds-buttonds": HTMLDsButtondsElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-main": HTMLDsMainElement;
@@ -199,12 +220,21 @@ declare namespace LocalJSX {
     }
     interface DsButton {
         "color"?: string;
-        "dataUseRsp"?: boolean;
         "disabled"?: string | boolean;
         "mods"?: string | string[];
         "onDsButtonClick"?: (event: DsButtonCustomEvent<any>) => void;
         "styles"?: string;
         "type"?: DSButtonType;
+        "url"?: string;
+    }
+    interface DsButtonds {
+        "color"?: string;
+        "dataUseRsp"?: boolean;
+        "disabled"?: string | boolean;
+        "mods"?: string | string[];
+        "onDsButtonClick"?: (event: DsButtondsCustomEvent<any>) => void;
+        "styles"?: string;
+        "type"?: DSButtonType1;
         "url"?: string;
     }
     interface DsGrid {
@@ -265,6 +295,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ds-block": DsBlock;
         "ds-button": DsButton;
+        "ds-buttonds": DsButtonds;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-main": DsMain;
@@ -284,6 +315,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-buttonds": LocalJSX.DsButtonds & JSXBase.HTMLAttributes<HTMLDsButtondsElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;

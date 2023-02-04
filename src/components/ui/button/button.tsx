@@ -1,31 +1,16 @@
 import { Component, h, Prop, Watch, Event } from '@stencil/core';
-import { Element, EventEmitter, Host } from '@stencil/core/internal';
+import { Element, EventEmitter, Host, HostElement } from '@stencil/core/internal';
 import _ds from '../../../dot-stash';
-import Breakpoint from '../../../interfaces/breakpoint';
 
 export type DSButtonType = 'button' | 'submit' | 'trigger';
 export type ButtonType = 'button' | 'submit';
-
-const Breakpoints: () => PropertyDecorator = () => {
-  return (target: any, propertyKey: string) => {
-    const rspComponent = document.querySelector("ds-rsp");
-    target[propertyKey] = async (): Promise<{ breakpoints: Breakpoint[]; }> => { return await rspComponent.getData(); };
-  };
-};
-
-const Responsive: () => PropertyDecorator = () => {
-  return (target: any, propertyKey: string) => {
-    const rspComponent = document.querySelector("ds-rsp");
-    target[propertyKey] = async (element: HTMLDsButtonElement) => { return await rspComponent.subscribe(element); };
-  };
-};
 
 @Component({
   tag: 'ds-button',
   styleUrl: 'button.scss',
 })
 export class DSButton {
-  @Element() button: any;
+  @Element() button: HostElement;
 
   @Prop() type: DSButtonType = 'button';
   @Prop() mods: string | string[] = [];
@@ -33,10 +18,6 @@ export class DSButton {
   @Prop() styles: string;
   @Prop() color: string;
   @Prop() disabled: string | boolean;
-  @Prop() dataUseRsp: boolean;
-
-  @Breakpoints() breakpoints: any;
-  @Responsive() subscribeResponsive: any;
 
   CSSClassList: Record<string, boolean>;
   buttonType: ButtonType;
@@ -78,13 +59,8 @@ export class DSButton {
     this.isDisabled = _ds.props.isTrue(this.disabled);
   }
 
-  componentDidLoad() {
-    this.subscribeResponsive(this.button);
-  }
-
   buttonClickHandler(event: MouseEvent) {
     this.dsButtonClick.emit();
-    console.log(this.breakpoints());
     if (this.buttonType === 'button') {
       event.preventDefault();
       event.stopPropagation();

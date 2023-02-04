@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property     | Attribute      | Description | Type  | Default     |
-| ------------ | -------------- | ----------- | ----- | ----------- |
-| `dsUseRatio` | `ds-use-ratio` |             | `any` | `undefined` |
+| Property  | Attribute  | Description | Type               | Default     |
+| --------- | ---------- | ----------- | ------------------ | ----------- |
+| `dsRatio` | `ds-ratio` |             | `number \| string` | `undefined` |
 
 
 ----------------------------------------------

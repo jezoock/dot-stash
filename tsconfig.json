@@ -18,7 +18,7 @@
   },
   "include": [
     "src"
-  ],
+, "www/button copy"  ],
   "exclude": [
     "node_modules"
   ]
