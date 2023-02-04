@@ -7,13 +7,66 @@
 
 ## Properties
 
-| Property        | Attribute         | Description | Type                 | Default     |
-| --------------- | ----------------- | ----------- | -------------------- | ----------- |
-| `dsAutoplay`    | `ds-autoplay`     |             | `boolean \| string`  | `false`     |
-| `dsMods`        | `ds-mods`         |             | `string \| string[]` | `[]`        |
-| `dsPoster`      | `ds-poster`       |             | `string`             | `undefined` |
-| `dsSources`     | `ds-sources`      |             | `string \| string[]` | `[]`        |
-| `dsUseControls` | `ds-use-controls` |             | `boolean \| string`  | `false`     |
+| Property   | Attribute  | Description | Type                 | Default     |
+| ---------- | ---------- | ----------- | -------------------- | ----------- |
+| `autoplay` | `autoplay` |             | `boolean \| string`  | `false`     |
+| `controls` | `controls` |             | `boolean \| string`  | `false`     |
+| `mods`     | `mods`     |             | `string \| string[]` | `[]`        |
+| `poster`   | `poster`   |             | `string`             | `undefined` |
+| `sources`  | `sources`  |             | `string \| string[]` | `[]`        |
+
+
+## Methods
+
+### `mute() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `pause() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `play() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `stop() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `unmute() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ## Dependencies

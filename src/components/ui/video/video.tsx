@@ -1,5 +1,5 @@
-import { Component, Element, h, Prop, State, Watch } from '@stencil/core';
-import { Fragment, Method } from '@stencil/core/internal/stencil-public-runtime';
+import { Component, Element, h, Prop, State, Watch, Method } from '@stencil/core';
+import { Fragment } from '@stencil/core/internal';
 import _ds from '../../../dot-stash';
 
 @Component({

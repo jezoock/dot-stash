@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@stencil/core": "^3.0.0",
-    "@stencil/sass": "^2.0.3"
+    "@stencil/sass": "^2.0.3",
+    "stencil-fragment": "^1.0.1"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
