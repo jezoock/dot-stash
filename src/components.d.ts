@@ -87,6 +87,10 @@ export namespace Components {
         "stop": () => Promise<void>;
         "unmute": () => Promise<void>;
     }
+    interface DsVideoPlay {
+        "disabled": string | boolean;
+        "target": string;
+    }
 }
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -179,6 +183,12 @@ declare global {
         prototype: HTMLDsVideoElement;
         new (): HTMLDsVideoElement;
     };
+    interface HTMLDsVideoPlayElement extends Components.DsVideoPlay, HTMLStencilElement {
+    }
+    var HTMLDsVideoPlayElement: {
+        prototype: HTMLDsVideoPlayElement;
+        new (): HTMLDsVideoPlayElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
@@ -193,6 +203,7 @@ declare global {
         "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-title": HTMLDsTitleElement;
         "ds-video": HTMLDsVideoElement;
+        "ds-video-play": HTMLDsVideoPlayElement;
     }
 }
 declare namespace LocalJSX {
@@ -265,6 +276,10 @@ declare namespace LocalJSX {
         "poster"?: string;
         "sources"?: string | string[];
     }
+    interface DsVideoPlay {
+        "disabled"?: string | boolean;
+        "target"?: string;
+    }
     interface IntrinsicElements {
         "ds-block": DsBlock;
         "ds-button": DsButton;
@@ -279,6 +294,7 @@ declare namespace LocalJSX {
         "ds-slider-menu": DsSliderMenu;
         "ds-title": DsTitle;
         "ds-video": DsVideo;
+        "ds-video-play": DsVideoPlay;
     }
 }
 export { LocalJSX as JSX };
@@ -298,6 +314,7 @@ declare module "@stencil/core" {
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
+            "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
         }
     }
 }

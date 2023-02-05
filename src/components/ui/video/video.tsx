@@ -39,13 +39,16 @@ export class DSVideo {
 
   @Method()
   async play() {
-    if( !this.isReady ) {
-      this.isReady = true;
+    if (!this.isPlaying) {
+      if( !this.isReady ) {
+        this.isReady = true;
+      }
+      this.isPlaying = true;
+      this.isPaused = false;
+      const videoPlayer = this.getPlayer();
+      videoPlayer.play();
+      console.log("play");
     }
-    this.isPlaying = true;
-    this.isPaused = false;
-    const videoPlayer = this.getPlayer();
-    videoPlayer.play();
   }
 
   @Method()
@@ -157,6 +160,7 @@ export class DSVideo {
             />
           )}
         </video>
+        <slot name="controls" />
         {this.useControls && (
           <Fragment>
             <ds-button

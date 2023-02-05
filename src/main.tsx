@@ -81,6 +81,9 @@ export class DSMainTest {
             
             Mods Click me too!
           </ds-button>
+          <ds-video>
+            <ds-video-play slot="controls">play it Yvette!</ds-video-play>
+          </ds-video>
           {/* <ds-block>
           <ds-title>
             Buttons
