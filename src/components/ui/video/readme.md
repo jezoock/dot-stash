@@ -71,6 +71,10 @@ Type: `Promise<void>`
 
 ## Dependencies
 
+### Used by
+
+ - [ds-main](../../..)
+
 ### Depends on
 
 - [ds-button](../button)
@@ -79,6 +83,7 @@ Type: `Promise<void>`
 ```mermaid
 graph TD;
   ds-video --> ds-button
+  ds-main --> ds-video
   style ds-video fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

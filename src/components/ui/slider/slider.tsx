@@ -17,16 +17,16 @@ const DSSliderDefaults = {
 
 @Component({
   tag: 'ds-slider',
-  styleUrls: ['slider.scss', './scss/button.scss']
+  styleUrl: 'slider.scss'
 })
 export class DSSlider {
 
   @Element() host: HTMLDivElement;
 
   @Prop({ mutable: true, reflect: true }) sliderId: string;
-	@Prop({ mutable: true, reflect: true }) dsMods: string | string[] = "";
-	@Prop({ mutable: true, reflect: true }) dsParams: any | string = {};
-	@Prop({ mutable: true, reflect: true }) type: string = "sld";
+	@Prop({ mutable: true, reflect: true }) mods: string | string[] = "";
+	@Prop({ mutable: true, reflect: true }) params: any | string = {};
+	@Prop({ mutable: true, reflect: true }) type = "sld";
 
 	@State() currentItem: any = {
 		obj: null,
@@ -37,26 +37,26 @@ export class DSSlider {
   sliderContener: HTMLDivElement;
 	list: any;
 	items: any;	
-  listLen: number = 0;
-  dspDim: number = 0;
-  itemWidth: number = 0;
-  itemHeight: number = 0;
-  dspItems: number = 0;
-  listDim: number = 0;
-  step: number = 1;
+  listLen = 0;
+  dspDim = 0;
+  itemWidth = 0;
+  itemHeight = 0;
+  dspItems = 0;
+  listDim = 0;
+  step = 1;
   timer: NodeJS.Timeout = null;
-  duration: number = 4000;
+  duration = 4000;
   menu: AnyHTMLElement;
   
-	isScrollable: boolean = false;
-	isDraggable: boolean = false;
-	isTransitionStarted: boolean = false;
-	isPlaying: boolean = true;
-	isReady: boolean = false;
-  CSSClassList: any;
+	isScrollable = false;
+	isDraggable = false;
+	isTransitionStarted = false;
+	isPlaying = true;
+	isReady = false;
+  CSSClassList: Record<string, boolean>;
 
-  @Watch('dsMods')
-  dsModsWatcher( newMods ) {
+  @Watch('mods')
+  modsWatcher( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-slider", newMods);
   }
 
@@ -78,8 +78,8 @@ export class DSSlider {
   }
 
   componentWillLoad() {
-    this.dsParams = {...DSSliderDefaults, ..._ds.props.fromJSON(this.dsParams) };
-    this.CSSClassList = _ds.props.toClassList("ds-slider", this.dsMods);
+    this.params = {...DSSliderDefaults, ..._ds.props.fromJSON(this.params) };
+    this.CSSClassList = _ds.props.toClassList("ds-slider", this.mods);
   }
   
   componentDidLoad() {
@@ -87,7 +87,7 @@ export class DSSlider {
     this.list = this.getList();
     this.items = this.getListItems();
     this.listLen = this.items.length;
-    this.dspDim = this.sliderContener[ `offset${this.dsParams.orientation === "vtc" ? "Height" : "Width"}` ];
+    this.dspDim = this.sliderContener[ `offset${this.params.orientation === "vtc" ? "Height" : "Width"}` ];
 
     this.initialize();
   }
@@ -96,15 +96,15 @@ export class DSSlider {
 
     if( !this.isReady ) {
 
-			/* if( this.dsParams.index !== 0 ) {
+			/* if( this.params.index !== 0 ) {
 
-				if( this.dsParams.index === "rand" ) {
-          this.dsParams.index = Math.floor( Math.random()*this.listLen );
+				if( this.params.index === "rand" ) {
+          this.params.index = Math.floor( Math.random()*this.listLen );
         }
 				
 				this.items = this.list.children(":visible");
-				const start = this.items.slice(0, this.dsParams.index).clone(true,true);
-				const end = this.items.slice( this.dsParams.index ).clone(true,true);
+				const start = this.items.slice(0, this.params.index).clone(true,true);
+				const end = this.items.slice( this.params.index ).clone(true,true);
 					
 				this.list.empty().append(end).append(start);
 				this.items = this.list.children(":visible");
@@ -114,11 +114,11 @@ export class DSSlider {
 			this.refresh(true); 
 
 			if( this.isScrollable ) {
-				if(this.dsParams.autoHeight && this.dsParams.orientation === "hrt" ) {
+				if(this.params.autoHeight && this.params.orientation === "hrt" ) {
           _ds.css.set({ height: this.itemHeight }, [this.sliderContener]);
         }
-        this.step = parseInt(this.dsParams.step, 10);
-        if( this.dsParams.menu ) {
+        this.step = parseInt(this.params.step, 10);
+        if( this.params.menu ) {
           this.menu = this.host.querySelector("ds-slider-menu") as AnyHTMLElement;
         }
       }
@@ -146,13 +146,13 @@ export class DSSlider {
       this.itemWidth = 0;
       this.itemHeight = 0;
       
-      this.dsParams.xOffset = _ds.css.toNumber( "margin-left", this.list);
+      this.params.xOffset = _ds.css.toNumber( "margin-left", this.list);
       
       _ds.css.set({ width: "", height: "" }, [this.list, ...this.items]);
       
-      this.dspDim = this.sliderContener[ `offset${this.dsParams.orientation === "vtc" ? "Height" : "Width"}` ];
+      this.dspDim = this.sliderContener[ `offset${this.params.orientation === "vtc" ? "Height" : "Width"}` ];
       
-      if( this.dsParams.autoplay ) {
+      if( this.params.autoplay ) {
         clearTimeout( this.timer );
       }
 
@@ -160,7 +160,7 @@ export class DSSlider {
       let listHeight = 0;
 
       this.items.forEach( item => {
-        if( !this.dsParams.autoWidth ) {
+        if( !this.params.autoWidth ) {
           listWidth += item.offsetWidth;
           listHeight += item.offsetHeight;
           _ds.css.set({ width: `${item.offsetWidth}px`, maxWidth: `${item.offsetWidth}px`, height: `${item.offsetHeight}px`}, [item]);
@@ -175,39 +175,39 @@ export class DSSlider {
         }
       });
       
-      if( this.dsParams.forceItemDspCount ) {
-        this[ `item${this.dsParams.orientation == "hrt" ? "Width" : "Height"}` ] = Math.ceil(this.dspDim/this.dsParams.forceItemDspCount);
+      if( this.params.forceItemDspCount ) {
+        this[ `item${this.params.orientation == "hrt" ? "Width" : "Height"}` ] = Math.ceil(this.dspDim/this.params.forceItemDspCount);
       }
   
-      const itemHeight = this.dsParams.forceHeight
-        ? this.dsParams.forceHeight
-        : this.dsParams.orientation === "hrt"
-          ? this.dsParams.autoHeight
+      const itemHeight = this.params.forceHeight
+        ? this.params.forceHeight
+        : this.params.orientation === "hrt"
+          ? this.params.autoHeight
             ? this.itemHeight
             : "auto"
           : this.itemHeight 
 
-      if( this.dsParams.autoWidth ) {
+      if( this.params.autoWidth ) {
         _ds.css.set({ height: `${itemHeight}px`, width: `${this.itemWidth}px`}, this.items);
-        this.listDim = this.listLen*this[ this.dsParams.orientation === "vtc" ? "itemHeight" : "itemWidth" ];
+        this.listDim = this.listLen*this[ this.params.orientation === "vtc" ? "itemHeight" : "itemWidth" ];
       } else {
-        this.listDim = this.dsParams.orientation === "vtc" ? listHeight : listWidth;
+        this.listDim = this.params.orientation === "vtc" ? listHeight : listWidth;
       }
 
-      this.dspItems = this.dsParams.forceItemDspCount
-        ? this.dsParams.forceItemDspCount
-        : Math.ceil(this.dspDim/this[ this.dsParams.orientation === "vtc" ? "itemHeight" : "itemWidth" ]);
+      this.dspItems = this.params.forceItemDspCount
+        ? this.params.forceItemDspCount
+        : Math.ceil(this.dspDim/this[ this.params.orientation === "vtc" ? "itemHeight" : "itemWidth" ]);
 
-      if( this.dspItems < this.dsParams.minItemDspCount ) {
-        this.dspItems = this.dsParams.minItemDspCount;
+      if( this.dspItems < this.params.minItemDspCount ) {
+        this.dspItems = this.params.minItemDspCount;
       }
 
       
-      this.isScrollable = this.listDim > this.dspDim || this.dsParams.loop && this.dspItems === this.listLen;
+      this.isScrollable = this.listDim > this.dspDim || this.params.loop && this.dspItems === this.listLen;
 
-      this.list.classList.add( this.dsParams.orientation );
+      this.list.classList.add( this.params.orientation );
       
-      if( this.dsParams.orientation === "vtc" ) {
+      if( this.params.orientation === "vtc" ) {
         _ds.css.set({
           height: `${this.listDim}px`
         }, [this.list]);
@@ -221,8 +221,8 @@ export class DSSlider {
         }, [this.sliderContener]);
       }
 
-      if( this.dsParams.step > this.dspItems || this.listLen === 1 ) {
-        this.dsParams.step = this.dspItems;
+      if( this.params.step > this.dspItems || this.listLen === 1 ) {
+        this.params.step = this.dspItems;
         this.isScrollable = false;
       }
 
@@ -230,15 +230,15 @@ export class DSSlider {
         
         if( this.currentItem.obj === null || (reset||false) ) {
           this.currentItem = {
-            index: this.dsParams.index,
-            obj: this.items[ this.dsParams.index ],
-            dTime: this.dsParams.duration
+            index: this.params.index,
+            obj: this.items[ this.params.index ],
+            dTime: this.params.duration
           }
         }
         
-        if( this.dsParams.autoplay && this.isPlaying ) {
+        if( this.params.autoplay && this.isPlaying ) {
           this.timer = setTimeout(
-            () => this[ ( this.dsParams.direction === 1 ? "next" : "prev" ) ](),
+            () => this[ ( this.params.direction === 1 ? "next" : "prev" ) ](),
             this.currentItem.dTime
           );
         }
@@ -253,11 +253,11 @@ export class DSSlider {
 
   next( step: number = this.step ) {
 
-		if( this.dsParams.autoplay ) {
+		if( this.params.autoplay ) {
 			clearTimeout( this.timer );
 		}
 			
-	  if( !this.isTransitionStarted ) {
+    if( !this.isTransitionStarted ) {
 
 			this.dsSliderEvent.emit({ 'slide': 'start-slide', 'direction': 1 });
       this.isTransitionStarted = true;
@@ -266,14 +266,14 @@ export class DSSlider {
       const from: any = { transform: 'translate3d(0,0,0)' };
       const to: any = {};
     
-      if( this.dsParams.orientation === "vtc" ) {
+      if( this.params.orientation === "vtc" ) {
         from.height = `${this.listDim + this.itemHeight*step}px`;
         to.transform = `translate3d( 0, -${this.itemHeight*step}px, 0 )`;
       } else {
 
         let distance = this.itemWidth*step;
         let nextItemWidth = this.itemWidth*step;
-        if( !this.dsParams.autoWidth ) {
+        if( !this.params.autoWidth ) {
           distance = 0;
           for( let i=0; i<step; i++ ) {
             distance += this.items[i].offsetWidth;
@@ -304,11 +304,11 @@ export class DSSlider {
 
   prev( step? ) {
 
-		if( this.dsParams.autoplay ) {
+		if( this.params.autoplay ) {
 			clearTimeout( this.timer );
 		}
 		
-		if( !this.dsParams.loop && (this.currentItem.index - step < 0) ) {
+		if( !this.params.loop && (this.currentItem.index - step < 0) ) {
 			step = this.currentItem.index;
     }
 
@@ -321,14 +321,14 @@ export class DSSlider {
       const from: any = {};
       const to: any = { transform: 'translate3d(0,0,0)' };
 
-      if( this.dsParams.orientation === "vtc" ) {
+      if( this.params.orientation === "vtc" ) {
         from.height = `${this.listDim + this.itemHeight*step}px`;
         from.transform = `translate3d( 0, -${this.itemHeight*step}px, 0 )`;
       } else {
         
         let distance = this.itemWidth*step;
         let prevItemWidth = this.itemWidth*step;
-        if( !this.dsParams.autoWidth ) {
+        if( !this.params.autoWidth ) {
           distance = 0;
           for( let i=1; i<=step; i++ ) {
             distance += this.items[this.listLen-i].offsetWidth;
@@ -396,19 +396,19 @@ export class DSSlider {
     this.currentItem.index += this.currentItem.index + step > this.listLen-1 ? -(this.listLen-1) : step;
 
     this.dsSliderEvent.emit({ 'slide': 'stop-slide', 'direction': 1, 'currentIndex': this.currentItem.index });
-    if( typeof this.dsParams.menu === "boolean" && this.dsParams.menu && this.menu ) {
+    if( typeof this.params.menu === "boolean" && this.params.menu && this.menu ) {
       this.menu.dsCurrentItemIndex = this.currentItem.index;
     }
     this.list.removeEventListener( 'transitionend', this.slideNextTransitionEndHandler );
     
-    if(this.dsParams.autoplay) {
+    if(this.params.autoplay) {
       this.timer = setTimeout(
         () => {
           if( this.isPlaying ) {
             this.next();
           }
         },
-        this.dsParams.duration
+        this.params.duration
         );
     }
   }
@@ -431,19 +431,19 @@ export class DSSlider {
     this.isTransitionStarted = false;
     this.currentItem.index -= this.currentItem.index-step < 0 ? this.listLen - 1 : step;
     this.dsSliderEvent.emit({ 'slide': 'stop-slide', 'direction': -1, 'currentIndex': this.currentItem.index });
-    if( typeof this.dsParams.menu === "boolean" && this.dsParams.menu && this.menu ) {
+    if( typeof this.params.menu === "boolean" && this.params.menu && this.menu ) {
       this.menu.dsCurrentItemIndex = this.currentItem.index;
     }
     this.list.removeEventListener( 'transitionend', this.slidePrevTransitionEndHandler );
 
-    if(this.dsParams.autoplay) {
+    if(this.params.autoplay) {
       this.timer = setTimeout(
         () => {
           if( this.isPlaying ) {
             this.prev();
           }
         },
-        this.dsParams.duration
+        this.params.duration
       );
     }
   }
@@ -472,7 +472,7 @@ export class DSSlider {
         }}
       >
 
-        {(this.dsParams.loop || this.currentItem.index) > 0 && (
+        {(this.params.loop || this.currentItem.index) > 0 && (
           <ds-button
             class="ds-slider__prev-button"
             mods={['slider', 'prev']}
@@ -487,7 +487,7 @@ export class DSSlider {
           </div>
         </div>
         
-        {(this.dsParams.loop || this.currentItem.index + this.dspItems < this.listLen) && ( 
+        {(this.params.loop || this.currentItem.index + this.dspItems < this.listLen) && ( 
           <ds-button
             class="ds-slider__next-button"
             mods={['slider', 'next']}
@@ -495,7 +495,7 @@ export class DSSlider {
           />
         )}
 
-        {this.dsParams.menu && (
+        {this.params.menu && (
           <ds-slider-menu
             dsItemCount={this.listLen}
             dsCurrentItemIndex={this.currentItem.index}

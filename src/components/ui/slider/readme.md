@@ -9,8 +9,8 @@
 
 | Property   | Attribute   | Description | Type                 | Default     |
 | ---------- | ----------- | ----------- | -------------------- | ----------- |
-| `dsMods`   | `ds-mods`   |             | `string \| string[]` | `""`        |
-| `dsParams` | `ds-params` |             | `any`                | `{}`        |
+| `mods`     | `mods`      |             | `string \| string[]` | `""`        |
+| `params`   | `params`    |             | `any`                | `{}`        |
 | `sliderId` | `slider-id` |             | `string`             | `undefined` |
 | `type`     | `type`      |             | `string`             | `"sld"`     |
 

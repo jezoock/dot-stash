@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property    | Attribute    | Description | Type                 | Default     |
-| ----------- | ------------ | ----------- | -------------------- | ----------- |
-| `dsHeading` | `ds-heading` |             | `number \| string`   | `""`        |
-| `dsMods`    | `ds-mods`    |             | `string \| string[]` | `"default"` |
+| Property  | Attribute | Description | Type                 | Default     |
+| --------- | --------- | ----------- | -------------------- | ----------- |
+| `heading` | `heading` |             | `number \| string`   | `""`        |
+| `mods`    | `mods`    |             | `string \| string[]` | `"default"` |
 
 
 ----------------------------------------------

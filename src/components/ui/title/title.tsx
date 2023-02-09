@@ -7,29 +7,29 @@ import _ds from '../../../dot-stash';
 })
 export class DSTitle {
 
-	@Prop() dsMods: string | string[] = "default";
-	@Prop() dsHeading: string | number = "";
+	@Prop() mods: string | string[] = "default";
+	@Prop() heading: string | number = "";
 
-	CSSClassList: any;
-	titleTag: string = 'div';
+	CSSClassList: Record<string, boolean>;
+	titleTag = 'div';
 
-	@Watch('dsMods')
-  dsModsWatcher( newMods ) {
+	@Watch('mods')
+  modsWatcher( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-title", newMods);
   }
 
 	constructor() { }
 	
 	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList("ds-title", this.dsMods);
+		this.CSSClassList = _ds.props.toClassList("ds-title", this.mods);
 		this.setTitleTag();
 	}
 
 	setTitleTag() {
-		if ( typeof this.dsHeading === 'number' ) {
-			this.titleTag = `H${this.dsHeading.toString(10)}`;
-		} else if (!!this.dsHeading) {
-			this.titleTag = `H${this.dsHeading}`;
+		if ( typeof this.heading === 'number' ) {
+			this.titleTag = `H${this.heading.toString(10)}`;
+		} else if (this.heading) {
+			this.titleTag = `H${this.heading}`;
 		}
 	}
 	

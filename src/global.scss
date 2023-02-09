@@ -1,4 +1,8 @@
-@import "./components/scss/theme.scss";
+@import "./scss/theme.scss";
+
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   &::before {

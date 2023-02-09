@@ -5,6 +5,7 @@ export const config: Config = {
   namespace: 'dot-stash',
   plugins: [
     sass({
+      includePaths: ['src/components/*/*.scss'],
       injectGlobalPaths: [
         'src/scss/variables/breakpoint.scss',
         'src/scss/variables/palette.scss',

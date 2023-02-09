@@ -7,35 +7,41 @@ import _ds from '../../../dot-stash';
 })
 export class DSBlock {
 
-	@Prop() dsTag = "div";
-	@Prop() dsType = "";
-	@Prop() dsMods: string | string[] = "";
+	@Prop() tag = "div";
+	@Prop() type = "";
+	@Prop() mods: string | string[] = "";
 
 	CSSClassList: any;
 	tagName = "ds-block";
 
-	@Watch('dsMods')
-	dsModsWatcher(newMods) {
+	@Watch('mods')
+	modsWatcher(newMods) {
 		this.CSSClassList = _ds.props.toClassList(this.tagName, newMods);
 	}
 	
 	componentWillLoad() {
-		if (this.dsType) {
-			this.tagName = `ds-${this.dsType}-block`;
+		if (this.type) {
+			this.tagName = `ds-${this.type}-block`;
 		}
-		this.CSSClassList = _ds.props.toClassList(this.tagName, this.dsMods);
+		this.CSSClassList = _ds.props.toClassList(this.tagName, this.mods);
 	}
 
 	render() {
-		const { dsTag: Tag }: { dsTag: string} = this;
+		const { tag: Tag }: { tag: string} = this;
 
 		return (
 			<Tag
 				class={this.CSSClassList}
 			>
-				<slot name="header" />
-				<slot />
-				<slot name="footer" />
+				<header class={`${this.tagName}__header`}>
+					<slot name="header" />
+				</header>
+				<div class={`${this.tagName}__body`}>
+					<slot />
+				</div>
+				<footer class={`${this.tagName}__footer`}>
+					<slot name="footer" />
+				</footer>
 			</Tag>
 		);
 	}

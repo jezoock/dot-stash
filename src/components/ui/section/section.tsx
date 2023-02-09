@@ -7,27 +7,26 @@ import _ds from '../../../dot-stash';
 })
 export class DSSection {
 
-  @Prop({ mutable: true, reflect: true}) dsMods: string | string[] = "";
-  @Prop({ mutable: true, reflect: true}) dsBackground: string;
-  @Prop({ mutable: true, reflect: true}) dsBackgroundMobile: string;
+  @Prop({ mutable: true, reflect: true}) mods: string | string[] = "";
+/*   @Prop({ mutable: true, reflect: true}) background: string;
+  @Prop({ mutable: true, reflect: true}) backgroundMobile: string;
+ */
+  CSSClassList: Record<string, boolean>;
 
-  CSSClassList: any;
-
-  @Watch('dsMods')
-  dsModsWatcher( newMods ) {
+  @Watch('mods')
+  modsWatcher( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-section", newMods);
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-section", this.dsMods);
+    this.CSSClassList = _ds.props.toClassList("ds-section", this.mods);
+    console.log(this.mods)
   }
   
   render() {
-    const backgroundImage = window.innerWidth < 768 ? this.dsBackgroundMobile : this.dsBackground;
     return (
       <div
         class={this.CSSClassList}
-        style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         <div class="ds-section__content">
           <slot />
