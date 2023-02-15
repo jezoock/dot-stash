@@ -3,10 +3,11 @@ import { sass } from '@stencil/sass';
 
 export const config: Config = {
   namespace: 'dot-stash',
+  srcDir: 'components',
   plugins: [
     sass({
-      includePaths: ['src/components/*/*.scss'],
-      injectGlobalPaths: [
+      includePaths: ['components/*/*.scss'],
+      /* injectGlobalPaths: [
         'src/scss/variables/breakpoint.scss',
         'src/scss/variables/palette.scss',
         'src/scss/variables/typography.scss',
@@ -15,7 +16,7 @@ export const config: Config = {
         'src/scss/tools/typography.scss',
         'src/scss/tools/colors.scss',
         'src/scss/tools/theme.scss',
-      ]
+      ] */
     })
   ],
   outputTargets: [
