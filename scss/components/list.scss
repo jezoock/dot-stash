@@ -1,0 +1,16 @@
+.ds-list {
+  font-size: 1.625rem;
+  margin: 0;
+  list-style-type: none;
+  &.--services {
+    font-weight: bold;
+    flex-grow: 1;
+    padding: 1rem 0 0 4rem;
+  }
+  &.--capital {
+    font-weight: bold;
+    padding: 0;
+  }
+  &.--conseil {
+  }
+}

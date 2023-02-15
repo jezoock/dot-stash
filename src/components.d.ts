@@ -5,12 +5,14 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { DSButtonType } from "./components/ui/button/button";
-import { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
-import { Breakpoint } from "./components/ui/responsive/responsive";
-export { DSButtonType } from "./components/ui/button/button";
-export { DSGridAlignment, DSGridType } from "./components/ui/grid/grid";
-export { Breakpoint } from "./components/ui/responsive/responsive";
+import { DSButtonType } from "./components/button/button";
+import { DSGridAlignment, DSGridType } from "./components/grid/grid";
+import { Breakpoint } from "./components/responsive/responsive";
+import { DSSliderPrams } from "./components/slider/slider";
+export { DSButtonType } from "./components/button/button";
+export { DSGridAlignment, DSGridType } from "./components/grid/grid";
+export { Breakpoint } from "./components/responsive/responsive";
+export { DSSliderPrams } from "./components/slider/slider";
 export namespace Components {
     interface DsBlock {
         "dsMods": string | string[];
@@ -55,13 +57,12 @@ export namespace Components {
         "subscriberSelector": string;
     }
     interface DsSection {
-        "dsBackground": string;
-        "dsBackgroundMobile": string;
-        "dsMods": string | string[];
+        "background": string;
+        "mods": string | string[];
     }
     interface DsSlider {
         "dsMods": string | string[];
-        "dsParams": any | string;
+        "dsParams": DSSliderPrams | string;
         "sliderId": string;
         "type": string;
     }
@@ -72,8 +73,8 @@ export namespace Components {
         "dsItemCount": number;
     }
     interface DsTitle {
-        "dsHeading": string | number;
-        "dsMods": string | string[];
+        "heading": string | number;
+        "mods": string | string[];
     }
     interface DsVideo {
         "autoplay": string | boolean;
@@ -247,13 +248,12 @@ declare namespace LocalJSX {
         "subscriberSelector"?: string;
     }
     interface DsSection {
-        "dsBackground"?: string;
-        "dsBackgroundMobile"?: string;
-        "dsMods"?: string | string[];
+        "background"?: string;
+        "mods"?: string | string[];
     }
     interface DsSlider {
         "dsMods"?: string | string[];
-        "dsParams"?: any | string;
+        "dsParams"?: DSSliderPrams | string;
         "onDsSliderEvent"?: (event: DsSliderCustomEvent<any>) => void;
         "sliderId"?: string;
         "type"?: string;
@@ -266,8 +266,8 @@ declare namespace LocalJSX {
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
     interface DsTitle {
-        "dsHeading"?: string | number;
-        "dsMods"?: string | string[];
+        "heading"?: string | number;
+        "mods"?: string | string[];
     }
     interface DsVideo {
         "autoplay"?: string | boolean;

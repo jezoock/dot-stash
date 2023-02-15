@@ -1,0 +1,241 @@
+.ds-grid {
+  & img {
+    vertical-align: top;
+  }
+  &.--home {
+    padding: 0 180px;
+    margin: 0 auto;
+  }
+  &.--categories {
+    padding: 0 40px;
+    & img {
+      width: 100%;
+    }
+  }
+  &.--conseil {
+    background-color: #dbd5dc;
+    
+  }
+  &.--capital {
+    background-color: #dbd5dc;
+    
+    & .ds-grid {
+      &__row {
+        align-items: center;
+      }
+    }
+  }
+}
+
+$columnGap: 0.25rem;
+
+[data-layout='fieldset'] {
+  display: flex;
+  flex-wrap: wrap;
+
+  // *** Horizontal alignment *** //
+  &[data-align='left'] {
+    justify-content: flex-start;
+    
+    &[data-gutter='1'] {
+      & > [data-layout='cell'] {
+        padding-left: 0.25rem;
+      }
+    }
+    &[data-gutter='2'] {
+      & > [data-layout='cell'] {
+        padding-left: 0.5rem;
+      }
+    }
+    &[data-gutter='3'] {
+      & > [data-layout='cell'] {
+        padding-left: 1rem;
+      }
+    }
+    &[data-gutter='4'] {
+      & > [data-layout='cell'] {
+        padding-left: 1.25rem;
+      }
+    }
+    &[data-gutter='5'] {
+      & > [data-layout='cell'] {
+        padding-left: 2.5rem;
+      }
+    }
+    &[data-gutter] {
+      & > [data-layout='cell'] {
+        &:first-child {
+          padding-left: 0;
+        }
+      }
+      &[data-cols='3'] {
+        & > [data-layout='cell'] {
+          @include break-p(null, md) {
+            padding-left: 0;
+          }
+          @include break-p(lg, xxl) {
+            &:nth-child(2n+1) {
+              padding-left: 0;
+            }
+          }
+          @include break-p(max) {
+            &:nth-child(3n+1) {
+              padding-left: 0;
+            }
+          }
+        }
+      }
+
+      &[data-cols='4'] {
+        & > [data-layout='cell'] {
+          @include break-p(null, sm) {
+            padding-left: 0;
+          }
+          @include break-p(md, lg) {
+            &:nth-child(2n+1) {
+              padding-left: 0;
+            }
+          }
+          @include break-p(xl, xl) {
+            &:nth-child(3n+1) {
+              padding-left: 0;
+            }
+          }
+          @include break-p(xxl) {
+            &:nth-child(4n+1) {
+              padding-left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  &[data-align='center'] {
+    justify-content: center;
+    &[data-gutter='1'] {
+      column-gap: 0.25rem;
+    }
+    &[data-gutter='2'] {
+      column-gap: 0.5rem;
+    }
+    &[data-gutter='3'] {
+      column-gap: 1rem;
+    }
+    &[data-gutter='4'] {
+      column-gap: 1.25rem;
+    }
+    &[data-gutter='5'] {
+      column-gap: 2.5rem;
+    }
+  }
+
+  &[data-align='right'] {
+    justify-content: flex-end;
+
+    &[data-gutter='1'] {
+      & > [data-layout='cell'] {
+        padding-right: 0.25rem;
+      }
+    }
+    &[data-gutter='2'] {
+      & > [data-layout='cell'] {
+        padding-right: 0.5rem;
+      }
+    }
+    &[data-gutter='3'] {
+      & > [data-layout='cell'] {
+        padding-right: 1rem;
+      }
+    }
+    &[data-gutter='4'] {
+      & > [data-layout='cell'] {
+        padding-right: 1.25rem;
+      }
+    }
+    &[data-gutter='5'] {
+      & > [data-layout='cell'] {
+        padding-right: 2.5rem;
+      }
+    }
+    &[data-gutter] {
+      &[data-cols='3'] {
+        & > :nth-child(3n+1) {
+          padding-right: 0;
+        }
+      }
+      &[data-cols='4'] {
+        & > :nth-child(4n+1) {
+          padding-right: 0;
+        }
+      }
+    }
+  }
+  
+  // *** Vertical alignment *** //
+  &[data-v-align='top'] {
+    align-items: flex-start;
+  }
+  &[data-v-align='center'] {
+    align-items: center;
+  }
+  &[data-v-align='bottom'] {
+    align-items: flex-end;
+  }
+
+  & > [data-layout='cell'] { }
+
+  &[data-cols='3'] {
+    // *** Cells width *** //
+    & > [data-layout='cell'] {
+      @include break-p(null, md) {
+        width: 100%;
+      }
+      @include break-p(lg, xxl) {
+        width: 50%;
+      }
+      @include break-p(max) {
+        width: 33.333%;
+      }
+    }
+  }
+
+  &[data-cols='4'] {
+    // *** Cells width *** //
+    & > [data-layout='cell'] {
+      @include break-p(null, sm) {
+        width: 100%;
+      }
+      @include break-p(md, lg) {
+        /* max-width: 30vw; */
+        width: 50%;
+      }
+      @include break-p(xl, xl) {
+        /* max-width: 21vw; */
+        width: 33.333%;
+      }
+      @include break-p(xxl) {
+        width: 25%;
+        /* max-width: 15vw; */
+      }
+
+      /* TO KEEP
+      &:not([data-span]) {
+        width: 25%;
+        max-width: 15vw;
+      }
+      &[data-span='2'] {
+        width: 50%;
+      }
+      &[data-span='3'] {
+        width: 75%;
+      }
+      &[data-span='4'] {
+        width: 100%;
+      }
+      */
+    }
+  }
+}
+
+// *** WIP grid component *** //
