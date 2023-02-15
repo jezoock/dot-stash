@@ -15,9 +15,9 @@ export { Breakpoint } from "./components/responsive/responsive";
 export { DSSliderPrams } from "./components/slider/slider";
 export namespace Components {
     interface DsBlock {
-        "dsMods": string | string[];
-        "dsTag": string;
-        "dsType": string;
+        "mods": string | string[];
+        "tag": string;
+        "type": string;
     }
     interface DsButton {
         "color": string;
@@ -32,17 +32,29 @@ export namespace Components {
         "dsCellRatio": string | number;
         "dsCols": string | number;
         "dsHGap": string | number;
-        "dsMods": string | string[];
         "dsParams": Record<string, unknown>;
         "dsType": DSGridType;
         "dsVAlign": DSGridAlignment;
         "dsVGap": string | number;
+        "mods": string | string[];
     }
     interface DsGridItem {
         "dsRatio": number | string;
     }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
+    }
+    interface DsNavMenu {
+        "currentActiveItemId": string;
+        "mods": string|string[];
+    }
+    interface DsNavMenuItem {
+        "depth": number;
+        "dsItemId": string;
+        "hasChildren": boolean;
+        "isActive": boolean;
+        "isAnimated": boolean;
+        "type": string;
     }
     interface DsPlaceholder {
         "dsMods": string|string[];
@@ -57,12 +69,20 @@ export namespace Components {
         "subscriberSelector": string;
     }
     interface DsSection {
+<<<<<<< HEAD
         "background": string;
         "mods": string | string[];
     }
     interface DsSlider {
         "dsMods": string | string[];
         "dsParams": DSSliderPrams | string;
+=======
+        "mods": string | string[];
+    }
+    interface DsSlider {
+        "mods": string | string[];
+        "params": any | string;
+>>>>>>> e50014bef1730e3d73bec7b919109504649fba49
         "sliderId": string;
         "type": string;
     }
@@ -96,6 +116,10 @@ export namespace Components {
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
+}
+export interface DsNavMenuItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsNavMenuItemElement;
 }
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -135,6 +159,18 @@ declare global {
     var HTMLDsMainElement: {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
+    };
+    interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
+    }
+    var HTMLDsNavMenuElement: {
+        prototype: HTMLDsNavMenuElement;
+        new (): HTMLDsNavMenuElement;
+    };
+    interface HTMLDsNavMenuItemElement extends Components.DsNavMenuItem, HTMLStencilElement {
+    }
+    var HTMLDsNavMenuItemElement: {
+        prototype: HTMLDsNavMenuItemElement;
+        new (): HTMLDsNavMenuItemElement;
     };
     interface HTMLDsPlaceholderElement extends Components.DsPlaceholder, HTMLStencilElement {
     }
@@ -196,6 +232,8 @@ declare global {
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-main": HTMLDsMainElement;
+        "ds-nav-menu": HTMLDsNavMenuElement;
+        "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
         "ds-rsp": HTMLDsRspElement;
         "ds-section": HTMLDsSectionElement;
@@ -209,9 +247,9 @@ declare global {
 }
 declare namespace LocalJSX {
     interface DsBlock {
-        "dsMods"?: string | string[];
-        "dsTag"?: string;
-        "dsType"?: string;
+        "mods"?: string | string[];
+        "tag"?: string;
+        "type"?: string;
     }
     interface DsButton {
         "color"?: string;
@@ -227,16 +265,29 @@ declare namespace LocalJSX {
         "dsCellRatio"?: string | number;
         "dsCols"?: string | number;
         "dsHGap"?: string | number;
-        "dsMods"?: string | string[];
         "dsParams"?: Record<string, unknown>;
         "dsType"?: DSGridType;
         "dsVAlign"?: DSGridAlignment;
         "dsVGap"?: string | number;
+        "mods"?: string | string[];
     }
     interface DsGridItem {
         "dsRatio"?: number | string;
     }
     interface DsMain {
+    }
+    interface DsNavMenu {
+        "currentActiveItemId"?: string;
+        "mods"?: string|string[];
+    }
+    interface DsNavMenuItem {
+        "depth"?: number;
+        "dsItemId"?: string;
+        "hasChildren"?: boolean;
+        "isActive"?: boolean;
+        "isAnimated"?: boolean;
+        "onDsMenuItemClick"?: (event: DsNavMenuItemCustomEvent<any>) => void;
+        "type"?: string;
     }
     interface DsPlaceholder {
         "dsMods"?: string|string[];
@@ -248,13 +299,21 @@ declare namespace LocalJSX {
         "subscriberSelector"?: string;
     }
     interface DsSection {
+<<<<<<< HEAD
         "background"?: string;
         "mods"?: string | string[];
     }
     interface DsSlider {
         "dsMods"?: string | string[];
         "dsParams"?: DSSliderPrams | string;
+=======
+        "mods"?: string | string[];
+    }
+    interface DsSlider {
+        "mods"?: string | string[];
+>>>>>>> e50014bef1730e3d73bec7b919109504649fba49
         "onDsSliderEvent"?: (event: DsSliderCustomEvent<any>) => void;
+        "params"?: any | string;
         "sliderId"?: string;
         "type"?: string;
     }
@@ -286,6 +345,8 @@ declare namespace LocalJSX {
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-main": DsMain;
+        "ds-nav-menu": DsNavMenu;
+        "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
         "ds-rsp": DsRsp;
         "ds-section": DsSection;
@@ -306,6 +367,8 @@ declare module "@stencil/core" {
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
+            "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
+            "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
             "ds-section": LocalJSX.DsSection & JSXBase.HTMLAttributes<HTMLDsSectionElement>;

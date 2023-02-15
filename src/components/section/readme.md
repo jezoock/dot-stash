@@ -7,11 +7,9 @@
 
 ## Properties
 
-| Property             | Attribute              | Description | Type                 | Default     |
-| -------------------- | ---------------------- | ----------- | -------------------- | ----------- |
-| `dsBackground`       | `ds-background`        |             | `string`             | `undefined` |
-| `dsBackgroundMobile` | `ds-background-mobile` |             | `string`             | `undefined` |
-| `dsMods`             | `ds-mods`              |             | `string \| string[]` | `""`        |
+| Property | Attribute | Description | Type                 | Default |
+| -------- | --------- | ----------- | -------------------- | ------- |
+| `mods`   | `mods`    |             | `string \| string[]` | `""`    |
 
 
 ----------------------------------------------

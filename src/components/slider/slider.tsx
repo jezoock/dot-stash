@@ -31,14 +31,14 @@ const DSSliderDefaults: DSSliderPrams = {
 
 @Component({
   tag: 'ds-slider',
-  styleUrls: ['slider.scss', './scss/button.scss']
+  styleUrl: 'slider.scss'
 })
 export class DSSlider {
 
   @Element() host: HTMLDivElement;
 
   @Prop({ mutable: true, reflect: true }) sliderId: string;
-	@Prop({ mutable: true, reflect: true }) dsMods: string | string[] = "";
+	@Prop({ mutable: true, reflect: true }) mods: string | string[] = "";
 	@Prop({ mutable: true, reflect: true }) dsParams: DSSliderPrams | string = {};
 	@Prop({ mutable: true, reflect: true }) type = "sld";
 
@@ -67,12 +67,12 @@ export class DSSlider {
 	isTransitionStarted = false;
 	isPlaying = true;
 	isReady = false;
-  CSSClassList: Record<string, unknown>;
+  CSSClassList: Record<string, boolean>;
 
   params: DSSliderPrams;
 
-  @Watch('dsMods')
-  dsModsWatcher( newMods ) {
+  @Watch('mods')
+  modsWatcher( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-slider", newMods);
   }
 
@@ -95,7 +95,7 @@ export class DSSlider {
 
   componentWillLoad() {
     this.params = {...DSSliderDefaults, ..._ds.props.fromJSON(this.dsParams) };
-    this.CSSClassList = _ds.props.toClassList("ds-slider", this.dsMods);
+    this.CSSClassList = _ds.props.toClassList("ds-slider", this.mods);
   }
   
   componentDidLoad() {
@@ -112,15 +112,15 @@ export class DSSlider {
 
     if( !this.isReady ) {
 
-			/* if( this.dsParams.index !== 0 ) {
+			/* if( this.params.index !== 0 ) {
 
-				if( this.dsParams.index === "rand" ) {
-          this.dsParams.index = Math.floor( Math.random()*this.listLen );
+				if( this.params.index === "rand" ) {
+          this.params.index = Math.floor( Math.random()*this.listLen );
         }
 				
 				this.items = this.list.children(":visible");
-				const start = this.items.slice(0, this.dsParams.index).clone(true,true);
-				const end = this.items.slice( this.dsParams.index ).clone(true,true);
+				const start = this.items.slice(0, this.params.index).clone(true,true);
+				const end = this.items.slice( this.params.index ).clone(true,true);
 					
 				this.list.empty().append(end).append(start);
 				this.items = this.list.children(":visible");

@@ -20,16 +20,16 @@ export class DSGrid {
   cellRatio: number;
 
   @Prop({ mutable: true, reflect: true }) dsParams: Record<string, unknown> = {};
-  @Prop({ mutable: true, reflect: true }) dsMods: string | string[] = [];
+  @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) dsCols: string | number = 1;
-  @Prop({ mutable: true, reflect: true }) dsHGap: string | number = 1;
-  @Prop({ mutable: true, reflect: true }) dsVGap: string | number = 1;
+  @Prop({ mutable: true, reflect: true }) dsHGap: string | number = 0;
+  @Prop({ mutable: true, reflect: true }) dsVGap: string | number = 0;
   @Prop({ mutable: true, reflect: true }) dsAlign: DSGridAlignment;
   @Prop({ mutable: true, reflect: true }) dsVAlign: DSGridAlignment;
   @Prop({ mutable: true, reflect: true }) dsType: DSGridType;
   @Prop({ mutable: true, reflect: true }) dsCellRatio: string | number;
 
-  @Watch('dsMods')
+  @Watch('mods')
   modsWatcher(newMods: string | string[]) {
     this.CSSClassList = _ds.props.toClassList('ds-grid', newMods);
     this.processChildren();
@@ -65,7 +65,7 @@ export class DSGrid {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-grid', this.dsMods);
+    this.CSSClassList = _ds.props.toClassList('ds-grid', this.mods);
     this.cols = _ds.props.toNumber(this.dsCols);
     this.hGap = _ds.props.toNumber(this.dsHGap);
     this.vGap = _ds.props.toNumber(this.dsVGap);
