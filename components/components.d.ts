@@ -44,6 +44,9 @@ export namespace Components {
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
     }
+    interface DsMaps {
+        "locations": any[];
+    }
     interface DsNavMenu {
         "currentActiveItemId": string;
         "mods": string|string[];
@@ -152,6 +155,12 @@ declare global {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
     };
+    interface HTMLDsMapsElement extends Components.DsMaps, HTMLStencilElement {
+    }
+    var HTMLDsMapsElement: {
+        prototype: HTMLDsMapsElement;
+        new (): HTMLDsMapsElement;
+    };
     interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
     }
     var HTMLDsNavMenuElement: {
@@ -224,6 +233,7 @@ declare global {
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-main": HTMLDsMainElement;
+        "ds-maps": HTMLDsMapsElement;
         "ds-nav-menu": HTMLDsNavMenuElement;
         "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
@@ -267,6 +277,9 @@ declare namespace LocalJSX {
         "dsRatio"?: number | string;
     }
     interface DsMain {
+    }
+    interface DsMaps {
+        "locations"?: any[];
     }
     interface DsNavMenu {
         "currentActiveItemId"?: string;
@@ -329,6 +342,7 @@ declare namespace LocalJSX {
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-main": DsMain;
+        "ds-maps": DsMaps;
         "ds-nav-menu": DsNavMenu;
         "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
@@ -351,6 +365,7 @@ declare module "@stencil/core" {
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
+            "ds-maps": LocalJSX.DsMaps & JSXBase.HTMLAttributes<HTMLDsMapsElement>;
             "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
             "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;

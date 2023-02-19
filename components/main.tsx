@@ -41,49 +41,8 @@ export class DSMainTest {
   render() {
     return (
       <div class="ds-components-demo">
-        <ds-rsp>
-          <ds-button
-            data-rsp={`{
-            "sm": {
-              "mods": ["solid", "primary", "sm"]
-            },
-            "md": {
-              "mods": ["solid", "primary", "md"]
-            },
-            "lg": {
-              "mods": ["solid", "primary", "lg"]
-            }
-          }`}
-            mods={['solid', 'primary', 'lg']}
-          >
-            Mods Click me !
-          </ds-button>
-          <ds-button
-            data-rsp={`{
-              "xs": {
-                "mods": ["outlined", "secondary", "sm"]
-              },
-              "sm": {
-                "mods": ["solid", "disabled", "sm"]
-              },
-              "md": {
-                "mods": ["solid", "primary", "md"]
-              },
-              "lg": {
-                "mods": ["solid", "primary", "lg"]
-              }
-            }`}
-            mods={['solid', 'primary', 'lg']}
-          >
-            
-            
-            
-            
-            Mods Click me too!
-          </ds-button>
-          <ds-video>
-            <ds-video-play slot="controls">play it Yvette!</ds-video-play>
-          </ds-video>
+        <ds-maps api-key=""></ds-maps>
+
           {/* <ds-block>
           <ds-title>
             Buttons
@@ -140,7 +99,6 @@ export class DSMainTest {
             </ds-grid-item>
           </ds-grid>
         </ds-block> */}
-        </ds-rsp>
       </div>
     );
   }
