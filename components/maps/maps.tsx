@@ -1,5 +1,5 @@
 import { Component, h, Prop } from '@stencil/core';
-import { Element } from '@stencil/sass/dist/declarations';
+import { Element, Method } from '@stencil/sass/dist/declarations';
 
 const mapStyles = [
   {
@@ -205,10 +205,18 @@ export interface Location {
   address: {
     lat: number;
     lng: number;
-
   }
 }
 
+const defaultMapParams = {
+	zoom: 9,
+	zoomStep: 1,
+	center: {
+		lat: -34.397,
+		lng: 150.644
+	},
+	useCluster: false,
+}
 
 @Component({
   tag: 'ds-maps',
@@ -218,48 +226,103 @@ export class DSMaps {
 
   @Element() mapContainer;
 
+  @Prop() markers: any[];
   @Prop() locations: any[];
-
+	@Prop() apiKey: string;
+	@Prop() initializeCallbackName: string;
+	@Prop() params: Record<string, unknown> = defaultMapParams;
 
   map: any;
+	zoomLevel = 9; /* 0 to 22 */
+	zoomStep = 1;
+	ready = false;
+	gmaps: any;
 
-  async init(apiKey?, CALLBACK = 'initMap') {
-    const script = document.createElement('script');
-    script.async = true;
-    script.defer = true;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=${CALLBACK}`;
-    script.onerror = () => console.log("error");
-    script.onload = () => {
-      const styledMapType = new window['google'].maps.StyledMapType( mapStyles, { name: "Styled Map" });
-      this.map = new window['google'].maps.Map(this.mapContainer.querySelector('.ds-maps__map'), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8,
-      });
-      this.map.mapTypes.set("styled_map", styledMapType);
-      this.map.setMapTypeId("styled_map");
+	@Method()
+	async setZoom(zoomLevel: number) {
+		this.zoomLevel = zoomLevel;
+		this.map.setZoom(this.zoomLevel);
+	}
+	
+	@Method()
+	async zoomIn(scale = this.zoomLevel + this.zoomStep) {
+		this.setZoom(scale);
+	}
+	
+	@Method()
+	async zoomOut(scale = this.zoomLevel - this.zoomStep) {
+		this.setZoom(scale);
+	}
 
-      new window['google'].maps.Marker({
-        position: { lat: -34.397, lng: 150.644 },
-        map: this.map,
-        title: "Hello World!",
-      });
-      new window['google'].maps.Marker({
-        position: { lat: -34, lng: 150 },
-        map: this.map,
-        title: "Hello World!",
-      });
-    }
-    document.querySelector('head').appendChild(script);
-  }
+	@Method()
+	async initialize(apiKey?: string, initializeCallbackName?: string) {
+		if (!this.ready) {
+			if (typeof window['initMap'] === "undefined") {
+				window['initMap'] = () => console.log("[LOG] DSMap initialize: Gamps script succesfully loaded.")
+			}
+			await this.loadScript(apiKey ?? this.apiKey, initializeCallbackName ?? this.initializeCallbackName);
+		}
+	}
 
-  async componentDidLoad(){
-    window['initMap'] = () => console.log("dfssdfsdfdf")
-      await this.init('***REMOVED***');
+	@Method()
+	async loadScript(apiKey: string, initializeCallback = 'initMap') {
+		if (apiKey) {
+			const script = document.createElement('script');
+	
+			script.async = true;
+			script.defer = true;
+			script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=${initializeCallback}`;
+			script.onerror = () => console.log("[ERROR] DSMap intialize: Error loading gmaps script.");
+			script.onload = () => {
+				this.gmaps = window['google'].maps;
+				this.initializeMap();
+			}
+	
+			document.querySelector('head').appendChild(script);
+		} else {
+			console.log("[ERROR] DSMap intialize: No api key provided.")
+		}
+	}
+
+	@Method()
+	async setMapStyle(mapStyleName: string, mapStyles: Record<string, unknown>[]) {
+		const styledMapType = new this.gmaps.StyledMapType( mapStyles, { name: mapStyleName });
+		this.map.mapTypes.set("styled_map", styledMapType);
+		this.map.setMapTypeId("styled_map");
+	}
+
+	async initializeMap() {
+		this.map = new this.gmaps.Map(this.mapContainer.querySelector('.ds-maps__map'), this.params);
+		const markers= [];
+		markers.push(
+			new this.gmaps.Marker({
+				position: { lat: -34.397, lng: 150.644 },
+				map: this.map,
+				title: "Hello World!",
+			})
+		);
+		markers.push(
+			new this.gmaps.Marker({
+				position: { lat: -34, lng: 150 },
+				map: this.map,
+				title: "Hello World!",
+			})
+		);
+
+		/* if (this.params.useCluster) {
+			new MarkerClusterer(this.map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+		} */
+
+		this.ready = true;
+	}
+
+	async componentDidLoad(){
+		await this.initialize();
       
       if (this.locations) {
           /* const markers = this.locations
               .map(location => {
-                  const marker = new window['google'].maps.Marker({
+                  const marker = this.gmaps.Marker({
                       position: {lat: location.lat, lng: location.lng},
                       map: this.map,
                       title: location.name
@@ -273,9 +336,7 @@ export class DSMaps {
               this.zoomToPlace(EUROPE);
           }
 
-          if (this.cluster) {
-              new MarkerClusterer(this.map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-          } */
+           */
       }
   }
   
@@ -284,7 +345,12 @@ export class DSMaps {
       <div class="ds-maps">
         <div class="ds-maps__map">
         </div>
-        <div class="ds-maps__controls"></div>
+        <div class="ds-maps__controls">
+					<button type="button" onClick={() => this.setZoom(2)}>zoom min</button>
+					<button type="button" onClick={() => this.setZoom(22)}>zoom max</button>
+					<button type="button" onClick={() => this.zoomIn()}>zoomin</button>
+					<button type="button" onClick={() => this.zoomOut()}>zoomOut</button>
+				</div>
       </div>
     );
   }

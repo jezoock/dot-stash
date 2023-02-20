@@ -45,7 +45,17 @@ export namespace Components {
         "getData": (key: string) => Promise<Record<string, any>>;
     }
     interface DsMaps {
+        "apiKey": string;
+        "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
+        "initializeCallbackName": string;
+        "loadScript": (apiKey: string, initializeCallback?: string) => Promise<void>;
         "locations": any[];
+        "markers": any[];
+        "params": Record<string, unknown>;
+        "setMapStyle": (mapStyleName: string, mapStyles: Record<string, unknown>[]) => Promise<void>;
+        "setZoom": (zoomLevel: number) => Promise<void>;
+        "zoomIn": (scale?: number) => Promise<void>;
+        "zoomOut": (scale?: number) => Promise<void>;
     }
     interface DsNavMenu {
         "currentActiveItemId": string;
@@ -279,7 +289,11 @@ declare namespace LocalJSX {
     interface DsMain {
     }
     interface DsMaps {
+        "apiKey"?: string;
+        "initializeCallbackName"?: string;
         "locations"?: any[];
+        "markers"?: any[];
+        "params"?: Record<string, unknown>;
     }
     interface DsNavMenu {
         "currentActiveItemId"?: string;

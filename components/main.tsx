@@ -41,7 +41,7 @@ export class DSMainTest {
   render() {
     return (
       <div class="ds-components-demo">
-        <ds-maps api-key=""></ds-maps>
+        <ds-maps api-key="***REMOVED***"></ds-maps>
 
           {/* <ds-block>
           <ds-title>
