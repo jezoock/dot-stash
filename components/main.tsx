@@ -41,7 +41,8 @@ export class DSMainTest {
   render() {
     return (
       <div class="ds-components-demo">
-        <ds-maps api-key="***REMOVED***"></ds-maps>
+        <ds-title section sub>test</ds-title>
+        <ds-maps api-key="***REMOVED***" params={{useCluster: true }}></ds-maps>
 
           {/* <ds-block>
           <ds-title>

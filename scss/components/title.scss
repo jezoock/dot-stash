@@ -1,5 +1,88 @@
-.ds-title {
-  box-sizing: border-box;
+ds-title {
+
+  &:not([sub]) {
+    &[page] {
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6,
+      & strong {
+        font-size: 3rem;
+      }
+      font-size: 3rem;
+    }
+    
+    &[section] {
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6,
+      & strong {
+        font-size: 2rem;
+      }
+      font-size: 2rem;
+    }
+    
+    &[block] {
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6,
+      & strong {
+        font-size: 1rem;
+      }
+      font-size: 1rem;
+    }
+  }
+  
+  &[sub] {
+    &[page] {
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6,
+      & strong {
+        font-size: 3rem;
+      }
+      font-size: 3rem;
+    }
+    
+    &[section] {
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6,
+      & strong {
+        font-size: 2rem;
+      }
+      font-size: 2rem;
+    }
+    
+    &[block] {
+      & h1,
+      & h2,
+      & h3,
+      & h4,
+      & h5,
+      & h6,
+      & strong {
+        font-size: 1rem;
+      }
+      font-size: 1rem;
+    }
+  }
+
+  /* box-sizing: border-box;
   &.--block {
     font-size: 2rem;
     font-weight: bold;
@@ -53,5 +136,5 @@
       padding: 0 0 2.5rem 0;
       margin: 0;
     }
-  }
+  } */
 }

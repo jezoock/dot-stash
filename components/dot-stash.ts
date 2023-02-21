@@ -132,6 +132,26 @@ const _ds = {
     },
   },
   tools: {
+
+    loadScript: (scriptUrl: string, scriptId: string) => {
+      return new Promise((resolve, reject) => {
+        if (!document.querySelector(`#${scriptId}`)) {
+          const script = document.createElement('script');
+        
+          script.id = scriptId;
+          script.async = true;
+          script.defer = true;
+          script.src = scriptUrl;
+          script.onerror = (err) => reject(err);
+          script.onload = () => resolve(true);
+      
+          document.querySelector('head').appendChild(script);
+        } else {
+          reject(`[ERROR] ds loadScript - script already loaded: ${scriptUrl}`);
+        }
+      })
+    },
+
     scrollTo: (element: string, offset = 100): void => {
       const scrollY = (document.querySelector(element) as AnyHTMLElement).offsetTop - offset;
       window.scroll(0, scrollY);

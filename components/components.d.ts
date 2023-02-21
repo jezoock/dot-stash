@@ -7,10 +7,12 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./button/button";
 import { DSGridAlignment, DSGridType } from "./grid/grid";
+import { Location } from "./maps/maps";
 import { Breakpoint } from "./responsive/responsive";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
 export { DSGridAlignment, DSGridType } from "./grid/grid";
+export { Location } from "./maps/maps";
 export { Breakpoint } from "./responsive/responsive";
 export { DSSliderPrams } from "./slider/slider";
 export namespace Components {
@@ -45,12 +47,11 @@ export namespace Components {
         "getData": (key: string) => Promise<Record<string, any>>;
     }
     interface DsMaps {
+        "addMarker": (location: Location) => Promise<void>;
         "apiKey": string;
         "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
         "initializeCallbackName": string;
-        "loadScript": (apiKey: string, initializeCallback?: string) => Promise<void>;
         "locations": any[];
-        "markers": any[];
         "params": Record<string, unknown>;
         "setMapStyle": (mapStyleName: string, mapStyles: Record<string, unknown>[]) => Promise<void>;
         "setZoom": (zoomLevel: number) => Promise<void>;
@@ -97,9 +98,22 @@ export namespace Components {
         "dsCurrentItemIndex": number;
         "dsItemCount": number;
     }
-    interface DsTitle {
-        "heading": string | number;
+    interface DsText {
+        "bold": boolean;
+        "color": string;
+        "highlight": boolean;
+        "italic": boolean;
         "mods": string | string[];
+        "size": string | number;
+        "type": string;
+    }
+    interface DsTitle {
+        "block": boolean;
+        "group": string;
+        "mods": string | string[];
+        "page": boolean;
+        "section": boolean;
+        "sub": boolean;
     }
     interface DsVideo {
         "autoplay": string | boolean;
@@ -219,6 +233,12 @@ declare global {
         prototype: HTMLDsSliderMenuElement;
         new (): HTMLDsSliderMenuElement;
     };
+    interface HTMLDsTextElement extends Components.DsText, HTMLStencilElement {
+    }
+    var HTMLDsTextElement: {
+        prototype: HTMLDsTextElement;
+        new (): HTMLDsTextElement;
+    };
     interface HTMLDsTitleElement extends Components.DsTitle, HTMLStencilElement {
     }
     var HTMLDsTitleElement: {
@@ -252,6 +272,7 @@ declare global {
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
+        "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
@@ -292,7 +313,6 @@ declare namespace LocalJSX {
         "apiKey"?: string;
         "initializeCallbackName"?: string;
         "locations"?: any[];
-        "markers"?: any[];
         "params"?: Record<string, unknown>;
     }
     interface DsNavMenu {
@@ -335,9 +355,22 @@ declare namespace LocalJSX {
         "dsItemCount"?: number;
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
-    interface DsTitle {
-        "heading"?: string | number;
+    interface DsText {
+        "bold"?: boolean;
+        "color"?: string;
+        "highlight"?: boolean;
+        "italic"?: boolean;
         "mods"?: string | string[];
+        "size"?: string | number;
+        "type"?: string;
+    }
+    interface DsTitle {
+        "block"?: boolean;
+        "group"?: string;
+        "mods"?: string | string[];
+        "page"?: boolean;
+        "section"?: boolean;
+        "sub"?: boolean;
     }
     interface DsVideo {
         "autoplay"?: string | boolean;
@@ -365,6 +398,7 @@ declare namespace LocalJSX {
         "ds-slider": DsSlider;
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": DsSliderMenu;
+        "ds-text": DsText;
         "ds-title": DsTitle;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
@@ -388,6 +422,7 @@ declare module "@stencil/core" {
             "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
+            "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
