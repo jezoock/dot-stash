@@ -7,12 +7,12 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./button/button";
 import { DSGridAlignment, DSGridType } from "./grid/grid";
-import { Location } from "./maps/maps";
+import { Location } from "./map/map";
 import { Breakpoint } from "./responsive/responsive";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
 export { DSGridAlignment, DSGridType } from "./grid/grid";
-export { Location } from "./maps/maps";
+export { Location } from "./map/map";
 export { Breakpoint } from "./responsive/responsive";
 export { DSSliderPrams } from "./slider/slider";
 export namespace Components {
@@ -43,17 +43,23 @@ export namespace Components {
     interface DsGridItem {
         "dsRatio": number | string;
     }
+    interface DsLocation {
+        "lat": number;
+        "lng": number;
+        "name": string;
+    }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
     }
-    interface DsMaps {
-        "addMarker": (location: Location) => Promise<void>;
+    interface DsMap {
+        "addMapStyle": (name: string, styles: google.maps.MapTypeStyle[]) => Promise<void>;
+        "addMarkers": (locations: Location[]) => Promise<void>;
         "apiKey": string;
+        "fitLocations": () => Promise<void>;
         "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
-        "initializeCallbackName": string;
-        "locations": any[];
-        "params": Record<string, unknown>;
-        "setMapStyle": (mapStyleName: string, mapStyles: Record<string, unknown>[]) => Promise<void>;
+        "locations": Location[] | string;
+        "params": string | Record<string, unknown>;
+        "setMapStyles": (name: string) => Promise<void>;
         "setZoom": (zoomLevel: number) => Promise<void>;
         "zoomIn": (scale?: number) => Promise<void>;
         "zoomOut": (scale?: number) => Promise<void>;
@@ -173,17 +179,23 @@ declare global {
         prototype: HTMLDsGridItemElement;
         new (): HTMLDsGridItemElement;
     };
+    interface HTMLDsLocationElement extends Components.DsLocation, HTMLStencilElement {
+    }
+    var HTMLDsLocationElement: {
+        prototype: HTMLDsLocationElement;
+        new (): HTMLDsLocationElement;
+    };
     interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
     }
     var HTMLDsMainElement: {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
     };
-    interface HTMLDsMapsElement extends Components.DsMaps, HTMLStencilElement {
+    interface HTMLDsMapElement extends Components.DsMap, HTMLStencilElement {
     }
-    var HTMLDsMapsElement: {
-        prototype: HTMLDsMapsElement;
-        new (): HTMLDsMapsElement;
+    var HTMLDsMapElement: {
+        prototype: HTMLDsMapElement;
+        new (): HTMLDsMapElement;
     };
     interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
     }
@@ -262,8 +274,9 @@ declare global {
         "ds-button": HTMLDsButtonElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
+        "ds-location": HTMLDsLocationElement;
         "ds-main": HTMLDsMainElement;
-        "ds-maps": HTMLDsMapsElement;
+        "ds-map": HTMLDsMapElement;
         "ds-nav-menu": HTMLDsNavMenuElement;
         "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
@@ -307,13 +320,17 @@ declare namespace LocalJSX {
     interface DsGridItem {
         "dsRatio"?: number | string;
     }
+    interface DsLocation {
+        "lat"?: number;
+        "lng"?: number;
+        "name"?: string;
+    }
     interface DsMain {
     }
-    interface DsMaps {
+    interface DsMap {
         "apiKey"?: string;
-        "initializeCallbackName"?: string;
-        "locations"?: any[];
-        "params"?: Record<string, unknown>;
+        "locations"?: Location[] | string;
+        "params"?: string | Record<string, unknown>;
     }
     interface DsNavMenu {
         "currentActiveItemId"?: string;
@@ -388,8 +405,9 @@ declare namespace LocalJSX {
         "ds-button": DsButton;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
+        "ds-location": DsLocation;
         "ds-main": DsMain;
-        "ds-maps": DsMaps;
+        "ds-map": DsMap;
         "ds-nav-menu": DsNavMenu;
         "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
@@ -412,8 +430,9 @@ declare module "@stencil/core" {
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
+            "ds-location": LocalJSX.DsLocation & JSXBase.HTMLAttributes<HTMLDsLocationElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
-            "ds-maps": LocalJSX.DsMaps & JSXBase.HTMLAttributes<HTMLDsMapsElement>;
+            "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
             "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
             "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
