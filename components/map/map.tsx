@@ -24,6 +24,7 @@ export interface Location {
   name: string;
   lat: number;
   lng: number;
+  infos?: string;
 }
 
 export interface GMapsParams {
@@ -69,13 +70,11 @@ export class DSMap {
   @Prop() apiKey: string;
   @Prop() params: string | Record<string, unknown>;
   
-  markers: any[] = [];
+  markers: Location[] = [];
   map: any;
   zoomLevel = 9; /* 0 to 22 */
   zoomStep = 1;
   ready = false;
-
-  allLocations: Location[] = [];
 
   mapParams: GMapsParams;
 
@@ -86,12 +85,12 @@ export class DSMap {
   }
   
   @Method()
-  async zoomIn(scale = this.zoomLevel + this.zoomStep) {
+  async zoomIn(scale = this.map.getZoom() + this.zoomStep) {
     this.setZoom(scale);
   }
   
   @Method()
-  async zoomOut(scale = this.zoomLevel - this.zoomStep) {
+  async zoomOut(scale = this.map.getZoom() - this.zoomStep) {
     this.setZoom(scale);
   }
 
@@ -142,42 +141,70 @@ export class DSMap {
   }
 
   @Method()
-  async addMarkers(locations: Location[]) {
-    if (locations && Array.isArray(locations)) {
+  async addInfoWindow(content: string, marker) {
+    console.log(content, marker);
+    const infowindow = new google.maps.InfoWindow({
+      content,
+      ariaLabel: "Uluru",
+    });
+    marker.addListener("click", () => {
+      infowindow.open({
+        anchor: marker,
+        map: this.map,
+      });
+    });
+  }
+
+  @Method()
+  async addMarkers(markers: Location[]) {
+    const newMarkers = []
+    if (markers && Array.isArray(markers)) {
       if (typeof google !== "undefined") {
-        locations.map( location => {
-          const { name: title, lat, lng } = location;
+        markers.map( marker => {
+          const { name: title, lat, lng, infos } = marker;
           if (lat && lng) {
-            const { markers } = this;
-            markers.push(
-              new google.maps.Marker({
-                position: { lat, lng },
-                map: this.map,
-                title,
-              })
-            )
-            this.markers = markers;
+            const newMarker = new google.maps.Marker({
+              position: { lat, lng },
+              map: this.map,
+              title,
+            });
+            if (infos) {
+              this.addInfoWindow(infos, newMarker);
+            }
+            newMarkers.push(marker);
           } else {
             console.log(`[ERROR] DSMaps addMarkers: ${lat ? '' : ' latitude'}${lng ? '' : ' longitude'} not provided.`);
           }
         });
+        const { markers: currentMarkers } = this;
+        this.markers = [ ...currentMarkers, ...newMarkers ];
       } else {
         console.log(`[LOG] DSMaps addMarkers: GMaps not ready, store location.`);
-        this.allLocations.push(...locations);
+        this.markers.push(...markers);
       }
     } else {
       console.log(`[ERROR] DSMaps addMarkers: invalid locations.`);
     }
+    return newMarkers;
   }
 
   @Method()
   async fitLocations() {
-    const { allLocations } = this;
+    const { markers } = this;
     const bounds = new google.maps.LatLngBounds();
-    for (const location of allLocations) {
+    for (const location of markers) {
       bounds.extend(location);
     }
     this.map.fitBounds(bounds);
+  }
+
+  @Method()
+  async clusturize() {
+    new markerClusterer.MarkerClusterer(
+      this.map,
+      this.markers,
+      { imagePath: this.mapParams.clusterImage }
+    );
   }
 
   componentWillLoad() {
@@ -191,25 +218,18 @@ export class DSMap {
     this.map = new google.maps.Map(this.mapContainer.querySelector('.ds-map__map'), this.mapParams);
     this.ready = true;
 
-    let defaultMapStylesName = '';
+    let defaultMapStylesName = 'roadmap';
     (this.mapParams.mapStyles || []).map( ({ name, styles, isDefault }) => {
       this.addMapStyle(name, styles);
       if (isDefault || this.mapParams.mapStyles.length === 1) {
         defaultMapStylesName = name;
       }
     });
+    this.setMapStyles(defaultMapStylesName);
 
-    if (defaultMapStylesName) {
-      this.setMapStyles(defaultMapStylesName);
-    }
-
-    this.addMarkers(this.allLocations);
+    this.addMarkers(this.markers);
     if (this.mapParams.useCluster) {
-      new markerClusterer.MarkerClusterer(
-        this.map,
-        this.markers,
-        { imagePath: this.mapParams.clusterImage }
-      );
+      this.clusturize();
     }
 
     if (this.mapParams.fitLocations) {
@@ -232,6 +252,7 @@ export class DSMap {
           <button type="button" onClick={() => this.zoomIn()}>zoomin</button>
           <button type="button" onClick={() => this.zoomOut()}>zoomOut</button>
           <button type="button" onClick={() => this.fitLocations()}>fit</button>
+          <ds-map-rc action="zoomIn">test</ds-map-rc>
         </div>
       </div>
     );

@@ -6,7 +6,7 @@ export const config: Config = {
   srcDir: 'components',
   plugins: [
     sass({
-      includePaths: ['components/*/*.scss'],
+      includePaths: ['components/**/*.scss'],
       /* injectGlobalPaths: [
         'src/scss/variables/breakpoint.scss',
         'src/scss/variables/palette.scss',

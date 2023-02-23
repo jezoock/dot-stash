@@ -52,17 +52,27 @@ export namespace Components {
         "getData": (key: string) => Promise<Record<string, any>>;
     }
     interface DsMap {
+        "addInfoWindow": (content: string, marker: any) => Promise<void>;
         "addMapStyle": (name: string, styles: google.maps.MapTypeStyle[]) => Promise<void>;
-        "addMarkers": (locations: Location[]) => Promise<void>;
+        "addMarkers": (markers: Location[]) => Promise<any[]>;
         "apiKey": string;
+        "clusturize": () => Promise<void>;
         "fitLocations": () => Promise<void>;
         "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
         "locations": Location[] | string;
         "params": string | Record<string, unknown>;
         "setMapStyles": (name: string) => Promise<void>;
         "setZoom": (zoomLevel: number) => Promise<void>;
-        "zoomIn": (scale?: number) => Promise<void>;
+        "zoomIn": (scale?: any) => Promise<void>;
         "zoomOut": (scale?: number) => Promise<void>;
+    }
+    interface DsMapRc {
+        "action": string;
+    }
+    interface DsMarker {
+        "lat": number;
+        "lng": number;
+        "name": string;
     }
     interface DsNavMenu {
         "currentActiveItemId": string;
@@ -197,6 +207,18 @@ declare global {
         prototype: HTMLDsMapElement;
         new (): HTMLDsMapElement;
     };
+    interface HTMLDsMapRcElement extends Components.DsMapRc, HTMLStencilElement {
+    }
+    var HTMLDsMapRcElement: {
+        prototype: HTMLDsMapRcElement;
+        new (): HTMLDsMapRcElement;
+    };
+    interface HTMLDsMarkerElement extends Components.DsMarker, HTMLStencilElement {
+    }
+    var HTMLDsMarkerElement: {
+        prototype: HTMLDsMarkerElement;
+        new (): HTMLDsMarkerElement;
+    };
     interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
     }
     var HTMLDsNavMenuElement: {
@@ -277,6 +299,8 @@ declare global {
         "ds-location": HTMLDsLocationElement;
         "ds-main": HTMLDsMainElement;
         "ds-map": HTMLDsMapElement;
+        "ds-map-rc": HTMLDsMapRcElement;
+        "ds-marker": HTMLDsMarkerElement;
         "ds-nav-menu": HTMLDsNavMenuElement;
         "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
@@ -331,6 +355,14 @@ declare namespace LocalJSX {
         "apiKey"?: string;
         "locations"?: Location[] | string;
         "params"?: string | Record<string, unknown>;
+    }
+    interface DsMapRc {
+        "action"?: string;
+    }
+    interface DsMarker {
+        "lat"?: number;
+        "lng"?: number;
+        "name"?: string;
     }
     interface DsNavMenu {
         "currentActiveItemId"?: string;
@@ -408,6 +440,8 @@ declare namespace LocalJSX {
         "ds-location": DsLocation;
         "ds-main": DsMain;
         "ds-map": DsMap;
+        "ds-map-rc": DsMapRc;
+        "ds-marker": DsMarker;
         "ds-nav-menu": DsNavMenu;
         "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
@@ -433,6 +467,8 @@ declare module "@stencil/core" {
             "ds-location": LocalJSX.DsLocation & JSXBase.HTMLAttributes<HTMLDsLocationElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
+            "ds-map-rc": LocalJSX.DsMapRc & JSXBase.HTMLAttributes<HTMLDsMapRcElement>;
+            "ds-marker": LocalJSX.DsMarker & JSXBase.HTMLAttributes<HTMLDsMarkerElement>;
             "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
             "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
