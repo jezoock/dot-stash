@@ -4,26 +4,14 @@ import _ds from '../dot-stash';
 
 declare global {
   let markerClusterer: any;
-  let initMap: any;
+  let initMap: () => void;
 }
-
-export interface Zone {
-  name: string;
-  zoom: number;
-  lat: number;
-  lng: number;
-}
-
-/* export const EUROPE: Zone = {
-  name: "Europe",
-  zoom: 5,
-  lat: 48.886483489234266, lng: 2.342630624771118,
-}; */
 
 export interface Location {
   name: string;
   lat: number;
   lng: number;
+  zoom?: number;
   infos?: string;
 }
 
@@ -71,17 +59,20 @@ export class DSMap {
   @Prop() params: string | Record<string, unknown>;
   
   markers: Location[] = [];
-  map: any;
-  zoomLevel = 9; /* 0 to 22 */
+  map: google.maps.Map;
   zoomStep = 1;
   ready = false;
 
   mapParams: GMapsParams;
 
   @Method()
+  async getZoom(): Promise<number> {
+    return this.map.getZoom();
+  }
+  
+  @Method()
   async setZoom(zoomLevel: number) {
-    this.zoomLevel = zoomLevel;
-    this.map.setZoom(this.zoomLevel);
+    this.map.setZoom(zoomLevel);
   }
   
   @Method()
@@ -189,11 +180,11 @@ export class DSMap {
   }
 
   @Method()
-  async fitLocations() {
+  async fitMarkers() {
     const { markers } = this;
     const bounds = new google.maps.LatLngBounds();
-    for (const location of markers) {
-      bounds.extend(location);
+    for (const marker of markers) {
+      bounds.extend(marker);
     }
     this.map.fitBounds(bounds);
   }
@@ -233,7 +224,7 @@ export class DSMap {
     }
 
     if (this.mapParams.fitLocations) {
-      this.fitLocations();
+      this.fitMarkers();
     }
   }
 
@@ -244,15 +235,9 @@ export class DSMap {
   render() {
     return (
       <div class="ds-map">
-        <div class="ds-map__map">
-        </div>
+        <div class="ds-map__map" />
         <div class="ds-map__controls">
-          <button type="button" onClick={() => this.setZoom(2)}>zoom min</button>
-          <button type="button" onClick={() => this.setZoom(22)}>zoom max</button>
-          <button type="button" onClick={() => this.zoomIn()}>zoomin</button>
-          <button type="button" onClick={() => this.zoomOut()}>zoomOut</button>
-          <button type="button" onClick={() => this.fitLocations()}>fit</button>
-          <ds-map-rc action="zoomIn">test</ds-map-rc>
+          <slot name="controls" />
         </div>
       </div>
     );

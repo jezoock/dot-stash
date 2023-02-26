@@ -1,5 +1,5 @@
-import { Element, Prop, Component, h } from '@stencil/core';
-
+import { Element, Prop, Component, h, Host } from '@stencil/core';
+import _ds from '../dot-stash';
 
 @Component({
   tag: 'ds-map-rc',
@@ -8,20 +8,23 @@ export class DSMapRc {
   @Element() hostContainer: any;
 
   @Prop() action: string;
+  @Prop() target: string;
 
   targetMap: HTMLDsMapElement;
 
   componentDidLoad() {
-    this.targetMap = this.hostContainer.closest("ds-map");
+    this.targetMap = this.target ? document.querySelector(this.target) : this.hostContainer.closest("ds-map");
   }
 
   hostClickHandler = () => {
-    this.targetMap[this.action]();
+    const [ action, args ] = this.action.split(/:(.*)/s);
+    console.log(..._ds.props.fromJSON(args||[]))
+    this.targetMap[action](..._ds.props.fromJSON(args||[]));
   }
 
   render() {
     return (
-      <button onClick={this.hostClickHandler}><slot /></button>
+      <Host onClick={this.hostClickHandler}><slot /></Host>
     );
   }
 }

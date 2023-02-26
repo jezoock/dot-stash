@@ -236,7 +236,7 @@ export class DSMainTest {
           }}
         >
           <ds-location lat={-34.397} lng={150.644} name="Test 7">
-            <div slot="infos">
+            <div>
               <ds-title mods="main">test</ds-title>
               <h2>dsfjhsdfjs</h2>
               <p>sdfjkhsdfjksdkjfjksdf</p>
@@ -244,6 +244,19 @@ export class DSMainTest {
           </ds-location>
           <ds-location lat={-37.397} lng={152.644} name="Test 8" />
           <ds-location lat={-39.397} lng={154.644} name="Test 9" />
+          <div slot="controls">
+          {/* <button type="button" onClick={() => this.setZoom(2)}>zoom min</button>
+          <button type="button" onClick={() => this.setZoom(22)}>zoom max</button>
+          <button type="button" onClick={() => this.zoomIn()}>zoomin</button>
+          <button type="button" onClick={() => this.zoomOut()}>zoomOut</button>
+          <button type="button" onClick={() => this.fitMarkers()}>fit</button> */}
+          {/* <ds-map-rc action='setZoom:[5, { "name": "bob"}, [1,2,3]]'>test</ds-map-rc> */}
+          <ds-map-rc action='setZoom:[5]'>test</ds-map-rc>
+          <ds-map-rc action="setZoom:[10]">test</ds-map-rc>
+          <ds-map-rc action="zoomIn">test</ds-map-rc>
+          <ds-map-rc action="zoomOut">test</ds-map-rc>
+          <ds-map-rc action="fitMarkers">test</ds-map-rc>
+          </div>
         </ds-map>
 
           {/* <ds-block>

@@ -30,7 +30,7 @@ const _ds = {
     toNumber: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseInt(prop, 10),
     toFloat: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseFloat(prop),
     toArray: ( prop: string|any[] ): any[] => typeof prop === 'string' ? (prop as string).split(',') : prop,
-    fromJSON: ( prop: string | Record<string, unknown>, rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
+    fromJSON: ( prop: string | Record<string, unknown> | any[], rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
     toClassList: ( mainClass: string, mods: string|string[] ): any => {
       const classList = {};
       if( mainClass && mainClass.trim() !== '' ) {

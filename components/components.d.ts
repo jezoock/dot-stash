@@ -57,17 +57,19 @@ export namespace Components {
         "addMarkers": (markers: Location[]) => Promise<any[]>;
         "apiKey": string;
         "clusturize": () => Promise<void>;
-        "fitLocations": () => Promise<void>;
+        "fitMarkers": () => Promise<void>;
+        "getZoom": () => Promise<number>;
         "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
         "locations": Location[] | string;
         "params": string | Record<string, unknown>;
         "setMapStyles": (name: string) => Promise<void>;
         "setZoom": (zoomLevel: number) => Promise<void>;
-        "zoomIn": (scale?: any) => Promise<void>;
+        "zoomIn": (scale?: number) => Promise<void>;
         "zoomOut": (scale?: number) => Promise<void>;
     }
     interface DsMapRc {
         "action": string;
+        "target": string;
     }
     interface DsMarker {
         "lat": number;
@@ -358,6 +360,7 @@ declare namespace LocalJSX {
     }
     interface DsMapRc {
         "action"?: string;
+        "target"?: string;
     }
     interface DsMarker {
         "lat"?: number;

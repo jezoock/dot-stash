@@ -16,6 +16,9 @@ export class DSLocation {
   componentDidLoad() {
     const mapComponent = this.locationContainer.closest("ds-map");
     const { name, lat, lng} = this;
+
+    console.log(this.locationContainer)
+
     mapComponent.addMarkers([{
       name,
       lat,
@@ -28,10 +31,9 @@ export class DSLocation {
     return (
       <div class="ds-location">
         <div class="ds-location__info-window">
-          <slot name="infos" />
+          <slot/>
         </div>
         <div class="ds-location__content">
-          <slot/>
         </div>
       </div>
     );
