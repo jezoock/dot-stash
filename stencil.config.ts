@@ -21,6 +21,9 @@ export const config: Config = {
   ],
   outputTargets: [
     {
+      type: 'dist'
+    },
+    {
       type: 'www',
       serviceWorker: null, // disable service workers
       copy: [

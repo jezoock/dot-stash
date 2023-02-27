@@ -21,15 +21,15 @@ export const generateCSS = () => {
   }
 
   let newlyGeneratedFiles = gulp
-    .src(paths.scss.sourceFiles)
+    .src(settings.scss.sourceFiles)
     .pipe(sass({ outputStyle: "compressed" }).on("error", sass.logError));
 
   if (settings.scss.autoprefix) {
     newlyGeneratedFiles = newlyGeneratedFiles.pipe(autoprefixer({ browsers: settings.scss.autoprefixerTargetBrowsers }));
   }
 
-  newlyGeneratedFiles = newlyGeneratedFiles.pipe( concat(settings.generatedSylesheetName) )
-    .pipe( gulp.dest(paths.destination.css) )
+  newlyGeneratedFiles = newlyGeneratedFiles.pipe( concat(settings.scss.generatedSylesheetName) )
+    .pipe( gulp.dest(`${paths.destination.root}/${paths.destination.css}`) )
     .pipe(browserSync.stream());
 
   return merge(previouslyGeneratedFiles, newlyGeneratedFiles);

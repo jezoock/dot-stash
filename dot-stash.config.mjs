@@ -26,7 +26,8 @@ const DotstashConfig = {
       autoprefixerTargetBrowsers: ["last 2 versions"],
       cleanDestinationDirectory: true,
       generatedSylesheetName: "style.css",
-      watch: ["**/*.scss"],
+      watch: ["./scss/**/*.scss"],
+      sourceFiles: './scss/index.scss'
     },
   }
 }
