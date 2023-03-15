@@ -1,5 +1,6 @@
 import { Component, h, Prop, Element } from '@stencil/core';
 import { AnyHTMLElement } from '@stencil/sass/dist/declarations';
+import { Location } from './map';
 
 @Component({
   tag: 'ds-location',
@@ -16,15 +17,18 @@ export class DSLocation {
   componentDidLoad() {
     const mapComponent = this.locationContainer.closest("ds-map");
     const { name, lat, lng} = this;
-
-    console.log(this.locationContainer)
-
-    mapComponent.addMarkers([{
+    const marker: Location = {
       name,
       lat,
       lng,
-      infos: this.locationContainer.querySelector(".ds-location__info-window").innerHTML
-    }]);
+    }
+
+    const template = this.locationContainer.querySelector(".ds-location__info-window");
+    if (template) {
+      marker.infos = template.textContent;
+    }
+
+    mapComponent.addMarkers([marker]);
   }
   
   render() {

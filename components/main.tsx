@@ -231,16 +231,17 @@ export class DSMainTest {
         <ds-map
           api-key="***REMOVED***"
           params={{
-            useCluster: true,
+            useCluster: false,
             mapStyles: [{ name: "newStyles", styles: mapStyles }]
           }}
         >
           <ds-location lat={-34.397} lng={150.644} name="Test 7">
-            <div>
+           { `<div class="test">
               <ds-title mods="main">test</ds-title>
               <h2>dsfjhsdfjs</h2>
               <p>sdfjkhsdfjksdkjfjksdf</p>
-            </div>
+            </div>`}
+            
           </ds-location>
           <ds-location lat={-37.397} lng={152.644} name="Test 8" />
           <ds-location lat={-39.397} lng={154.644} name="Test 9" />
