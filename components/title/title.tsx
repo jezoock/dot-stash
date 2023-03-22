@@ -3,12 +3,12 @@ import _ds from '../dot-stash';
 
 @Component({
 	tag: 'ds-title',
-	styleUrl: 'title.scss'
+	styleUrl: 'title.scss',
 })
 export class DSTitle {
 
-	@Prop() mods: string | string[] = "default";
-	@Prop() group = "app";
+	@Prop({ reflect: true }) mods: string | string[] = "default";
+	@Prop({ reflect: true }) group = "app";
 	@Prop({ reflect: true }) page: boolean;
 	@Prop({ reflect: true }) section: boolean;
 	@Prop({ reflect: true }) block: boolean;

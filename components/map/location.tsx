@@ -1,31 +1,35 @@
 import { Component, h, Prop, Element } from '@stencil/core';
-import { AnyHTMLElement } from '@stencil/sass/dist/declarations';
+import { AnyHTMLElement  } from '@stencil/sass/dist/declarations';
 import { Location } from './map';
 
 @Component({
-  tag: 'ds-location',
-  styleUrl: './location.scss'
+  tag: 'ds-map-location',
+  styleUrl: './location.scss',
 })
-export class DSLocation {
+export class DSMapLocation {
+
 
   @Element() locationContainer: AnyHTMLElement;
 
-  @Prop() name: string;
+  @Prop() title: string;
   @Prop() lat: number;
   @Prop() lng: number;
 
   componentDidLoad() {
     const mapComponent = this.locationContainer.closest("ds-map");
-    const { name, lat, lng} = this;
+    const { title, lat, lng} = this;
     const marker: Location = {
-      name,
-      lat,
-      lng,
+      title,
+      position: {
+        lat,
+        lng,
+      }
     }
 
-    const template = this.locationContainer.querySelector(".ds-location__info-window");
+    const template = this.locationContainer.querySelector("ds-info-window");
     if (template) {
-      marker.infos = template.textContent;
+      console.log(template);
+      marker.infos = template;
     }
 
     mapComponent.addMarkers([marker]);
@@ -34,10 +38,9 @@ export class DSLocation {
   render() {
     return (
       <div class="ds-location">
-        <div class="ds-location__info-window">
-          <slot/>
-        </div>
-        <div class="ds-location__content">
+        <slot />
+        <div class="ds-location__description">
+          <slot name="description" />
         </div>
       </div>
     );

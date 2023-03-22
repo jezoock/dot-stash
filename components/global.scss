@@ -1,0 +1,20 @@
+.ds-title {
+  &.--default {
+    font-size: inherit;
+  }
+  &.--main {
+    color: red;
+  }
+}
+
+.ds-title  {
+  &:host-context(.ds-title__content) {
+    color: green;
+
+  }
+  & span {
+    color: red;
+  }
+  & > div {
+  }
+}

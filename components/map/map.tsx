@@ -8,11 +8,14 @@ declare global {
 }
 
 export interface Location {
-  name: string;
-  lat: number;
-  lng: number;
-  zoom?: number;
-  infos?: string;
+  title: string;
+  position: {
+    lat: number;
+    lng: number;
+  },
+  label?: string | google.maps.MarkerLabel;
+  icon?: string | google.maps.Icon | google.maps.Symbol;
+  infos?: HTMLDsInfoWindowElement;
 }
 
 export interface GMapsParams {
@@ -58,6 +61,7 @@ export class DSMap {
   @Prop() apiKey: string;
   @Prop() params: string | Record<string, unknown>;
   
+  unregisteredMarkers: Location[] = [];
   markers: Location[] = [];
   map: google.maps.Map;
   zoomStep = 1;
@@ -132,14 +136,11 @@ export class DSMap {
   }
 
   @Method()
-  async addInfoWindow(content: string, marker) {
-    console.log(content, marker);
-    const infowindow = new google.maps.InfoWindow({
-      content,
-      ariaLabel: "Uluru",
-    });
+  async addInfoWindow(infoWindowComponent: HTMLDsInfoWindowElement, marker: google.maps.Marker) {
+    const infoWindowParams = await infoWindowComponent.getParams();
+    const infoWindow = new google.maps.InfoWindow(infoWindowParams);
     marker.addListener("click", () => {
-      infowindow.open({
+      infoWindow.open({
         anchor: marker,
         map: this.map,
       });
@@ -152,12 +153,12 @@ export class DSMap {
     if (markers && Array.isArray(markers)) {
       if (typeof google !== "undefined") {
         markers.map( marker => {
-          const { name: title, lat, lng, infos } = marker;
+          const { infos, position: { lat, lng }, ...markerOptions } = marker;
           if (lat && lng) {
             const newMarker = new google.maps.Marker({
               position: { lat, lng },
               map: this.map,
-              title,
+              ...markerOptions,
             });
             if (infos) {
               this.addInfoWindow(infos, newMarker);
@@ -171,7 +172,7 @@ export class DSMap {
         this.markers = [ ...currentMarkers, ...newMarkers ];
       } else {
         console.log(`[LOG] DSMaps addMarkers: GMaps not ready, store location.`);
-        this.markers.push(...markers);
+        this.unregisteredMarkers.push(...markers);
       }
     } else {
       console.log(`[ERROR] DSMaps addMarkers: invalid locations.`);
@@ -183,8 +184,8 @@ export class DSMap {
   async fitMarkers() {
     const { markers } = this;
     const bounds = new google.maps.LatLngBounds();
-    for (const marker of markers) {
-      bounds.extend(marker);
+    for (const {position} of markers) {
+      bounds.extend(position);
     }
     this.map.fitBounds(bounds);
   }
@@ -218,7 +219,7 @@ export class DSMap {
     });
     this.setMapStyles(defaultMapStylesName);
 
-    this.addMarkers(this.markers);
+    this.addMarkers(this.unregisteredMarkers);
     if (this.mapParams.useCluster) {
       this.clusturize();
     }

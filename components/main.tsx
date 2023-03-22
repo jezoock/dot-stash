@@ -235,15 +235,16 @@ export class DSMainTest {
             mapStyles: [{ name: "newStyles", styles: mapStyles }]
           }}
         >
-          <ds-location lat={-34.397} lng={150.644} name="Test 7">
-           { `<div class="test">
-              <ds-title mods="main">test</ds-title>
-              <h2>dsfjhsdfjs</h2>
-              <p>sdfjkhsdfjksdkjfjksdf</p>
-            </div>`}
-            
-          </ds-location>
-          <ds-location lat={-37.397} lng={152.644} name="Test 8" />
+          <ds-map-marker lat={-39.397} lng={155.644} label="JEz" name="Test 9" />
+          <ds-map-marker lat={-34.397} lng={150.644} name="Test 7">
+            <ds-info-window>
+              <div class="bob">
+                <ds-title mods="main" slot="header"><span>test</span></ds-title>
+                <h2>dsfjhsdfjs</h2>
+                <p>sdfjkhsdfjksdkjfjksdf</p>
+              </div>
+            </ds-info-window>
+          </ds-map-marker>
           <ds-location lat={-39.397} lng={154.644} name="Test 9" />
           <div slot="controls">
           {/* <button type="button" onClick={() => this.setZoom(2)}>zoom min</button>
