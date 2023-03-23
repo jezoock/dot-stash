@@ -1,6 +1,6 @@
 import { Component, h, Prop, Element } from '@stencil/core';
 import { AnyHTMLElement  } from '@stencil/sass/dist/declarations';
-import { Location } from './map';
+import { MapMarkerOptions } from './map.type';
 
 @Component({
   tag: 'ds-map-location',
@@ -11,25 +11,21 @@ export class DSMapLocation {
 
   @Element() locationContainer: AnyHTMLElement;
 
-  @Prop() title: string;
+  @Prop() name: string;
   @Prop() lat: number;
   @Prop() lng: number;
 
   componentDidLoad() {
     const mapComponent = this.locationContainer.closest("ds-map");
-    const { title, lat, lng} = this;
-    const marker: Location = {
+    const { name: title, lat, lng} = this;
+    const marker: MapMarkerOptions = {
       title,
-      position: {
-        lat,
-        lng,
-      }
+      position: new google.maps.LatLng(lat, lng),
     }
 
-    const template = this.locationContainer.querySelector("ds-info-window");
-    if (template) {
-      console.log(template);
-      marker.infos = template;
+    const infoWindow = this.locationContainer.querySelector("ds-info-window");
+    if (infoWindow) {
+      marker.infos = infoWindow;
     }
 
     mapComponent.addMarkers([marker]);

@@ -1,6 +1,6 @@
 import { Component, h, Host, Prop, Element } from '@stencil/core';
 import { AnyHTMLElement } from '@stencil/sass/dist/declarations';
-import { Location } from './map';
+import { MapMarkerOptions } from './map.type';
 
 @Component({
   tag: 'ds-map-marker',
@@ -15,27 +15,44 @@ export class DSMapMarker {
   @Prop() icon: string | google.maps.Icon | google.maps.Symbol;
   @Prop() label: string | google.maps.MarkerLabel;
 
-  anchorPoint?: google.maps.Point|null;
-  animation?: google.maps.Animation|null;
-  clickable?: boolean|null;
-  crossOnDrag?: boolean|null;
-  cursor?: string|null;
-  draggable?: boolean|null;
-  opacity?: number|null;
-  optimized?: boolean|null;
-  shape?: google.maps.MarkerShape|null;
-  visible?: boolean|null;
+  @Prop() anchorPoint?: google.maps.Point|null;
+  @Prop() animation?: google.maps.Animation|null;
+  @Prop() clickable?: boolean|null;
+  @Prop() crossOnDrag?: boolean|null;
+  @Prop() cursor?: string|null;
+  @Prop() isDraggable?: boolean|null;
+  @Prop() opacity?: number|null;
+  @Prop() optimized?: boolean|null;
+  @Prop() shape?: google.maps.MarkerShape|null;
+  @Prop() visible?: boolean|null;
 
   componentDidLoad() {
-    const { name: title, lat, lng, icon, label } = this;
-    const marker: Location = {
+    const { name: title, lat, lng, icon, label, anchorPoint,
+      animation,
+      clickable,
+      crossOnDrag,
+      cursor,
+      isDraggable: draggable,
+      opacity,
+      optimized,
+      shape,
+      visible
+    } = this;
+    const marker: MapMarkerOptions = {
       title,
-      position: {
-        lat,
-        lng,
-      },
+      position: new google.maps.LatLng(lat, lng),
       icon,
       label,
+      anchorPoint,
+      animation,
+      clickable,
+      crossOnDrag,
+      cursor,
+      draggable,
+      opacity,
+      optimized,
+      shape,
+      visible,
     }
 
     const parentMap = this.markerContainer.closest("ds-map");

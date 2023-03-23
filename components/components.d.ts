@@ -7,12 +7,12 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./button/button";
 import { DSGridAlignment, DSGridType } from "./grid/grid";
-import { Location } from "./map/map";
+import { MapMarkerOptions } from "./map/map.type";
 import { Breakpoint } from "./responsive/responsive";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
 export { DSGridAlignment, DSGridType } from "./grid/grid";
-export { Location } from "./map/map";
+export { MapMarkerOptions } from "./map/map.type";
 export { Breakpoint } from "./responsive/responsive";
 export { DSSliderPrams } from "./slider/slider";
 export namespace Components {
@@ -59,7 +59,7 @@ export namespace Components {
     interface DsMap {
         "addInfoWindow": (infoWindowComponent: HTMLDsInfoWindowElement, marker: google.maps.Marker) => Promise<void>;
         "addMapStyle": (name: string, styles: google.maps.MapTypeStyle[]) => Promise<void>;
-        "addMarkers": (markers: Location[]) => Promise<any[]>;
+        "addMarkers": (markers: MapMarkerOptions[]) => Promise<any[]>;
         "apiKey": string;
         "clusturize": () => Promise<void>;
         "fitMarkers": () => Promise<void>;
@@ -75,14 +75,24 @@ export namespace Components {
     interface DsMapLocation {
         "lat": number;
         "lng": number;
-        "title": string;
+        "name": string;
     }
     interface DsMapMarker {
+        "anchorPoint"?: google.maps.Point|null;
+        "animation"?: google.maps.Animation|null;
+        "clickable"?: boolean|null;
+        "crossOnDrag"?: boolean|null;
+        "cursor"?: string|null;
         "icon": string | google.maps.Icon | google.maps.Symbol;
+        "isDraggable"?: boolean|null;
         "label": string | google.maps.MarkerLabel;
         "lat": number;
         "lng": number;
         "name": string;
+        "opacity"?: number|null;
+        "optimized"?: boolean|null;
+        "shape"?: google.maps.MarkerShape|null;
+        "visible"?: boolean|null;
     }
     interface DsMapRc {
         "action": string;
@@ -384,14 +394,24 @@ declare namespace LocalJSX {
     interface DsMapLocation {
         "lat"?: number;
         "lng"?: number;
-        "title"?: string;
+        "name"?: string;
     }
     interface DsMapMarker {
+        "anchorPoint"?: google.maps.Point|null;
+        "animation"?: google.maps.Animation|null;
+        "clickable"?: boolean|null;
+        "crossOnDrag"?: boolean|null;
+        "cursor"?: string|null;
         "icon"?: string | google.maps.Icon | google.maps.Symbol;
+        "isDraggable"?: boolean|null;
         "label"?: string | google.maps.MarkerLabel;
         "lat"?: number;
         "lng"?: number;
         "name"?: string;
+        "opacity"?: number|null;
+        "optimized"?: boolean|null;
+        "shape"?: google.maps.MarkerShape|null;
+        "visible"?: boolean|null;
     }
     interface DsMapRc {
         "action"?: string;

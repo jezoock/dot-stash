@@ -1,52 +1,11 @@
 import { Component, h, Prop } from '@stencil/core';
 import { Element, Method } from '@stencil/sass/dist/declarations';
 import _ds from '../dot-stash';
+import { defaultMapParams, GMapsParams, MapMarkerOptions } from './map.type';
 
 declare global {
   let markerClusterer: any;
   let initMap: () => void;
-}
-
-export interface Location {
-  title: string;
-  position: {
-    lat: number;
-    lng: number;
-  },
-  label?: string | google.maps.MarkerLabel;
-  icon?: string | google.maps.Icon | google.maps.Symbol;
-  infos?: HTMLDsInfoWindowElement;
-}
-
-export interface GMapsParams {
-  zoom: number;
-  zoomStep: number;
-  center: {
-    lat: number;
-    lng: number;
-  },
-  useCluster: boolean;
-  initializeCallbackName: string;
-  clusterImage: string;
-  fitLocations: boolean;
-  mapStyles?: {
-    name: string;
-    styles: google.maps.MapTypeStyle[];
-    isDefault?: boolean;
-  }[];
-}
-
-const defaultMapParams: GMapsParams = {
-  zoom: 9,
-  zoomStep: 1,
-  center: {
-    lat: -34.397,
-    lng: 150.644
-  },
-  useCluster: false,
-  initializeCallbackName: 'initMap',
-  clusterImage: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-  fitLocations: true,
 }
 
 @Component({
@@ -61,8 +20,8 @@ export class DSMap {
   @Prop() apiKey: string;
   @Prop() params: string | Record<string, unknown>;
   
-  unregisteredMarkers: Location[] = [];
-  markers: Location[] = [];
+  unregisteredMarkers: MapMarkerOptions[] = [];
+  markers: google.maps.Marker[] = [];
   map: google.maps.Map;
   zoomStep = 1;
   ready = false;
@@ -148,7 +107,7 @@ export class DSMap {
   }
 
   @Method()
-  async addMarkers(markers: Location[]) {
+  async addMarkers(markers: MapMarkerOptions[]) {
     const newMarkers = []
     if (markers && Array.isArray(markers)) {
       if (typeof google !== "undefined") {
@@ -156,7 +115,6 @@ export class DSMap {
           const { infos, position: { lat, lng }, ...markerOptions } = marker;
           if (lat && lng) {
             const newMarker = new google.maps.Marker({
-              position: { lat, lng },
               map: this.map,
               ...markerOptions,
             });
@@ -184,9 +142,7 @@ export class DSMap {
   async fitMarkers() {
     const { markers } = this;
     const bounds = new google.maps.LatLngBounds();
-    for (const {position} of markers) {
-      bounds.extend(position);
-    }
+    markers.map( marker => bounds.extend(marker.getPosition()) );
     this.map.fitBounds(bounds);
   }
 
