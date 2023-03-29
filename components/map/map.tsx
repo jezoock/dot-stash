@@ -3,9 +3,16 @@ import { Element, Method } from '@stencil/sass/dist/declarations';
 import _ds from '../dot-stash';
 import { defaultMapParams, GMapsParams, MapMarkerOptions } from './map.type';
 
-declare global {
+/* declare global {
   let markerClusterer: any;
   let initMap: () => void;
+} */
+
+declare global {
+  interface Window {
+    initMap: () => void;
+    markerClusterer: any;
+  }
 }
 
 @Component({
@@ -55,8 +62,8 @@ export class DSMap {
 
       if (apiKey || this.apiKey) {
 
-        if (typeof initMap === "undefined") {
-          window['initMap'] = () => console.log("[LOG] DSMap initialize: GMaps intialize callback called");
+        if (typeof window.initMap === "undefined") {
+          window.initMap = () => console.log("[LOG] DSMap initialize: GMaps intialize callback called");
         }
 
         try {
@@ -116,14 +123,15 @@ export class DSMap {
           if (lat && lng) {
             const newMarker = new google.maps.Marker({
               map: this.map,
+              position: new google.maps.LatLng({lat, lng}),
               ...markerOptions,
             });
             if (infos) {
               this.addInfoWindow(infos, newMarker);
             }
-            newMarkers.push(marker);
+            newMarkers.push(newMarker);
           } else {
-            console.log(`[ERROR] DSMaps addMarkers: ${lat ? '' : ' latitude'}${lng ? '' : ' longitude'} not provided.`);
+            console.log(`[ERROR] DSMaps addMarkers:${lat ? '' : ' latitude'}${lng ? '' : ' longitude'} not provided.`);
           }
         });
         const { markers: currentMarkers } = this;
@@ -148,7 +156,7 @@ export class DSMap {
 
   @Method()
   async clusturize() {
-    new markerClusterer.MarkerClusterer(
+    new window.markerClusterer.MarkerClusterer(
       this.map,
       this.markers,
       { imagePath: this.mapParams.clusterImage }

@@ -1,5 +1,9 @@
 export interface MapMarkerOptions extends google.maps.MarkerOptions {
   infos?: HTMLDsInfoWindowElement;
+  position: {
+    lat: number;
+    lng: number;
+  }
 }
 
 export interface Location {

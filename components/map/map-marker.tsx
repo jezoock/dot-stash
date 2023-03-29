@@ -40,7 +40,7 @@ export class DSMapMarker {
     } = this;
     const marker: MapMarkerOptions = {
       title,
-      position: new google.maps.LatLng(lat, lng),
+      position: { lat, lng },
       icon,
       label,
       anchorPoint,

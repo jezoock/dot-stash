@@ -20,7 +20,7 @@ export class DSMapLocation {
     const { name: title, lat, lng} = this;
     const marker: MapMarkerOptions = {
       title,
-      position: new google.maps.LatLng(lat, lng),
+      position: {lat, lng},
     }
 
     const infoWindow = this.locationContainer.querySelector("ds-info-window");
