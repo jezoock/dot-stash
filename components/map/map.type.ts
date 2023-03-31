@@ -18,16 +18,16 @@ export interface Location {
 }
 
 export interface GMapsParams {
-  zoom: number;
-  zoomStep: number;
-  center: {
+  zoom?: number;
+  zoomStep?: number;
+  center?: {
     lat: number;
     lng: number;
   },
-  useCluster: boolean;
-  initializeCallbackName: string;
-  clusterImage: string;
-  fitLocations: boolean;
+  useCluster?: boolean;
+  initializeCallbackName?: string;
+  clusterImage?: string;
+  fitLocations?: boolean;
   mapStyles?: {
     name: string;
     styles: google.maps.MapTypeStyle[];
@@ -47,3 +47,17 @@ export const defaultMapParams: GMapsParams = {
   clusterImage: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
   fitLocations: true,
 }
+
+export type MarkerOptionsFromProps = Pick<
+MapMarkerOptions,
+'anchorPoint'
+| 'animation'
+| 'clickable'
+| 'crossOnDrag'
+| 'cursor'
+| 'draggable'
+| 'opacity'
+| 'optimized'
+| 'shape'
+| 'visible'
+>

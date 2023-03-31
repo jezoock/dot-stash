@@ -25,12 +25,11 @@ export class DSMap {
 
   @Prop() locations: Location[] | string;
   @Prop() apiKey: string;
-  @Prop() params: string | Record<string, unknown>;
+  @Prop() params: string | GMapsParams;
   
   unregisteredMarkers: MapMarkerOptions[] = [];
   markers: google.maps.Marker[] = [];
   map: google.maps.Map;
-  zoomStep = 1;
   ready = false;
 
   mapParams: GMapsParams;
@@ -46,12 +45,12 @@ export class DSMap {
   }
   
   @Method()
-  async zoomIn(scale = this.map.getZoom() + this.zoomStep) {
+  async zoomIn(scale = this.map.getZoom() + this.mapParams.zoomStep) {
     this.setZoom(scale);
   }
   
   @Method()
-  async zoomOut(scale = this.map.getZoom() - this.zoomStep) {
+  async zoomOut(scale = this.map.getZoom() - this.mapParams.zoomStep) {
     this.setZoom(scale);
   }
 
@@ -166,7 +165,7 @@ export class DSMap {
   componentWillLoad() {
     this.mapParams = {
       ...defaultMapParams,
-      ..._ds.props.fromJSON(this.params)
+      ...(typeof this.params === "string" ? _ds.props.fromJSON(this.params) : this.params)
     };
   }
 

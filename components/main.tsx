@@ -1,6 +1,6 @@
 import { Component, h, Method } from '@stencil/core';
 
-const mapStyles = [
+const mapStyles: google.maps.MapTypeStyle[] = [
   {
       "featureType": "water",
       "elementType": "geometry.fill",
@@ -174,7 +174,6 @@ const mapStyles = [
           }
       ]
   },
-  {},
   {
       "featureType": "poi",
       "elementType": "geometry.fill",
@@ -221,8 +220,6 @@ export class DSMainTest {
   changeHandler = event => {
     console.log(event);
   };
-
-  componentDidLoad() { }
 
   render() {
     return (

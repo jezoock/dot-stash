@@ -1,6 +1,9 @@
 import { Component, h, Host, Prop, Element } from '@stencil/core';
 import { AnyHTMLElement } from '@stencil/sass/dist/declarations';
-import { MapMarkerOptions } from './map.type';
+import _ds from '../dot-stash';
+import { MapMarkerOptions, MarkerOptionsFromProps } from './map.type';
+
+
 
 @Component({
   tag: 'ds-map-marker',
@@ -14,30 +17,34 @@ export class DSMapMarker {
   @Prop() lng: number;
   @Prop() icon: string | google.maps.Icon | google.maps.Symbol;
   @Prop() label: string | google.maps.MarkerLabel;
+  @Prop() params: string | MarkerOptionsFromProps;
 
-  @Prop() anchorPoint?: google.maps.Point|null;
-  @Prop() animation?: google.maps.Animation|null;
-  @Prop() clickable?: boolean|null;
-  @Prop() crossOnDrag?: boolean|null;
-  @Prop() cursor?: string|null;
-  @Prop() isDraggable?: boolean|null;
-  @Prop() opacity?: number|null;
-  @Prop() optimized?: boolean|null;
-  @Prop() shape?: google.maps.MarkerShape|null;
-  @Prop() visible?: boolean|null;
+  markerParams: MarkerOptionsFromProps;
+
+  componentWillLoad() {
+    this.markerParams = _ds.props.fromJSON(this.params);
+  }
 
   componentDidLoad() {
-    const { name: title, lat, lng, icon, label, anchorPoint,
+    const {
+      name: title,
+      lat, 
+      lng,
+      icon, 
+      label, 
+    } = this;
+    const {
+      anchorPoint,
       animation,
       clickable,
       crossOnDrag,
       cursor,
-      isDraggable: draggable,
+      draggable,
       opacity,
       optimized,
       shape,
-      visible
-    } = this;
+      visible,
+    } = this.markerParams;
     const marker: MapMarkerOptions = {
       title,
       position: { lat, lng },
