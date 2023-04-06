@@ -22,19 +22,20 @@ Type: `Promise<Record<string, any>>`
 
 ### Depends on
 
-- [ds-rsp](./components/ui/responsive)
-- [ds-button](./components/ui/button)
-- [ds-video](./components/ui/video)
-- [ds-video-play](./components/ui/video/controls)
+- [ds-title](title)
+- [ds-map](map)
+- [ds-map-marker](map)
+- [ds-info-window](map)
+- [ds-map-rc](map)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-rsp
-  ds-main --> ds-button
-  ds-main --> ds-video
-  ds-main --> ds-video-play
-  ds-video --> ds-button
+  ds-main --> ds-title
+  ds-main --> ds-map
+  ds-main --> ds-map-marker
+  ds-main --> ds-info-window
+  ds-main --> ds-map-rc
   style ds-main fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

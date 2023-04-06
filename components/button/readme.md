@@ -28,7 +28,6 @@
 
 ### Used by
 
- - [ds-main](../../..)
  - [ds-nav-menu-item](../nav-menu/nav-menu-item)
  - [ds-slider](../slider)
  - [ds-video](../video)
@@ -36,7 +35,6 @@
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-button
   ds-nav-menu-item --> ds-button
   ds-slider --> ds-button
   ds-video --> ds-button

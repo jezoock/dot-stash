@@ -9,9 +9,9 @@
 
 | Property | Attribute | Description | Type                 | Default |
 | -------- | --------- | ----------- | -------------------- | ------- |
-| `mods`   | `mods`    |             | `string \| string[]` | `""`    |
-| `tag`    | `tag`     |             | `string`             | `"div"` |
-| `type`   | `type`    |             | `string`             | `""`    |
+| `dsMods` | `ds-mods` |             | `string \| string[]` | `""`    |
+| `dsTag`  | `ds-tag`  |             | `string`             | `"div"` |
+| `dsType` | `ds-type` |             | `string`             | `""`    |
 
 
 ----------------------------------------------

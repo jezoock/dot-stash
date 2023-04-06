@@ -21,6 +21,7 @@ export class DSNavMenu {
 
   @Listen('DSMenuItemClick')
   onDSMenuItemClick({detail: { menuItem }}) {
+    console.log(menuItem);
   }
 
   constructor() {}

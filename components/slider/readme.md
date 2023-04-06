@@ -7,12 +7,12 @@
 
 ## Properties
 
-| Property   | Attribute   | Description | Type                 | Default     |
-| ---------- | ----------- | ----------- | -------------------- | ----------- |
-| `mods`     | `mods`      |             | `string \| string[]` | `""`        |
-| `params`   | `params`    |             | `any`                | `{}`        |
-| `sliderId` | `slider-id` |             | `string`             | `undefined` |
-| `type`     | `type`      |             | `string`             | `"sld"`     |
+| Property   | Attribute   | Description | Type                      | Default     |
+| ---------- | ----------- | ----------- | ------------------------- | ----------- |
+| `dsParams` | `ds-params` |             | `DSSliderPrams \| string` | `{}`        |
+| `mods`     | `mods`      |             | `string \| string[]`      | `""`        |
+| `sliderId` | `slider-id` |             | `string`                  | `undefined` |
+| `type`     | `type`      |             | `string`                  | `"sld"`     |
 
 
 ## Events

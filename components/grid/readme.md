@@ -7,17 +7,16 @@
 
 ## Properties
 
-| Property      | Attribute       | Description | Type                           | Default     |
-| ------------- | --------------- | ----------- | ------------------------------ | ----------- |
-| `dsAlign`     | `ds-align`      |             | `"center" \| "end" \| "start"` | `undefined` |
-| `dsCellRatio` | `ds-cell-ratio` |             | `number \| string`             | `undefined` |
-| `dsCols`      | `ds-cols`       |             | `number \| string`             | `1`         |
-| `dsHGap`      | `ds-h-gap`      |             | `number \| string`             | `0`         |
-| `dsParams`    | --              |             | `{ [x: string]: unknown; }`    | `{}`        |
-| `dsType`      | `ds-type`       |             | `"fixed" \| "fluid"`           | `undefined` |
-| `dsVAlign`    | `ds-v-align`    |             | `"center" \| "end" \| "start"` | `undefined` |
-| `dsVGap`      | `ds-v-gap`      |             | `number \| string`             | `0`         |
-| `mods`        | `mods`          |             | `string \| string[]`           | `[]`        |
+| Property    | Attribute    | Description | Type                           | Default     |
+| ----------- | ------------ | ----------- | ------------------------------ | ----------- |
+| `align`     | `align`      |             | `"center" \| "end" \| "start"` | `undefined` |
+| `cellRatio` | `cell-ratio` |             | `number \| string`             | `1`         |
+| `cols`      | `cols`       |             | `number \| string`             | `1`         |
+| `hGap`      | `h-gap`      |             | `number \| string`             | `0`         |
+| `mods`      | `mods`       |             | `string \| string[]`           | `[]`        |
+| `type`      | `type`       |             | `"fixed" \| "fluid"`           | `undefined` |
+| `vAlign`    | `v-align`    |             | `"center" \| "end" \| "start"` | `undefined` |
+| `vGap`      | `v-gap`      |             | `number \| string`             | `0`         |
 
 
 ----------------------------------------------
