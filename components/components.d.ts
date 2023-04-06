@@ -112,10 +112,6 @@ export namespace Components {
         "name": string;
         "params": string | MarkerOptionsFromProps;
     }
-    interface DsMapRc {
-        "action": string;
-        "target": string;
-    }
     interface DsNavMenu {
         "currentActiveItemId": string;
         "mods": string|string[];
@@ -271,12 +267,6 @@ declare global {
         prototype: HTMLDsMapMarkerElement;
         new (): HTMLDsMapMarkerElement;
     };
-    interface HTMLDsMapRcElement extends Components.DsMapRc, HTMLStencilElement {
-    }
-    var HTMLDsMapRcElement: {
-        prototype: HTMLDsMapRcElement;
-        new (): HTMLDsMapRcElement;
-    };
     interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
     }
     var HTMLDsNavMenuElement: {
@@ -366,7 +356,6 @@ declare global {
         "ds-map": HTMLDsMapElement;
         "ds-map-location": HTMLDsMapLocationElement;
         "ds-map-marker": HTMLDsMapMarkerElement;
-        "ds-map-rc": HTMLDsMapRcElement;
         "ds-nav-menu": HTMLDsNavMenuElement;
         "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
@@ -465,10 +454,6 @@ declare namespace LocalJSX {
         "name"?: string;
         "params"?: string | MarkerOptionsFromProps;
     }
-    interface DsMapRc {
-        "action"?: string;
-        "target"?: string;
-    }
     interface DsNavMenu {
         "currentActiveItemId"?: string;
         "mods"?: string|string[];
@@ -552,7 +537,6 @@ declare namespace LocalJSX {
         "ds-map": DsMap;
         "ds-map-location": DsMapLocation;
         "ds-map-marker": DsMapMarker;
-        "ds-map-rc": DsMapRc;
         "ds-nav-menu": DsNavMenu;
         "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
@@ -582,7 +566,6 @@ declare module "@stencil/core" {
             "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
             "ds-map-location": LocalJSX.DsMapLocation & JSXBase.HTMLAttributes<HTMLDsMapLocationElement>;
             "ds-map-marker": LocalJSX.DsMapMarker & JSXBase.HTMLAttributes<HTMLDsMapMarkerElement>;
-            "ds-map-rc": LocalJSX.DsMapRc & JSXBase.HTMLAttributes<HTMLDsMapRcElement>;
             "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
             "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;

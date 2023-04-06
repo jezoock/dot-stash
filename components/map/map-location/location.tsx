@@ -1,6 +1,6 @@
 import { Component, h, Prop, Element } from '@stencil/core';
 import { AnyHTMLElement  } from '@stencil/sass/dist/declarations';
-import { MapMarkerOptions } from './map.type';
+import { MapMarkerOptions } from '../map.type';
 
 @Component({
   tag: 'ds-map-location',

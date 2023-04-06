@@ -24,8 +24,6 @@ export class DSNavMenu {
     console.log(menuItem);
   }
 
-  constructor() {}
-
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList("ds-nav-menu", this.mods);
   }

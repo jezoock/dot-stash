@@ -252,14 +252,14 @@ const _ds = {
         timeout = null;
         result = func.apply(ctx, args);
       };
-      return function () {
+      return function (...rest) {
         const now: any = new Date();
         if (!previous && !leading) {
           previous = now;
         }
         const remaining = wait - (now - previous);
         ctx = context || this;
-        args = arguments;
+        args = rest;
         if (remaining <= 0) {
           clearTimeout(timeout);
           timeout = null;

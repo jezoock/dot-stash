@@ -249,12 +249,12 @@ export class DSMainTest {
           <button type="button" onClick={() => this.zoomIn()}>zoomin</button>
           <button type="button" onClick={() => this.zoomOut()}>zoomOut</button>
           <button type="button" onClick={() => this.fitMarkers()}>fit</button> */}
-          {/* <ds-map-rc action='setZoom:[5, { "name": "bob"}, [1,2,3]]'>test</ds-map-rc> */}
-          <ds-map-rc action='setZoom:[5]'>test</ds-map-rc>
-          <ds-map-rc action="setZoom:[10]">test</ds-map-rc>
-          <ds-map-rc action="zoomIn">test</ds-map-rc>
-          <ds-map-rc action="zoomOut">test</ds-map-rc>
-          <ds-map-rc action="fitMarkers">test</ds-map-rc>
+          {/* <ds-control action='setZoom:[5, { "name": "bob"}, [1,2,3]]'>test</ds-control> */}
+          <ds-control action='setZoom:[5]'>test</ds-control>
+          <ds-control action="setZoom:[10]">test</ds-control>
+          <ds-control action="zoomIn">test</ds-control>
+          <ds-control action="zoomOut">test</ds-control>
+          <ds-control action="fitMarkers">test</ds-control>
           </div>
         </ds-map>
 
