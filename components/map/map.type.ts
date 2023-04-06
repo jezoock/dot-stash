@@ -17,35 +17,49 @@ export interface Location {
   infos?: HTMLDsInfoWindowElement;
 }
 
+export enum GMapsTypeId {
+  ROADMAP = 'roadmap',
+  HYBRID = 'hybrid',
+  TERRAIN = 'terrain',
+  SATELLITE = 'satellite',
+}
+
+export const defaultMapTypes = [
+  GMapsTypeId.ROADMAP,
+  GMapsTypeId.HYBRID,
+  GMapsTypeId.TERRAIN,
+  GMapsTypeId.SATELLITE,
+]
+
 export interface GMapsParams {
-  zoom?: number;
   zoomStep?: number;
-  center?: {
-    lat: number;
-    lng: number;
-  },
   useCluster?: boolean;
   initializeCallbackName?: string;
   clusterImage?: string;
   fitLocations?: boolean;
+  language?: string;
+  region?: string;
   mapStyles?: {
     name: string;
     styles: google.maps.MapTypeStyle[];
     isDefault?: boolean;
   }[];
+  settings?: google.maps.MapOptions;
 }
 
 export const defaultMapParams: GMapsParams = {
-  zoom: 9,
   zoomStep: 1,
-  center: {
-    lat: -34.397,
-    lng: 150.644
-  },
   useCluster: false,
   initializeCallbackName: 'initMap',
   clusterImage: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
   fitLocations: true,
+  settings: {
+    zoom: 9,
+    center: {
+      lat: -34.397,
+      lng: 150.644
+    },
+  }
 }
 
 export type MarkerOptionsFromProps = Pick<

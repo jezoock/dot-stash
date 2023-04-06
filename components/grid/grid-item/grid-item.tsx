@@ -16,7 +16,6 @@ export class DSGridItem {
   ratioWatcher(newRatio: string | number) {
     this.useRatio = true;
     this.ratio = _ds.props.toNumber(newRatio);
-    console.log(this.ratio)
   }
 
   componentWillLoad() {

@@ -1,12 +1,7 @@
 import { Component, h, Prop } from '@stencil/core';
 import { Element, Method } from '@stencil/sass/dist/declarations';
 import _ds from '../dot-stash';
-import { defaultMapParams, GMapsParams, MapMarkerOptions } from './map.type';
-
-/* declare global {
-  let markerClusterer: any;
-  let initMap: () => void;
-} */
+import { defaultMapParams, GMapsParams, GMapsTypeId, MapMarkerOptions } from './map.type';
 
 declare global {
   interface Window {
@@ -33,6 +28,16 @@ export class DSMap {
   ready = false;
 
   mapParams: GMapsParams;
+
+  @Method()
+  async getTilt(): Promise<number> {
+    return this.map.getTilt();
+  }
+
+  @Method()
+  async setTilt(tilt: number = this.map.getTilt()): Promise<void> {
+    this.map.setTilt(tilt);
+  }
 
   @Method()
   async getZoom(): Promise<number> {
@@ -66,7 +71,17 @@ export class DSMap {
         }
 
         try {
-          await _ds.tools.loadScript(`https://maps.googleapis.com/maps/api/js?key=${apiKey ?? this.apiKey }&callback=${initializeCallbackName ?? this.mapParams.initializeCallbackName}`, "gMaps")
+          const key = `key=${apiKey ?? this.apiKey}`;
+          const callback = `&callback=${initializeCallbackName ?? this.mapParams.initializeCallbackName}`;
+          let language = '';
+          let region = '';
+          if(this.mapParams.language) {
+            language = `&language=${language}`;
+          }
+          if(this.mapParams.region) {
+            region = `&language=${region}`;
+          }
+          await _ds.tools.loadScript(`https://maps.googleapis.com/maps/api/js?${key}${callback}${language}${region}`, "gMaps")
           console.log("[LOG] DSMap initialize: GMaps script succesfully loaded.");
         } catch (err) {
           console.log(err);
@@ -170,10 +185,10 @@ export class DSMap {
   }
 
   initializeMap() {
-    this.map = new google.maps.Map(this.mapContainer.querySelector('.ds-map__map'), this.mapParams);
+    this.map = new google.maps.Map(this.mapContainer.querySelector('.ds-map__map'), this.mapParams.settings);
     this.ready = true;
 
-    let defaultMapStylesName = 'roadmap';
+    let defaultMapStylesName: string = GMapsTypeId.ROADMAP;
     (this.mapParams.mapStyles || []).map( ({ name, styles, isDefault }) => {
       this.addMapStyle(name, styles);
       if (isDefault || this.mapParams.mapStyles.length === 1) {

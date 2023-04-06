@@ -5,7 +5,7 @@ import _ds from '../dot-stash';
   tag: 'ds-map-rc',
 })
 export class DSMapRc {
-  @Element() hostContainer: any;
+  @Element() hostContainer: HTMLDsMapRcElement;
 
   @Prop() action: string;
   @Prop() target: string;
@@ -18,7 +18,6 @@ export class DSMapRc {
 
   hostClickHandler = () => {
     const [ action, args ] = this.action.split(/:(.*)/s);
-    console.log(..._ds.props.fromJSON(args||[]))
     this.targetMap[action](..._ds.props.fromJSON(args||[]));
   }
 

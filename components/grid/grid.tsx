@@ -4,6 +4,16 @@ import _ds from '../dot-stash';
 export type DSGridAlignment = 'start' | 'center' | 'end';
 export type DSGridType = 'fixed' | 'fluid';
 
+export interface DSGridParams {
+  type: DSGridType;
+  cols: number;
+  hGap: number;
+  vGap: number;
+  align: DSGridAlignment;
+  vAlign: DSGridAlignment;
+  cellRatio: number;
+}
+
 @Component({
   tag: 'ds-grid',
   styleUrl: 'grid.scss',
@@ -12,22 +22,16 @@ export class DSGrid {
   @Element() container: HTMLDivElement;
 
   CSSClassList: Record<string, boolean>;
-  cols: number;
-  hGap: number;
-  vGap: number;
-  align: string;
-  vAlign: string;
-  cellRatio: number;
+  params: DSGridParams;
 
-  @Prop({ mutable: true, reflect: true }) dsParams: Record<string, unknown> = {};
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
-  @Prop({ mutable: true, reflect: true }) dsCols: string | number = 1;
-  @Prop({ mutable: true, reflect: true }) dsHGap: string | number = 0;
-  @Prop({ mutable: true, reflect: true }) dsVGap: string | number = 0;
-  @Prop({ mutable: true, reflect: true }) dsAlign: DSGridAlignment;
-  @Prop({ mutable: true, reflect: true }) dsVAlign: DSGridAlignment;
-  @Prop({ mutable: true, reflect: true }) dsType: DSGridType;
-  @Prop({ mutable: true, reflect: true }) dsCellRatio: string | number;
+  @Prop({ mutable: true, reflect: true }) cols: string | number = 1;
+  @Prop({ mutable: true, reflect: true }) hGap: string | number = 0;
+  @Prop({ mutable: true, reflect: true }) vGap: string | number = 0;
+  @Prop({ mutable: true, reflect: true }) align: DSGridAlignment;
+  @Prop({ mutable: true, reflect: true }) vAlign: DSGridAlignment;
+  @Prop({ mutable: true, reflect: true }) type: DSGridType;
+  @Prop({ mutable: true, reflect: true }) cellRatio: string | number = 1;
 
   @Watch('mods')
   modsWatcher(newMods: string | string[]) {
@@ -35,41 +39,84 @@ export class DSGrid {
     this.processChildren();
   }
 
-  @Watch('dsCols')
+  @Watch('cols')
   colsWatcher(newCols: string | number) {
-    this.cols = _ds.props.toNumber(newCols);
+    const cols = _ds.props.toNumber(newCols);
+    this.params = {
+      ...this.params,
+      cols
+    }
     this.processChildren();
   }
 
-  @Watch('dsHGap')
+  @Watch('hGap')
   hGapWatcher(newGap: string | number) {
-    this.hGap = _ds.props.toNumber(newGap);
+    const hGap = _ds.props.toNumber(newGap);
+    this.params = {
+      ...this.params,
+      hGap
+    }
     this.processChildren();
   }
 
-  @Watch('dsVGap')
+  @Watch('vGap')
   vGapWatcher(newGap: string | number) {
-    this.vGap = _ds.props.toNumber(newGap);
+    const vGap = _ds.props.toNumber(newGap);
+    this.params = {
+      ...this.params,
+      vGap
+    }
     this.processChildren();
   }
 
-  @Watch('dsType')
+  @Watch('align')
+  alignWatcher(align: DSGridAlignment) {
+    this.params = {
+      ...this.params,
+      align
+    }
+    this.processChildren();
+  }
+
+  @Watch('vAlign')
+  vAlignWatcher(vAlign: DSGridAlignment) {
+    this.params = {
+      ...this.params,
+      vAlign
+    }
+    this.processChildren();
+  }
+
+  @Watch('type')
   typeWatcher() {
     this.processChildren();
   }
 
-  @Watch('dsCellRatio')
+  @Watch('cellRatio')
   cellRatioWatcher(newRatio: string | number) {
-    this.cellRatio = _ds.props.toFloat(newRatio);
+    const cellRatio = _ds.props.toFloat(newRatio);
+    this.params = {
+      ...this.params,
+      cellRatio
+    }
     this.processChildren();
   }
 
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList('ds-grid', this.mods);
-    this.cols = _ds.props.toNumber(this.dsCols);
-    this.hGap = _ds.props.toNumber(this.dsHGap);
-    this.vGap = _ds.props.toNumber(this.dsVGap);
-    this.cellRatio = _ds.props.toNumber(this.dsCellRatio);
+    const cols = _ds.props.toNumber(this.cols);
+    const hGap = _ds.props.toNumber(this.hGap);
+    const vGap = _ds.props.toNumber(this.vGap);
+    const cellRatio = _ds.props.toFloat(this.cellRatio);
+    this.params = {
+      align: this.align,
+      cellRatio,
+      cols,
+      hGap,
+      type: this.type,
+      vAlign: this.vAlign,
+      vGap,
+    }
   }
 
   componentDidLoad() {
@@ -82,46 +129,48 @@ export class DSGrid {
   }
 
   processStyles(element: HTMLDsGridItemElement, rowCount: number, index: number) {
-    if (this.dsType === 'fixed') {
-      const width = `${(100 / this.cols).toFixed(6)}%`;
+    const { type, hGap, vGap, cols, cellRatio } = this.params;
+
+    if (type === 'fixed') {
+      const width = `${(100 / cols).toFixed(6)}%`;
       element.style.width = width;
 
-      if (this.dsHGap) {
-        const paddingInlineStart = `${(this.hGap / this.cols) * (index % this.cols)}rem`;
-        const paddingInlineEnd = `${(this.hGap / this.cols) * (this.cols - ((index % this.cols) + 1))}rem`;
+      if (hGap) {
+        const paddingInlineStart = `${(hGap / cols) * (index % cols)}rem`;
+        const paddingInlineEnd = `${(hGap / cols) * (cols - ((index % cols) + 1))}rem`;
 
         element.style.paddingInlineStart = paddingInlineStart;
         element.style.paddingInlineEnd = paddingInlineEnd;
       }
 
-      if (this.dsVGap) {
-        const itemRow = Math.floor(index / this.cols);
-        const paddingBlockStart = `${(this.vGap / rowCount) * (itemRow % rowCount)}rem`;
-        const paddingBlockEnd = `${(this.vGap / rowCount) * (rowCount - ((itemRow % rowCount) + 1))}rem`;
+      if (vGap) {
+        const itemRow = Math.floor(index / cols);
+        const paddingBlockStart = `${(vGap / rowCount) * (itemRow % rowCount)}rem`;
+        const paddingBlockEnd = `${(vGap / rowCount) * (rowCount - ((itemRow % rowCount) + 1))}rem`;
 
         element.style.paddingBlockStart = paddingBlockStart;
         element.style.paddingBlockEnd = paddingBlockEnd;
       }
-    } else if (this.dsType === 'fluid') {
+    } else if (type === 'fluid') {
       let gap = 0;
-      if (this.dsHGap) {
+      if (hGap) {
         const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
         rowContainer.style.columnGap = `${this.hGap}rem`;
 
-        const gapWidth = ((this.cols - 1) * this.hGap * 16) / this.cols;
+        const gapWidth = ((cols - 1) * hGap * 16) / cols;
         gap = (gapWidth / this.container.offsetWidth) * 100;
       }
 
-      if (this.dsVGap) {
+      if (vGap) {
         const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
-        rowContainer.style.rowGap = `${this.vGap}rem`;
+        rowContainer.style.rowGap = `${vGap}rem`;
       }
 
-      const width = 100 / this.cols - gap;
+      const width = 100 / cols - gap;
       element.style.width = `${width.toFixed(4)}%`;
 
-      if (this.dsCellRatio) {
-        element.style.paddingBlockStart = `${(this.cellRatio * width).toFixed(4)}%`;
+      if (cellRatio) {
+        element.style.paddingBlockStart = `${(cellRatio * width).toFixed(4)}%`;
       }
     }
   }
@@ -131,7 +180,7 @@ export class DSGrid {
       <div
         class={{
           ...this.CSSClassList,
-          [`--${this.dsType}`]: true,
+          [`--${this.params.type}`]: true,
         }}
       >
         <div class="ds-grid__row">

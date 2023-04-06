@@ -100,8 +100,6 @@ const _ds = {
 
         const type = element.dataset[key.toLowerCase()];
 
-        console.log(element, type);
-
         if (element) {
           if (type === 'prop') {
             element[key] = value;

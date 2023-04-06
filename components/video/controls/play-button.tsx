@@ -29,7 +29,6 @@ export class DSVideoPlay {
   }
 
   clickHandler = () => {
-    console.log("here")
     this.videoPlayer.play();
   }
 

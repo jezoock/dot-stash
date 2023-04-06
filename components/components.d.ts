@@ -29,16 +29,20 @@ export namespace Components {
         "type": DSButtonType;
         "url": string;
     }
+    interface DsControl {
+        "action": string;
+        "target": string;
+        "type": string;
+    }
     interface DsGrid {
-        "dsAlign": DSGridAlignment;
-        "dsCellRatio": string | number;
-        "dsCols": string | number;
-        "dsHGap": string | number;
-        "dsParams": Record<string, unknown>;
-        "dsType": DSGridType;
-        "dsVAlign": DSGridAlignment;
-        "dsVGap": string | number;
+        "align": DSGridAlignment;
+        "cellRatio": string | number;
+        "cols": string | number;
+        "hGap": string | number;
         "mods": string | string[];
+        "type": DSGridType;
+        "vAlign": DSGridAlignment;
+        "vGap": string | number;
     }
     interface DsGridItem {
         "dsRatio": number | string;
@@ -84,11 +88,13 @@ export namespace Components {
         "apiKey": string;
         "clusturize": () => Promise<void>;
         "fitMarkers": () => Promise<void>;
+        "getTilt": () => Promise<number>;
         "getZoom": () => Promise<number>;
         "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
         "locations": Location[] | string;
         "params": string | GMapsParams;
         "setMapStyles": (name: string) => Promise<void>;
+        "setTilt": (tilt?: number) => Promise<void>;
         "setZoom": (zoomLevel: number) => Promise<void>;
         "zoomIn": (scale?: number) => Promise<void>;
         "zoomOut": (scale?: number) => Promise<void>;
@@ -183,6 +189,10 @@ export namespace Components {
         "disabled": string | boolean;
         "target": string;
     }
+    interface DsVideoRc {
+        "action": string;
+        "target": string;
+    }
 }
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -212,6 +222,12 @@ declare global {
     var HTMLDsButtonElement: {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
+    };
+    interface HTMLDsControlElement extends Components.DsControl, HTMLStencilElement {
+    }
+    var HTMLDsControlElement: {
+        prototype: HTMLDsControlElement;
+        new (): HTMLDsControlElement;
     };
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
@@ -333,9 +349,16 @@ declare global {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
     };
+    interface HTMLDsVideoRcElement extends Components.DsVideoRc, HTMLStencilElement {
+    }
+    var HTMLDsVideoRcElement: {
+        prototype: HTMLDsVideoRcElement;
+        new (): HTMLDsVideoRcElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
+        "ds-control": HTMLDsControlElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-info-window": HTMLDsInfoWindowElement;
@@ -356,6 +379,7 @@ declare global {
         "ds-title": HTMLDsTitleElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
+        "ds-video-rc": HTMLDsVideoRcElement;
     }
 }
 declare namespace LocalJSX {
@@ -373,16 +397,20 @@ declare namespace LocalJSX {
         "type"?: DSButtonType;
         "url"?: string;
     }
+    interface DsControl {
+        "action"?: string;
+        "target"?: string;
+        "type"?: string;
+    }
     interface DsGrid {
-        "dsAlign"?: DSGridAlignment;
-        "dsCellRatio"?: string | number;
-        "dsCols"?: string | number;
-        "dsHGap"?: string | number;
-        "dsParams"?: Record<string, unknown>;
-        "dsType"?: DSGridType;
-        "dsVAlign"?: DSGridAlignment;
-        "dsVGap"?: string | number;
+        "align"?: DSGridAlignment;
+        "cellRatio"?: string | number;
+        "cols"?: string | number;
+        "hGap"?: string | number;
         "mods"?: string | string[];
+        "type"?: DSGridType;
+        "vAlign"?: DSGridAlignment;
+        "vGap"?: string | number;
     }
     interface DsGridItem {
         "dsRatio"?: number | string;
@@ -509,9 +537,14 @@ declare namespace LocalJSX {
         "disabled"?: string | boolean;
         "target"?: string;
     }
+    interface DsVideoRc {
+        "action"?: string;
+        "target"?: string;
+    }
     interface IntrinsicElements {
         "ds-block": DsBlock;
         "ds-button": DsButton;
+        "ds-control": DsControl;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-info-window": DsInfoWindow;
@@ -532,6 +565,7 @@ declare namespace LocalJSX {
         "ds-title": DsTitle;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
+        "ds-video-rc": DsVideoRc;
     }
 }
 export { LocalJSX as JSX };
@@ -540,6 +574,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-control": LocalJSX.DsControl & JSXBase.HTMLAttributes<HTMLDsControlElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-info-window": LocalJSX.DsInfoWindow & JSXBase.HTMLAttributes<HTMLDsInfoWindowElement>;
@@ -560,6 +595,7 @@ declare module "@stencil/core" {
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
+            "ds-video-rc": LocalJSX.DsVideoRc & JSXBase.HTMLAttributes<HTMLDsVideoRcElement>;
         }
     }
 }
