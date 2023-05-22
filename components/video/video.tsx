@@ -1,4 +1,4 @@
-import { Component, Element, h, Prop, State, Watch, Method } from '@stencil/core';
+import { Component, Element, h, Prop, State, Watch, Method } from '@stencil/core/internal';
 import { Fragment } from '@stencil/core/internal';
 import _ds from '../dot-stash';
 

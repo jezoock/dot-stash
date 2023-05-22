@@ -1,4 +1,4 @@
-import { Component, Element, h, Prop, Watch } from '@stencil/core';
+import { Component, Element, Prop, Watch, h } from '@stencil/core/internal';
 import _ds from '../dot-stash';
 
 export type DSGridAlignment = 'start' | 'center' | 'end';
@@ -131,26 +131,33 @@ export class DSGrid {
   processStyles(element: HTMLDsGridItemElement, rowCount: number, index: number) {
     const { type, hGap, vGap, cols, cellRatio } = this.params;
 
+    let width = `${(100 / cols).toFixed(6)}%`;
+    let paddingInlineStart = '0';
+    let paddingInlineEnd = '0';
+    let paddingBlockStart = '0';
+    let paddingBlockEnd = '0';
     if (type === 'fixed') {
-      const width = `${(100 / cols).toFixed(6)}%`;
-      element.style.width = width;
+      //const width = `${(100 / cols).toFixed(6)}%`;
+      //element.style.width = width;
 
       if (hGap) {
-        const paddingInlineStart = `${(hGap / cols) * (index % cols)}rem`;
-        const paddingInlineEnd = `${(hGap / cols) * (cols - ((index % cols) + 1))}rem`;
+        paddingInlineStart = `${(hGap / cols) * (index % cols)}rem`;
+        paddingInlineEnd = `${(hGap / cols) * (cols - ((index % cols) + 1))}rem`;
 
-        element.style.paddingInlineStart = paddingInlineStart;
-        element.style.paddingInlineEnd = paddingInlineEnd;
+        /* element.style.paddingInlineStart = paddingInlineStart;
+        element.style.paddingInlineEnd = paddingInlineEnd; */
       }
 
       if (vGap) {
         const itemRow = Math.floor(index / cols);
-        const paddingBlockStart = `${(vGap / rowCount) * (itemRow % rowCount)}rem`;
-        const paddingBlockEnd = `${(vGap / rowCount) * (rowCount - ((itemRow % rowCount) + 1))}rem`;
+        paddingBlockStart = `${(vGap / rowCount) * (itemRow % rowCount)}rem`;
+        paddingBlockEnd = `${(vGap / rowCount) * (rowCount - ((itemRow % rowCount) + 1))}rem`;
 
-        element.style.paddingBlockStart = paddingBlockStart;
-        element.style.paddingBlockEnd = paddingBlockEnd;
+        /* element.style.paddingBlockStart = paddingBlockStart;
+        element.style.paddingBlockEnd = paddingBlockEnd; */
       }
+
+      
     } else if (type === 'fluid') {
       let gap = 0;
       if (hGap) {
@@ -166,13 +173,14 @@ export class DSGrid {
         rowContainer.style.rowGap = `${vGap}rem`;
       }
 
-      const width = 100 / cols - gap;
-      element.style.width = `${width.toFixed(4)}%`;
+      const colWidth = 100 / cols - gap;
+      width = `${colWidth.toFixed(4)}%`;
 
       if (cellRatio) {
-        element.style.paddingBlockStart = `${(cellRatio * width).toFixed(4)}%`;
+        paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
       }
     }
+    element.setStyles( width, paddingBlockStart, paddingInlineEnd, paddingBlockEnd, paddingInlineStart);
   }
 
   render() {

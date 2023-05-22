@@ -1,26 +1,13 @@
 .ds-block {
-  &.--modal {
-    & .gbx-block {
-      &__header {
-      }
-      &__content {
-        padding: 0 0 1rem 0;
-      }
-      &__footer {
-        & > menu {
-          text-align: right;
-          & .ds-button {
-            margin: 0 0 0 1rem;
-          }
-        }
-      }
+  box-sizing: border-box;
+  &__header {
+    &:not(:has([slot="header"])) {
+      display: none;
     }
   }
-  &.--post {
-    & .ds-block {
-      &__content {
-        text-align: center;
-      }
+  &__footer {
+    &:not(:has([slot="footer"])) {
+      display: none;
     }
   }
 }

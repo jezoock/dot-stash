@@ -1,4 +1,4 @@
-import { Component, h, Prop, Element } from '@stencil/core';
+import { Component, h, Prop, Element } from '@stencil/core/internal';
 import { AnyHTMLElement  } from '@stencil/sass/dist/declarations';
 import { MapMarkerOptions } from '../map.type';
 

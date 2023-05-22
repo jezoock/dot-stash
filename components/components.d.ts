@@ -46,6 +46,7 @@ export namespace Components {
     }
     interface DsGridItem {
         "dsRatio": number | string;
+        "setStyles": (width?: string, paddingBlockStart?: string, paddingInlineEnd?: string, paddingBlockEnd?: string, paddingInlineStart?: string) => Promise<void>;
     }
     interface DsInfoWindow {
         /**
@@ -183,10 +184,6 @@ export namespace Components {
     }
     interface DsVideoPlay {
         "disabled": string | boolean;
-        "target": string;
-    }
-    interface DsVideoRc {
-        "action": string;
         "target": string;
     }
 }
@@ -339,12 +336,6 @@ declare global {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
     };
-    interface HTMLDsVideoRcElement extends Components.DsVideoRc, HTMLStencilElement {
-    }
-    var HTMLDsVideoRcElement: {
-        prototype: HTMLDsVideoRcElement;
-        new (): HTMLDsVideoRcElement;
-    };
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
@@ -368,7 +359,6 @@ declare global {
         "ds-title": HTMLDsTitleElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
-        "ds-video-rc": HTMLDsVideoRcElement;
     }
 }
 declare namespace LocalJSX {
@@ -522,10 +512,6 @@ declare namespace LocalJSX {
         "disabled"?: string | boolean;
         "target"?: string;
     }
-    interface DsVideoRc {
-        "action"?: string;
-        "target"?: string;
-    }
     interface IntrinsicElements {
         "ds-block": DsBlock;
         "ds-button": DsButton;
@@ -549,7 +535,6 @@ declare namespace LocalJSX {
         "ds-title": DsTitle;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
-        "ds-video-rc": DsVideoRc;
     }
 }
 export { LocalJSX as JSX };
@@ -578,7 +563,6 @@ declare module "@stencil/core" {
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
-            "ds-video-rc": LocalJSX.DsVideoRc & JSXBase.HTMLAttributes<HTMLDsVideoRcElement>;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop, Element } from '@stencil/core';
+import { Component, h, Host, Prop, Element } from '@stencil/core/internal';
 import { AnyHTMLElement } from '@stencil/sass/dist/declarations';
 import _ds from '../../dot-stash';
 import { MapMarkerOptions, MarkerOptionsFromProps } from '../map.type';
@@ -22,7 +22,7 @@ export class DSMapMarker {
   markerParams: MarkerOptionsFromProps;
 
   componentWillLoad() {
-    this.markerParams = _ds.props.fromJSON(this.params);
+    this.markerParams = _ds.props.fromJSON(this.params) || {};
   }
 
   componentDidLoad() {

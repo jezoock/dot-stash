@@ -1,4 +1,4 @@
-import { Config } from '@stencil/core';
+import { Config } from '@stencil/core/internal';
 import { sass } from '@stencil/sass';
 
 export const config: Config = {

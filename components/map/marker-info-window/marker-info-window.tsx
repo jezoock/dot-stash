@@ -1,4 +1,4 @@
-import { Host, Prop, Component, h, Element, Method } from '@stencil/core';
+import { Host, Prop, Component, h, Element, Method } from '@stencil/core/internal';
 
 
 @Component({

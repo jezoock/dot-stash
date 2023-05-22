@@ -1,4 +1,4 @@
-import { Component, h, Host } from '@stencil/core';
+import { Component, h, Host } from '@stencil/core/internal';
 import { Method, Prop } from '@stencil/core/internal';
 import { getBreakpoint, getStylesJSON } from '../tools/sass';
 import debounce from '../tools/debounce';

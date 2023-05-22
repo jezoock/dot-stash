@@ -1,4 +1,4 @@
-import { Component, h, Prop, Watch, Event } from '@stencil/core';
+import { Component, h, Prop, Watch, Event } from '@stencil/core/internal';
 import { Element, EventEmitter, Host, HostElement } from '@stencil/core/internal';
 import _ds from '../dot-stash';
 

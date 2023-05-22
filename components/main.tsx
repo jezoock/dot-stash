@@ -1,4 +1,4 @@
-import { Component, h, Method } from '@stencil/core';
+import { Component, h, Method } from '@stencil/core/internal';
 
 const mapStyles: google.maps.MapTypeStyle[] = [
   {
@@ -242,7 +242,7 @@ export class DSMainTest {
               </div>
             </ds-info-window>
           </ds-map-marker>
-          <ds-location lat={-39.397} lng={154.644} name="Test 9" />
+          <ds-location lat={-39.397} lng={155.644} name="Test 9" />
           <div slot="controls">
           {/* <button type="button" onClick={() => this.setZoom(2)}>zoom min</button>
           <button type="button" onClick={() => this.setZoom(22)}>zoom max</button>
@@ -250,22 +250,22 @@ export class DSMainTest {
           <button type="button" onClick={() => this.zoomOut()}>zoomOut</button>
           <button type="button" onClick={() => this.fitMarkers()}>fit</button> */}
           {/* <ds-control action='setZoom:[5, { "name": "bob"}, [1,2,3]]'>test</ds-control> */}
-          <ds-control action='setZoom:[5]'>test</ds-control>
+          {/* <ds-control action='setZoom:[5]'>test</ds-control>
           <ds-control action="setZoom:[10]">test</ds-control>
           <ds-control action="zoomIn">test</ds-control>
           <ds-control action="zoomOut">test</ds-control>
-          <ds-control action="fitMarkers">test</ds-control>
+          <ds-control action="fitMarkers">test</ds-control> */}
           </div>
         </ds-map>
 
-          {/* <ds-block>
-          <ds-title>
-            Buttons
-          </ds-title>
+          <ds-block>
+            <ds-title>
+              Buttons
+            </ds-title>
           
 
 
-          <ds-grid class="ds-button-list" ds-cols="5" ds-h-gap="1" ds-v-gap="1" ds-type="fixed">
+          <ds-grid class="ds-button-list" cols="5" h-gap="1" v-gap="1" type="fixed">
             <ds-grid-item class="ds-buttton-list__item" dsRatio={1}>
               <ds-button id="button" mods={["solid", "primary", "xs"]} onDsButtonClick={() => (document.querySelector('#button') as any).mods = ["solid", "primary", "xl"] }>Click me !</ds-button>
             </ds-grid-item>
@@ -313,7 +313,7 @@ export class DSMainTest {
               <ds-button mods={["outlined", "primary", "xl"]}>Click me !</ds-button>
             </ds-grid-item>
           </ds-grid>
-        </ds-block> */}
+        </ds-block>
       </div>
     );
   }

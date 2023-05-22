@@ -1,4 +1,4 @@
-import { Component, Element, h, Prop, Watch } from '@stencil/core';
+import { Component, Element, h, Prop, Watch, Method } from '@stencil/core/internal';
 import _ds from '../../dot-stash';
 
 @Component({
@@ -16,6 +16,15 @@ export class DSGridItem {
   ratioWatcher(newRatio: string | number) {
     this.useRatio = true;
     this.ratio = _ds.props.toNumber(newRatio);
+  }
+
+  @Method()
+  async setStyles(width = '100%', paddingBlockStart = '0',  paddingInlineEnd = '0', paddingBlockEnd = '0', paddingInlineStart = '0') {
+    this.container.style.width = width;
+    this.container.style.paddingBlockStart = paddingBlockStart;
+    this.container.style.paddingInlineEnd = paddingInlineEnd;
+    this.container.style.paddingBlockEnd = paddingBlockEnd;
+    this.container.style.paddingInlineStart = paddingInlineStart;
   }
 
   componentWillLoad() {

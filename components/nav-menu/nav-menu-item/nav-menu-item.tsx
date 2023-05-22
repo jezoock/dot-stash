@@ -1,4 +1,4 @@
-import { Component, Event, EventEmitter, h, Prop, Element, State } from '@stencil/core';
+import { Component, Event, EventEmitter, h, Prop, Element, State } from '@stencil/core/internal';
 import  _ds from '../../dot-stash';
 
 @Component({
