@@ -7,8 +7,8 @@ export type DSGridType = 'fixed' | 'fluid';
 export interface DSGridParams {
   type: DSGridType;
   cols: number;
-  hGap: number;
-  vGap: number;
+  hGap: string;
+  vGap: string;
   align: DSGridAlignment;
   vAlign: DSGridAlignment;
   cellRatio: number;
@@ -26,8 +26,8 @@ export class DSGrid {
 
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) cols: string | number = 1;
-  @Prop({ mutable: true, reflect: true }) hGap: string | number = 0;
-  @Prop({ mutable: true, reflect: true }) vGap: string | number = 0;
+  @Prop({ mutable: true, reflect: true }) hGap = '0';
+  @Prop({ mutable: true, reflect: true }) vGap = '0';
   @Prop({ mutable: true, reflect: true }) align: DSGridAlignment;
   @Prop({ mutable: true, reflect: true }) vAlign: DSGridAlignment;
   @Prop({ mutable: true, reflect: true }) type: DSGridType;
@@ -50,8 +50,7 @@ export class DSGrid {
   }
 
   @Watch('hGap')
-  hGapWatcher(newGap: string | number) {
-    const hGap = _ds.props.toNumber(newGap);
+  hGapWatcher(hGap: string) {
     this.params = {
       ...this.params,
       hGap
@@ -60,8 +59,7 @@ export class DSGrid {
   }
 
   @Watch('vGap')
-  vGapWatcher(newGap: string | number) {
-    const vGap = _ds.props.toNumber(newGap);
+  vGapWatcher(vGap: string) {
     this.params = {
       ...this.params,
       vGap
@@ -105,17 +103,15 @@ export class DSGrid {
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList('ds-grid', this.mods);
     const cols = _ds.props.toNumber(this.cols);
-    const hGap = _ds.props.toNumber(this.hGap);
-    const vGap = _ds.props.toNumber(this.vGap);
     const cellRatio = _ds.props.toFloat(this.cellRatio);
     this.params = {
       align: this.align,
       cellRatio,
       cols,
-      hGap,
+      hGap: this.hGap,
       type: this.type,
       vAlign: this.vAlign,
-      vGap,
+      vGap: this.vGap,
     }
   }
 
@@ -125,60 +121,52 @@ export class DSGrid {
 
   processChildren() {
     const children = this.container.querySelectorAll('ds-grid-item');
-    children.forEach((child, index) => this.processStyles(child, children.length, index));
+    children.forEach((child, index) => this.processStyles(child, Math.ceil(children.length/this.params.cols), index));
   }
 
   processStyles(element: HTMLDsGridItemElement, rowCount: number, index: number) {
-    const { type, hGap, vGap, cols, cellRatio } = this.params;
+    const { type, hGap, vGap, cols } = this.params;
 
-    let width = `${(100 / cols).toFixed(6)}%`;
+    let width = `100%`;
     let paddingInlineStart = '0';
     let paddingInlineEnd = '0';
     let paddingBlockStart = '0';
     let paddingBlockEnd = '0';
+
     if (type === 'fixed') {
-      //const width = `${(100 / cols).toFixed(6)}%`;
-      //element.style.width = width;
+      width = `${(100 / cols).toFixed(4)}%`;
 
       if (hGap) {
-        paddingInlineStart = `${(hGap / cols) * (index % cols)}rem`;
-        paddingInlineEnd = `${(hGap / cols) * (cols - ((index % cols) + 1))}rem`;
-
-        /* element.style.paddingInlineStart = paddingInlineStart;
-        element.style.paddingInlineEnd = paddingInlineEnd; */
+        paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
+        paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - ((index % cols) + 1)})`;
       }
 
       if (vGap) {
         const itemRow = Math.floor(index / cols);
-        paddingBlockStart = `${(vGap / rowCount) * (itemRow % rowCount)}rem`;
-        paddingBlockEnd = `${(vGap / rowCount) * (rowCount - ((itemRow % rowCount) + 1))}rem`;
-
-        /* element.style.paddingBlockStart = paddingBlockStart;
-        element.style.paddingBlockEnd = paddingBlockEnd; */
+        paddingBlockStart = `calc((${vGap} / ${rowCount}) * ${itemRow % rowCount})`;
+        paddingBlockEnd = `calc((${vGap} / ${rowCount}) * ${rowCount - ((itemRow % rowCount) + 1)})`;
       }
-
       
     } else if (type === 'fluid') {
-      let gap = 0;
+      let gapWidth = '0';
+
       if (hGap) {
         const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
-        rowContainer.style.columnGap = `${this.hGap}rem`;
+        rowContainer.style.columnGap = `${hGap}`;
 
-        const gapWidth = ((cols - 1) * hGap * 16) / cols;
-        gap = (gapWidth / this.container.offsetWidth) * 100;
+        gapWidth = `calc((${cols - 1} * ${hGap}) / ${cols})`;
       }
 
       if (vGap) {
         const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
-        rowContainer.style.rowGap = `${vGap}rem`;
+        rowContainer.style.rowGap = `${vGap}`;
       }
 
-      const colWidth = 100 / cols - gap;
-      width = `${colWidth.toFixed(4)}%`;
+      width = `calc(100% / ${cols} - ${gapWidth}`;
 
-      if (cellRatio) {
+      /* if (cellRatio) {
         paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
-      }
+      } */
     }
     element.setStyles( width, paddingBlockStart, paddingInlineEnd, paddingBlockEnd, paddingInlineStart);
   }
@@ -198,95 +186,3 @@ export class DSGrid {
     );
   }
 }
-
-/*
-
-
-    if (this.cols === 2) {
-      if (index % 3 === 0) {
-        paddingEnd = `${(this.hGap/2)}rem`;
-      }
-      if (index % 3 === 1) {
-        paddingStart = `${(this.hGap/2)}rem`;
-      }
-    }
-
-    if (this.cols === 3) {
-      if (index % 3 === 0) {
-        paddingEnd = `${(this.hGap/3)*2}rem`;
-      }
-      if (index % 3 === 1) {
-        paddingStart = `${this.hGap/3}rem`;
-        paddingEnd = `${this.hGap/3}rem`;
-      }
-      if (index % 3 === 2) {
-        paddingStart = `${(this.hGap/3)*2}rem`;
-      }
-    }
-
-    if (this.cols === 4) {
-      if (index % 4 === 0) {
-        paddingEnd = `${(this.hGap/4)*3}rem`;
-      }
-      if (index % 4 === 1) {
-        paddingStart = `${this.hGap/4}rem`;
-        paddingEnd = `${this.hGap/4*2}rem`;
-      }
-      if (index % 4 === 2) {
-        paddingStart = `${this.hGap/4*2}rem`;
-        paddingEnd = `${this.hGap/4}rem`;
-      }
-      if (index % 4 === 3) {
-        paddingStart = `${(this.hGap/4)*3}rem`;
-      }
-    }
-
-    if (this.cols === 5) {
-      if (index % 5 === 0) {
-        paddingEnd = `${(this.hGap/5)*4}rem`;
-      }
-      if (index % 5 === 1) {
-        paddingStart = `${this.hGap/5}rem`;
-        paddingEnd = `${this.hGap/5*3}rem`;
-      }
-      if (index % 5 === 2) {
-        paddingStart = `${this.hGap/5*2}rem`;
-        paddingEnd = `${this.hGap/5*2}rem`;
-      }
-      if (index % 5 === 3) {
-        paddingStart = `${this.hGap/5*3}rem`;
-        paddingEnd = `${this.hGap/5}rem`;
-      }
-      if (index % 5 === 4) {
-        paddingStart = `${(this.hGap/5)*4}rem`;
-      }
-    }
-
-    if (this.cols === 6) {
-      if (index % 6 === 0) {
-        paddingEnd = `${(this.hGap/6)*5}rem`;
-
-        // paddingStart = (this.hGap / this.cols)*(index % 6) // index = 0 || 6
-        // paddingEnd = (this.hGap / this.cols)*(this.cols-((index % 6)+1))) // index = 0 || 6
-      }
-      if (index % 6 === 1) {
-        paddingStart = `${this.hGap/6}rem`;
-        paddingEnd = `${this.hGap/6*4}rem`;
-      }
-      if (index % 6 === 2) {
-        paddingStart = `${this.hGap/6*2}rem`;
-        paddingEnd = `${this.hGap/6*3}rem`;
-      }
-      if (index % 6 === 3) {
-        paddingStart = `${this.hGap/6*3}rem`;
-        paddingEnd = `${this.hGap/6*2}rem`;
-      }
-      if (index % 6 === 4) {
-        paddingStart = `${this.hGap/6*4}rem`;
-        paddingEnd = `${this.hGap/6}rem`;
-      }
-      if (index % 6 === 5) {
-        paddingStart = `${(this.hGap/6)*5}rem`;
-        // paddingEnd = (this.hGap / this.cols)*(this.cols-(index+1))
-      }
-    }*/

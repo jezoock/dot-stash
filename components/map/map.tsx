@@ -184,6 +184,10 @@ export class DSMap {
     };
   }
 
+  componentDidLoad() {
+    this.initialize();
+  }
+
   initializeMap() {
     this.map = new google.maps.Map(this.mapContainer.querySelector('.ds-map__map'), this.mapParams.settings);
     this.ready = true;
@@ -205,10 +209,6 @@ export class DSMap {
     if (this.mapParams.fitLocations) {
       this.fitMarkers();
     }
-  }
-
-  componentDidLoad() {
-    this.initialize();
   }
   
   render() {

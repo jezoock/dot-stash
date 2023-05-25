@@ -38,11 +38,11 @@ export namespace Components {
         "align": DSGridAlignment;
         "cellRatio": string | number;
         "cols": string | number;
-        "hGap": string | number;
+        "hGap": string;
         "mods": string | string[];
         "type": DSGridType;
         "vAlign": DSGridAlignment;
-        "vGap": string | number;
+        "vGap": string;
     }
     interface DsGridItem {
         "dsRatio": number | string;
@@ -385,11 +385,11 @@ declare namespace LocalJSX {
         "align"?: DSGridAlignment;
         "cellRatio"?: string | number;
         "cols"?: string | number;
-        "hGap"?: string | number;
+        "hGap"?: string;
         "mods"?: string | string[];
         "type"?: DSGridType;
         "vAlign"?: DSGridAlignment;
-        "vGap"?: string | number;
+        "vGap"?: string;
     }
     interface DsGridItem {
         "dsRatio"?: number | string;

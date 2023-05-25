@@ -488,7 +488,7 @@ export class DSSlider {
         }}
       >
 
-        {(this.params.loop || this.currentItem.index) > 0 && (
+        {(this.params.loop || this.currentItem.index > 0) && (
           <ds-button
             class="ds-slider__prev-button"
             mods={['slider', 'prev']}
