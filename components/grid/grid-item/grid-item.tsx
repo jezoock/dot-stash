@@ -1,5 +1,6 @@
 import { Component, Element, h, Prop, Watch, Method } from '@stencil/core/internal';
 import _ds from '../../dot-stash';
+import { DSGridItemStyles } from "../grid";
 
 @Component({
   tag: 'ds-grid-item',
@@ -11,6 +12,7 @@ export class DSGridItem {
 
   @Element() container: HTMLDivElement;
   @Prop() dsRatio: number | string;
+  @Prop() width = 1;
 
   @Watch('dsRatio')
   ratioWatcher(newRatio: string | number) {
@@ -19,12 +21,15 @@ export class DSGridItem {
   }
 
   @Method()
-  async setStyles(width = '100%', paddingBlockStart = '0',  paddingInlineEnd = '0', paddingBlockEnd = '0', paddingInlineStart = '0') {
-    this.container.style.width = width;
-    this.container.style.paddingBlockStart = paddingBlockStart;
-    this.container.style.paddingInlineEnd = paddingInlineEnd;
-    this.container.style.paddingBlockEnd = paddingBlockEnd;
-    this.container.style.paddingInlineStart = paddingInlineStart;
+  async getWidth() {
+    return this.width;
+  }
+
+  @Method()
+  async setStyles(styles: DSGridItemStyles): Promise<void> {
+    for (const prop in styles) {
+      this.container.style[prop] = styles[prop];
+    }
   }
 
   componentWillLoad() {

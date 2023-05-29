@@ -4,6 +4,14 @@ import _ds from '../dot-stash';
 export type DSGridAlignment = 'start' | 'center' | 'end';
 export type DSGridType = 'fixed' | 'fluid';
 
+export interface DSGridItemStyles {
+  width?: string;
+  paddingBlockStart?: string;
+  paddingInlineEnd?: string;
+  paddingBlockEnd?: string;
+  paddingInlineStart?: string;
+}
+
 export interface DSGridParams {
   type: DSGridType;
   cols: number;
@@ -19,19 +27,13 @@ export interface DSGridParams {
   styleUrl: 'grid.scss',
 })
 export class DSGrid {
-  @Element() container: HTMLDivElement;
-
   CSSClassList: Record<string, boolean>;
-  params: DSGridParams;
-
+  options: DSGridParams;
+  
+  @Element() container: HTMLDivElement;
+  
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
-  @Prop({ mutable: true, reflect: true }) cols: string | number = 1;
-  @Prop({ mutable: true, reflect: true }) hGap = '0';
-  @Prop({ mutable: true, reflect: true }) vGap = '0';
-  @Prop({ mutable: true, reflect: true }) align: DSGridAlignment;
-  @Prop({ mutable: true, reflect: true }) vAlign: DSGridAlignment;
-  @Prop({ mutable: true, reflect: true }) type: DSGridType;
-  @Prop({ mutable: true, reflect: true }) cellRatio: string | number = 1;
+  @Prop() params: DSGridParams | string;
 
   @Watch('mods')
   modsWatcher(newMods: string | string[]) {
@@ -39,112 +41,48 @@ export class DSGrid {
     this.processChildren();
   }
 
-  @Watch('cols')
-  colsWatcher(newCols: string | number) {
-    const cols = _ds.props.toNumber(newCols);
-    this.params = {
-      ...this.params,
-      cols
+  @Watch('params')
+  paramsWatcher(newParams: string | DSGridParams) {
+    if (typeof newParams !== "undefined") {
+      this.options = _ds.props.fromJSON<string | DSGridParams>(newParams);
+      this.processChildren();
     }
-    this.processChildren();
-  }
-
-  @Watch('hGap')
-  hGapWatcher(hGap: string) {
-    this.params = {
-      ...this.params,
-      hGap
-    }
-    this.processChildren();
-  }
-
-  @Watch('vGap')
-  vGapWatcher(vGap: string) {
-    this.params = {
-      ...this.params,
-      vGap
-    }
-    this.processChildren();
-  }
-
-  @Watch('align')
-  alignWatcher(align: DSGridAlignment) {
-    this.params = {
-      ...this.params,
-      align
-    }
-    this.processChildren();
-  }
-
-  @Watch('vAlign')
-  vAlignWatcher(vAlign: DSGridAlignment) {
-    this.params = {
-      ...this.params,
-      vAlign
-    }
-    this.processChildren();
-  }
-
-  @Watch('type')
-  typeWatcher() {
-    this.processChildren();
-  }
-
-  @Watch('cellRatio')
-  cellRatioWatcher(newRatio: string | number) {
-    const cellRatio = _ds.props.toFloat(newRatio);
-    this.params = {
-      ...this.params,
-      cellRatio
-    }
-    this.processChildren();
   }
 
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList('ds-grid', this.mods);
-    const cols = _ds.props.toNumber(this.cols);
-    const cellRatio = _ds.props.toFloat(this.cellRatio);
-    this.params = {
-      align: this.align,
-      cellRatio,
-      cols,
-      hGap: this.hGap,
-      type: this.type,
-      vAlign: this.vAlign,
-      vGap: this.vGap,
-    }
+    this.options = _ds.props.fromJSON<string | DSGridParams>(this.params);
   }
 
   componentDidLoad() {
     this.processChildren();
   }
 
-  processChildren() {
+  async processChildren(): Promise<void> {
     const children = this.container.querySelectorAll('ds-grid-item');
-    children.forEach((child, index) => this.processStyles(child, Math.ceil(children.length/this.params.cols), index));
+    const rowCount = Math.ceil(children.length/this.options.cols);
+    children.forEach( async (child, index) => {
+      const styles = await this.processStyles(rowCount, index);
+      await child.setStyles( styles );
+    });
   }
 
-  processStyles(element: HTMLDsGridItemElement, rowCount: number, index: number) {
-    const { type, hGap, vGap, cols } = this.params;
-
-    let width = `100%`;
-    let paddingInlineStart = '0';
-    let paddingInlineEnd = '0';
-    let paddingBlockStart = '0';
-    let paddingBlockEnd = '0';
+  async processStyles(rowCount: number, index: number): Promise<DSGridItemStyles> {
+    const { type, hGap, vGap, cols } = this.options;
+    const styles: DSGridItemStyles = {};
 
     if (type === 'fixed') {
-      width = `${(100 / cols).toFixed(4)}%`;
+      styles.width = `${(100 / cols).toFixed(4)}%`;
 
       if (hGap) {
-        paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
-        paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - ((index % cols) + 1)})`;
+        styles.paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
+        styles.paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - ((index % cols) + 1)})`;
       }
 
       if (vGap) {
         const itemRow = Math.floor(index / cols);
-        paddingBlockStart = `calc((${vGap} / ${rowCount}) * ${itemRow % rowCount})`;
-        paddingBlockEnd = `calc((${vGap} / ${rowCount}) * ${rowCount - ((itemRow % rowCount) + 1)})`;
+        styles.paddingBlockStart = `calc((${vGap} / ${rowCount}) * ${itemRow % rowCount})`;
+        styles.paddingBlockEnd = `calc((${vGap} / ${rowCount}) * ${rowCount - ((itemRow % rowCount) + 1)})`;
       }
       
     } else if (type === 'fluid') {
@@ -162,13 +100,14 @@ export class DSGrid {
         rowContainer.style.rowGap = `${vGap}`;
       }
 
-      width = `calc(100% / ${cols} - ${gapWidth}`;
+      styles.width = `calc(100% / ${cols} - ${gapWidth}`;
 
       /* if (cellRatio) {
         paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
       } */
     }
-    element.setStyles( width, paddingBlockStart, paddingInlineEnd, paddingBlockEnd, paddingInlineStart);
+    
+    return styles;
   }
 
   render() {
@@ -176,7 +115,7 @@ export class DSGrid {
       <div
         class={{
           ...this.CSSClassList,
-          [`--${this.params.type}`]: true,
+          [`--${this.options.type}`]: true,
         }}
       >
         <div class="ds-grid__row">

@@ -6,12 +6,14 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./button/button";
-import { DSGridAlignment, DSGridType } from "./grid/grid";
+import { DSGridParams } from "./grid/grid";
+import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 import { Breakpoint } from "./responsive/responsive";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
-export { DSGridAlignment, DSGridType } from "./grid/grid";
+export { DSGridParams } from "./grid/grid";
+export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 export { Breakpoint } from "./responsive/responsive";
 export { DSSliderPrams } from "./slider/slider";
@@ -35,18 +37,14 @@ export namespace Components {
         "type": string;
     }
     interface DsGrid {
-        "align": DSGridAlignment;
-        "cellRatio": string | number;
-        "cols": string | number;
-        "hGap": string;
         "mods": string | string[];
-        "type": DSGridType;
-        "vAlign": DSGridAlignment;
-        "vGap": string;
+        "params": DSGridParams | string;
     }
     interface DsGridItem {
         "dsRatio": number | string;
-        "setStyles": (width?: string, paddingBlockStart?: string, paddingInlineEnd?: string, paddingBlockEnd?: string, paddingInlineStart?: string) => Promise<void>;
+        "getWidth": () => Promise<number>;
+        "setStyles": (styles: DSGridItemStyles) => Promise<void>;
+        "width": number;
     }
     interface DsInfoWindow {
         /**
@@ -382,17 +380,12 @@ declare namespace LocalJSX {
         "type"?: string;
     }
     interface DsGrid {
-        "align"?: DSGridAlignment;
-        "cellRatio"?: string | number;
-        "cols"?: string | number;
-        "hGap"?: string;
         "mods"?: string | string[];
-        "type"?: DSGridType;
-        "vAlign"?: DSGridAlignment;
-        "vGap"?: string;
+        "params"?: DSGridParams | string;
     }
     interface DsGridItem {
         "dsRatio"?: number | string;
+        "width"?: number;
     }
     interface DsInfoWindow {
         /**

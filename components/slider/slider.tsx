@@ -162,7 +162,7 @@ export class DSSlider {
       this.itemWidth = 0;
       this.itemHeight = 0;
       
-      this.params.xOffset = _ds.css.toNumber( "margin-left", this.list);
+      this.params.xOffset = _ds.css.toNumber( "marginLeft", this.list);
       
       _ds.css.set({ width: "", height: "" }, [this.list, ...this.items]);
       

@@ -11,7 +11,7 @@ export const removeQuotes = (quotedString: string): string => {
 export const getStylesJSON = (): SassStyles => {
   let style = '{}';
 
-  if (window && window.getComputedStyle && window.getComputedStyle(document.body, '::before')) {
+  if (window?.getComputedStyle?.(document.body, '::before')) {
     const computedStyle = window.getComputedStyle(document.body, '::before');
     style = (computedStyle.content !== 'none' && computedStyle.content) || '{}';
   }

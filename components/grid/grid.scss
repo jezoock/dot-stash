@@ -4,7 +4,20 @@
 
   }
   &.--fixed {
-
+    & .ds-grid {
+      &__row {
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+    }
+    & ds-grid-item {
+      background: #066;
+      height: 100%;
+    }
+    & .ds-grid-item {
+      background: #0aa;
+    }
   }
   &.--fluid {
     & .ds-grid {

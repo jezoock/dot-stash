@@ -5,20 +5,19 @@ const _ds = {
     touchSupport: () => 'touchend' in window,
   },
   css: {
-    set: ( pairs, elements ) => {
+    set: ( pairs: CSSRule[], elements: HTMLElement[] ): void => {
       Object.keys( pairs ).forEach( prop => {
         elements.forEach( element => {
           element.style[prop] = pairs[prop];
         })
       });
     },
-    get: ( props, element ) => {
-      const allCSSProps = getComputedStyle(element);
+    get: ( props: (keyof CSSStyleDeclaration)[], element: HTMLElement ): CSSRule | object => {
       const CSSProps = {};
-      props.map( prop => CSSProps[prop] = allCSSProps[prop] )
+      props.map( prop => CSSProps[prop] = element.style[prop] )
       return CSSProps;
     },
-    toNumber: (prop, element) => parseInt(getComputedStyle(element)[prop].replace('px',''), 10),
+    toNumber: (prop: keyof CSSStyleDeclaration, element: HTMLElement) => parseInt((element.style[prop] as string).replace('px',''), 10),
   },
   
   props: {
@@ -29,21 +28,19 @@ const _ds = {
         : prop.toLowerCase() === 'true' || prop.toLowerCase() === '',
     toNumber: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseInt(prop, 10),
     toFloat: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseFloat(prop),
-    toArray: ( prop: string|any[] ): any[] => typeof prop === 'string' ? (prop as string).split(',') : prop,
-    fromJSON: ( prop: string | Record<string, unknown> | any[], rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
-    toClassList: ( mainClass: string, mods: string|string[] ): any => {
+    toArray: <T = string>( prop: string | T[] ): T[] => typeof prop === 'string' ? prop.split(',') as T[]: prop,
+    fromJSON: <T = string | Record<string, unknown> | unknown[]>( prop: T, rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
+    toClassList: ( mainClass: string, mods: string|string[] ): Record<string, boolean> => {
       const classList = {};
       if( mainClass && mainClass.trim() !== '' ) {
         classList[`${mainClass}`] = true;
       }
-      if( mods.length ) {
-        const modsList = _ds.props.toArray(mods);
-        modsList.forEach( CSSClass => {
-          if (CSSClass && CSSClass.trim() !== '') {
-            classList[`--${CSSClass.trim()}`] = true;
-          }
-        });
-      }
+      const modsList = _ds.props.toArray(mods);
+      modsList.forEach( CSSClass => {
+        if (CSSClass && CSSClass.trim() !== '') {
+          classList[`--${CSSClass.trim()}`] = true;
+        }
+      });
       return classList;
     }
   },
@@ -237,40 +234,7 @@ const _ds = {
         left: box.left + window.pageXOffset - document.documentElement.clientLeft
       };
     },
-    throttle: (
-      func,
-      wait,
-      leading = false,
-      trailing = false,
-      context?
-    ) => {
-      let ctx, args, result;
-      let timeout = null;
-      let previous: any = 0;
-      const later = function () {
-        previous = new Date();
-        timeout = null;
-        result = func.apply(ctx, args);
-      };
-      return function (...rest) {
-        const now: any = new Date();
-        if (!previous && !leading) {
-          previous = now;
-        }
-        const remaining = wait - (now - previous);
-        ctx = context || this;
-        args = rest;
-        if (remaining <= 0) {
-          clearTimeout(timeout);
-          timeout = null;
-          previous = now;
-          result = func.apply(ctx, args);
-        } else if (!timeout && trailing) {
-          timeout = setTimeout(later, remaining);
-        }
-        return result;
-      };
-    },
+    
     waitUntil: (
       func: () => void,
       pollingRate = 100,

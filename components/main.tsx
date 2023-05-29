@@ -261,14 +261,14 @@ export class DSMainTest {
           
 
 
-          <ds-grid class="ds-button-list" cols="5" h-gap="10px" v-gap="1rem" type="fixed">
+          <ds-grid class="ds-button-list" params={{"cols": 5, "hGap": "10px", "vGap": "1rem", "type": "fixed"}}>
             <ds-grid-item class="ds-buttton-list__item">
               <ds-button id="button" mods={["solid", "primary", "xs"]} onDsButtonClick={() => (document.querySelector('#button') as any).mods = ["solid", "primary", "xl"] }>Click me !</ds-button>
             </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
+            <ds-grid-item class="ds-buttton-list__item" width={4}>
               <ds-button mods={["solid", "primary", "sm"]}>Click me !</ds-button>
             </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
+            <ds-grid-item class="ds-buttton-list__item" width={2}>
               <ds-button mods={["solid", "primary", "md"]} disabled>
                 <div slot="before">Before sdkjfh sjkdf</div>
                 <div>Click me !</div>
