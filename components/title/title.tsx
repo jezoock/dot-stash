@@ -7,7 +7,7 @@ import _ds from '../dot-stash';
 })
 export class DSTitle {
 
-	@Prop({ reflect: true }) mods: string | string[] = "default";
+	@Prop({ reflect: true }) mods: string | string[] = ["default"];
 	@Prop({ reflect: true }) group = "app";
 	@Prop({ reflect: true }) page: boolean;
 	@Prop({ reflect: true }) section: boolean;

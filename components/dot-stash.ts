@@ -1,11 +1,12 @@
 import { AnyHTMLElement } from "@stencil/core/internal";
+import { SassStyles } from "./interfaces/sass-styles";
 
 const _ds = {
   env: {
     touchSupport: () => 'touchend' in window,
   },
   css: {
-    set: ( pairs: CSSRule[], elements: HTMLElement[] ): void => {
+    set: ( pairs: Partial<CSSStyleDeclaration>, elements: HTMLElement[] ): void => {
       Object.keys( pairs ).forEach( prop => {
         elements.forEach( element => {
           element.style[prop] = pairs[prop];
@@ -30,17 +31,25 @@ const _ds = {
     toFloat: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseFloat(prop),
     toArray: <T = string>( prop: string | T[] ): T[] => typeof prop === 'string' ? prop.split(',') as T[]: prop,
     fromJSON: <T = string | Record<string, unknown> | unknown[]>( prop: T, rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
-    toClassList: ( mainClass: string, mods: string|string[] ): Record<string, boolean> => {
+    toClassList: ( mainClass: string|string[], mods?: string|string[] ): Record<string, boolean> => {
       const classList = {};
-      if( mainClass && mainClass.trim() !== '' ) {
-        classList[`${mainClass}`] = true;
-      }
-      const modsList = _ds.props.toArray(mods);
-      modsList.forEach( CSSClass => {
-        if (CSSClass && CSSClass.trim() !== '') {
-          classList[`--${CSSClass.trim()}`] = true;
+      _ds.props.toArray(mainClass).forEach( CSSClass => {
+        
+        const className = CSSClass.trim();
+        if (className !== '') {
+          classList[className] = true;
         }
       });
+      console.log(mainClass, _ds.props.toArray(mods));
+      if (mods) {
+        _ds.props.toArray(mods).forEach( CSSClass => {
+          
+          const className = CSSClass.trim();
+          if (className !== '') {
+            classList[`--${className}`] = true;
+          }
+        });
+      }
       return classList;
     }
   },
@@ -128,6 +137,19 @@ const _ds = {
   },
   tools: {
 
+    getStylesJSON: (): SassStyles => {
+      let style = '{}';
+    
+      if (window?.getComputedStyle?.(document.body, '::before')) {
+        const computedStyle = window.getComputedStyle(document.body, '::before');
+        style = (computedStyle.content !== 'none' && computedStyle.content) || '{}';
+      }
+      return JSON.parse(_ds.tools.removeQuotes(style));
+    },
+
+    removeQuotes: (quotedString: string): string => typeof quotedString === 'string' ?
+        quotedString = quotedString.replace(/^['"]+|\s+|\\|(;\s?})+|['"]$/g, '') : quotedString,
+
     loadScript: (scriptUrl: string, scriptId: string) => {
       return new Promise((resolve, reject) => {
         if (!document.querySelector(`#${scriptId}`)) {
@@ -151,10 +173,12 @@ const _ds = {
       const scrollY = (document.querySelector(element) as AnyHTMLElement).offsetTop - offset;
       window.scroll(0, scrollY);
     },
+
     getFileExtension: ( fileLocation: string ): string => {
       const filename = fileLocation.split('/').pop();
       return filename.substr(filename.lastIndexOf('.')+1,filename.length);
     },
+
     animate: (function () {
       const easings = {
         linear: t => t,
@@ -226,7 +250,8 @@ const _ds = {
         return promise;
       };
     })(),
-    getOffset: (el) => {
+
+    getOffset: (el: AnyHTMLElement) => {
       const box = el.getBoundingClientRect();
     
       return {

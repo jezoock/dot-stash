@@ -38,7 +38,7 @@ export class DSSlider {
   @Element() host: HTMLDivElement;
 
   @Prop({ mutable: true, reflect: true }) sliderId: string;
-	@Prop({ mutable: true, reflect: true }) mods: string | string[] = "";
+	@Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
 	@Prop({ mutable: true, reflect: true }) dsParams: DSSliderPrams | string = {};
 	@Prop({ mutable: true, reflect: true }) type = "sld";
 
@@ -131,7 +131,7 @@ export class DSSlider {
 
 			if( this.isScrollable ) {
 				if(this.params.autoHeight && this.params.orientation === "hrt" ) {
-          _ds.css.set({ height: this.itemHeight }, [this.sliderContener]);
+          _ds.css.set({ height: `${this.itemHeight}px` } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
         }
         this.step = this.params.step;
         if( this.params.menu ) {
@@ -261,7 +261,7 @@ export class DSSlider {
         
       }
       
-      _ds.css.set({opacity: 1}, [this.sliderContener]);
+      _ds.css.set({opacity: "1"} as Partial<CSSStyleDeclaration>, [this.sliderContener]);
     
     }
     
@@ -279,8 +279,8 @@ export class DSSlider {
       this.isTransitionStarted = true;
 			this.items = this.getListItems();
 
-      const from: Record<string, unknown> = { transform: 'translate3d(0,0,0)' };
-      const to: Record<string, unknown> = {};
+      const from: Partial<CSSStyleDeclaration> = { transform: 'translate3d(0,0,0)' };
+      const to: Partial<CSSStyleDeclaration> = {};
     
       if( this.params.orientation === "vtc" ) {
         from.height = `${this.listDim + this.itemHeight*step}px`;
@@ -334,8 +334,8 @@ export class DSSlider {
       this.isTransitionStarted = true;
       this.items = this.getListItems();
 
-      const from: Record<string, unknown> = {};
-      const to: Record<string, unknown> = { transform: 'translate3d(0,0,0)' };
+      const from: Partial<CSSStyleDeclaration> = {};
+      const to: Partial<CSSStyleDeclaration> = { transform: 'translate3d(0,0,0)' };
 
       if( this.params.orientation === "vtc" ) {
         from.height = `${this.listDim + this.itemHeight*step}px`;

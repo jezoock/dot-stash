@@ -44,7 +44,7 @@ export class DSGrid {
   @Watch('params')
   paramsWatcher(newParams: string | DSGridParams) {
     if (typeof newParams !== "undefined") {
-      this.options = _ds.props.fromJSON<string | DSGridParams>(newParams);
+      this.options = { ...this.options, ..._ds.props.fromJSON<string | DSGridParams>(newParams)};
       this.processChildren();
     }
   }

@@ -1,6 +1,6 @@
 import { Component, h, Method } from '@stencil/core/internal';
 
-const mapStyles: google.maps.MapTypeStyle[] = [
+/* const mapStyles: google.maps.MapTypeStyle[] = [
   {
       "featureType": "water",
       "elementType": "geometry.fill",
@@ -183,7 +183,7 @@ const mapStyles: google.maps.MapTypeStyle[] = [
           }
       ]
   }
-];
+]; */
 
 @Component({
   tag: 'ds-main',
@@ -260,8 +260,23 @@ export class DSMainTest {
             </ds-title>
           
 
-
-          <ds-grid class="ds-button-list" params={{"cols": 5, "hGap": "10px", "vGap": "1rem", "type": "fixed"}}>
+<ds-rsp>
+          <ds-grid
+            data-use-rsp
+            class="ds-button-list"
+            params={{"cols": 5, "hGap": "10px", "vGap": "1rem", "type": "fluid"}}
+            data-rsp={JSON.stringify({
+              'sm': {
+                params: {"cols": 1, "hGap": "10px", "vGap": "1rem"}
+              },
+              'md': {
+                params: {"cols": 3, "hGap": "30px", "vGap": "3rem"}
+              },
+              'lg': {
+                params: {"cols": 5, "hGap": "50px", "vGap": "5rem"}
+              }
+            })}
+          >
             <ds-grid-item class="ds-buttton-list__item">
               <ds-button id="button" mods={["solid", "primary", "xs"]} onDsButtonClick={() => (document.querySelector('#button') as any).mods = ["solid", "primary", "xl"] }>Click me !</ds-button>
             </ds-grid-item>
@@ -277,18 +292,7 @@ export class DSMainTest {
             </ds-grid-item>
             <ds-grid-item class="ds-buttton-list__item">
               <ds-button
-                data-use-rsp
-                data-rsp={{
-                'sm': {
-                  mods: ["solid", "primary", "sm"]
-                },
-                'md': {
-                  mods: ["solid", "primary", "md"]
-                },
-                'lg': {
-                  mods: ["solid", "primary", "lg"]
-                }
-              }} mods={["solid", "primary", "lg"]}>Mods Click me !</ds-button>
+                mods={["solid", "primary", "lg"]}>Mods Click me !</ds-button>
             </ds-grid-item>
             <ds-grid-item class="ds-buttton-list__item">
               <ds-button mods={["solid", "primary", "xl"]}>Click me !</ds-button>
@@ -324,6 +328,7 @@ export class DSMainTest {
               <ds-button mods={["outlined", "primary", "xl"]}>Click me !</ds-button>
             </ds-grid-item>
           </ds-grid>
+          </ds-rsp>
         </ds-block>
       </div>
     );

@@ -9,19 +9,20 @@ import { DSButtonType } from "./button/button";
 import { DSGridParams } from "./grid/grid";
 import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
-import { Breakpoint } from "./responsive/responsive";
+import { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
 export { DSGridParams } from "./grid/grid";
 export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
-export { Breakpoint } from "./responsive/responsive";
+export { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles";
 export { DSSliderPrams } from "./slider/slider";
 export namespace Components {
     interface DsBlock {
-        "dsMods": string | string[];
-        "dsTag": string;
-        "dsType": string;
+        "mods": string | string[];
+        "tag": string;
+        "type": string;
+        "useStyles": string | boolean;
     }
     interface DsButton {
         "color": string;
@@ -129,8 +130,16 @@ export namespace Components {
     interface DsRsp {
         "breakpointsFromProp": string | Record<string, unknown>;
         "debounceDelay": number;
-        "getData": () => Promise<{ breakpoints: Breakpoint[]; }>;
+        /**
+          * Get the current breakpoint
+          * @param rawBreakpoints JSON Object containings all breakpoints
+          * @returns current breakpoint ( label & limits )
+         */
+        "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
+        "getBreakpoints": () => Promise<Breakpoints>;
+        "getData": () => Promise<{ breakpoints: Breakpoints; }>;
         "getSubscribers": () => Promise<Element[]>;
+        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
         "propertyName": string;
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
@@ -361,9 +370,10 @@ declare global {
 }
 declare namespace LocalJSX {
     interface DsBlock {
-        "dsMods"?: string | string[];
-        "dsTag"?: string;
-        "dsType"?: string;
+        "mods"?: string | string[];
+        "tag"?: string;
+        "type"?: string;
+        "useStyles"?: string | boolean;
     }
     interface DsButton {
         "color"?: string;

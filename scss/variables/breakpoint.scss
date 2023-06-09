@@ -1,4 +1,4 @@
-$grid-min: '319px';
+/* $grid-min: '319px';
 
 $grid-xxs-min: '320px';
 $grid-xxs-max: '364px';
@@ -21,7 +21,8 @@ $grid-xl-max: '1439px';
 $grid-xxl-min: '1440px';
 $grid-xxl-max: '1599px';
 
-$grid-max: '1600px';
+$grid-max: '1600px'; 
+
 
 $breakpoints: (
   min: $grid-min,
@@ -40,7 +41,8 @@ $breakpoints: (
   xxl-min: $grid-xxl-min,
   xxl-max: $grid-xxl-max,
   max: $grid-max,
-);
+);*/
+
 /* 
 $grid-xxs: '320px';
 $grid-xs: '365px';
@@ -92,3 +94,40 @@ $breakpoints-group: (
 );
 
 */
+
+$grid-xxs: 320px;
+$grid-xs: 576px;
+$grid-sm: 768px;
+$grid-md: 992px;
+$grid-lg: 1200px;
+$grid-xl: 1400px;
+$grid-xxl: 1600px;
+
+$breakpoints: (
+  min: $grid-xxs - 1,
+  xxs: $grid-xxs,
+  xs: $grid-xs,
+  sm: $grid-sm,
+  md: $grid-md,
+  lg: $grid-lg,
+  xl: $grid-xl,
+  xxl: $grid-xxl
+);
+
+/* $breakpoints: (
+  xxs-min: $grid-xxs-min,
+  xxs-max: $grid-xxs-max,
+  xs-min: $grid-xs-min,
+  xs-max: $grid-xs-max,
+  sm-min: $grid-sm-min,
+  sm-max: $grid-sm-max,
+  md-min: $grid-md-min,
+  md-max: $grid-md-max,
+  lg-min: $grid-lg-min,
+  lg-max: $grid-lg-max,
+  xl-min: $grid-xl-min,
+  xl-max: $grid-xl-max,
+  xxl-min: $grid-xxl-min,
+  xxl-max: $grid-xxl-max,
+  max: $grid-max,
+); */

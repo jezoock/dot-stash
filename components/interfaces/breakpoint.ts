@@ -1,5 +1,7 @@
-export default interface Breakpoint {
+/* export interface Breakpoint {
   label: string;
-  group?: string;
   limits: number[];
 }
+export default interface RawBreakpoint {
+  [label: string]: number;
+} */

@@ -30,14 +30,7 @@ export class DSButton {
 
   @Watch('mods')
   modsPropChangeHanler(newMods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList(
-      'ds-button',
-      [
-        ..._ds.props.toArray(newMods),
-        this.styles,
-        this.color
-      ]
-    );
+    this.CSSClassList = this.generateClassList(newMods);
   }
 
   @Event() dsButtonClick: EventEmitter;
@@ -47,16 +40,23 @@ export class DSButton {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList(
-      'ds-button',
-      [
-        ..._ds.props.toArray(this.mods),
-        this.styles,
-        this.color,
-      ]
-    );
+    this.CSSClassList = this.generateClassList(this.mods);
     this.buttonType = this.type === 'trigger' ? 'button' : this.type;
     this.isDisabled = _ds.props.isTrue(this.disabled);
+  }
+
+  generateClassList(modifiers: string|string[]) {
+    const newModifiers = _ds.props.toArray(modifiers);
+    if (typeof this.styles === "string") {
+      newModifiers.push(this.styles);
+    }
+    if (typeof this.color === "string") {
+      newModifiers.push(this.color);
+    }
+    return _ds.props.toClassList(
+      'ds-button',
+      newModifiers
+    );
   }
 
   buttonClickHandler(event: MouseEvent) {

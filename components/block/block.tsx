@@ -7,27 +7,28 @@ import _ds from '../dot-stash';
 })
 export class DSBlock {
 
-	@Prop() dsTag = "div";
-	@Prop() dsType = "";
-	@Prop() dsMods: string | string[] = "";
-
 	CSSClassList: Record<string, boolean>;
 	blockName = "ds-block";
+	
+	@Prop() useStyles: string | boolean;
+	@Prop() tag = "div";
+	@Prop() type = "";
+	@Prop() mods: string | string[] = [];
 
-	@Watch('dsMods')
-	dsModsWatcher(newMods: string | string[]) {
+	@Watch('mods')
+	modsWatcher(newMods: string | string[]) {
 		this.CSSClassList = _ds.props.toClassList(this.blockName, newMods);
 	}
 	
 	componentWillLoad() {
-		if (this.dsType) {
-			this.blockName = `ds-${this.dsType}-block`;
+		if (this.type) {
+			this.blockName = `ds-${this.type}-block`;
 		}
-		this.CSSClassList = _ds.props.toClassList(this.blockName, this.dsMods);
+		this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);
 	}
 
 	render() {
-		const { dsTag: Tag }: { dsTag: string} = this;
+		const { tag: Tag } = this;
 
 		return (
 			<Tag

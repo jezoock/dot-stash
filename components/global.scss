@@ -1,20 +1,11 @@
-.ds-title {
-  &.--default {
-    font-size: inherit;
-  }
-  &.--main {
-    color: red;
-  }
-}
+@import '../scss/theme.scss';
 
-.ds-title  {
-  &:host-context(.ds-title__content) {
-    color: green;
-
+body {
+  margin: 0;
+  padding: 0;
+  
+  &::before {
+    @include ds-theme();
   }
-  & span {
-    color: red;
-  }
-  & > div {
-  }
+  font-family: "Now";
 }

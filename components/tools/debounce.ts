@@ -1,11 +1,12 @@
-const debounce = (callback, wait) => {
-  let timeoutId = null;
-  return (...args) => {
-    window.clearTimeout(timeoutId);
-    timeoutId = window.setTimeout(() => {
-      /* callback.apply(null, args); */
-      callback(...args);
-    }, wait);
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+      const later = () => {
+          timeout = null;
+          func.apply(this, args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
   };
 }
 
