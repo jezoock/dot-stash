@@ -7,7 +7,7 @@ import _ds from '../dot-stash';
 })
 export class DSSection {
 
-  @Prop({ mutable: true, reflect: true}) mods: string | string[] = "";
+  @Prop({ mutable: true, reflect: true}) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true}) background: string;
 
   CSSClassList: Record<string, boolean>;
