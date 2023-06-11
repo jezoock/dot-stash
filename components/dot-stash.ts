@@ -34,16 +34,13 @@ const _ds = {
     toClassList: ( mainClass: string|string[], mods?: string|string[] ): Record<string, boolean> => {
       const classList = {};
       _ds.props.toArray(mainClass).forEach( CSSClass => {
-        
         const className = CSSClass.trim();
         if (className !== '') {
           classList[className] = true;
         }
       });
-      console.log(mainClass, _ds.props.toArray(mods));
       if (mods) {
         _ds.props.toArray(mods).forEach( CSSClass => {
-          
           const className = CSSClass.trim();
           if (className !== '') {
             classList[`--${className}`] = true;

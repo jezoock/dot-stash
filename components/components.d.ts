@@ -19,10 +19,18 @@ export { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles
 export { DSSliderPrams } from "./slider/slider";
 export namespace Components {
     interface DsBlock {
+        /**
+          * List of modifiers
+         */
         "mods": string | string[];
+        /**
+          * Main container tag
+         */
         "tag": string;
+        /**
+          * Use to derivate the main class name
+         */
         "type": string;
-        "useStyles": string | boolean;
     }
     interface DsButton {
         "color": string;
@@ -138,6 +146,7 @@ export namespace Components {
         "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
         "getBreakpoints": () => Promise<Breakpoints>;
         "getData": () => Promise<{ breakpoints: Breakpoints; }>;
+        "getParamsForBreakpoint": <T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T; }) => Promise<T>;
         "getSubscribers": () => Promise<Element[]>;
         "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
         "propertyName": string;
@@ -370,10 +379,18 @@ declare global {
 }
 declare namespace LocalJSX {
     interface DsBlock {
+        /**
+          * List of modifiers
+         */
         "mods"?: string | string[];
+        /**
+          * Main container tag
+         */
         "tag"?: string;
+        /**
+          * Use to derivate the main class name
+         */
         "type"?: string;
-        "useStyles"?: string | boolean;
     }
     interface DsButton {
         "color"?: string;

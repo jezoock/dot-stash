@@ -104,6 +104,24 @@ export class DSRsp {
     return currentBreakpoint;
   }
 
+  @Method()
+  async getParamsForBreakpoint<T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T}) {
+    let currentBreakpointParams: T;
+    const {label, limits: [,max]} = currentBreakpoint;
+    for (const breakpointLabel in params) {
+      if (label === breakpointLabel) {
+        return params[breakpointLabel];
+      }
+      const [,paramsMax] = this.breakpoints[breakpointLabel];
+      if (paramsMax > max) {
+        return currentBreakpointParams || params[breakpointLabel];
+      } else {
+        currentBreakpointParams = params[breakpointLabel];
+      }
+    }
+    return currentBreakpointParams;
+  }
+
   constructor() {
     this.notifySubscribers = this.notifySubscribers.bind(this);
     this.breakpointChangeHandler = this.breakpointChangeHandler.bind(this);
@@ -150,17 +168,16 @@ export class DSRsp {
     subscribers.forEach(element => element.dispatchEvent(event));
   }
 
-  breakpointChangeHandler(event: CustomEvent) {
+  async breakpointChangeHandler(event: CustomEvent<{current: Breakpoint}>) {
     const {
       target: element,
       detail: { current },
     } = event;
-    /* const attributeValue = (element as Element).getAttribute(this.propertyName); */
-    /* const params: Record<string, unknown> = _ds.props.fromJSON(attributeValue) || {}; */
+    const attributeValue = (element as Element).getAttribute(this.propertyName);
+    const params: { [breakpointLabel: string]: Element} = _ds.props.fromJSON(attributeValue) || {};
+    
     // Calculate limits from parameters
-    const breakpointParams = ''/* getParamsForBreakpoint(params, current, this.breakpoints) */;
-
-    console.log(current)
+    const breakpointParams = await this.getParamsForBreakpoint<Element>(current, params);
 
     if (breakpointParams) {
       Object.entries(breakpointParams).map(([prop, value]) => {

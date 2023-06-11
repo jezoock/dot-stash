@@ -10,9 +10,19 @@ export class DSBlock {
 	CSSClassList: Record<string, boolean>;
 	blockName = "ds-block";
 	
-	@Prop() useStyles: string | boolean;
+	/**
+	 * Main container tag
+	 */
 	@Prop() tag = "div";
+
+	/**
+	 * Use to derivate the main class name
+	 */
 	@Prop() type = "";
+
+	/**
+	 * List of modifiers
+	 */
 	@Prop() mods: string | string[] = [];
 
 	@Watch('mods')
