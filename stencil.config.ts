@@ -4,6 +4,7 @@ import { sass } from '@stencil/sass';
 export const config: Config = {
   namespace: 'dot-stash',
   srcDir: 'components',
+  minifyJs: true,
   plugins: [
     sass({
       includePaths: ['components/**/*.scss'],

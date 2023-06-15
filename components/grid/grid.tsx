@@ -116,6 +116,8 @@ export class DSGrid {
         class={{
           ...this.CSSClassList,
           [`--${this.options.type}`]: true,
+          [`--align-${this.options.align}`]: true,
+          [`--v-align-${this.options.vAlign}`]: true,
         }}
       >
         <div class="ds-grid__row">
