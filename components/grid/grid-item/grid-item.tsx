@@ -11,13 +11,13 @@ export class DSGridItem {
   useRatio = false;
 
   @Element() container: HTMLDivElement;
-  @Prop() dsRatio: number | string;
+  @Prop({ reflect: true, attribute: "ratio"}) ratioFromProps: number | string;
   @Prop() width = 1;
 
-  @Watch('dsRatio')
-  ratioWatcher(newRatio: string | number) {
+  @Watch('ratioFromProps')
+  ratioPropsWatcher(ratio: number) {
     this.useRatio = true;
-    this.ratio = _ds.props.toNumber(newRatio);
+    this.ratio = _ds.props.toNumber(ratio);
   }
 
   @Method()
@@ -33,8 +33,8 @@ export class DSGridItem {
   }
 
   componentWillLoad() {
-    if (this.dsRatio) {
-      const ratio = _ds.props.toNumber(this.dsRatio);
+    if (this.ratioFromProps) {
+      const ratio = _ds.props.toNumber(this.ratioFromProps);
       if (ratio > 0) {
         this.useRatio = true;
         this.ratio = ratio * 100;

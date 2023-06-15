@@ -7,30 +7,30 @@ import _ds from '../dot-stash';
   styleUrl: 'video.scss'
 })
 export class DSVideo {
-
-  @Element() container: HTMLDivElement;
-
-  @Prop({mutable: true, reflect: true}) mods: string | string[] = [];
-  @Prop({mutable: true, reflect: true}) sources: string | string[] = [];
-  @Prop({mutable: true, reflect: true}) poster: string;
-  @Prop({mutable: true, reflect: true}) autoplay: string | boolean = false;
-  @Prop({mutable: true, reflect: true}) controls: string | boolean = false;
-  
-  @State() isPlaying = false;
-  @State() isPaused = false;
-  @State() isMuted = false;
-  
   isReady = false;
   CSSClassList: Record<string, boolean>;
   useControls = false;
   playOnload = false;
   videoSources: string[];
 
+  @Element() container: HTMLDivElement;
+
+  @Prop({ mutable: true, reflect: true }) mods: string[] = [];
+  @Prop({ mutable: true, reflect: true }) sources: string[] = [];
+  @Prop({ mutable: true, reflect: true }) poster: string;
+  @Prop({ mutable: true, reflect: true }) autoplay = false;
+  @Prop({ mutable: true, reflect: true }) controls = false;
+  
+  @State() isPlaying = false;
+  @State() isPaused = false;
+  @State() isMuted = false;
+  
+
   //#region PROP WATCHERS
 
   @Watch('mods')
-  dsModsWatcher( newMods ) {
-    this.CSSClassList = _ds.props.toClassList("ds-video", newMods);
+  dsModsWatcher( mods: string[] ) {
+    this.CSSClassList = _ds.props.toClassList("ds-video", _ds.props.toArray(mods));
   }
 
   //#endregion
@@ -89,7 +89,7 @@ export class DSVideo {
   }
   
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-video", this.mods);
+    this.CSSClassList = _ds.props.toClassList("ds-video", _ds.props.toArray(this.mods));
     this.useControls = _ds.props.isTrue(this.controls);
     this.playOnload = _ds.props.isTrue(this.autoplay);
     this.videoSources = _ds.props.toArray(this.sources);
@@ -146,13 +146,13 @@ export class DSVideo {
         <video
           class="ds-video__player"
           poster={this.poster}
-          controls={this.useControls && this.isReady as boolean}
-          muted={this.autoplay as boolean}
-          autoplay={this.autoplay as boolean}
+          controls={this.useControls && this.isReady}
+          muted={this.autoplay}
+          autoplay={this.autoplay}
           onPlay={this.playButtonclickHandler}
           onPause={this.pauseButtonclickHandler}
         >
-          {(this.videoSources as string[]).map( (source: string) => 
+          {this.videoSources.map( source => 
             <source
               src={source}
               type={`video/${_ds.tools.getFileExtension(source)}`}

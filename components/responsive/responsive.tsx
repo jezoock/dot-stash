@@ -16,7 +16,7 @@ export class DSRsp {
   @Prop() debounceDelay = 500;
   @Prop() subscriberSelector = '[data-use-rsp]:not([data-rsp-init])';
   @Prop() propertyName = 'data-rsp';
-  @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: string | Record<string, unknown>;
+  @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: Record<string, number>;
 
   @Method()
   async subscribe(target: Element) {
@@ -128,12 +128,11 @@ export class DSRsp {
     
   }
 
-  componentWillLoad() {
-   // this.breakpoints = _ds.props.fromJSON(this.breakpointsFromProp);
+  async componentWillLoad() {
+    this.breakpoints = this.breakpointsFromProp ? _ds.props.fromJSON(this.breakpointsFromProp) : await this.getBreakpoints();
   }
 
   async componentDidLoad() {
-    this.breakpoints = await this.getBreakpoints();
     this.waitingSubscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
     window.addEventListener('resize', debounce(this.notifySubscribers, this.debounceDelay), false);
     this.notifySubscribers();

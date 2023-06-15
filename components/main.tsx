@@ -79,16 +79,19 @@ export class DSMainTest {
           <ds-grid
             data-use-rsp
             class="ds-button-list"
-            params={{"cols": 5, "hGap": "10px", "vGap": "1rem", "type": "fluid"}}
+            cols={5}
+            hGap="10px"
+            vGap="1rem"
+            type="fixed"
             data-rsp={JSON.stringify({
               'sm': {
-                params: {"cols": 1, "hGap": "10px", "vGap": "1rem"}
+                "cols": 1, "hGap": "10px", "vGap": "1rem"
               },
               'md': {
-                params: {"cols": 3, "hGap": "30px", "vGap": "3rem"}
+                "cols": 3, "hGap": "30px", "vGap": "3rem"
               },
               'lg': {
-                params: {"cols": 5, "hGap": "50px", "vGap": "5rem"}
+                "cols": 5, "hGap": "50px", "vGap": "5rem"
               }
             })}
           >

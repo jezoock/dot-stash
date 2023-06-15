@@ -23,11 +23,11 @@ export class DSBlock {
 	/**
 	 * List of modifiers
 	 */
-	@Prop() mods: string | string[] = [];
+	@Prop() mods: string[] = [];
 
 	@Watch('mods')
-	modsWatcher(newMods: string | string[]) {
-		this.CSSClassList = _ds.props.toClassList(this.blockName, newMods);
+	modsWatcher(mods: string[]) {
+		this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
 	}
 	
 	componentWillLoad() {

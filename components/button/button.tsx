@@ -1,5 +1,5 @@
 import { Component, h, Prop, Watch, Event } from '@stencil/core/internal';
-import { Element, EventEmitter, Host, HostElement } from '@stencil/core/internal';
+import { EventEmitter } from '@stencil/core/internal';
 import _ds from '../dot-stash';
 
 export type DSButtonType = 'button' | 'submit' | 'trigger';
@@ -10,34 +10,28 @@ export type ButtonType = 'button' | 'submit';
   styleUrl: 'button.scss',
 })
 export class DSButton {
-  @Element() button: HostElement;
-
-  @Prop() type: DSButtonType = 'button';
-  @Prop() mods: string | string[] = [];
-  @Prop() url: string;
-  @Prop() styles: string;
-  @Prop() color: string;
-  @Prop() disabled: string | boolean;
-
   CSSClassList: Record<string, boolean>;
   buttonType: ButtonType;
   isDisabled: boolean;
 
+  @Prop({ reflect: true, mutable: true }) type: DSButtonType = 'button';
+  @Prop({ reflect: true, mutable: true }) mods: string[] = [];
+  @Prop({ reflect: true, mutable: true }) url: string;
+  @Prop({ reflect: true, mutable: true }) styles: string;
+  @Prop({ reflect: true, mutable: true }) color: string;
+  @Prop({ reflect: true, mutable: true }) disabled: boolean;
+
   @Watch('disabled')
-  disabledPropChangeHandler(newDisabled: string | boolean) {
-    this.isDisabled = _ds.props.isTrue(newDisabled);
+  disabledPropChangeHandler(isDisabled: boolean) {
+    this.isDisabled = _ds.props.isTrue(isDisabled);
   }
 
   @Watch('mods')
-  modsPropChangeHanler(newMods: string | string[]) {
-    this.CSSClassList = this.generateClassList(newMods);
+  modsPropChangeHanler(mods: string[]) {
+    this.CSSClassList = this.generateClassList(mods);
   }
 
-  @Event() dsButtonClick: EventEmitter;
-
-  constructor() {
-    this.buttonClickHandler = this.buttonClickHandler.bind(this);
-  }
+  @Event() buttonClick: EventEmitter;
 
   componentWillLoad() {
     this.CSSClassList = this.generateClassList(this.mods);
@@ -45,7 +39,7 @@ export class DSButton {
     this.isDisabled = _ds.props.isTrue(this.disabled);
   }
 
-  generateClassList(modifiers: string|string[]) {
+  generateClassList(modifiers: string[]) {
     const newModifiers = _ds.props.toArray(modifiers);
     if (typeof this.styles === "string") {
       newModifiers.push(this.styles);
@@ -59,8 +53,8 @@ export class DSButton {
     );
   }
 
-  buttonClickHandler(event: MouseEvent) {
-    this.dsButtonClick.emit();
+  buttonClickHandler = (event: MouseEvent) => {
+    this.buttonClick.emit();
     if (this.buttonType === 'button') {
       event.preventDefault();
       event.stopPropagation();
@@ -72,7 +66,6 @@ export class DSButton {
 
   render() {
     return (
-      <Host>
       <button 
         class={this.CSSClassList}
         type={this.buttonType}
@@ -82,7 +75,7 @@ export class DSButton {
         <slot name="before" />
         <slot />
         <slot name="after" />
-      </button></Host>
+      </button>
     );
   }
 }

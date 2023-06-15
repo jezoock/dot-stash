@@ -15,19 +15,17 @@ declare global {
   styleUrl: 'map.scss'
 })
 export class DSMap {
-
-  @Element() mapContainer: HTMLDivElement;
-
-  @Prop() locations: Location[] | string;
-  @Prop() apiKey: string;
-  @Prop() params: string | GMapsParams;
-  
   unregisteredMarkers: MapMarkerOptions[] = [];
   markers: google.maps.Marker[] = [];
   map: google.maps.Map;
   ready = false;
-
   mapParams: GMapsParams;
+
+  @Element() mapContainer: HTMLDivElement;
+
+  @Prop() locations: Location[];
+  @Prop() apiKey: string;
+  @Prop() params: GMapsParams;
 
   @Method()
   async getTilt(): Promise<number> {
@@ -180,7 +178,7 @@ export class DSMap {
   componentWillLoad() {
     this.mapParams = {
       ...defaultMapParams,
-      ...(typeof this.params === "string" ? _ds.props.fromJSON(this.params) : this.params)
+      ..._ds.props.fromJSON(this.params)
     };
   }
 

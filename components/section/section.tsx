@@ -7,29 +7,28 @@ import _ds from '../dot-stash';
 })
 export class DSSection {
 
-  @Prop({ mutable: true, reflect: true}) mods: string | string[] = [];
+  @Prop({ mutable: true, reflect: true}) mods: string[] = [];
   @Prop({ mutable: true, reflect: true}) background: string;
 
   CSSClassList: Record<string, boolean>;
 
   @Watch('mods')
-  modsWatcher( newMods ) {
-    this.CSSClassList = _ds.props.toClassList("ds-section", newMods);
+  modsWatcher( mods: string[] ) {
+    this.CSSClassList = _ds.props.toClassList("ds-section", _ds.props.toArray(mods));
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-section", this.mods);
+    this.CSSClassList = _ds.props.toClassList("ds-section", _ds.props.toArray(this.mods));
   }
   
   render() {
-    const style = {} as Record<string, unknown>;
+    const componentProps = {class: this.CSSClassList } as Record<string, unknown>;
     if (this.background) {
-      style.style = { backgroundImage: `url(${this.background})` };
+      componentProps.style = { backgroundImage: `url(${this.background})` };
     }
     return (
       <div
-        class={this.CSSClassList}
-        {...style}
+        {...componentProps}
       >
         <div class="ds-section__content">
           <slot />

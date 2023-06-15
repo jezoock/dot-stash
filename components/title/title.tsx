@@ -6,23 +6,23 @@ import _ds from '../dot-stash';
 	styleUrl: 'title.scss',
 })
 export class DSTitle {
+	CSSClassList: Record<string, boolean>;
 
-	@Prop({ reflect: true }) mods: string | string[] = ["default"];
+	@Prop({ reflect: true }) mods: string[] = ["default"];
 	@Prop({ reflect: true }) group = "app";
 	@Prop({ reflect: true }) page: boolean;
 	@Prop({ reflect: true }) section: boolean;
 	@Prop({ reflect: true }) block: boolean;
 	@Prop({ reflect: true }) sub: boolean;
 
-	CSSClassList: Record<string, boolean>;
 
 	@Watch('mods')
-  modsWatcher( newMods ) {
-    this.CSSClassList = _ds.props.toClassList("ds-title", newMods);
+  modsWatcher( mods: string[] ) {
+    this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(mods));
   }
 
 	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList("ds-title", this.mods);
+		this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(this.mods));
 	}
 	
 	render() {

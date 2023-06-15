@@ -22,7 +22,7 @@ export namespace Components {
         /**
           * List of modifiers
          */
-        "mods": string | string[];
+        "mods": string[];
         /**
           * Main container tag
          */
@@ -34,8 +34,8 @@ export namespace Components {
     }
     interface DsButton {
         "color": string;
-        "disabled": string | boolean;
-        "mods": string | string[];
+        "disabled": boolean;
+        "mods": string[];
         "styles": string;
         "type": DSButtonType;
         "url": string;
@@ -57,8 +57,8 @@ export namespace Components {
         "vGap": string;
     }
     interface DsGridItem {
-        "dsRatio": number | string;
         "getWidth": () => Promise<number>;
+        "ratioFromProps": number | string;
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
         "width": number;
     }
@@ -106,8 +106,8 @@ export namespace Components {
         "getTilt": () => Promise<number>;
         "getZoom": () => Promise<number>;
         "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
-        "locations": Location[] | string;
-        "params": string | GMapsParams;
+        "locations": Location[];
+        "params": GMapsParams;
         "setMapStyles": (name: string) => Promise<void>;
         "setTilt": (tilt?: number) => Promise<void>;
         "setZoom": (zoomLevel: number) => Promise<void>;
@@ -143,7 +143,7 @@ export namespace Components {
         "dsMods": string|string[];
     }
     interface DsRsp {
-        "breakpointsFromProp": string | Record<string, unknown>;
+        "breakpointsFromProp": Record<string, number>;
         "debounceDelay": number;
         /**
           * Get the current breakpoint
@@ -162,7 +162,7 @@ export namespace Components {
     }
     interface DsSection {
         "background": string;
-        "mods": string | string[];
+        "mods": string[];
     }
     interface DsSlider {
         "dsParams": DSSliderPrams | string;
@@ -188,20 +188,20 @@ export namespace Components {
     interface DsTitle {
         "block": boolean;
         "group": string;
-        "mods": string | string[];
+        "mods": string[];
         "page": boolean;
         "section": boolean;
         "sub": boolean;
     }
     interface DsVideo {
-        "autoplay": string | boolean;
-        "controls": string | boolean;
-        "mods": string | string[];
+        "autoplay": boolean;
+        "controls": boolean;
+        "mods": string[];
         "mute": () => Promise<void>;
         "pause": () => Promise<void>;
         "play": () => Promise<void>;
         "poster": string;
-        "sources": string | string[];
+        "sources": string[];
         "stop": () => Promise<void>;
         "unmute": () => Promise<void>;
     }
@@ -389,7 +389,7 @@ declare namespace LocalJSX {
         /**
           * List of modifiers
          */
-        "mods"?: string | string[];
+        "mods"?: string[];
         /**
           * Main container tag
          */
@@ -401,9 +401,9 @@ declare namespace LocalJSX {
     }
     interface DsButton {
         "color"?: string;
-        "disabled"?: string | boolean;
-        "mods"?: string | string[];
-        "onDsButtonClick"?: (event: DsButtonCustomEvent<any>) => void;
+        "disabled"?: boolean;
+        "mods"?: string[];
+        "onButtonClick"?: (event: DsButtonCustomEvent<any>) => void;
         "styles"?: string;
         "type"?: DSButtonType;
         "url"?: string;
@@ -425,7 +425,7 @@ declare namespace LocalJSX {
         "vGap"?: string;
     }
     interface DsGridItem {
-        "dsRatio"?: number | string;
+        "ratioFromProps"?: number | string;
         "width"?: number;
     }
     interface DsInfoWindow {
@@ -462,8 +462,8 @@ declare namespace LocalJSX {
     }
     interface DsMap {
         "apiKey"?: string;
-        "locations"?: Location[] | string;
-        "params"?: string | GMapsParams;
+        "locations"?: Location[];
+        "params"?: GMapsParams;
     }
     interface DsMapLocation {
         "lat"?: number;
@@ -495,14 +495,14 @@ declare namespace LocalJSX {
         "dsMods"?: string|string[];
     }
     interface DsRsp {
-        "breakpointsFromProp"?: string | Record<string, unknown>;
+        "breakpointsFromProp"?: Record<string, number>;
         "debounceDelay"?: number;
         "propertyName"?: string;
         "subscriberSelector"?: string;
     }
     interface DsSection {
         "background"?: string;
-        "mods"?: string | string[];
+        "mods"?: string[];
     }
     interface DsSlider {
         "dsParams"?: DSSliderPrams | string;
@@ -530,17 +530,17 @@ declare namespace LocalJSX {
     interface DsTitle {
         "block"?: boolean;
         "group"?: string;
-        "mods"?: string | string[];
+        "mods"?: string[];
         "page"?: boolean;
         "section"?: boolean;
         "sub"?: boolean;
     }
     interface DsVideo {
-        "autoplay"?: string | boolean;
-        "controls"?: string | boolean;
-        "mods"?: string | string[];
+        "autoplay"?: boolean;
+        "controls"?: boolean;
+        "mods"?: string[];
         "poster"?: string;
-        "sources"?: string | string[];
+        "sources"?: string[];
     }
     interface DsVideoPlay {
         "disabled"?: string | boolean;
