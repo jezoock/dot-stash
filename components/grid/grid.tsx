@@ -19,7 +19,7 @@ export interface DSGridParams {
   vGap: string;
   align: DSGridAlignment;
   vAlign: DSGridAlignment;
-  cellRatio: number;
+  cellRatio?: number;
 }
 
 @Component({
@@ -32,8 +32,16 @@ export class DSGrid {
   
   @Element() container: HTMLDivElement;
   
-  @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
-  @Prop() params: DSGridParams | string;
+  @Prop() params: DSGridParams;
+  @Prop({ mutable: true, reflect: true }) mods: string[] = [];
+  @Prop({ mutable: true, reflect: true }) type: DSGridType = 'fixed';
+  @Prop({ mutable: true, reflect: true }) cols = 1;
+  @Prop({ mutable: true, reflect: true }) hGap = '0';
+  @Prop({ mutable: true, reflect: true }) vGap = '0';
+  @Prop({ mutable: true, reflect: true }) align: DSGridAlignment = "start";
+  @Prop({ mutable: true, reflect: true }) vAlign: DSGridAlignment = "start";
+  @Prop({ mutable: true, reflect: true }) cellRatio: number;
+
 
   @Watch('mods')
   modsWatcher(newMods: string | string[]) {
@@ -41,17 +49,57 @@ export class DSGrid {
     this.processChildren();
   }
 
-  @Watch('params')
-  paramsWatcher(newParams: string | DSGridParams) {
-    if (typeof newParams !== "undefined") {
-      this.options = { ...this.options, ..._ds.props.fromJSON<string | DSGridParams>(newParams)};
-      this.processChildren();
-    }
+  @Watch('type')
+  typeWatcher(type: DSGridType) {
+    this.options = { ...this.options, type};
+    this.processChildren();
+  }
+
+  @Watch('cols')
+  colsWatcher(cols: number) {
+    this.options = { ...this.options, cols: _ds.props.toNumber(cols) };
+    this.processChildren();
+  }
+
+  @Watch('hGap')
+  hGapWatcher(hGap: string) {
+    this.options = { ...this.options, hGap};
+    this.processChildren();
+  }
+
+  @Watch('vGap')
+  vGapWatcher(vGap: string) {
+    this.options = { ...this.options, vGap};
+    this.processChildren();
+  }
+  
+  @Watch('align')
+  alignWatcher(align: DSGridAlignment) {
+    this.options = { ...this.options, align};
+    this.processChildren();
+  }
+  
+  @Watch('vAlign')
+  vAlignWatcher(vAlign: DSGridAlignment) {
+    this.options = { ...this.options, vAlign};
+    this.processChildren();
+  }
+
+  @Watch('cellRatio')
+  cellRatioWatcher(cellRatio: number) {
+    this.options = { ...this.options, cellRatio: _ds.props.toNumber(cellRatio)};
+    this.processChildren();
   }
 
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList('ds-grid', this.mods);
-    this.options = _ds.props.fromJSON<string | DSGridParams>(this.params);
+    const { type, hGap, vGap, align, vAlign } = this;
+    const cols = _ds.props.toNumber(this.cols);
+    const options: DSGridParams = { type, hGap, vGap, align, vAlign, cols };
+    if (this.cellRatio) {
+      options.cellRatio = _ds.props.toNumber(this.cellRatio);
+    }
+    this.options = options;
   }
 
   componentDidLoad() {

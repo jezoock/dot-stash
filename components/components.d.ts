@@ -6,13 +6,13 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./button/button";
-import { DSGridParams } from "./grid/grid";
+import { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
-export { DSGridParams } from "./grid/grid";
+export { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles";
@@ -46,8 +46,15 @@ export namespace Components {
         "type": string;
     }
     interface DsGrid {
-        "mods": string | string[];
-        "params": DSGridParams | string;
+        "align": DSGridAlignment;
+        "cellRatio": number;
+        "cols": number;
+        "hGap": string;
+        "mods": string[];
+        "params": DSGridParams;
+        "type": DSGridType;
+        "vAlign": DSGridAlignment;
+        "vGap": string;
     }
     interface DsGridItem {
         "dsRatio": number | string;
@@ -407,8 +414,15 @@ declare namespace LocalJSX {
         "type"?: string;
     }
     interface DsGrid {
-        "mods"?: string | string[];
-        "params"?: DSGridParams | string;
+        "align"?: DSGridAlignment;
+        "cellRatio"?: number;
+        "cols"?: number;
+        "hGap"?: string;
+        "mods"?: string[];
+        "params"?: DSGridParams;
+        "type"?: DSGridType;
+        "vAlign"?: DSGridAlignment;
+        "vGap"?: string;
     }
     interface DsGridItem {
         "dsRatio"?: number | string;
