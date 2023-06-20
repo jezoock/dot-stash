@@ -1,5 +1,5 @@
 import { Component, h, Prop, Watch } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 @Component({
   tag: 'ds-section',
@@ -7,13 +7,13 @@ import _ds from '../dot-stash';
 })
 export class DSSection {
 
-  @Prop({ mutable: true, reflect: true}) mods: string[] = [];
+  @Prop({ mutable: true, reflect: true}) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true}) background: string;
 
   CSSClassList: Record<string, boolean>;
 
   @Watch('mods')
-  modsWatcher( mods: string[] ) {
+  modsWatcher( mods: string | string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-section", _ds.props.toArray(mods));
   }
 

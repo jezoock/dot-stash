@@ -1,6 +1,6 @@
 import { Component, h, Prop } from '@stencil/core/internal';
 import { Element, Method } from '@stencil/sass/dist/declarations';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 import { defaultMapParams, GMapsParams, GMapsTypeId, MapMarkerOptions } from './map.type';
 
 declare global {

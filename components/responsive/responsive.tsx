@@ -1,8 +1,8 @@
-import { Component, h, Host } from '@stencil/core/internal';
+import { Component, Event, EventEmitter, h, Host } from '@stencil/core/internal';
 import { Method, Prop } from '@stencil/core/internal';
-import debounce from '../tools/debounce';
-import _ds from '../dot-stash';
-import { Breakpoint, Breakpoints, RawBreakpoint } from '../interfaces/sass-styles';
+import debounce from '../../typescript/debounce';
+import _ds from '../../typescript/dot-stash';
+import { Breakpoint, Breakpoints, RawBreakpoint } from '../../typescript/interfaces/sass-styles';
 
 @Component({
   tag: 'ds-rsp',
@@ -122,6 +122,8 @@ export class DSRsp {
     return currentBreakpointParams;
   }
 
+  @Event() breakpointChange: EventEmitter;
+
   constructor() {
     this.notifySubscribers = this.notifySubscribers.bind(this);
     this.breakpointChangeHandler = this.breakpointChangeHandler.bind(this);
@@ -155,6 +157,7 @@ export class DSRsp {
   }
   
   async notifySubscribers() {
+    const {currentBreakpoint: previousBreakpoint} = this;
     this.initSubscribers();
     this.currentBreakpoint = await this.getBreakpoint(this.breakpoints);
     const eventDetails = {
@@ -165,6 +168,7 @@ export class DSRsp {
     const subscribers = document.querySelectorAll("[data-use-rsp]");
 
     subscribers.forEach(element => element.dispatchEvent(event));
+    this.breakpointChange.emit({ all: this.breakpoints, current: this.currentBreakpoint, previous: previousBreakpoint });
   }
 
   async breakpointChangeHandler(event: CustomEvent<{current: Breakpoint}>) {

@@ -1,5 +1,5 @@
 import { Component, Element, h, Listen, Prop, Watch } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 @Component({
   tag: 'ds-nav-menu',

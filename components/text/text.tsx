@@ -1,5 +1,5 @@
 import { Prop, Component, h, Watch } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 
 @Component({

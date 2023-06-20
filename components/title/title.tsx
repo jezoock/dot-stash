@@ -1,5 +1,5 @@
 import { Component, h, Prop, Watch } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 @Component({
 	tag: 'ds-title',
@@ -8,8 +8,7 @@ import _ds from '../dot-stash';
 export class DSTitle {
 	CSSClassList: Record<string, boolean>;
 
-	@Prop({ reflect: true }) mods: string[] = ["default"];
-	@Prop({ reflect: true }) group = "app";
+	@Prop({ reflect: true }) mods: string | string[] = [];
 	@Prop({ reflect: true }) page: boolean;
 	@Prop({ reflect: true }) section: boolean;
 	@Prop({ reflect: true }) block: boolean;
@@ -17,7 +16,7 @@ export class DSTitle {
 
 
 	@Watch('mods')
-  modsWatcher( mods: string[] ) {
+  modsWatcher( mods: string | string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(mods));
   }
 

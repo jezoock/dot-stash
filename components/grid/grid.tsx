@@ -1,5 +1,5 @@
 import { Component, Element, Prop, Watch, h } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 export type DSGridAlignment = 'start' | 'center' | 'end';
 export type DSGridType = 'fixed' | 'fluid';
@@ -33,7 +33,7 @@ export class DSGrid {
   @Element() container: HTMLDivElement;
   
   @Prop() params: DSGridParams;
-  @Prop({ mutable: true, reflect: true }) mods: string[] = [];
+  @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) type: DSGridType = 'fixed';
   @Prop({ mutable: true, reflect: true }) cols = 1;
   @Prop({ mutable: true, reflect: true }) hGap = '0';

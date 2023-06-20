@@ -69,13 +69,33 @@ export class DSMainTest {
           </div>
         </ds-map> */}
 
-          <ds-block type="product">
-            <ds-title>
-              Buttons
-            </ds-title>
-          
+        <ds-section>
 
-        <ds-rsp>
+        
+          <ds-block>
+            <ds-title slot="header">
+              Default button
+            </ds-title>
+            <ds-grid
+              class="ds-button-list"
+              hGap="10px"
+              type="fluid"
+            >
+              <ds-grid-item>
+                <ds-button mods="default,sm">Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item>
+                <ds-button mods={["default", "md"]}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item>
+                <ds-button mods={["default", "lg"]}>Click me !</ds-button>
+              </ds-grid-item>
+            </ds-grid>
+          </ds-block>
+
+        </ds-section>
+
+        {/* <ds-rsp>
           <ds-grid
             data-use-rsp
             class="ds-button-list"
@@ -147,7 +167,7 @@ export class DSMainTest {
             </ds-grid-item>
           </ds-grid>
           </ds-rsp>
-        </ds-block>
+        </ds-block> */}
       </div>
     );
   }

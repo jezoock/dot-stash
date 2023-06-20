@@ -1,6 +1,6 @@
 import { Component, Element, h, Prop, State, Watch, Method } from '@stencil/core/internal';
 import { Fragment } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 @Component({
   tag: 'ds-video',

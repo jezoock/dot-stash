@@ -5,14 +5,14 @@ const DotstashConfig = {
       css: "css",
       images: "images",
       components: "dot-stash",
-      scripts: "js",
+      scripts: "scripts",
     },
     source: {
       root: ".",
       css: "scss",
       images: "images",
       components: "components",
-      scripts: "js",
+      scripts: "typescript",
     }
   },
   gulp: {
@@ -29,6 +29,9 @@ const DotstashConfig = {
       watch: ["./scss/**/*.scss"],
       sourceFiles: './scss/index.scss'
     },
+    typescript : {
+      watch: ["./typescript/**/*.ts"],
+    }
   }
 }
 

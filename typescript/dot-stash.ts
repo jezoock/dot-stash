@@ -98,7 +98,7 @@ const _ds = {
         if (typeof index !== 'undefined') {
           element = contener.querySelectorAll(`[data-${key}]`)[index] as AnyHTMLElement;
         } else {
-          element = contener.querySelector(`[data-${key}]`);
+          element = contener.querySelector(`[data-${key}]`) as AnyHTMLElement;
         }
 
         const type = element.dataset[key.toLowerCase()];
@@ -159,7 +159,7 @@ const _ds = {
           script.onerror = (err) => reject(err);
           script.onload = () => resolve(true);
       
-          document.querySelector('head').appendChild(script);
+          document.querySelector('head')?.appendChild(script);
         } else {
           reject(`[WARNING] ds loadScript - script already loaded: ${scriptUrl}`);
         }
@@ -173,7 +173,7 @@ const _ds = {
 
     getFileExtension: ( fileLocation: string ): string => {
       const filename = fileLocation.split('/').pop();
-      return filename.substr(filename.lastIndexOf('.')+1,filename.length);
+      return filename?.substr(filename.lastIndexOf('.')+1,filename.length) || '';
     },
 
     animate: (function () {

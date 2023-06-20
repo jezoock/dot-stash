@@ -1,6 +1,6 @@
 import { Component, h, Host, Prop, Element } from '@stencil/core/internal';
 import { AnyHTMLElement } from '@stencil/sass/dist/declarations';
-import _ds from '../../dot-stash';
+import _ds from '../../../typescript/dot-stash';
 import { MapMarkerOptions, MarkerOptionsFromProps } from '../map.type';
 
 

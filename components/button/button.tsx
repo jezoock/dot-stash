@@ -1,6 +1,6 @@
 import { Component, h, Prop, Watch, Event } from '@stencil/core/internal';
 import { EventEmitter } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 export type DSButtonType = 'button' | 'submit' | 'trigger';
 export type ButtonType = 'button' | 'submit';
@@ -15,7 +15,7 @@ export class DSButton {
   isDisabled: boolean;
 
   @Prop({ reflect: true, mutable: true }) type: DSButtonType = 'button';
-  @Prop({ reflect: true, mutable: true }) mods: string[] = [];
+  @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
   @Prop({ reflect: true, mutable: true }) url: string;
   @Prop({ reflect: true, mutable: true }) styles: string;
   @Prop({ reflect: true, mutable: true }) color: string;
@@ -27,7 +27,7 @@ export class DSButton {
   }
 
   @Watch('mods')
-  modsPropChangeHanler(mods: string[]) {
+  modsPropChangeHanler(mods: string | string[]) {
     this.CSSClassList = this.generateClassList(mods);
   }
 
@@ -39,7 +39,7 @@ export class DSButton {
     this.isDisabled = _ds.props.isTrue(this.disabled);
   }
 
-  generateClassList(modifiers: string[]) {
+  generateClassList(modifiers: string | string[]) {
     const newModifiers = _ds.props.toArray(modifiers);
     if (typeof this.styles === "string") {
       newModifiers.push(this.styles);

@@ -1,6 +1,6 @@
 import { Component, h, Prop } from '@stencil/core/internal';
 import { Element, Host, HostElement } from '@stencil/core/internal';
-import _ds from '../../dot-stash';
+import _ds from '../../../typescript/dot-stash';
 
 export type DSButtonType = 'button' | 'submit' | 'trigger';
 export type ButtonType = 'button' | 'submit';

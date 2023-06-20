@@ -9,20 +9,20 @@ import { DSButtonType } from "./button/button";
 import { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
-import { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles";
+import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 import { DSSliderPrams } from "./slider/slider";
 export { DSButtonType } from "./button/button";
 export { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
-export { Breakpoint, Breakpoints, RawBreakpoint } from "./interfaces/sass-styles";
+export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 export { DSSliderPrams } from "./slider/slider";
 export namespace Components {
     interface DsBlock {
         /**
           * List of modifiers
          */
-        "mods": string[];
+        "mods": string | string[];
         /**
           * Main container tag
          */
@@ -35,7 +35,7 @@ export namespace Components {
     interface DsButton {
         "color": string;
         "disabled": boolean;
-        "mods": string[];
+        "mods": string | string[];
         "styles": string;
         "type": DSButtonType;
         "url": string;
@@ -50,7 +50,7 @@ export namespace Components {
         "cellRatio": number;
         "cols": number;
         "hGap": string;
-        "mods": string[];
+        "mods": string | string[];
         "params": DSGridParams;
         "type": DSGridType;
         "vAlign": DSGridAlignment;
@@ -162,7 +162,7 @@ export namespace Components {
     }
     interface DsSection {
         "background": string;
-        "mods": string[];
+        "mods": string | string[];
     }
     interface DsSlider {
         "dsParams": DSSliderPrams | string;
@@ -187,8 +187,7 @@ export namespace Components {
     }
     interface DsTitle {
         "block": boolean;
-        "group": string;
-        "mods": string[];
+        "mods": string | string[];
         "page": boolean;
         "section": boolean;
         "sub": boolean;
@@ -217,6 +216,10 @@ export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
 export interface DsNavMenuItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsNavMenuItemElement;
+}
+export interface DsRspCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsRspElement;
 }
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -389,7 +392,7 @@ declare namespace LocalJSX {
         /**
           * List of modifiers
          */
-        "mods"?: string[];
+        "mods"?: string | string[];
         /**
           * Main container tag
          */
@@ -402,7 +405,7 @@ declare namespace LocalJSX {
     interface DsButton {
         "color"?: string;
         "disabled"?: boolean;
-        "mods"?: string[];
+        "mods"?: string | string[];
         "onButtonClick"?: (event: DsButtonCustomEvent<any>) => void;
         "styles"?: string;
         "type"?: DSButtonType;
@@ -418,7 +421,7 @@ declare namespace LocalJSX {
         "cellRatio"?: number;
         "cols"?: number;
         "hGap"?: string;
-        "mods"?: string[];
+        "mods"?: string | string[];
         "params"?: DSGridParams;
         "type"?: DSGridType;
         "vAlign"?: DSGridAlignment;
@@ -497,12 +500,13 @@ declare namespace LocalJSX {
     interface DsRsp {
         "breakpointsFromProp"?: Record<string, number>;
         "debounceDelay"?: number;
+        "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
         "propertyName"?: string;
         "subscriberSelector"?: string;
     }
     interface DsSection {
         "background"?: string;
-        "mods"?: string[];
+        "mods"?: string | string[];
     }
     interface DsSlider {
         "dsParams"?: DSSliderPrams | string;
@@ -529,8 +533,7 @@ declare namespace LocalJSX {
     }
     interface DsTitle {
         "block"?: boolean;
-        "group"?: string;
-        "mods"?: string[];
+        "mods"?: string | string[];
         "page"?: boolean;
         "section"?: boolean;
         "sub"?: boolean;

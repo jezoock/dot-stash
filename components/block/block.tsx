@@ -1,5 +1,5 @@
 import { Component, h, Prop, Watch } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 @Component({
 	tag: 'ds-block',
@@ -23,10 +23,10 @@ export class DSBlock {
 	/**
 	 * List of modifiers
 	 */
-	@Prop() mods: string[] = [];
+	@Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
 
 	@Watch('mods')
-	modsWatcher(mods: string[]) {
+	modsWatcher(mods: string | string[]) {
 		this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
 	}
 	

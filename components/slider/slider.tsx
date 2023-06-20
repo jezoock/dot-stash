@@ -1,6 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Prop, State, Watch, Listen } from '@stencil/core/internal';
 import { AnyHTMLElement } from '@stencil/core/internal';
-import _ds from '../dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 export interface DSSliderPrams extends Record<string, unknown> {
   orientation?: 'hrt' | 'vtc';
