@@ -48,7 +48,7 @@ export const generateScripts = () => {
 
     return merge([
       tsResult.dts.pipe(gulp.dest(`${paths.destination.root}/${paths.destination.scripts}/definitions`)),
-      tsResult.js.pipe(gulp.dest(`${paths.destination.root}/${paths.destination.scripts}/js`))
+      tsResult.js.pipe(gulp.dest(`${paths.destination.root}/${paths.destination.scripts}`))
     ]);
 }
 

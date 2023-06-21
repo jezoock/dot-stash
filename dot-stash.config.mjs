@@ -5,7 +5,7 @@ const DotstashConfig = {
       css: "css",
       images: "images",
       components: "dot-stash",
-      scripts: "scripts",
+      scripts: "js",
     },
     source: {
       root: ".",
