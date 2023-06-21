@@ -55,6 +55,11 @@ export class DSRsp {
     return this.processBreakpoints(breakpoints);
   }
 
+  @Method()
+  async getCurrentBreakpoint() : Promise<Breakpoint> {
+    return this.currentBreakpoint;
+  }
+
   /**
    * Get the current breakpoint
    * @param rawBreakpoints JSON Object containings all breakpoints
