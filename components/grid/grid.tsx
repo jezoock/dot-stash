@@ -1,5 +1,6 @@
 import { Component, Element, Prop, Watch, h } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 export type DSGridAlignment = 'start' | 'center' | 'end';
 export type DSGridType = 'fixed' | 'fluid';
@@ -27,7 +28,7 @@ export interface DSGridParams {
   styleUrl: 'grid.scss',
 })
 export class DSGrid {
-  CSSClassList: Record<string, boolean>;
+  CSSClassList: CssClassList;
   options: DSGridParams;
   
   @Element() container: HTMLDivElement;

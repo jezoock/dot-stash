@@ -1,5 +1,6 @@
 import { Component, h, Prop, Watch } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 @Component({
 	tag: 'ds-block',
@@ -7,7 +8,7 @@ import _ds from '../../typescript/dot-stash';
 })
 export class DSBlock {
 
-	CSSClassList: Record<string, boolean>;
+	CSSClassList: CssClassList;
 	blockName = "ds-block";
 	
 	/**

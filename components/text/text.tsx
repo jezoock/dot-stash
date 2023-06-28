@@ -1,5 +1,6 @@
 import { Prop, Component, h, Watch } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 
 @Component({
@@ -14,7 +15,7 @@ export class DSText {
 	@Prop() size: string | number;
 	@Prop() color: string;
 
-	CSSClassList: Record<string, boolean>;
+	CSSClassList: CssClassList;
 
 	@Watch('mods')
   modsWatcher( newMods ) {

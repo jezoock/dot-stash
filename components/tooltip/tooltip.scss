@@ -1,0 +1,258 @@
+$tooltip_background-color: snk-color(primary, base);
+$triangle_small-side: 0.4375rem;
+$triangle_large-side: 0.8125rem;
+
+gbx-tooltip {
+  & > [slot] {
+    display: none;
+  }
+}
+
+.gbx-tooltip {
+  display: inline-flex;
+  position: relative;
+  white-space: normal;
+  width: min-content;
+  align-content: center;
+  justify-content: center;
+
+  &__content {
+    display: flex;
+    width: 100%;
+    & > span {
+      white-space: nowrap;
+    }
+
+  }
+
+  & [slot="message"] {
+    display: none;
+    position: absolute;
+    padding: 0.75rem;
+    line-height: 1.3rem;
+    background-color: $tooltip_background-color;
+    color: colorSet(white-outline, text-color);
+    font-size: 1rem;
+    z-index: 1000;
+    width: 220px;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    letter-spacing: 0.28px;
+    text-align: left;
+
+    &:after {
+      background-color: $tooltip_background-color;
+      border-radius: 0.5rem;
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+  }
+
+  &.--icon {
+    margin: 0 0.5rem;
+    &:before {
+      content: "";
+      width: 1rem;
+      /* icon */
+      font-weight: 300;
+      font-size: 1rem;
+    }
+    &.--search {
+      &:before {
+        /* icon */
+      }
+    }
+
+    &.--lock {
+      &:before {
+        /* icon */
+      }
+    }
+
+    &.--info {
+      &:before {
+        /* icon */
+      }
+      &.--payment-method {
+        position: static;
+        width: auto;
+        & .gbx-tooltip {
+          &__message {
+            left: 15px;
+            right: 15px;
+            top: 1.25rem;
+            bottom: auto;
+            transform: translate3d(0%, -100%, 0);
+          }
+        }
+      }
+    }
+
+    &.--locked {
+      &:before {
+        /* icon */
+      }
+    }
+
+    &.--pink-lock {
+      &:before {
+        /* icon */
+      }
+    }
+  }
+
+  &.--top {
+    & [slot="message"] {
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  &.--top-left {
+    & [slot="message"] {
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-10%);
+    }
+  }
+  &.--top-right {
+    & [slot="message"] {
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-85%);
+    }
+  }
+  &.--bottom {
+    & [slot="message"] {
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  &.--bottom-left {
+    & [slot="message"] {
+      top: calc(100% + 10px);
+      left: 15%;
+      transform: translateX(-5%);
+    }
+  }
+  &.--bottom-right {
+    & [slot="message"] {
+      top: calc(100% + 10px);
+      left: 15%;
+      transform: translateX(-85%);
+    }
+  }
+  &.--left {
+    & [slot="message"] {
+      right: calc(100% + 10px);
+      top: -50%;
+      transform: translateY(-50%);
+    }
+  }
+  &.--right {
+    & [slot="message"] {
+      left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+  &.--with-arrow {
+    
+    &:after {
+      content: "";
+      display: none;
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      background-image: url("./tooltipArrow.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 1.5rem;
+      z-index: 10;
+    }
+  
+    &.--top {
+      &:after {
+        top: 0;
+        left: 50%;
+        transform: translate3d(-50%, -100%, 0) rotate(180deg);
+      }
+    }
+  
+    &.--top-left {
+      &:after {
+        top: 0;
+        left: 0;
+        transform: translate3d(-20%,-100%, 0) rotate(180deg);
+      }
+    }
+    &.--top-right {
+      &:after {
+        top: 0;
+        right: 0;
+        transform: translate3d(20%,-100%, 0) rotate(180deg);
+      }
+    }
+    &.--bottom {
+      &:after {
+        bottom: 0;
+        left: 50%;
+        transform: translate3d(-50%, 100%, 0);
+      }
+    }
+    &.--bottom-left {
+      &:after {
+        bottom: 0;
+        left: 0;
+        transform: translate3d(-20%, 100%, 0);
+      }
+    }
+    &.--bottom-right {
+      &:after {
+        bottom: 0;
+        right: 0;
+        transform: translate3d(20%, 100%, 0);
+      }
+    }
+    &.--left {
+      &:after {
+        left: 0;
+        top: 50%;
+        transform: translate3d(-100%, -50%, 0) rotate(90deg);
+      }
+    }
+    &.--right {
+      &:after {
+        right: 0;
+        top: 50%;
+        transform: translate3d(100%, -50%, 0) rotate(-90deg);
+      }
+    }
+  }
+  
+  &.--is-shown {
+    &.--top,
+    &.--top-left, 
+    &.--top-right, 
+    &.--bottom,
+    &.--bottom-left, 
+    &.--bottom-right, 
+    &.--left, 
+    &.--right {
+      &:after {
+        display: block;
+      }
+    }
+    & [slot="message"] {
+      display: block;
+    }
+  }
+}
+

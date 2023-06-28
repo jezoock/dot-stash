@@ -11,12 +11,16 @@ import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 import { DSSliderPrams } from "./slider/slider";
+import { TooltipPosition } from "./tooltip/tooltip-position.enum";
+import { DSOption } from "./combo/combo";
 export { DSButtonType } from "./button/button";
 export { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 export { DSSliderPrams } from "./slider/slider";
+export { TooltipPosition } from "./tooltip/tooltip-position.enum";
+export { DSOption } from "./combo/combo";
 export namespace Components {
     interface DsBlock {
         /**
@@ -152,6 +156,7 @@ export namespace Components {
          */
         "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
         "getBreakpoints": () => Promise<Breakpoints>;
+        "getCurrentBreakpoint": () => Promise<Breakpoint>;
         "getData": () => Promise<{ breakpoints: Breakpoints; }>;
         "getParamsForBreakpoint": <T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T; }) => Promise<T>;
         "getSubscribers": () => Promise<Element[]>;
@@ -163,6 +168,11 @@ export namespace Components {
     interface DsSection {
         "background": string;
         "mods": string | string[];
+    }
+    interface DsSidebar {
+        "isShown": boolean;
+        "mods": string | string[];
+        "position": string | 'left' | 'right' | 'top' | 'bottom';
     }
     interface DsSlider {
         "dsParams": DSSliderPrams | string;
@@ -192,6 +202,31 @@ export namespace Components {
         "section": boolean;
         "sub": boolean;
     }
+    /**
+     * Simple icon tooltip component
+     */
+    interface DsTooltip {
+        "containerSelector": string;
+        "hasArrow": boolean;
+        /**
+          * Displayed tooltip icon
+         */
+        "icon": string;
+        "isActive": boolean;
+        /**
+          * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
+         */
+        "isDisabled": boolean;
+        /**
+          * Used for applying modifier on main container
+         */
+        "mode": string;
+        "mods": string | string[];
+        /**
+          * @type {string} Tooltip position (top, left, right or bottom)
+         */
+        "position": TooltipPosition;
+    }
     interface DsVideo {
         "autoplay": boolean;
         "controls": boolean;
@@ -208,6 +243,51 @@ export namespace Components {
         "disabled": string | boolean;
         "target": string;
     }
+    interface GbxCombo {
+        "close": () => Promise<void>;
+        "customLabel": string;
+        "mode": string;
+        "multiple": boolean;
+        "name": string;
+        "open": () => Promise<void>;
+        "options": any;
+        "overlay": boolean;
+        "pageName": string;
+        "position": string;
+        "selected": DSOption;
+        "selectedOption": DSOption[];
+        "toggle": (forceDisplay?: boolean) => Promise<void>;
+    }
+    interface GbxModal {
+        "closeButtonMods": string[];
+        "darkBackground": boolean;
+        "isClosingDisabled": boolean;
+        "isFooterDisabled": boolean;
+        "isHeaderDisabled": boolean;
+        "isLayoutDisabled": boolean;
+        "isSubtitleDisabled": boolean;
+        "lightboxClass": any;
+        "lightboxClassObject": any;
+        "overlay": boolean;
+        "redirectToSmoodOnClose": boolean;
+        "shown": boolean;
+        "useSnack": boolean;
+    }
+    interface GbxToaster {
+    }
+    interface GbxToggler {
+        "isActive": boolean;
+        "items": any[];
+        "togglerMods": string;
+    }
+    interface GbxTogglerItem {
+        "expanded": boolean;
+        "haveContent": boolean;
+        "pageName": string;
+        "replaceExtendFunction": any;
+        "titleContent": string;
+        "titleLevel": string;
+    }
 }
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -221,6 +301,10 @@ export interface DsRspCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRspElement;
 }
+export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSidebarElement;
+}
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
@@ -228,6 +312,22 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
 export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
+}
+export interface GbxComboCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLGbxComboElement;
+}
+export interface GbxModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLGbxModalElement;
+}
+export interface GbxToasterCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLGbxToasterElement;
+}
+export interface GbxTogglerItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLGbxTogglerItemElement;
 }
 declare global {
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
@@ -320,6 +420,12 @@ declare global {
         prototype: HTMLDsSectionElement;
         new (): HTMLDsSectionElement;
     };
+    interface HTMLDsSidebarElement extends Components.DsSidebar, HTMLStencilElement {
+    }
+    var HTMLDsSidebarElement: {
+        prototype: HTMLDsSidebarElement;
+        new (): HTMLDsSidebarElement;
+    };
     interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
     }
     var HTMLDsSliderElement: {
@@ -350,6 +456,15 @@ declare global {
         prototype: HTMLDsTitleElement;
         new (): HTMLDsTitleElement;
     };
+    /**
+     * Simple icon tooltip component
+     */
+    interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
+    }
+    var HTMLDsTooltipElement: {
+        prototype: HTMLDsTooltipElement;
+        new (): HTMLDsTooltipElement;
+    };
     interface HTMLDsVideoElement extends Components.DsVideo, HTMLStencilElement {
     }
     var HTMLDsVideoElement: {
@@ -361,6 +476,36 @@ declare global {
     var HTMLDsVideoPlayElement: {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
+    };
+    interface HTMLGbxComboElement extends Components.GbxCombo, HTMLStencilElement {
+    }
+    var HTMLGbxComboElement: {
+        prototype: HTMLGbxComboElement;
+        new (): HTMLGbxComboElement;
+    };
+    interface HTMLGbxModalElement extends Components.GbxModal, HTMLStencilElement {
+    }
+    var HTMLGbxModalElement: {
+        prototype: HTMLGbxModalElement;
+        new (): HTMLGbxModalElement;
+    };
+    interface HTMLGbxToasterElement extends Components.GbxToaster, HTMLStencilElement {
+    }
+    var HTMLGbxToasterElement: {
+        prototype: HTMLGbxToasterElement;
+        new (): HTMLGbxToasterElement;
+    };
+    interface HTMLGbxTogglerElement extends Components.GbxToggler, HTMLStencilElement {
+    }
+    var HTMLGbxTogglerElement: {
+        prototype: HTMLGbxTogglerElement;
+        new (): HTMLGbxTogglerElement;
+    };
+    interface HTMLGbxTogglerItemElement extends Components.GbxTogglerItem, HTMLStencilElement {
+    }
+    var HTMLGbxTogglerItemElement: {
+        prototype: HTMLGbxTogglerItemElement;
+        new (): HTMLGbxTogglerItemElement;
     };
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
@@ -378,13 +523,20 @@ declare global {
         "ds-placeholder": HTMLDsPlaceholderElement;
         "ds-rsp": HTMLDsRspElement;
         "ds-section": HTMLDsSectionElement;
+        "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
+        "ds-tooltip": HTMLDsTooltipElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
+        "gbx-combo": HTMLGbxComboElement;
+        "gbx-modal": HTMLGbxModalElement;
+        "gbx-toaster": HTMLGbxToasterElement;
+        "gbx-toggler": HTMLGbxTogglerElement;
+        "gbx-toggler-item": HTMLGbxTogglerItemElement;
     }
 }
 declare namespace LocalJSX {
@@ -508,6 +660,15 @@ declare namespace LocalJSX {
         "background"?: string;
         "mods"?: string | string[];
     }
+    interface DsSidebar {
+        "isShown"?: boolean;
+        "mods"?: string | string[];
+        "onSidebarHidden"?: (event: DsSidebarCustomEvent<any>) => void;
+        "onSidebarHide"?: (event: DsSidebarCustomEvent<any>) => void;
+        "onSidebarShow"?: (event: DsSidebarCustomEvent<any>) => void;
+        "onSidebarShown"?: (event: DsSidebarCustomEvent<any>) => void;
+        "position"?: string | 'left' | 'right' | 'top' | 'bottom';
+    }
     interface DsSlider {
         "dsParams"?: DSSliderPrams | string;
         "mods"?: string | string[];
@@ -538,6 +699,31 @@ declare namespace LocalJSX {
         "section"?: boolean;
         "sub"?: boolean;
     }
+    /**
+     * Simple icon tooltip component
+     */
+    interface DsTooltip {
+        "containerSelector"?: string;
+        "hasArrow"?: boolean;
+        /**
+          * Displayed tooltip icon
+         */
+        "icon"?: string;
+        "isActive"?: boolean;
+        /**
+          * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
+         */
+        "isDisabled"?: boolean;
+        /**
+          * Used for applying modifier on main container
+         */
+        "mode"?: string;
+        "mods"?: string | string[];
+        /**
+          * @type {string} Tooltip position (top, left, right or bottom)
+         */
+        "position"?: TooltipPosition;
+    }
     interface DsVideo {
         "autoplay"?: boolean;
         "controls"?: boolean;
@@ -548,6 +734,55 @@ declare namespace LocalJSX {
     interface DsVideoPlay {
         "disabled"?: string | boolean;
         "target"?: string;
+    }
+    interface GbxCombo {
+        "customLabel"?: string;
+        "mode"?: string;
+        "multiple"?: boolean;
+        "name"?: string;
+        "onGbxValueChange"?: (event: GbxComboCustomEvent<any>) => void;
+        "options"?: any;
+        "overlay"?: boolean;
+        "pageName"?: string;
+        "position"?: string;
+        "selected"?: DSOption;
+        "selectedOption"?: DSOption[];
+    }
+    interface GbxModal {
+        "closeButtonMods"?: string[];
+        "darkBackground"?: boolean;
+        "isClosingDisabled"?: boolean;
+        "isFooterDisabled"?: boolean;
+        "isHeaderDisabled"?: boolean;
+        "isLayoutDisabled"?: boolean;
+        "isSubtitleDisabled"?: boolean;
+        "lightboxClass"?: any;
+        "lightboxClassObject"?: any;
+        "onGbxModalClose"?: (event: GbxModalCustomEvent<any>) => void;
+        "onGbxModalOpen"?: (event: GbxModalCustomEvent<any>) => void;
+        "overlay"?: boolean;
+        "redirectToSmoodOnClose"?: boolean;
+        "shown"?: boolean;
+        "useSnack"?: boolean;
+    }
+    interface GbxToaster {
+        "onNotify_toasterHide_event"?: (event: GbxToasterCustomEvent<any>) => void;
+        "onNotify_toasterShow_event"?: (event: GbxToasterCustomEvent<any>) => void;
+    }
+    interface GbxToggler {
+        "isActive"?: boolean;
+        "items"?: any[];
+        "togglerMods"?: string;
+    }
+    interface GbxTogglerItem {
+        "expanded"?: boolean;
+        "haveContent"?: boolean;
+        "onNotify_togglerCollapsed_event"?: (event: GbxTogglerItemCustomEvent<any>) => void;
+        "onNotify_togglerExpanded_event"?: (event: GbxTogglerItemCustomEvent<any>) => void;
+        "pageName"?: string;
+        "replaceExtendFunction"?: any;
+        "titleContent"?: string;
+        "titleLevel"?: string;
     }
     interface IntrinsicElements {
         "ds-block": DsBlock;
@@ -565,13 +800,20 @@ declare namespace LocalJSX {
         "ds-placeholder": DsPlaceholder;
         "ds-rsp": DsRsp;
         "ds-section": DsSection;
+        "ds-sidebar": DsSidebar;
         "ds-slider": DsSlider;
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": DsSliderMenu;
         "ds-text": DsText;
         "ds-title": DsTitle;
+        "ds-tooltip": DsTooltip;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
+        "gbx-combo": GbxCombo;
+        "gbx-modal": GbxModal;
+        "gbx-toaster": GbxToaster;
+        "gbx-toggler": GbxToggler;
+        "gbx-toggler-item": GbxTogglerItem;
     }
 }
 export { LocalJSX as JSX };
@@ -593,13 +835,23 @@ declare module "@stencil/core" {
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
             "ds-section": LocalJSX.DsSection & JSXBase.HTMLAttributes<HTMLDsSectionElement>;
+            "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
+            /**
+             * Simple icon tooltip component
+             */
+            "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
+            "gbx-combo": LocalJSX.GbxCombo & JSXBase.HTMLAttributes<HTMLGbxComboElement>;
+            "gbx-modal": LocalJSX.GbxModal & JSXBase.HTMLAttributes<HTMLGbxModalElement>;
+            "gbx-toaster": LocalJSX.GbxToaster & JSXBase.HTMLAttributes<HTMLGbxToasterElement>;
+            "gbx-toggler": LocalJSX.GbxToggler & JSXBase.HTMLAttributes<HTMLGbxTogglerElement>;
+            "gbx-toggler-item": LocalJSX.GbxTogglerItem & JSXBase.HTMLAttributes<HTMLGbxTogglerItemElement>;
         }
     }
 }

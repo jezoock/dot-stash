@@ -1,6 +1,7 @@
 import { Component, Element, Event, EventEmitter, h, Prop, State, Watch, Listen } from '@stencil/core/internal';
 import { AnyHTMLElement } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 export interface DSSliderPrams extends Record<string, unknown> {
   orientation?: 'hrt' | 'vtc';
@@ -67,7 +68,7 @@ export class DSSlider {
 	isTransitionStarted = false;
 	isPlaying = true;
 	isReady = false;
-  CSSClassList: Record<string, boolean>;
+  CSSClassList: CssClassList;
 
   params: DSSliderPrams;
 
@@ -492,7 +493,7 @@ export class DSSlider {
           <ds-button
             class="ds-slider__prev-button"
             mods={['slider', 'prev']}
-            onDsButtonClick={this.handlePrevButtonClickHandler}
+            onClick={this.handlePrevButtonClickHandler}
           />
         )}
 
@@ -507,7 +508,7 @@ export class DSSlider {
           <ds-button
             class="ds-slider__next-button"
             mods={['slider', 'next']}
-            onDsButtonClick={this.handleNextButtonClickHandler}
+            onClick={this.handleNextButtonClickHandler}
           />
         )}
 

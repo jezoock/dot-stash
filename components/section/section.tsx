@@ -1,5 +1,6 @@
 import { Component, h, Prop, Watch } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 @Component({
   tag: 'ds-section',
@@ -10,7 +11,7 @@ export class DSSection {
   @Prop({ mutable: true, reflect: true}) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true}) background: string;
 
-  CSSClassList: Record<string, boolean>;
+  CSSClassList: CssClassList;
 
   @Watch('mods')
   modsWatcher( mods: string | string[] ) {

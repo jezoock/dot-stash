@@ -1,0 +1,157 @@
+.gbx-toaster {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+
+  &__container {
+    box-sizing: border-box;
+    display: block;
+    max-width: 50vw;
+    min-width: 500px;
+    padding: 1.25rem;
+    min-height: 3rem;
+    transform-origin: center;
+    background-color: color(color-2, dark);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    pointer-events: initial;
+    font-size: 1rem;
+
+    &--valid {
+      background-color: color(valid);
+    }
+
+    &--warning {
+      background-color: color(warning);
+    }
+
+    &--error {
+      background-color: color(error);
+    }
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    line-height: 20px;
+  }
+
+  &__message {
+    &--info {
+    }
+
+    &--valid {
+      color: white;
+    }
+
+    &--warning {
+      color: white;
+    }
+
+    &--error {
+      color: white;
+    }
+  }
+
+  &__container {
+    &--valid {
+      & .gbx-toaster {
+        &__message {
+          &--valid,
+          &--warning,
+          &--error {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  &__action {
+    flex-shrink: 0;
+    margin: -0.5rem -0.5rem -0.5rem 0.5rem;
+
+    .gbx-toaster__close-button {
+      color: #fff;
+      max-height: 2.25rem;
+      min-width: 0;
+      border: 0;
+      background: none;
+    }
+  }
+
+  &--position-vertical {
+    &-top {
+      top: 0;
+      -webkit-animation: fadeinTop 0.5s;
+      animation: fadeinTop 0.5s;
+    }
+
+    &-bottom {
+      bottom: 0;
+      -webkit-animation: fadeinBottom 0.5s;
+      animation: fadeinBottom 0.5s;
+    }
+  }
+
+  &--position-horizontal {
+    &-left {
+      left: 0;
+    }
+
+    &-right {
+      right: 0;
+    }
+
+    &-center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  @-webkit-keyframes fadeinBottom {
+    from {
+      bottom: -100px;
+      opacity: 0;
+    }
+    to {
+      bottom: 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeinBottom {
+    from {
+      bottom: -100px;
+      opacity: 0;
+    }
+    to {
+      bottom: 0;
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes fadeinTop {
+    from {
+      top: -100px;
+      opacity: 0;
+    }
+    to {
+      top: 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeinTop {
+    from {
+      top: -100px;
+      opacity: 0;
+    }
+    to {
+      top: 0;
+      opacity: 1;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { Component, Element, h, Listen, Prop, Watch } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 @Component({
   tag: 'ds-nav-menu',
@@ -12,7 +13,7 @@ export class DSNavMenu {
   @Prop() currentActiveItemId: string;
   @Prop() mods: string|string[];
 
-  CSSClassList: Record<string, boolean>;
+  CSSClassList: CssClassList;
 
   @Watch('mods')
   modsWatcher( newMods ) {

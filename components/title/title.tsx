@@ -1,12 +1,13 @@
 import { Component, h, Prop, Watch } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 @Component({
 	tag: 'ds-title',
 	styleUrl: 'title.scss',
 })
 export class DSTitle {
-	CSSClassList: Record<string, boolean>;
+	CSSClassList: CssClassList;
 
 	@Prop({ reflect: true }) mods: string | string[] = [];
 	@Prop({ reflect: true }) page: boolean;

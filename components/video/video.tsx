@@ -1,6 +1,7 @@
 import { Component, Element, h, Prop, State, Watch, Method } from '@stencil/core/internal';
 import { Fragment } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 @Component({
   tag: 'ds-video',
@@ -8,7 +9,7 @@ import _ds from '../../typescript/dot-stash';
 })
 export class DSVideo {
   isReady = false;
-  CSSClassList: Record<string, boolean>;
+  CSSClassList: CssClassList;
   useControls = false;
   playOnload = false;
   videoSources: string[];

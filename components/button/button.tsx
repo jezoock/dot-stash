@@ -1,6 +1,7 @@
 import { Component, h, Prop, Watch, Event } from '@stencil/core/internal';
 import { EventEmitter } from '@stencil/core/internal';
 import _ds from '../../typescript/dot-stash';
+import CssClassList from '../types/css-class-list.interface';
 
 export type DSButtonType = 'button' | 'submit' | 'trigger';
 export type ButtonType = 'button' | 'submit';
@@ -10,7 +11,7 @@ export type ButtonType = 'button' | 'submit';
   styleUrl: 'button.scss',
 })
 export class DSButton {
-  CSSClassList: Record<string, boolean>;
+  CSSClassList: CssClassList;
   buttonType: ButtonType;
   isDisabled: boolean;
 

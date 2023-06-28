@@ -1,0 +1,66 @@
+.gbx-toggler {
+  & gbx-toggler-item {
+    & .gbx-toggler-item {
+      margin: 5px 15px;
+      border-bottom: 1px solid color(gray, light);
+    }
+
+    &:last-child {
+      .gbx-toggler-item {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &.--product {
+		& .gbx-toggler-item {
+      margin: 0 0 0.25rem 0;
+			padding: 0;
+			border-bottom: none;
+
+			&__title {
+				padding: 0;
+				height: 2.5rem;
+				line-height: 2.5rem;
+				margin: 0;
+
+				& h1,
+				& h2,
+				& h3,
+				& h4,
+				& h5,
+				& h6 {
+					color: color(gray, darker);
+					line-height: inherit;
+					font-size: 1rem;
+					margin: 0;
+				}
+
+				&:after {
+					/* icon */
+					color: color(color-1, base);
+					font-size: 2rem;
+					width: 2rem;
+					text-align: center;
+				}
+			}
+
+      &__content {
+        color: ds-color(gray, dark);
+      }
+
+			&--active {
+				& .gbx-toggler-item__content {
+					margin-bottom: 0;
+				}
+
+				& .gbx-toggler-item__title {
+					&:after {
+						/* icon */
+					}
+				}
+			}
+
+    }
+	}
+}

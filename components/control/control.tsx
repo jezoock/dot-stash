@@ -24,6 +24,7 @@ export class DSControl {
     if(this.targetComponent) {
       const [ action, args ] = this.action.split(/:(.*)/s);
       this.targetComponent[action](..._ds.props.fromJSON(args||[]));
+
     }
   }
 
