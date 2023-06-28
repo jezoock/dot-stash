@@ -45,7 +45,7 @@ export class DSGrid {
 
 
   @Watch('mods')
-  modsWatcher(newMods: string | string[]) {
+  modsChangeHandler(newMods: string | string[]) {
     this.CSSClassList = _ds.props.toClassList('ds-grid', newMods);
     this.processChildren();
   }

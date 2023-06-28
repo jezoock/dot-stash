@@ -69,6 +69,13 @@ export class DSMainTest {
           </div>
         </ds-map> */}
 
+        <ds-sidebar position='top'>
+          sdfhlsdfklsdfk
+          <div>sdkfljsdklfkl</div>
+        </ds-sidebar>
+
+        <ds-control target="ds-sidebar" action='toggle'>sidebar</ds-control>
+
         <ds-section>
 
         

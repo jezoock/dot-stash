@@ -73,7 +73,7 @@ export class DSSlider {
   params: DSSliderPrams;
 
   @Watch('mods')
-  modsWatcher( newMods ) {
+  modsChangeHandler( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-slider", newMods);
   }
 

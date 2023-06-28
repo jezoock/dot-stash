@@ -30,7 +30,7 @@ export class DSVideo {
   //#region PROP WATCHERS
 
   @Watch('mods')
-  dsModsWatcher( mods: string[] ) {
+  dsmodsChangeHandler( mods: string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-video", _ds.props.toArray(mods));
   }
 

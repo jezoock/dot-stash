@@ -17,7 +17,7 @@ export class DSTitle {
 
 
 	@Watch('mods')
-  modsWatcher( mods: string | string[] ) {
+  modsChangeHandler( mods: string | string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(mods));
   }
 

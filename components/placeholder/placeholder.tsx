@@ -13,7 +13,7 @@ export class DSPlaceholder {
   CSSClassList: CssClassList;
 
   @Watch('dsMods')
-  dsModsWatcher( newMods ) {
+  dsmodsChangeHandler( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-button", newMods);
   }
 

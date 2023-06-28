@@ -27,7 +27,7 @@ export class DSBlock {
 	@Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
 
 	@Watch('mods')
-	modsWatcher(mods: string | string[]) {
+	modsChangeHandler(mods: string | string[]) {
 		this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
 	}
 	

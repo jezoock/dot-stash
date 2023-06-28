@@ -18,7 +18,7 @@ export class DSText {
 	CSSClassList: CssClassList;
 
 	@Watch('mods')
-  modsWatcher( newMods ) {
+  modsChangeHandler( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-title", newMods);
   }
 

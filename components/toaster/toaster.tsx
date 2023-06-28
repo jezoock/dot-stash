@@ -1,4 +1,4 @@
-import { Component, h, State, Listen, Host, Event, EventEmitter } from "@stencil/core";
+import { Component, h, Method, State, Host, Event, EventEmitter } from "@stencil/core";
 @Component({
   tag: "ds-toaster",
   styleUrl: "toaster.scss"
@@ -18,12 +18,13 @@ export class DSToaster {
   @State() position: string[];
   @State() type: string;
 
-  @Event() notify_toasterShow_event: EventEmitter;
-  @Event() notify_toasterHide_event: EventEmitter;
+  @Event() toasterShow: EventEmitter;
+  @Event() toasterShown: EventEmitter;
+  @Event() toasterHide: EventEmitter;
+  @Event() toasterHidden: EventEmitter;
 
-  @Listen("toaster_show_event", { target: "body" })
-  toaster_show_eventHandler(event) {
-    const { detail: params } = event;
+  @Method()
+  async displayToast(params) {
     this.setToDefaults();
     const {
       message,
@@ -65,10 +66,10 @@ export class DSToaster {
     }
 
     setTimeout(() => {
-      this.open();
+      this.show();
       if (this.closingDelay !== 0) {
         setTimeout(() => {
-          this.close();
+          this.hide();
         }, this.closingDelay);
       }
     }, 10);
@@ -87,47 +88,48 @@ export class DSToaster {
 
   constructor() {
     this.setToDefaults();
-    this.close = this.close.bind(this);
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
   }
 
-  /**
-   * Display toaster
-   */
-  open(): void {
+  @Method()
+  async show() {
+    this.toasterShow.emit();
+    this.container.addEventListener( "transitionend", this.animationEndHandler);
     this.isShown = true;
-    this.notify_toasterShow_event.emit();
+  }
+  
+  @Method()
+  async hide() {
+    this.toasterHide.emit();
+    this.container.addEventListener( "transitionend", this.animationEndHandler);
+    this.isShown = false;
   }
 
-  /**
-   * Hide toaster
-   */
-  close(): void {
-    this.isShown = false;
-    this.notify_toasterHide_event.emit();
-  }
+  //#region HANDLERS
+
+  animationEndHandler() {
+    this.container.removeEventListener("transitionend", this.animationEndHandler);
+    this[ `toaster${this.isShown ? 'Shown' : 'Hidden'}` ].emit();
+  }  
+
+  //#endregion
 
   render() {
-    const positionClasses = {};
-    positionClasses[
-      `ds-toaster--position-vertical-${this.position[0]}`
-    ] = true;
-    positionClasses[
-      `ds-toaster--position-horizontal-${this.position[1]}`
-    ] = true;
-
     return (
       <Host>
         {this.isShown && (
           <div
             class={{
               "ds-toaster": true,
-              ...positionClasses,
+              [`ds-toaster--position-vertical-${this.position[0]}`]: true,
+              [`ds-toaster--position-horizontal-${this.position[1]}`]: true,
               ...this.toasterClass
             }}
             ref={el => {
               this.container = el as HTMLDivElement;
             }}
-            onClick={this.close}
+            onClick={this.hide}
           >
             <div class={`ds-toaster__container ds-toaster__container--${this.type}`}>
               {this.innerJSX ? (
@@ -144,7 +146,7 @@ export class DSToaster {
                       <div class="ds-toaster__action">
                         <button
                           class="ds-toaster__close-button"
-                          onClick={this.close}>
+                          onClick={this.hide}>
                           {this.buttonText || "OK"}
                         </button>
                       </div>

@@ -46,7 +46,7 @@ export class DSTooltip {
   CSSClassList: CssClassList;
 
   @Watch("mods")
-  modsWatcher() {
+  modsChangeHandler() {
     this.computeCSSClasslist();
   }
 

@@ -1,4 +1,4 @@
-import { Component, h, Prop, Listen, Event, EventEmitter, Watch } from "@stencil/core";
+import { Component, h, Prop, Method, Event, EventEmitter, Watch } from "@stencil/core";
 import CssClassList from "../types/css-class-list.interface";
 import _ds from "../../typescript/dot-stash";
 import SIDEBAR_POSITION from "../types/sidebar-position.enum";
@@ -21,7 +21,7 @@ export class DSSidebar {
   CSSClassList: CssClassList;
 
   @Watch("mods")
-  modsWatcher() {
+  modsChangeHandler() {
     this.computeCSSClasslist();
   }
 
@@ -34,27 +34,49 @@ export class DSSidebar {
   @Event() sidebarShow: EventEmitter;
   @Event() sidebarShown: EventEmitter;
 
-  @Listen("request_sidebarShow_event")
-  request_sidebarShow_eventHandler() {
-    this.show();
+  //#endregion
+
+  @Method()
+  async toggle( mustShow: boolean ) {
+    let { isShown } = this;
+    
+    if (typeof mustShow === "boolean") {
+      isShown = mustShow;
+    } else {
+      isShown = !isShown;
+    }
+
+    this[ isShown ? 'show' : 'hide' ]();
   }
   
-  @Listen("request_sidebarHide_event")
-  request_sidebarHide_eventHandler() {
-    this.hide();
+  @Method()
+  async show() {
+    this.containerRefresh();
+    this.sidebarShow.emit();
+    this.container.addEventListener( "transitionend", this.animationEndHandler);
+    this.isShown = true;
+    
   }
-
-  @Listen("request_sidebarToggle_event")
-  request_sidebarToggle_eventHandler({ detail: { mustShow }}) {
-    this.toggle(mustShow);
+  
+  @Method()
+  async hide() {
+    this.sidebarHide.emit();
+    this.container.addEventListener( "transitionend", this.animationEndHandler);
+    this.isShown = false;
   }
-
-  //#endregion
   
   //#region TOOLS
   
   computeCSSClasslist() {
     this.CSSClassList = _ds.props.toClassList("ds-sidebar", this.mods);
+  }
+
+  containerRefresh() {
+    const windowHeight = window.innerHeight;
+    const containerOffset = this.container.offsetTop;
+    const newHeight = windowHeight - containerOffset;
+
+    this.container.style.height = `${newHeight}px`;
   }
   
   //#endregion
@@ -78,44 +100,6 @@ export class DSSidebar {
   }
 
   //#region 
-
-  //#region DISPLAY MANAGMENT
-
-  containerRefresh() {
-    const windowHeight = window.innerHeight;
-    const containerOffset = this.container.offsetTop;
-    const newHeight = windowHeight - containerOffset;
-
-    this.container.style.height = `${newHeight}px`;
-  }
-
-  toggle( mustShow: boolean ): void {
-    let { isShown } = this;
-    
-    if (typeof mustShow === "boolean") {
-      isShown = mustShow;
-    } else {
-      isShown = !isShown;
-    }
-
-    this[ isShown ? 'show' : 'hide' ]();
-  }
-  
-  show() {
-    this.containerRefresh();
-    this.sidebarShow.emit();
-    this.container.addEventListener( "transitionend", this.animationEndHandler);
-    this.isShown = true;
-    
-  }
-  
-  hide() {
-    this.sidebarHide.emit();
-    this.container.addEventListener( "transitionend", this.animationEndHandler);
-    this.isShown = false;
-  }
-
-  //#endregion
 
   //#region HANDLERS
 

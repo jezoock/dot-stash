@@ -16,7 +16,7 @@ export class DSNavMenu {
   CSSClassList: CssClassList;
 
   @Watch('mods')
-  modsWatcher( newMods ) {
+  modsChangeHandler( newMods ) {
     this.CSSClassList = _ds.props.toClassList("ds-nav-menu", newMods);
   }
 

@@ -199,9 +199,12 @@ export namespace Components {
         "mods": string | string[];
     }
     interface DsSidebar {
+        "hide": () => Promise<void>;
         "isShown": boolean;
         "mods": string | string[];
         "position": string | 'left' | 'right' | 'top' | 'bottom';
+        "show": () => Promise<void>;
+        "toggle": (mustShow: boolean) => Promise<void>;
     }
     interface DsSlider {
         "dsParams": DSSliderPrams | string;
@@ -232,6 +235,9 @@ export namespace Components {
         "sub": boolean;
     }
     interface DsToaster {
+        "displayToast": (params: any) => Promise<void>;
+        "hide": () => Promise<void>;
+        "show": () => Promise<void>;
     }
     interface DsToggler {
         "isActive": boolean;
@@ -727,8 +733,10 @@ declare namespace LocalJSX {
         "sub"?: boolean;
     }
     interface DsToaster {
-        "onNotify_toasterHide_event"?: (event: DsToasterCustomEvent<any>) => void;
-        "onNotify_toasterShow_event"?: (event: DsToasterCustomEvent<any>) => void;
+        "onToasterHidden"?: (event: DsToasterCustomEvent<any>) => void;
+        "onToasterHide"?: (event: DsToasterCustomEvent<any>) => void;
+        "onToasterShow"?: (event: DsToasterCustomEvent<any>) => void;
+        "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
     }
     interface DsToggler {
         "isActive"?: boolean;

@@ -14,7 +14,7 @@ export class DSSection {
   CSSClassList: CssClassList;
 
   @Watch('mods')
-  modsWatcher( mods: string | string[] ) {
+  modsChangeHandler( mods: string | string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-section", _ds.props.toArray(mods));
   }
 

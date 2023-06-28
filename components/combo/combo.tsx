@@ -47,8 +47,34 @@ export class DSCombo {
   @Event() optionSelected: EventEmitter;
 
   @Watch("options")
-  watchOptionsHandler(options) {
+  optionsChangeHandler(options) {
     this.optionsHandler(options, 0);
+  }
+
+  @Method()
+  async close() {
+    const body = document.querySelector("body");
+    body.removeEventListener("click", this.bodyClickHandler);
+    this.showCombo = false;
+  }
+
+  @Method()
+  async open() {
+    const body = document.querySelector("body");
+    body.addEventListener("click", this.bodyClickHandler);
+    this.showCombo = true;
+  }
+
+  @Method()
+  async toggle(forceDisplay?: boolean) {
+    const show =
+      typeof forceDisplay !== "undefined" ? forceDisplay : !this.showCombo;
+
+    if (show) {
+      this.open();
+    } else {
+      this.close();
+    }
   }
 
   constructor() {
@@ -147,31 +173,7 @@ export class DSCombo {
     }
   }
 
-  @Method()
-  async close() {
-    const body = document.querySelector("body");
-    body.removeEventListener("click", this.bodyClickHandler);
-    this.showCombo = false;
-  }
-
-  @Method()
-  async open() {
-    const body = document.querySelector("body");
-    body.addEventListener("click", this.bodyClickHandler);
-    this.showCombo = true;
-  }
-
-  @Method()
-  async toggle(forceDisplay?: boolean) {
-    const show =
-      typeof forceDisplay !== "undefined" ? forceDisplay : !this.showCombo;
-
-    if (show) {
-      this.open();
-    } else {
-      this.close();
-    }
-  }
+  
 
   render() {
     return (
