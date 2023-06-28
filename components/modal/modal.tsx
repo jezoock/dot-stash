@@ -3,14 +3,14 @@ import Fragment from "stencil-fragment";
 import throttle from "../../typescript/throttle";
 
 @Component({
-  tag: "gbx-modal",
+  tag: "ds-modal",
   styleUrls: [
     "modal.scss",
   ]
 })
 export class DSModal {
 
-  @Element() container: HTMLGbxModalElement;
+  @Element() container: HTMLDsModalElement;
 
   @Prop({ mutable: true, reflect: true }) shown = false;
   @Prop() overlay = false;
@@ -28,8 +28,8 @@ export class DSModal {
 
   @State() isReady = false;
 
-  @Event() gbxModalClose: EventEmitter;
-  @Event() gbxModalOpen: EventEmitter;
+  @Event() modalClose: EventEmitter;
+  @Event() modalOpen: EventEmitter;
 
   @Watch("lightboxClass")
   lightboxClassWatcher() {
@@ -40,14 +40,14 @@ export class DSModal {
   shownWatchHandler() {
     const body = document.querySelector("body");
     if (this.shown) {
-      body.classList.add("gbx-js--modal-open");
+      body.classList.add("ds-js--modal-open");
       this.modalInit();
     } else {
       this.modalCloseHandler();
       this.isReady = false;
     }
 
-    this[`gbxModal${this.shown ? "Open" : "Close"}`].emit();
+    this[`modal${this.shown ? "Open" : "Close"}`].emit();
   }
 
   @Listen("request_toggleModal_event")
@@ -108,8 +108,8 @@ export class DSModal {
       window.location.href = window.location.origin;
     }
 
-    if (this.gbxModalClose) {
-      this.gbxModalClose.emit();
+    if (this.modalClose) {
+      this.modalClose.emit();
     } else {
       this.toggle(false);
     }
@@ -152,7 +152,7 @@ export class DSModal {
 
     const body = document.querySelector("body");
 
-    body.classList.remove("gbx-js--modal-open");
+    body.classList.remove("ds-js--modal-open");
     body.style.overflow = "visible";
 
     document.removeEventListener(
@@ -165,7 +165,7 @@ export class DSModal {
   modalMouseDownHandler(event: MouseEvent): void {
     if (
       !this.isClosingDisabled &&
-      !(event.target as HTMLDivElement).closest(".gbx-modal")
+      !(event.target as HTMLDivElement).closest(".ds-modal")
     ) {
       this.hide();
     }
@@ -185,7 +185,7 @@ export class DSModal {
         {this.shown && (
           <div
             class={{
-              "gbx-lightbox": true,
+              "ds-lightbox": true,
               "--no-layout": this.isLayoutDisabled,
               "--overlay": this.overlay,
               "--dark-overlay": !this.overlay && this.darkBackground,
@@ -194,42 +194,40 @@ export class DSModal {
             onMouseDown={this.modalMouseDownHandler}
             onMouseUp={this.modalMouseUpHandler}
           >
-            <div class="gbx-lightbox__container">
-              <div class="gbx-modal">
+            <div class="ds-lightbox__container">
+              <div class="ds-modal">
                 {this.isLayoutDisabled ? (
-                  <div class="gbx-modal__content">
+                  <div class="ds-modal__content">
                     <slot name="content" />
                   </div>
                 ) : (
                   <Fragment>
                     {!this.isHeaderDisabled && (
-                      <header class="gbx-modal__header">
-                        <div class="gbx-modal__title">
+                      <header class="ds-modal__header">
+                        <div class="ds-modal__title">
                           <slot name="title" />
                         </div>
 
                         {!this.isSubtitleDisabled && (
-                          <div class="gbx-modal__sub-title">
+                          <div class="ds-modal__sub-title">
                             <slot name="subTitle" />
                           </div>
                         )}
 
                         {!this.isClosingDisabled && (
-                          <gbx-button
-                            buttonType="button"
-                            useSnack={this.useSnack}
-                            buttonMods={this.closeButtonMods}
-                            onGbxButtonClick={this.closeButtonClickHandler}
+                          <ds-button
+                            mods={this.closeButtonMods}
+                            onClick={this.closeButtonClickHandler}
                           />
                         )}
                       </header>
                     )}
-                    <div class="gbx-modal__content">
+                    <div class="ds-modal__content">
                       <slot />
                       <slot name="content" />
                     </div>
                     {!this.isFooterDisabled && (
-                      <footer class="gbx-modal__footer">
+                      <footer class="ds-modal__footer">
                         <slot name="footer" />
                       </footer>
                     )}

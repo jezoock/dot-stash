@@ -6,21 +6,21 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSButtonType } from "./button/button";
+import { DSOption } from "./combo/combo";
 import { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 import { DSSliderPrams } from "./slider/slider";
 import { TooltipPosition } from "./tooltip/tooltip-position.enum";
-import { DSOption } from "./combo/combo";
 export { DSButtonType } from "./button/button";
+export { DSOption } from "./combo/combo";
 export { DSGridAlignment, DSGridParams, DSGridType } from "./grid/grid";
 export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 export { DSSliderPrams } from "./slider/slider";
 export { TooltipPosition } from "./tooltip/tooltip-position.enum";
-export { DSOption } from "./combo/combo";
 export namespace Components {
     interface DsBlock {
         /**
@@ -43,6 +43,20 @@ export namespace Components {
         "styles": string;
         "type": DSButtonType;
         "url": string;
+    }
+    interface DsCombo {
+        "close": () => Promise<void>;
+        "customLabel": string;
+        "mode": string;
+        "multiple": boolean;
+        "name": string;
+        "open": () => Promise<void>;
+        "options": any;
+        "overlay": boolean;
+        "position": string;
+        "selected": DSOption;
+        "selectedOption": DSOption[];
+        "toggle": (forceDisplay?: boolean) => Promise<void>;
     }
     interface DsControl {
         "action": string;
@@ -131,6 +145,21 @@ export namespace Components {
         "name": string;
         "params": string | MarkerOptionsFromProps;
     }
+    interface DsModal {
+        "closeButtonMods": string[];
+        "darkBackground": boolean;
+        "isClosingDisabled": boolean;
+        "isFooterDisabled": boolean;
+        "isHeaderDisabled": boolean;
+        "isLayoutDisabled": boolean;
+        "isSubtitleDisabled": boolean;
+        "lightboxClass": any;
+        "lightboxClassObject": any;
+        "overlay": boolean;
+        "redirectToSmoodOnClose": boolean;
+        "shown": boolean;
+        "useSnack": boolean;
+    }
     interface DsNavMenu {
         "currentActiveItemId": string;
         "mods": string|string[];
@@ -202,6 +231,20 @@ export namespace Components {
         "section": boolean;
         "sub": boolean;
     }
+    interface DsToaster {
+    }
+    interface DsToggler {
+        "isActive": boolean;
+        "items": any[];
+        "togglerMods": string;
+    }
+    interface DsTogglerItem {
+        "expanded": boolean;
+        "hasContent": boolean;
+        "replaceExtendFunction": any;
+        "titleContent": string;
+        "titleLevel": string;
+    }
     /**
      * Simple icon tooltip component
      */
@@ -243,55 +286,18 @@ export namespace Components {
         "disabled": string | boolean;
         "target": string;
     }
-    interface GbxCombo {
-        "close": () => Promise<void>;
-        "customLabel": string;
-        "mode": string;
-        "multiple": boolean;
-        "name": string;
-        "open": () => Promise<void>;
-        "options": any;
-        "overlay": boolean;
-        "pageName": string;
-        "position": string;
-        "selected": DSOption;
-        "selectedOption": DSOption[];
-        "toggle": (forceDisplay?: boolean) => Promise<void>;
-    }
-    interface GbxModal {
-        "closeButtonMods": string[];
-        "darkBackground": boolean;
-        "isClosingDisabled": boolean;
-        "isFooterDisabled": boolean;
-        "isHeaderDisabled": boolean;
-        "isLayoutDisabled": boolean;
-        "isSubtitleDisabled": boolean;
-        "lightboxClass": any;
-        "lightboxClassObject": any;
-        "overlay": boolean;
-        "redirectToSmoodOnClose": boolean;
-        "shown": boolean;
-        "useSnack": boolean;
-    }
-    interface GbxToaster {
-    }
-    interface GbxToggler {
-        "isActive": boolean;
-        "items": any[];
-        "togglerMods": string;
-    }
-    interface GbxTogglerItem {
-        "expanded": boolean;
-        "haveContent": boolean;
-        "pageName": string;
-        "replaceExtendFunction": any;
-        "titleContent": string;
-        "titleLevel": string;
-    }
 }
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
+}
+export interface DsComboCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsComboElement;
+}
+export interface DsModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsModalElement;
 }
 export interface DsNavMenuItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -313,21 +319,13 @@ export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
 }
-export interface GbxComboCustomEvent<T> extends CustomEvent<T> {
+export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLGbxComboElement;
+    target: HTMLDsToasterElement;
 }
-export interface GbxModalCustomEvent<T> extends CustomEvent<T> {
+export interface DsTogglerItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLGbxModalElement;
-}
-export interface GbxToasterCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxToasterElement;
-}
-export interface GbxTogglerItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxTogglerItemElement;
+    target: HTMLDsTogglerItemElement;
 }
 declare global {
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
@@ -341,6 +339,12 @@ declare global {
     var HTMLDsButtonElement: {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
+    };
+    interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
+    }
+    var HTMLDsComboElement: {
+        prototype: HTMLDsComboElement;
+        new (): HTMLDsComboElement;
     };
     interface HTMLDsControlElement extends Components.DsControl, HTMLStencilElement {
     }
@@ -389,6 +393,12 @@ declare global {
     var HTMLDsMapMarkerElement: {
         prototype: HTMLDsMapMarkerElement;
         new (): HTMLDsMapMarkerElement;
+    };
+    interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
+    }
+    var HTMLDsModalElement: {
+        prototype: HTMLDsModalElement;
+        new (): HTMLDsModalElement;
     };
     interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
     }
@@ -456,6 +466,24 @@ declare global {
         prototype: HTMLDsTitleElement;
         new (): HTMLDsTitleElement;
     };
+    interface HTMLDsToasterElement extends Components.DsToaster, HTMLStencilElement {
+    }
+    var HTMLDsToasterElement: {
+        prototype: HTMLDsToasterElement;
+        new (): HTMLDsToasterElement;
+    };
+    interface HTMLDsTogglerElement extends Components.DsToggler, HTMLStencilElement {
+    }
+    var HTMLDsTogglerElement: {
+        prototype: HTMLDsTogglerElement;
+        new (): HTMLDsTogglerElement;
+    };
+    interface HTMLDsTogglerItemElement extends Components.DsTogglerItem, HTMLStencilElement {
+    }
+    var HTMLDsTogglerItemElement: {
+        prototype: HTMLDsTogglerItemElement;
+        new (): HTMLDsTogglerItemElement;
+    };
     /**
      * Simple icon tooltip component
      */
@@ -477,39 +505,10 @@ declare global {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
     };
-    interface HTMLGbxComboElement extends Components.GbxCombo, HTMLStencilElement {
-    }
-    var HTMLGbxComboElement: {
-        prototype: HTMLGbxComboElement;
-        new (): HTMLGbxComboElement;
-    };
-    interface HTMLGbxModalElement extends Components.GbxModal, HTMLStencilElement {
-    }
-    var HTMLGbxModalElement: {
-        prototype: HTMLGbxModalElement;
-        new (): HTMLGbxModalElement;
-    };
-    interface HTMLGbxToasterElement extends Components.GbxToaster, HTMLStencilElement {
-    }
-    var HTMLGbxToasterElement: {
-        prototype: HTMLGbxToasterElement;
-        new (): HTMLGbxToasterElement;
-    };
-    interface HTMLGbxTogglerElement extends Components.GbxToggler, HTMLStencilElement {
-    }
-    var HTMLGbxTogglerElement: {
-        prototype: HTMLGbxTogglerElement;
-        new (): HTMLGbxTogglerElement;
-    };
-    interface HTMLGbxTogglerItemElement extends Components.GbxTogglerItem, HTMLStencilElement {
-    }
-    var HTMLGbxTogglerItemElement: {
-        prototype: HTMLGbxTogglerItemElement;
-        new (): HTMLGbxTogglerItemElement;
-    };
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
+        "ds-combo": HTMLDsComboElement;
         "ds-control": HTMLDsControlElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
@@ -518,6 +517,7 @@ declare global {
         "ds-map": HTMLDsMapElement;
         "ds-map-location": HTMLDsMapLocationElement;
         "ds-map-marker": HTMLDsMapMarkerElement;
+        "ds-modal": HTMLDsModalElement;
         "ds-nav-menu": HTMLDsNavMenuElement;
         "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
@@ -529,14 +529,12 @@ declare global {
         "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
+        "ds-toaster": HTMLDsToasterElement;
+        "ds-toggler": HTMLDsTogglerElement;
+        "ds-toggler-item": HTMLDsTogglerItemElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
-        "gbx-combo": HTMLGbxComboElement;
-        "gbx-modal": HTMLGbxModalElement;
-        "gbx-toaster": HTMLGbxToasterElement;
-        "gbx-toggler": HTMLGbxTogglerElement;
-        "gbx-toggler-item": HTMLGbxTogglerItemElement;
     }
 }
 declare namespace LocalJSX {
@@ -562,6 +560,18 @@ declare namespace LocalJSX {
         "styles"?: string;
         "type"?: DSButtonType;
         "url"?: string;
+    }
+    interface DsCombo {
+        "customLabel"?: string;
+        "mode"?: string;
+        "multiple"?: boolean;
+        "name"?: string;
+        "onOptionSelected"?: (event: DsComboCustomEvent<any>) => void;
+        "options"?: any;
+        "overlay"?: boolean;
+        "position"?: string;
+        "selected"?: DSOption;
+        "selectedOption"?: DSOption[];
     }
     interface DsControl {
         "action"?: string;
@@ -633,6 +643,23 @@ declare namespace LocalJSX {
         "name"?: string;
         "params"?: string | MarkerOptionsFromProps;
     }
+    interface DsModal {
+        "closeButtonMods"?: string[];
+        "darkBackground"?: boolean;
+        "isClosingDisabled"?: boolean;
+        "isFooterDisabled"?: boolean;
+        "isHeaderDisabled"?: boolean;
+        "isLayoutDisabled"?: boolean;
+        "isSubtitleDisabled"?: boolean;
+        "lightboxClass"?: any;
+        "lightboxClassObject"?: any;
+        "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
+        "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
+        "overlay"?: boolean;
+        "redirectToSmoodOnClose"?: boolean;
+        "shown"?: boolean;
+        "useSnack"?: boolean;
+    }
     interface DsNavMenu {
         "currentActiveItemId"?: string;
         "mods"?: string|string[];
@@ -699,6 +726,24 @@ declare namespace LocalJSX {
         "section"?: boolean;
         "sub"?: boolean;
     }
+    interface DsToaster {
+        "onNotify_toasterHide_event"?: (event: DsToasterCustomEvent<any>) => void;
+        "onNotify_toasterShow_event"?: (event: DsToasterCustomEvent<any>) => void;
+    }
+    interface DsToggler {
+        "isActive"?: boolean;
+        "items"?: any[];
+        "togglerMods"?: string;
+    }
+    interface DsTogglerItem {
+        "expanded"?: boolean;
+        "hasContent"?: boolean;
+        "onNotify_togglerCollapsed_event"?: (event: DsTogglerItemCustomEvent<any>) => void;
+        "onNotify_togglerExpanded_event"?: (event: DsTogglerItemCustomEvent<any>) => void;
+        "replaceExtendFunction"?: any;
+        "titleContent"?: string;
+        "titleLevel"?: string;
+    }
     /**
      * Simple icon tooltip component
      */
@@ -735,58 +780,10 @@ declare namespace LocalJSX {
         "disabled"?: string | boolean;
         "target"?: string;
     }
-    interface GbxCombo {
-        "customLabel"?: string;
-        "mode"?: string;
-        "multiple"?: boolean;
-        "name"?: string;
-        "onGbxValueChange"?: (event: GbxComboCustomEvent<any>) => void;
-        "options"?: any;
-        "overlay"?: boolean;
-        "pageName"?: string;
-        "position"?: string;
-        "selected"?: DSOption;
-        "selectedOption"?: DSOption[];
-    }
-    interface GbxModal {
-        "closeButtonMods"?: string[];
-        "darkBackground"?: boolean;
-        "isClosingDisabled"?: boolean;
-        "isFooterDisabled"?: boolean;
-        "isHeaderDisabled"?: boolean;
-        "isLayoutDisabled"?: boolean;
-        "isSubtitleDisabled"?: boolean;
-        "lightboxClass"?: any;
-        "lightboxClassObject"?: any;
-        "onGbxModalClose"?: (event: GbxModalCustomEvent<any>) => void;
-        "onGbxModalOpen"?: (event: GbxModalCustomEvent<any>) => void;
-        "overlay"?: boolean;
-        "redirectToSmoodOnClose"?: boolean;
-        "shown"?: boolean;
-        "useSnack"?: boolean;
-    }
-    interface GbxToaster {
-        "onNotify_toasterHide_event"?: (event: GbxToasterCustomEvent<any>) => void;
-        "onNotify_toasterShow_event"?: (event: GbxToasterCustomEvent<any>) => void;
-    }
-    interface GbxToggler {
-        "isActive"?: boolean;
-        "items"?: any[];
-        "togglerMods"?: string;
-    }
-    interface GbxTogglerItem {
-        "expanded"?: boolean;
-        "haveContent"?: boolean;
-        "onNotify_togglerCollapsed_event"?: (event: GbxTogglerItemCustomEvent<any>) => void;
-        "onNotify_togglerExpanded_event"?: (event: GbxTogglerItemCustomEvent<any>) => void;
-        "pageName"?: string;
-        "replaceExtendFunction"?: any;
-        "titleContent"?: string;
-        "titleLevel"?: string;
-    }
     interface IntrinsicElements {
         "ds-block": DsBlock;
         "ds-button": DsButton;
+        "ds-combo": DsCombo;
         "ds-control": DsControl;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
@@ -795,6 +792,7 @@ declare namespace LocalJSX {
         "ds-map": DsMap;
         "ds-map-location": DsMapLocation;
         "ds-map-marker": DsMapMarker;
+        "ds-modal": DsModal;
         "ds-nav-menu": DsNavMenu;
         "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
@@ -806,14 +804,12 @@ declare namespace LocalJSX {
         "ds-slider-menu": DsSliderMenu;
         "ds-text": DsText;
         "ds-title": DsTitle;
+        "ds-toaster": DsToaster;
+        "ds-toggler": DsToggler;
+        "ds-toggler-item": DsTogglerItem;
         "ds-tooltip": DsTooltip;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
-        "gbx-combo": GbxCombo;
-        "gbx-modal": GbxModal;
-        "gbx-toaster": GbxToaster;
-        "gbx-toggler": GbxToggler;
-        "gbx-toggler-item": GbxTogglerItem;
     }
 }
 export { LocalJSX as JSX };
@@ -822,6 +818,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
             "ds-control": LocalJSX.DsControl & JSXBase.HTMLAttributes<HTMLDsControlElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
@@ -830,6 +827,7 @@ declare module "@stencil/core" {
             "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
             "ds-map-location": LocalJSX.DsMapLocation & JSXBase.HTMLAttributes<HTMLDsMapLocationElement>;
             "ds-map-marker": LocalJSX.DsMapMarker & JSXBase.HTMLAttributes<HTMLDsMapMarkerElement>;
+            "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
             "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
@@ -841,17 +839,15 @@ declare module "@stencil/core" {
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
+            "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
+            "ds-toggler": LocalJSX.DsToggler & JSXBase.HTMLAttributes<HTMLDsTogglerElement>;
+            "ds-toggler-item": LocalJSX.DsTogglerItem & JSXBase.HTMLAttributes<HTMLDsTogglerItemElement>;
             /**
              * Simple icon tooltip component
              */
             "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
-            "gbx-combo": LocalJSX.GbxCombo & JSXBase.HTMLAttributes<HTMLGbxComboElement>;
-            "gbx-modal": LocalJSX.GbxModal & JSXBase.HTMLAttributes<HTMLGbxModalElement>;
-            "gbx-toaster": LocalJSX.GbxToaster & JSXBase.HTMLAttributes<HTMLGbxToasterElement>;
-            "gbx-toggler": LocalJSX.GbxToggler & JSXBase.HTMLAttributes<HTMLGbxTogglerElement>;
-            "gbx-toggler-item": LocalJSX.GbxTogglerItem & JSXBase.HTMLAttributes<HTMLGbxTogglerItemElement>;
         }
     }
 }

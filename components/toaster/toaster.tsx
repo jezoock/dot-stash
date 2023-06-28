@@ -1,6 +1,6 @@
 import { Component, h, State, Listen, Host, Event, EventEmitter } from "@stencil/core";
 @Component({
-  tag: "gbx-toaster",
+  tag: "ds-toaster",
   styleUrl: "toaster.scss"
 })
 
@@ -8,7 +8,7 @@ export class DSToaster {
 
   container: HTMLDivElement = null;
 
-  @State() isShown: boolean = false;
+  @State() isShown = false;
   @State() isButtonDisabled: boolean;
   @State() message: string;
   @State() innerJSX: any;
@@ -109,10 +109,10 @@ export class DSToaster {
   render() {
     const positionClasses = {};
     positionClasses[
-      `gbx-toaster--position-vertical-${this.position[0]}`
+      `ds-toaster--position-vertical-${this.position[0]}`
     ] = true;
     positionClasses[
-      `gbx-toaster--position-horizontal-${this.position[1]}`
+      `ds-toaster--position-horizontal-${this.position[1]}`
     ] = true;
 
     return (
@@ -120,7 +120,7 @@ export class DSToaster {
         {this.isShown && (
           <div
             class={{
-              "gbx-toaster": true,
+              "ds-toaster": true,
               ...positionClasses,
               ...this.toasterClass
             }}
@@ -129,21 +129,21 @@ export class DSToaster {
             }}
             onClick={this.close}
           >
-            <div class={`gbx-toaster__container gbx-toaster__container--${this.type}`}>
+            <div class={`ds-toaster__container ds-toaster__container--${this.type}`}>
               {this.innerJSX ? (
-                <div class="gbx-toaster__content">
+                <div class="ds-toaster__content">
                   {this.innerJSX}
                 </div>
               ) : (
-                  <div class="gbx-toaster__content">
+                  <div class="ds-toaster__content">
                     <span
-                      class={`gbx-toaster__message gbx-toaster__message--${this.type}`}>
+                      class={`ds-toaster__message ds-toaster__message--${this.type}`}>
                       {this.message}
                     </span>
                     {!this.isButtonDisabled && (
-                      <div class="gbx-toaster__action">
+                      <div class="ds-toaster__action">
                         <button
-                          class="gbx-toaster__close-button"
+                          class="ds-toaster__close-button"
                           onClick={this.close}>
                           {this.buttonText || "OK"}
                         </button>

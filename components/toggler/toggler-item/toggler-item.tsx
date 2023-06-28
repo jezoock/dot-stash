@@ -8,20 +8,19 @@ import {
 } from "@stencil/core";
 
 @Component({
-  tag: "gbx-toggler-item",
+  tag: "ds-toggler-item",
   styleUrl: "toggler-item.scss"
 })
 export class DSTogglerItem {
-  @Prop() titleContent: string = "";
-  @Prop() titleLevel: string = "4";
-  @Prop({ mutable: true, reflect: true }) expanded: boolean = false;
+  @Prop() titleContent = "";
+  @Prop() titleLevel = "4";
+  @Prop({ mutable: true, reflect: true }) expanded = false;
   @Prop({ mutable: true }) replaceExtendFunction: any;
-  @Prop({ mutable: true }) haveContent: boolean = true;
-  @Prop() pageName: string = "Grocery";
+  @Prop({ mutable: true }) hasContent = true;
 
   @Element() container: HTMLElement;
 
-  transitionStarted: boolean = false;
+  transitionStarted = false;
 
   @Event() notify_togglerCollapsed_event: EventEmitter;
   @Event() notify_togglerExpanded_event: EventEmitter;
@@ -34,14 +33,14 @@ export class DSTogglerItem {
   componentDidLoad() {
     if (this.expanded) {
       (this.container.querySelector(
-        ".gbx-toggler-item__content"
+        ".ds-toggler-item__content"
       ) as HTMLDivElement).style.height = "auto";
     }
   }
 
   toggleContent() {
     const item = this.container.querySelector(
-      ".gbx-toggler-item__content"
+      ".ds-toggler-item__content"
     ) as HTMLDivElement;
     item.removeEventListener("transitionend", this.toggleContent);
     if (item.offsetHeight !== 0) {
@@ -68,7 +67,7 @@ export class DSTogglerItem {
       this.expanded = !expanded;
 
       const item = this.container.querySelector(
-        ".gbx-toggler-item__content"
+        ".ds-toggler-item__content"
       ) as HTMLDivElement;
 
       const height = this.expanded
@@ -99,29 +98,28 @@ export class DSTogglerItem {
     return (
       <div
         class={{
-          "gbx-toggler-item": true,
-          "--active": this.expanded && this.haveContent
+          "ds-toggler-item": true,
+          "--active": this.expanded && this.hasContent
         }}
       >
         <div
           class={{
-            "gbx-toggler-item__title": true,
-            "--content": this.haveContent
+            "ds-toggler-item__title": true,
+            "--content": this.hasContent
           }}
           onClick={this.togglerTitleClickHandler}
-          data-cy={this.pageName + "_Button_GbxTogglerItem"}
         >
           {this.titleContent === "" ? (
             <slot name="title" />
           ) : (
-            <TitleTag data-cy={this.pageName + "_Label_GbxTogglerTitle"}>
+            <TitleTag>
               {this.titleContent}
             </TitleTag>
           )}
         </div>
 
-        {this.haveContent && (
-          <div class="gbx-toggler-item__content">
+        {this.hasContent && (
+          <div class="ds-toggler-item__content">
             <div>
               <slot />
             </div>

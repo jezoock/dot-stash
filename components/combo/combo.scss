@@ -1,4 +1,4 @@
-.gbx-combo {
+.ds-combo {
   cursor: pointer;
   display: inline-block;
   vertical-align: inherit;
@@ -78,7 +78,7 @@
   }
 
   &--open {
-    & .gbx-combo__selected-option {
+    & .ds-combo__selected-option {
       &:after {
         transform: rotateZ(180deg);
       }
@@ -91,7 +91,7 @@
     min-width: 200px;
     line-height: 2rem;
 
-    & .gbx-combo {
+    & .ds-combo {
       &__selected-option {
         padding: 0 1rem;
         font-size: 1rem;
@@ -112,7 +112,7 @@
   }
 
   &--alt {
-    & .gbx-combo {
+    & .ds-combo {
       &__option {
         padding: 0 1rem;
         &-list {
@@ -126,7 +126,7 @@
   }
 
   &--image {
-    & .gbx-combo__option-list {
+    & .ds-combo__option-list {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;

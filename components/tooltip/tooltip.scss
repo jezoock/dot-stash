@@ -2,13 +2,13 @@ $tooltip_background-color: snk-color(primary, base);
 $triangle_small-side: 0.4375rem;
 $triangle_large-side: 0.8125rem;
 
-gbx-tooltip {
+ds-tooltip {
   & > [slot] {
     display: none;
   }
 }
 
-.gbx-tooltip {
+.ds-tooltip {
   display: inline-flex;
   position: relative;
   white-space: normal;
@@ -82,7 +82,7 @@ gbx-tooltip {
       &.--payment-method {
         position: static;
         width: auto;
-        & .gbx-tooltip {
+        & .ds-tooltip {
           &__message {
             left: 15px;
             right: 15px;

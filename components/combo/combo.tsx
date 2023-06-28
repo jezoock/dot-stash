@@ -21,7 +21,7 @@ export interface DSOption {
 }
 
 @Component({
-  tag: "gbx-combo",
+  tag: "ds-combo",
   styleUrl: "combo.scss"
 })
 export class DSCombo {
@@ -39,13 +39,12 @@ export class DSCombo {
     name: "",
     value: ""
   };
-  @Prop() pageName = "Grocery";
 
   @State() uid = uuid();
   @State() showCombo = false;
   @State() optionsArray: any[] = [];
 
-  @Event() gbxValueChange: EventEmitter;
+  @Event() optionSelected: EventEmitter;
 
   @Watch("options")
   watchOptionsHandler(options) {
@@ -126,7 +125,7 @@ export class DSCombo {
     this.optionsArray = previousOptions;
 
     if (emit) {
-      this.gbxValueChange.emit({
+      this.optionSelected.emit({
         name: this.name,
         option: this.selectedOption
       });
@@ -143,7 +142,7 @@ export class DSCombo {
   }
 
   bodyClickHandler(e) {
-    if (!(e.target as HTMLDivElement).closest(`.gbx-combo-${this.uid}`)) {
+    if (!(e.target as HTMLDivElement).closest(`.ds-combo-${this.uid}`)) {
       this.close();
     }
   }
@@ -178,37 +177,36 @@ export class DSCombo {
     return (
       <div
         id={
-          "gbx-combo-" +
+          "ds-combo-" +
           (this.name ||
             [
-              ...(document.querySelectorAll("gbx-combo") as any)
+              ...(document.querySelectorAll("ds-combo") as any)
             ].length.toString())
         }
         class={{
-          "gbx-combo": true,
-          "gbx-combo--open": this.showCombo,
-          [`gbx-combo-${this.uid}`]: true,
-          [`gbx-combo--position-${this.position}`]: true,
-          [`gbx-combo--${this.mode}`]: !!this.mode,
+          "ds-combo": true,
+          "ds-combo--open": this.showCombo,
+          [`ds-combo-${this.uid}`]: true,
+          [`ds-combo--position-${this.position}`]: true,
+          [`ds-combo--${this.mode}`]: !!this.mode,
         }}>
         {this.overlay && (
           <div
-            class="gbx-overlay"
+            class="ds-overlay"
             onClick={this.close}
           />
         )}
         {this.mode !== "dropdown" && (
           <div
-            class="gbx-combo__selected-option"
+            class="ds-combo__selected-option"
             onClick={() => {
               this.toggle();
-            }}
-            data-cy={this.pageName + '_Button_' + this.name + 'OptionSelected'}>
+            }}>
             {this.multiple && (
-              <span data-cy={this.pageName + '_Label_' + this.name + 'OptionSelectedName'}>
+              <span>
                 {this.name}
                 {this.selectedOption.length > 0 && (
-                  <span data-cy={this.pageName + '_Label_OptionSelectedLength'}>({this.selectedOption.length})</span>
+                  <span>({this.selectedOption.length})</span>
                 )}
               </span>
             )}
@@ -226,20 +224,20 @@ export class DSCombo {
           <menu>
             <ul
               class={{
-                "gbx-combo__option-list": true,
-                "gbx-js--hidden": this.mode === "image" && !this.showCombo
+                "ds-combo__option-list": true,
+                "ds-js--hidden": this.mode === "image" && !this.showCombo
               }}>
               {this.optionsArray.map((option, optionIndex) => (
                 <li
                   class={{
-                    "gbx-combo__option": true,
-                    "gbx-bombo__option--disabled": option.disabled,
-                    "gbx-combo__option--selected": option.selected
+                    "ds-combo__option": true,
+                    "ds-bombo__option--disabled": option.disabled,
+                    "ds-combo__option--selected": option.selected
                   }}
                   onClick={evt => {
                     this.selectOption(evt, optionIndex);
                   }}
-                  data-cy={this.pageName + '_Button_Option' + option.name}>
+                  >
                   {this.mode === "image" && (
                     <img
                       src={option.image}
@@ -247,9 +245,9 @@ export class DSCombo {
                     />
                   )}
                   {option.url ? (
-                    <a href={option.url} data-cy={this.pageName + '_Button_OptionLink' + option.name}>{option.name}</a>
+                    <a href={option.url}>{option.name}</a>
                   ) : (
-                      <span data-cy={this.pageName + '_Label_Option' + option.name}>{option.name}</span>
+                      <span>{option.name}</span>
                     )}
                 </li>
               ))}

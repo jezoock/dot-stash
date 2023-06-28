@@ -1,12 +1,7 @@
 import { Component, h, Prop, Listen, Event, EventEmitter, Watch } from "@stencil/core";
 import CssClassList from "../types/css-class-list.interface";
 import _ds from "../../typescript/dot-stash";
-enum SIDEBAR_POSITION {
-  LEFT = 'left',
-  RIGHT = 'right',
-  TOP = 'top',
-  BOTTOM = 'bottom',
-}
+import SIDEBAR_POSITION from "../types/sidebar-position.enum";
 
 @Component({
   tag: "ds-sidebar",
@@ -142,7 +137,7 @@ export class DSSidebar {
         }}
         ref={el => this.container = el}
       >
-        <div class="gbx-sidebar__content">
+        <div class="ds-sidebar__content">
           <slot />
         </div>
       </div>

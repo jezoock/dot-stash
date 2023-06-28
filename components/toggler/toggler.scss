@@ -1,19 +1,19 @@
-.gbx-toggler {
-  & gbx-toggler-item {
-    & .gbx-toggler-item {
+.ds-toggler {
+  & ds-toggler-item {
+    & .ds-toggler-item {
       margin: 5px 15px;
       border-bottom: 1px solid color(gray, light);
     }
 
     &:last-child {
-      .gbx-toggler-item {
+      .ds-toggler-item {
         border-bottom: none;
       }
     }
   }
 
   &.--product {
-		& .gbx-toggler-item {
+		& .ds-toggler-item {
       margin: 0 0 0.25rem 0;
 			padding: 0;
 			border-bottom: none;
@@ -50,11 +50,11 @@
       }
 
 			&--active {
-				& .gbx-toggler-item__content {
+				& .ds-toggler-item__content {
 					margin-bottom: 0;
 				}
 
-				& .gbx-toggler-item__title {
+				& .ds-toggler-item__title {
 					&:after {
 						/* icon */
 					}

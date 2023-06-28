@@ -1,4 +1,4 @@
-.gbx-toggler-item {
+.ds-toggler-item {
   padding: 0 0.3125rem;
 
   &__title {
@@ -39,7 +39,7 @@
   }
 
   &.--active {
-    .gbx-toggler-item {
+    .ds-toggler-item {
       &__content {
         margin-bottom: 1rem;
       }

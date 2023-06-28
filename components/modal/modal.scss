@@ -1,4 +1,4 @@
-gbx-modal {
+ds-modal {
   // !!!!!!! IMPORTANT !!!!!!!!!!!!
   // Slotted elements are displayed in the modal parent container before being transfered to assigned slot
   & > [slot] {
@@ -6,7 +6,7 @@ gbx-modal {
   }
 }
 
-.gbx-lightbox {
+.ds-lightbox {
   position: fixed;
   top: 0;
   left: 0;
@@ -21,7 +21,7 @@ gbx-modal {
     bottom: 0;
     right: 0;
     z-index: 100;
-    & .gbx-modal {
+    & .ds-modal {
       position: relative;
       z-index: 10;
       background: #fff;
@@ -50,9 +50,9 @@ gbx-modal {
   }
 
   &.--page {
-    & .gbx-lightbox {
+    & .ds-lightbox {
       &__container {
-        & .gbx-modal {
+        & .ds-modal {
           display: flex;
           flex-direction: column;
           overflow-y: auto;
@@ -63,7 +63,7 @@ gbx-modal {
   }
 
   &.--dialog {
-    & .gbx-lightbox {
+    & .ds-lightbox {
       &__container {
         position: absolute;
         top: 50%;
@@ -76,7 +76,7 @@ gbx-modal {
         display: flex;
         align-items: center;
 
-        & .gbx-modal {
+        & .ds-modal {
           box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
           border: 1px solid color(gray, light);
           border-radius: 3px;
@@ -126,15 +126,15 @@ gbx-modal {
   }
 
   &.--mini-cart {
-    & .gbx-lightbox {
+    & .ds-lightbox {
       &__container {
         padding: 0 2rem;
 
-        & .gbx-modal {
+        & .ds-modal {
           border-radius: 0;
           &__header {
             position: relative;
-            & .gbx-button {
+            & .ds-button {
               position: absolute;
               top: 0;
               right: 0;
@@ -153,6 +153,6 @@ gbx-modal {
   }
 }
 
-.gbx-js--modal-open {
+.ds-js--modal-open {
   overflow: hidden;
 }

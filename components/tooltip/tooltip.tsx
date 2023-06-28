@@ -142,7 +142,7 @@ export class DSTooltip {
         onMouseOut={this.tooltipHandler}
         onTouchEnd={this.tooltipHandler}
       >
-        <div class="gbx-tooltip__content">
+        <div class="ds-tooltip__content">
           <slot />
         </div>
         <slot name="message" />

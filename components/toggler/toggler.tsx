@@ -2,7 +2,7 @@ import { Component, Element, h, Prop } from "@stencil/core";
 import { AnyHTMLElement } from "@stencil/core/internal";
 
 @Component({
-  tag: "gbx-toggler",
+  tag: "ds-toggler",
   styleUrl: "toggler.scss"
 })
 export class DSToggler {
@@ -10,15 +10,13 @@ export class DSToggler {
   @Element() container: AnyHTMLElement;
 
   @Prop({ mutable: true }) items: any[] = [];
-  @Prop({ attribute: 'active', reflect: true }) isActive: boolean = true;
-  @Prop({ attribute: 'toggler-mods', reflect: true }) togglerMods: string = "";
-
-  constructor() { }
+  @Prop({ attribute: 'active', reflect: true }) isActive = true;
+  @Prop({ attribute: 'toggler-mods', reflect: true }) togglerMods = "";
 
   componentDidLoad() {
     if (!this.isActive) {
-      const items = this.container.querySelectorAll("gbx-toggler-item");
-      const contents = this.container.querySelectorAll(".gbx-toggler-item__content") as NodeListOf<HTMLDivElement>;
+      const items = this.container.querySelectorAll("ds-toggler-item");
+      const contents = this.container.querySelectorAll(".ds-toggler-item__content") as NodeListOf<HTMLDivElement>;
       if (items?.length > 0) {
         items.forEach((item: any, index: number) => {
           item.expanded = true;
@@ -34,16 +32,16 @@ export class DSToggler {
     return (
       <div
         class={{
-          "gbx-toggler": true,
+          "ds-toggler": true,
           [`--${this.togglerMods}`]: this.togglerMods && this.togglerMods !== ''
         }}
       >
         {this.items?.length > 0 && (
           this.items.map(item => {
             return (
-              <gbx-toggler-item pageName="Grocery" titleContent={item.title}>
+              <ds-toggler-item titleContent={item.title}>
                 {item.content}
-              </gbx-toggler-item>
+              </ds-toggler-item>
             );
           })
         )}

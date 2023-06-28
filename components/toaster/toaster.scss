@@ -1,4 +1,4 @@
-.gbx-toaster {
+.ds-toaster {
   position: fixed;
   z-index: 10000;
   pointer-events: none;
@@ -57,7 +57,7 @@
 
   &__container {
     &--valid {
-      & .gbx-toaster {
+      & .ds-toaster {
         &__message {
           &--valid,
           &--warning,
@@ -73,7 +73,7 @@
     flex-shrink: 0;
     margin: -0.5rem -0.5rem -0.5rem 0.5rem;
 
-    .gbx-toaster__close-button {
+    .ds-toaster__close-button {
       color: #fff;
       max-height: 2.25rem;
       min-width: 0;
