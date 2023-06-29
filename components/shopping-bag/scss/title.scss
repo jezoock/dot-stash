@@ -1,0 +1,88 @@
+.gbx-shopping-bag-title {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  line-height: 2rem;
+  &:before {
+    @include --icon(list);
+  }
+  &__button {
+    &:before {
+      @include --icon-font(middle);
+    }
+  }
+  &.--details,
+  &.--edit,
+  &.--create {
+    position: relative;
+    &:after {
+      position: absolute;
+      font-size: 0.75rem;
+      transform: translateY(-50%);
+      @include --rounded(1rem);
+      @include --color-set(color-1);
+      @include --icon-font();
+    }
+    & > strong {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  &.--details {
+    &:after {
+      @include --icon-content(search);
+    }
+  }
+  &.--create {
+    &:after {
+      @include --icon-content(plus);
+    }
+  }
+  @media (max-width: $grid-sm-max) {
+    font-size: $text_font-size-3;
+    padding: 0 0 1rem 0;
+    &:before {
+      margin: 0 0.5rem 0 0;
+    }
+    &__button {
+      &:before {
+        font-size: $title_font-size-3;
+      }
+    }
+    &.--details,
+    &.--edit,
+    &.--create {
+      &:after {
+        top: 0.5rem;
+        left: 1rem;
+      }
+    }
+  }
+  @media (min-width: $grid-md-min) {
+    font-size: $title_font-size-2;
+    &:before {
+      margin: 0 1rem 0 0;
+    }
+    &__button {
+      &:before {
+        font-size: 2rem;
+        margin: 0 0 0 0.75rem;
+      }
+    }
+    &.--list {
+      padding: 0 4rem 2rem 0;
+      margin: 0 -100% 0 0;
+    }
+    &.--details,
+    &.--edit,
+    &.--create {
+      position: relative;
+      padding: 0 25% 2rem 0;
+      &:after {
+        top: 0.25rem;
+        left: 1.5rem;
+      }
+    }
+  }
+}

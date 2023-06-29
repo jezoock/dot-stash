@@ -1,0 +1,89 @@
+.gbx-shopping-bag-title {
+
+  &__delete-products {
+    color: snk-color(primary, base);
+    text-decoration: underline;
+    margin: 0.375rem 0 0 0;
+  }
+
+  & > strong {
+    border: 1px solid #fff;
+  }
+  &__button {
+    font-weight: 500;
+    &.--edit {
+      color: color(color-1, base);
+      &:before {
+        @include --icon-content(edit-alt);
+      }
+    }
+    &.--cancel {
+      color: color(gray, base);
+      &:before {
+        @include --icon-content(close);
+      }
+    }
+    &.--save {
+      color: color(color-1, base);
+      &:before {
+        @include --icon-content(check-alt);
+      }
+    }
+  }
+  &.--edit {
+    &:after {
+      @include --icon-content(edit);
+    }
+    & > input {
+      font-weight: 700;
+      border: 1px solid color(gray, light);
+      border-radius: 3px;
+      padding: 0 0.5rem;
+      width: 100%;
+    }
+  }
+  @media (max-width: $grid-sm-max) {
+    & > strong {
+      padding: 0 0 0 0.5rem;
+      height: 3rem;
+      line-height: 3rem;
+      margin: -14px 0;
+    }
+    &.--edit {
+      flex-wrap: wrap;
+      justify-content: space-between;
+      & > input {
+        width: calc(100% - 2rem);
+        font-size: $text_font-size-3;
+        height: 3rem;
+        margin: -14px 0;
+      }
+      & > button {
+        margin: 1rem 0 0 0;
+        width: 48%;
+        & > span {
+          padding: 0 0 0 0.5rem;
+          font-size: $title_font-size-1;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+  @media (min-width: $grid-md-min) {
+    & > strong {
+      margin: -1rem 0 -14px 0.5rem;
+      line-height: 4rem;
+      height: 4rem;
+    }
+    & > input {
+      height: 4rem;
+      margin: -1rem 0 -14px 0;
+      font-size: $title_font-size-2;
+    }
+    & > button {
+      & > span {
+        display: none;
+      }
+    }
+  }
+}
