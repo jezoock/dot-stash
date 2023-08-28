@@ -1,4 +1,8 @@
-import { Component, h, Method, State, Host, Event, EventEmitter } from "@stencil/core";
+import { Component, h, Watch, Method, State, Prop, Event, EventEmitter } from "@stencil/core";
+import CssClassList from "../types/css-class-list.interface";
+import _ds from "../../typescript/dot-stash";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./toaster-positions.enum";
+
 @Component({
   tag: "ds-toaster",
   styleUrl: "toaster.scss"
@@ -6,17 +10,21 @@ import { Component, h, Method, State, Host, Event, EventEmitter } from "@stencil
 
 export class DSToaster {
 
-  container: HTMLDivElement = null;
+  container: HTMLDivElement;
+  CSSClassList: CssClassList;
+
+  @Prop({ mutable: true, reflect: true }) position: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION] = [TOASTER_VERTICAL_POSITION.TOP, TOASTER_HORIZONTAL_POSITION.LEFT];
+  @Prop({ mutable: true, reflect: true }) mods: string | string[] = "";
+  @Prop({ mutable: true, reflect: true }) messages: string | string[];
+  @Prop({ reflect: true }) maxDisplayedToast = 3;
+  @Prop() closingDelay = 3000;
 
   @State() isShown = false;
-  @State() isButtonDisabled: boolean;
-  @State() message: string;
-  @State() innerJSX: any;
-  @State() buttonText: string;
-  @State() closingDelay: number;
-  @State() toasterClass: any;
-  @State() position: string[];
-  @State() type: string;
+
+  @Watch('mods')
+  modsChangeHandler( mods: string | string[] ) {
+    this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(mods));
+  }
 
   @Event() toasterShow: EventEmitter;
   @Event() toasterShown: EventEmitter;
@@ -24,72 +32,13 @@ export class DSToaster {
   @Event() toasterHidden: EventEmitter;
 
   @Method()
-  async displayToast(params) {
-    this.setToDefaults();
-    const {
-      message,
-      closingDelay,
-      disableButton,
-      buttonText,
-      toasterClass,
-      position,
-      type,
-      innerJSX
-    } = params;
-
-    if (message) {
-      this.message = message;
+  async displayToast() {
+    this.show();
+    if (this.closingDelay !== 0) {
+      setTimeout(() => {
+        this.hide();
+      }, this.closingDelay);
     }
-    if (disableButton) {
-      this.isButtonDisabled = disableButton;
-    }
-    if (typeof closingDelay !== "undefined") {
-      this.closingDelay = closingDelay;
-      if (this.closingDelay === 0 && this.isButtonDisabled) {
-        this.closingDelay = 4000;
-      }
-    }
-    if (buttonText) {
-      this.buttonText = buttonText;
-    }
-    if (toasterClass) {
-      this.toasterClass = toasterClass;
-    }
-    if (position) {
-      this.position = position;
-    }
-    if (type) {
-      this.type = type;
-    }
-    if (innerJSX) {
-      this.innerJSX = innerJSX;
-    }
-
-    setTimeout(() => {
-      this.show();
-      if (this.closingDelay !== 0) {
-        setTimeout(() => {
-          this.hide();
-        }, this.closingDelay);
-      }
-    }, 10);
-  }
-
-  private setToDefaults(): void {
-    this.message = "";
-    this.closingDelay = 4000;
-    this.isButtonDisabled = false;
-    this.buttonText = "OK";
-    this.toasterClass = {};
-    this.position = ["bottom", "right"];
-    this.type = "info";
-    this.innerJSX = null;
-  }
-
-  constructor() {
-    this.setToDefaults();
-    this.show = this.show.bind(this);
-    this.hide = this.hide.bind(this);
   }
 
   @Method()
@@ -106,6 +55,15 @@ export class DSToaster {
     this.isShown = false;
   }
 
+  constructor() {
+    this.show = this.show.bind(this);
+    this.hide = this.hide.bind(this);
+  }
+
+	componentWillLoad() {
+		this.CSSClassList = _ds.props.toClassList("ds-toaster", _ds.props.toArray(this.mods));
+	}
+
   //#region HANDLERS
 
   animationEndHandler() {
@@ -113,50 +71,27 @@ export class DSToaster {
     this[ `toaster${this.isShown ? 'Shown' : 'Hidden'}` ].emit();
   }  
 
+  toastClickHandler = (): void => { console.log("click") }
+
   //#endregion
 
   render() {
     return (
-      <Host>
-        {this.isShown && (
-          <div
-            class={{
-              "ds-toaster": true,
-              [`ds-toaster--position-vertical-${this.position[0]}`]: true,
-              [`ds-toaster--position-horizontal-${this.position[1]}`]: true,
-              ...this.toasterClass
-            }}
-            ref={el => {
-              this.container = el as HTMLDivElement;
-            }}
-            onClick={this.hide}
-          >
-            <div class={`ds-toaster__container ds-toaster__container--${this.type}`}>
-              {this.innerJSX ? (
-                <div class="ds-toaster__content">
-                  {this.innerJSX}
-                </div>
-              ) : (
-                  <div class="ds-toaster__content">
-                    <span
-                      class={`ds-toaster__message ds-toaster__message--${this.type}`}>
-                      {this.message}
-                    </span>
-                    {!this.isButtonDisabled && (
-                      <div class="ds-toaster__action">
-                        <button
-                          class="ds-toaster__close-button"
-                          onClick={this.hide}>
-                          {this.buttonText || "OK"}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-            </div>
-          </div>
-        )}
-      </Host>
+      <div
+        class={{
+          "ds-toaster": true,
+          [`--v-pos-${this.position[0]}`]: true,
+          [`--h-pos-${this.position[1]}`]: true,
+        }}
+        ref={el => {
+          this.container = el as HTMLDivElement;
+        }}
+        onClick={this.hide}
+      >
+        <div class={`ds-toaster__container`}>
+          {_ds.props.toArray(this.messages).map( message => <ds-toast onClick={this.toastClickHandler}>{message}</ds-toast>)}
+        </div>
+      </div>
     );
   }
 }

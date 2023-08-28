@@ -4,7 +4,7 @@
 .gbx-shopping-bag {
   display: none;
 
-  &.--logged {
+  /* &.--logged {
     display: block;
   }
 
@@ -67,7 +67,7 @@
         right: 0;
         bottom: 0;
         opacity: 1;
-        background-image: url("#{$assetPath}banners/banner-shopping-bag.jpg");
+        background-image: url("banners/banner-shopping-bag.jpg");
         background-repeat: no-repeat;
         background-color: #fff;
         background-size: 100%;
@@ -120,5 +120,5 @@
         padding: 1.5rem 50% 1.5rem 1.5rem;
       }
     }
-  }
+  } */
 }

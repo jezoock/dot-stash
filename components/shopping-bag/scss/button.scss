@@ -2,7 +2,7 @@
   font-weight: 600;
   border-radius: 0.35rem;
   transition: opacity ease 0.4s;
-  &:before {
+  /* &:before {
     margin: 0 0.5rem 0 0;
     @include --icon-font(middle);
   }
@@ -92,5 +92,5 @@
       max-width: 15rem;
       @include --color-set(color-1);
     }
-  }
+  } */
 }

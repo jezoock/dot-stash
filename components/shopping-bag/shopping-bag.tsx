@@ -1,10 +1,4 @@
 import { Component, h, State, Prop, Watch, Listen } from "@stencil/core";
-import { Store, Action } from "@stencil/redux";
-import {
-  ShoppingBagCreateAction, ShoppingBagDeleteAction, ShoppingBagGetAction, ShoppingBagListAction,
-  ShoppingBagUpdateAction
-} from "../../../_redux/actions/shoppingBag";
-import { Greenbox_eventDispatch } from "../../../utils";
 import { AnyHTMLElement } from "@stencil/core/internal/stencil-private";
 
 @Component({
@@ -18,18 +12,9 @@ import { AnyHTMLElement } from "@stencil/core/internal/stencil-private";
 
 export class GreenboxShoppingBag {
 
-  ShoppingBagCreateAction: Action;
-  ShoppingBagDeleteAction: Action;
-  ShoppingBagGetAction: Action;
-  ShoppingBagListAction: Action;
-  ShoppingBagUpdateAction: Action;
-  TransAddTranslations: Action;
-  isModalCloseDisabled: boolean = false;
-
-  @Prop({ reflect: true }) mode: string = "default";
-  @Prop({ context: "store" }) store: Store;
-  @Prop() pageName: string = "Grocery";
-  @Prop() isAgeLegal: boolean = false;
+  @Prop({ reflect: true }) mode = "default";
+  @Prop() pageName = "Grocery";
+  @Prop() isAgeLegal = false;
 
   @State() list: any[] = [];
   @State() cart: any;
@@ -38,11 +23,11 @@ export class GreenboxShoppingBag {
   @State() shoppingBags: any[];
   @State() nameNewList: string;
   @State() editShoppingBag: any;
-  @State() isModalShown: boolean = false;
-  @State() isLogged: boolean = false;
-  @State() isLoading: boolean = false;
-  @State() loadingAddToCart: boolean = false;
-  @State() state: string = "list";
+  @State() isModalShown = false;
+  @State() isLogged = false;
+  @State() isLoading = false;
+  @State() loadingAddToCart = false;
+  @State() state = "list";
 
   @Watch("isModalShown")
   isModalShownWatchHandler(newValue: any) {
@@ -55,15 +40,15 @@ export class GreenboxShoppingBag {
   @Watch("loadingAddToCart")
   LoadingAddToCartHandler(newValue: any) {
     if (newValue === false) {
-      Greenbox_eventDispatch(
+      /* Greenbox_eventDispatch(
         ["gbx-page-loader"],
         "close_page_loader_event"
-      );
+      ); */
     } else if (newValue === true) {
-      Greenbox_eventDispatch(
+      /* Greenbox_eventDispatch(
         ["gbx-page-loader"],
         "open_page_loader_event"
-      );
+      ); */
     }
   }
 
@@ -73,10 +58,10 @@ export class GreenboxShoppingBag {
     if (newValue === true) {
       this.isModalShown = false;
       // open cart
-      Greenbox_eventDispatch(
+      /* Greenbox_eventDispatch(
         ["gbx-cart-block"],
         "request_cartBlockShow_event"
-      );
+      ); */
     }
   }
 
@@ -91,7 +76,7 @@ export class GreenboxShoppingBag {
   }
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => {
+    /* this.store.mapStateToProps(this, state => {
       const {
         app: { settings },
         cart: { cart, openCart,
@@ -121,7 +106,7 @@ export class GreenboxShoppingBag {
       ShoppingBagGetAction,
       ShoppingBagListAction,
       ShoppingBagUpdateAction
-    });
+    }); */
 
   }
 
@@ -130,7 +115,8 @@ export class GreenboxShoppingBag {
     * @param {any} data shopping bag informations to update
     */
   updateShoppingBag(data: any): void {
-    this.ShoppingBagUpdateAction({ ...data });
+    /* this.ShoppingBagUpdateAction({ ...data }); */
+    console.log(data)
   }
 
   /**
@@ -139,18 +125,20 @@ export class GreenboxShoppingBag {
    * @returns {Promise<void>}
    */
   async deleteShoppingBag(shoppingBagId: string, products: any[]): Promise<void> {
-    await this.ShoppingBagDeleteAction({ shoppingBagId: shoppingBagId, products });
+    /* await this.ShoppingBagDeleteAction({ shoppingBagId: shoppingBagId, products }); */
     this.setState("list");
+    console.log(shoppingBagId, products);
   }
-
+  
   /**
    * Display selected shopping bag content
    * @param {string} shoppingBagId: Shopping bag id to display content of
    * @returns {Promise<void>}
-   */
-  async displayShoppingBag(shoppingBagId: string): Promise<void> {
-    await this.ShoppingBagGetAction({ store: this.settings.storeId, shoppingBagId: shoppingBagId });
-    this.setState("details")
+  */
+ async displayShoppingBag(shoppingBagId: string): Promise<void> {
+   /* await this.ShoppingBagGetAction({ store: this.settings.storeId, shoppingBagId: shoppingBagId }); */
+   this.setState("details")
+   console.log(shoppingBagId);
   }
 
   /**
@@ -159,7 +147,8 @@ export class GreenboxShoppingBag {
    * @returns {Promise<void>}
    */
   async createShoppingBag(name: string): Promise<void> {
-    await this.ShoppingBagCreateAction({ name: name });
+    /* await this.ShoppingBagCreateAction({ name: name }); */
+    console.log(name);
     this.setState("list");
   }
 
@@ -184,14 +173,14 @@ export class GreenboxShoppingBag {
       this.isModalShown = !isModalShown;
     } else {
       if (this.settings.isMobile) {
-        Greenbox_eventDispatch(["greenbox-header"], "request_sidebarToggle_event");
-        Greenbox_eventDispatch(["greenbox-menu"], "change_currentTab_event", 1);
+        /* Greenbox_eventDispatch(["greenbox-header"], "request_sidebarToggle_event");
+        Greenbox_eventDispatch(["greenbox-menu"], "change_currentTab_event", 1); */
       }
       if (!this.settings.isMobile) {
-        Greenbox_eventDispatch(
+        /* Greenbox_eventDispatch(
           ["gbx-account-block"],
           "open_connection_event"
-        );
+        ); */
       }
     }
   }

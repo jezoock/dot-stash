@@ -12,6 +12,7 @@ import { DSGridItemStyles } from "./grid/grid";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 import { DSSliderPrams } from "./slider/slider";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./toaster/toaster-positions.enum";
 import { TooltipPosition } from "./tooltip/tooltip-position.enum";
 export { DSButtonType } from "./button/button";
 export { DSOption } from "./combo/combo";
@@ -20,6 +21,7 @@ export { DSGridItemStyles } from "./grid/grid";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./map/map.type";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 export { DSSliderPrams } from "./slider/slider";
+export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./toaster/toaster-positions.enum";
 export { TooltipPosition } from "./tooltip/tooltip-position.enum";
 export namespace Components {
     interface DsBlock {
@@ -235,8 +237,13 @@ export namespace Components {
         "sub": boolean;
     }
     interface DsToaster {
-        "displayToast": (params: any) => Promise<void>;
+        "closingDelay": number;
+        "displayToast": () => Promise<void>;
         "hide": () => Promise<void>;
+        "maxDisplayedToast": number;
+        "messages": string | string[];
+        "mods": string | string[];
+        "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
     }
     interface DsToggler {
@@ -291,6 +298,122 @@ export namespace Components {
     interface DsVideoPlay {
         "disabled": string | boolean;
         "target": string;
+    }
+    interface GbxShoppingBag {
+        "isAgeLegal": boolean;
+        "mode": string;
+        "pageName": string;
+    }
+    /**
+     * Simple button component displaying the shopping list modal
+     */
+    interface GbxShoppingBagButton {
+        /**
+          * Displayed button label
+         */
+        "label": string;
+    }
+    /**
+     * Create shopping bag form
+     */
+    interface GbxShoppingBagCreateForm {
+        /**
+          * Locale used for translations
+         */
+        "locale": string;
+        /**
+          * Parent component method called when form is submitted
+         */
+        "requestCreateShoppingBag": any;
+        /**
+          * Parent component method called to hide creation form
+         */
+        "requestHideCreateForm": any;
+    }
+    /**
+     * Display shopping bag details & products
+     */
+    interface GbxShoppingBagDetails {
+        /**
+          * Variable to know if the user already answer to confirm-age's modal
+         */
+        "isAgeLegal": boolean;
+        /**
+          * Locale used for translations
+         */
+        "locale": string;
+        /**
+          * Method called to delete current shopping bag
+         */
+        "requestDeleteShoppingBagProducts": any;
+        /**
+          * Method called to navigate to shopping bag root page
+         */
+        "requestNavigationBack": any;
+        /**
+          * Method called to update shopping bag informations
+         */
+        "requestUpdateShoppingBag": any;
+        /**
+          * Shopping bag to show details of
+         */
+        "shoppingBag": any;
+    }
+    /**
+     * Display a shopping bag list
+     */
+    interface GbxShoppingBagList {
+        /**
+          * Locale used for translations
+         */
+        "locale": string;
+        /**
+          * Method called to display shopping bag creation form
+         */
+        "requestDisplayCreateForm": any;
+        /**
+          * Method called to display shopping bag
+         */
+        "requestDisplayShoppingBag": any;
+        /**
+          * An array containing all shopping bags to display
+         */
+        "shoppingBags": any[];
+    }
+    /**
+     * Component used to display and edit shopping bag name
+     */
+    interface GbxShoppingBagName {
+        /**
+          * Wether shopping bag name is editable or not
+         */
+        "isDisabled": boolean;
+        /**
+          * Locale used for transaltions
+         */
+        "locale": string;
+        /**
+          * Shopping bag name to display/edit
+         */
+        "name": string;
+        /**
+          * Parent component method called to update shopping bag name
+         */
+        "requestUpdateShoppingBag": any;
+        "toggleDeleteMessage": () => void;
+    }
+    interface GbxShoppingBagProducts {
+        "ShoppingBagUpdateProductsAction": any;
+        /**
+          * Array of products to display
+         */
+        "products": any[];
+        "selectedProductIds": string[];
+        /**
+          * Shopping bag id associated to products
+         */
+        "shoppingBagId": string;
+        "toggleProductSelection": (productId: string) => void;
     }
 }
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
@@ -511,6 +634,63 @@ declare global {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
     };
+    interface HTMLGbxShoppingBagElement extends Components.GbxShoppingBag, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagElement: {
+        prototype: HTMLGbxShoppingBagElement;
+        new (): HTMLGbxShoppingBagElement;
+    };
+    /**
+     * Simple button component displaying the shopping list modal
+     */
+    interface HTMLGbxShoppingBagButtonElement extends Components.GbxShoppingBagButton, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagButtonElement: {
+        prototype: HTMLGbxShoppingBagButtonElement;
+        new (): HTMLGbxShoppingBagButtonElement;
+    };
+    /**
+     * Create shopping bag form
+     */
+    interface HTMLGbxShoppingBagCreateFormElement extends Components.GbxShoppingBagCreateForm, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagCreateFormElement: {
+        prototype: HTMLGbxShoppingBagCreateFormElement;
+        new (): HTMLGbxShoppingBagCreateFormElement;
+    };
+    /**
+     * Display shopping bag details & products
+     */
+    interface HTMLGbxShoppingBagDetailsElement extends Components.GbxShoppingBagDetails, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagDetailsElement: {
+        prototype: HTMLGbxShoppingBagDetailsElement;
+        new (): HTMLGbxShoppingBagDetailsElement;
+    };
+    /**
+     * Display a shopping bag list
+     */
+    interface HTMLGbxShoppingBagListElement extends Components.GbxShoppingBagList, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagListElement: {
+        prototype: HTMLGbxShoppingBagListElement;
+        new (): HTMLGbxShoppingBagListElement;
+    };
+    /**
+     * Component used to display and edit shopping bag name
+     */
+    interface HTMLGbxShoppingBagNameElement extends Components.GbxShoppingBagName, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagNameElement: {
+        prototype: HTMLGbxShoppingBagNameElement;
+        new (): HTMLGbxShoppingBagNameElement;
+    };
+    interface HTMLGbxShoppingBagProductsElement extends Components.GbxShoppingBagProducts, HTMLStencilElement {
+    }
+    var HTMLGbxShoppingBagProductsElement: {
+        prototype: HTMLGbxShoppingBagProductsElement;
+        new (): HTMLGbxShoppingBagProductsElement;
+    };
     interface HTMLElementTagNameMap {
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
@@ -541,6 +721,13 @@ declare global {
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
+        "gbx-shopping-bag": HTMLGbxShoppingBagElement;
+        "gbx-shopping-bag-button": HTMLGbxShoppingBagButtonElement;
+        "gbx-shopping-bag-create-form": HTMLGbxShoppingBagCreateFormElement;
+        "gbx-shopping-bag-details": HTMLGbxShoppingBagDetailsElement;
+        "gbx-shopping-bag-list": HTMLGbxShoppingBagListElement;
+        "gbx-shopping-bag-name": HTMLGbxShoppingBagNameElement;
+        "gbx-shopping-bag-products": HTMLGbxShoppingBagProductsElement;
     }
 }
 declare namespace LocalJSX {
@@ -733,10 +920,15 @@ declare namespace LocalJSX {
         "sub"?: boolean;
     }
     interface DsToaster {
+        "closingDelay"?: number;
+        "maxDisplayedToast"?: number;
+        "messages"?: string | string[];
+        "mods"?: string | string[];
         "onToasterHidden"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterHide"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShow"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
+        "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
     }
     interface DsToggler {
         "isActive"?: boolean;
@@ -788,6 +980,122 @@ declare namespace LocalJSX {
         "disabled"?: string | boolean;
         "target"?: string;
     }
+    interface GbxShoppingBag {
+        "isAgeLegal"?: boolean;
+        "mode"?: string;
+        "pageName"?: string;
+    }
+    /**
+     * Simple button component displaying the shopping list modal
+     */
+    interface GbxShoppingBagButton {
+        /**
+          * Displayed button label
+         */
+        "label"?: string;
+    }
+    /**
+     * Create shopping bag form
+     */
+    interface GbxShoppingBagCreateForm {
+        /**
+          * Locale used for translations
+         */
+        "locale"?: string;
+        /**
+          * Parent component method called when form is submitted
+         */
+        "requestCreateShoppingBag"?: any;
+        /**
+          * Parent component method called to hide creation form
+         */
+        "requestHideCreateForm"?: any;
+    }
+    /**
+     * Display shopping bag details & products
+     */
+    interface GbxShoppingBagDetails {
+        /**
+          * Variable to know if the user already answer to confirm-age's modal
+         */
+        "isAgeLegal"?: boolean;
+        /**
+          * Locale used for translations
+         */
+        "locale"?: string;
+        /**
+          * Method called to delete current shopping bag
+         */
+        "requestDeleteShoppingBagProducts"?: any;
+        /**
+          * Method called to navigate to shopping bag root page
+         */
+        "requestNavigationBack"?: any;
+        /**
+          * Method called to update shopping bag informations
+         */
+        "requestUpdateShoppingBag"?: any;
+        /**
+          * Shopping bag to show details of
+         */
+        "shoppingBag"?: any;
+    }
+    /**
+     * Display a shopping bag list
+     */
+    interface GbxShoppingBagList {
+        /**
+          * Locale used for translations
+         */
+        "locale"?: string;
+        /**
+          * Method called to display shopping bag creation form
+         */
+        "requestDisplayCreateForm"?: any;
+        /**
+          * Method called to display shopping bag
+         */
+        "requestDisplayShoppingBag"?: any;
+        /**
+          * An array containing all shopping bags to display
+         */
+        "shoppingBags"?: any[];
+    }
+    /**
+     * Component used to display and edit shopping bag name
+     */
+    interface GbxShoppingBagName {
+        /**
+          * Wether shopping bag name is editable or not
+         */
+        "isDisabled"?: boolean;
+        /**
+          * Locale used for transaltions
+         */
+        "locale"?: string;
+        /**
+          * Shopping bag name to display/edit
+         */
+        "name"?: string;
+        /**
+          * Parent component method called to update shopping bag name
+         */
+        "requestUpdateShoppingBag"?: any;
+        "toggleDeleteMessage"?: () => void;
+    }
+    interface GbxShoppingBagProducts {
+        "ShoppingBagUpdateProductsAction"?: any;
+        /**
+          * Array of products to display
+         */
+        "products"?: any[];
+        "selectedProductIds"?: string[];
+        /**
+          * Shopping bag id associated to products
+         */
+        "shoppingBagId"?: string;
+        "toggleProductSelection"?: (productId: string) => void;
+    }
     interface IntrinsicElements {
         "ds-block": DsBlock;
         "ds-button": DsButton;
@@ -818,6 +1126,13 @@ declare namespace LocalJSX {
         "ds-tooltip": DsTooltip;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
+        "gbx-shopping-bag": GbxShoppingBag;
+        "gbx-shopping-bag-button": GbxShoppingBagButton;
+        "gbx-shopping-bag-create-form": GbxShoppingBagCreateForm;
+        "gbx-shopping-bag-details": GbxShoppingBagDetails;
+        "gbx-shopping-bag-list": GbxShoppingBagList;
+        "gbx-shopping-bag-name": GbxShoppingBagName;
+        "gbx-shopping-bag-products": GbxShoppingBagProducts;
     }
 }
 export { LocalJSX as JSX };
@@ -856,6 +1171,28 @@ declare module "@stencil/core" {
             "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
+            "gbx-shopping-bag": LocalJSX.GbxShoppingBag & JSXBase.HTMLAttributes<HTMLGbxShoppingBagElement>;
+            /**
+             * Simple button component displaying the shopping list modal
+             */
+            "gbx-shopping-bag-button": LocalJSX.GbxShoppingBagButton & JSXBase.HTMLAttributes<HTMLGbxShoppingBagButtonElement>;
+            /**
+             * Create shopping bag form
+             */
+            "gbx-shopping-bag-create-form": LocalJSX.GbxShoppingBagCreateForm & JSXBase.HTMLAttributes<HTMLGbxShoppingBagCreateFormElement>;
+            /**
+             * Display shopping bag details & products
+             */
+            "gbx-shopping-bag-details": LocalJSX.GbxShoppingBagDetails & JSXBase.HTMLAttributes<HTMLGbxShoppingBagDetailsElement>;
+            /**
+             * Display a shopping bag list
+             */
+            "gbx-shopping-bag-list": LocalJSX.GbxShoppingBagList & JSXBase.HTMLAttributes<HTMLGbxShoppingBagListElement>;
+            /**
+             * Component used to display and edit shopping bag name
+             */
+            "gbx-shopping-bag-name": LocalJSX.GbxShoppingBagName & JSXBase.HTMLAttributes<HTMLGbxShoppingBagNameElement>;
+            "gbx-shopping-bag-products": LocalJSX.GbxShoppingBagProducts & JSXBase.HTMLAttributes<HTMLGbxShoppingBagProductsElement>;
         }
     }
 }

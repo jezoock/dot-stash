@@ -1,6 +1,5 @@
 .gbx-shopping-bag-create-form {
   & > menu {
-    @include --flex();
     & > button {
       width: 48%;
     }

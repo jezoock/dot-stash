@@ -1,7 +1,4 @@
 import { Component, h, Listen, Prop } from '@stencil/core';
-import { Store } from '@stencil/redux';
-import { Greenbox_getImage } from '../../../../utils';
-import { ShoppingBagUpdateProductsAction } from '../../../../_redux/actions/shoppingBag';
 
 @Component({
 	tag: 'gbx-shopping-bag-products',
@@ -14,7 +11,6 @@ export class GreenboxShoppingBagProducts {
 	 * Array of products to display
 	 */
 	@Prop() products: any[] = [];
-	@Prop({ context: "store" }) store: Store;
 	@Prop() ShoppingBagUpdateProductsAction: any;
 	@Prop() toggleProductSelection: (productId: string) => void;
 
@@ -25,9 +21,9 @@ export class GreenboxShoppingBagProducts {
 	@Prop() selectedProductIds: string[];
 
 	componentWillLoad() {
-		this.store.mapDispatchToProps(this, ({
+		/* this.store.mapDispatchToProps(this, ({
 			ShoppingBagUpdateProductsAction,
-		}));
+		})); */
 	}
 
 	@Listen('request_shoppingBagProductUpdate_event')
@@ -60,7 +56,7 @@ export class GreenboxShoppingBagProducts {
 						item={product}
 						isSelected={this.selectedProductIds.includes(product.id)}
 						toggleSelect={this.toggleProductSelection}
-						itemImage={Greenbox_getImage(product.image ? product.image : 'unavailable', 120)}
+						itemImage={product.image ? product.image : 'unavailable'}
 					/>
 				))}
 			</div>

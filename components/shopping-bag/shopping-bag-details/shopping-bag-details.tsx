@@ -1,10 +1,6 @@
 import { Component, h, Prop, Listen, State } from '@stencil/core';
 import Fragment from "stencil-fragment";
 import { translations } from "../translations";
-import { Store, Action } from "@stencil/redux";
-import { debounce, Greenbox_eventDispatch, Greenbox_formatPrice, Greenbox_isMobile } from '../../../../utils';
-import { CartAddProductsFromShoppingBagAction, CartUpdateAction } from "../../../../_redux/actions/cart";
-import { ShoppingBagUpdateProductsAction } from "../../../../_redux/actions/shoppingBag";
 
 /**
  * Display shopping bag details & products
@@ -23,7 +19,7 @@ export class GreenboxShoppingBagDetails {
   /**
    * Locale used for translations
    */
-  @Prop() locale: string = 'en';
+  @Prop() locale = 'en';
 
   /**
    * Method called to update shopping bag informations
@@ -41,28 +37,20 @@ export class GreenboxShoppingBagDetails {
   @Prop() requestNavigationBack: any;
 
   /**
-   * Redux store
-   */
-  @Prop({ context: "store" }) store: Store;
-
-  /**
    * Variable to know if the user already answer to confirm-age's modal
    */
-  @Prop() isAgeLegal: boolean = false;
+  @Prop() isAgeLegal = false;
 
-  @State() isDeleteMessageShown: boolean = false;
+  @State() isDeleteMessageShown = false;
   @State() cartId: string;
   @State() selectedProductIds: string[] = this.shoppingBag?.products?.map(({ id }) => id) || [];
 
   translations: any = translations[this.locale].gbx_shoppingBag;
-  ShoppingBagUpdateProductsAction: Action;
-  CartAddProductsFromShoppingBagAction: Action;
-  CartUpdateAction: Action;
 
   private isAlcohol: any = false;
   private modal: any;
 
-  private productInputQuantity_change_eventHandlerDebounced = debounce(({ productId, quantity }) => {
+  private productInputQuantity_change_eventHandlerDebounced = /* debounce( */({ productId, quantity }) => {
     const products = [];
     this.shoppingBag.products.forEach(product => {
       const newProduct = { ...product };
@@ -72,12 +60,11 @@ export class GreenboxShoppingBagDetails {
       }
       products.push(newProduct);
     });
-    this.ShoppingBagUpdateProductsAction({ shoppingBagId: this.shoppingBag.id, products: products });
-  }, 500, false);
+    /* this.ShoppingBagUpdateProductsAction({ shoppingBagId: this.shoppingBag.id, products: products }); */
+  }/* , 500, false); */
 
   @Listen("request_quantityUpdate_event")
   request_quantityUpdate_eventHandler({ detail }) {
-    // @ts-ignore
     this.productInputQuantity_change_eventHandlerDebounced(detail);
   }
 
@@ -92,7 +79,7 @@ export class GreenboxShoppingBagDetails {
   }
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => {
+    /* this.store.mapStateToProps(this, state => {
       const {
         cart: { cart: { id } }
       } = state;
@@ -104,7 +91,7 @@ export class GreenboxShoppingBagDetails {
       ShoppingBagUpdateProductsAction,
       CartAddProductsFromShoppingBagAction,
       CartUpdateAction
-    });
+    }); */
 
     this.initModal();
   }
@@ -147,7 +134,8 @@ export class GreenboxShoppingBagDetails {
         return product;
       }
     });
-    this.ShoppingBagUpdateProductsAction({ shoppingBagId: this.shoppingBag.id, products: newProductsCopy });
+    console.log(newProductsCopy);
+    /* this.ShoppingBagUpdateProductsAction({ shoppingBagId: this.shoppingBag.id, products: newProductsCopy }); */
   }
 
   deleteButtonClickHandler(): void {
@@ -186,7 +174,7 @@ export class GreenboxShoppingBagDetails {
 
   async addShoppingBagProductsToCart(): Promise<void> {
     try {
-      const response = await this.CartAddProductsFromShoppingBagAction({
+      /* const response = await this.CartAddProductsFromShoppingBagAction({
         cartId: this.cartId,
         products: this.shoppingBag.products.filter(({ id }) => this.selectedProductIds.includes(id)),
         isAgeLegal: this.isAgeLegal
@@ -200,7 +188,7 @@ export class GreenboxShoppingBagDetails {
         }
       } else if (response.type === "CART_ADD_PRODUCTS_FROM_SHOPPING_BAG_FAILURE") {
         this.showToast(this.translations.messages.shoppingBagDetails.error, 'error');
-      }
+      } */
       // no else
     } catch (e) {
       this.showToast(this.translations.messages.shoppingBagDetails.error, 'error');
@@ -208,7 +196,7 @@ export class GreenboxShoppingBagDetails {
   }
 
   private showToast(message: string, type: string): void {
-    Greenbox_eventDispatch(
+    /* Greenbox_eventDispatch(
       ['body'],
       'toaster_show_event',
       {
@@ -216,7 +204,8 @@ export class GreenboxShoppingBagDetails {
         type,
         closingDelay: 5000
       }
-    );
+    ); */
+    console.log(message, type);
   }
 
   /**
@@ -232,11 +221,11 @@ export class GreenboxShoppingBagDetails {
     if (this.modal) {
       this.modal.handleConfirmClick = async () => {
         this.isAgeLegal = true;
-        await this.CartUpdateAction({
+        /* await this.CartUpdateAction({
           cartId: this.cartId,
           isAgeLegal: this.isAgeLegal
         });
-
+ */
         this.addShoppingBagProductsToCart();
       }
     }
@@ -261,7 +250,7 @@ export class GreenboxShoppingBagDetails {
           requestUpdateShoppingBag={this.updateShoppingBag}
         />
         <menu class={{
-          "display-block": Greenbox_isMobile() && this.isDeleteMessageShown,
+          "display-block": /* Greenbox_isMobile() && */ this.isDeleteMessageShown,
         }}>
           {this.isDeleteMessageShown ? (
             <Fragment>
@@ -317,7 +306,7 @@ export class GreenboxShoppingBagDetails {
           />
         )}
 
-        {Greenbox_isMobile() && (
+        {/* Greenbox_isMobile() &&  */(
           <button
             type="button"
             class={{
@@ -332,7 +321,7 @@ export class GreenboxShoppingBagDetails {
 
         {productCount > 0 && (
           <footer>
-            {isEditable && !Greenbox_isMobile() && (
+            {isEditable && /* !Greenbox_isMobile() && */ (
               <button
                 type="button"
                 class={{
@@ -350,7 +339,7 @@ export class GreenboxShoppingBagDetails {
                   {productCount} {this.translations[productCount > 1 ? "products" : "product"]}
                 </span>
                 <strong>
-                  {Greenbox_formatPrice({ price: total / 100 })}
+                  {total}
                 </strong>
               </div>
               <button

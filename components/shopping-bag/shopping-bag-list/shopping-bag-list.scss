@@ -1,6 +1,6 @@
 .gbx-shopping-bag-list {
   overflow: hidden;
-  & > ul {
+  /* & > ul {
     & > li {
       cursor: pointer;
       border: 1px solid color(gray, light);
@@ -19,7 +19,6 @@
         top: 50%;
         right: 0.5rem;
         transform: translateY(-50%);
-        font-size: $text_font-size-3;
         color: color(gray, base);
         @include --icon(chevron-right);
       }
@@ -42,5 +41,5 @@
         }
       }
     }
-  }
+  } */
 }
