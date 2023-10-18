@@ -7,10 +7,10 @@ import { Store, Action } from "@stencil/redux";
 
 
 @Component({
-  tag: "gbx-order-messages",
+  tag: "ds-order-messages",
   styleUrl: "order-messages.scss"
 })
-export class GreenboxOrderMessages {
+export class DSOrderMessages {
   @Prop({ mutable: true, reflect: true }) messages: any[];
   @Prop({ context: "store" }) store: Store;
   @Prop({ mutable: true }) status: any;
@@ -60,13 +60,13 @@ export class GreenboxOrderMessages {
 
   render() {
     return (
-      <div class="gbx-order-messages">
+      <div class="ds-order-messages">
         <h2>{this.translations.gbx_orderMessages.title}</h2>
         {this.messages && this.messages.map(message => {
           return (
             <div
               class={{
-                "gbx-order-message": true,
+                "ds-order-message": true,
                 "--checked": message.isChecked,
                 [`--${message.sender}`]: true,
               }}
@@ -80,9 +80,9 @@ export class GreenboxOrderMessages {
           <span>{this.translations.gbx_orderMessages.noMessage}</span>
         }
         {["new", "new_pending", "new_flagged", "consulting"].indexOf(this.status) >= 0 && (
-          <div class="gbx-order-messages__add-message-container">
-            <input class="gbx-order-messages__add-message-input" onChange={(evt) => { this.handleInputMessage(evt) }} />
-            <button class="gbx-order-messages__add-message-button" onClick={() => { this.addMessage() }}></button>
+          <div class="ds-order-messages__add-message-container">
+            <input class="ds-order-messages__add-message-input" onChange={(evt) => { this.handleInputMessage(evt) }} />
+            <button class="ds-order-messages__add-message-button" onClick={() => { this.addMessage() }}></button>
           </div>
         )}
       </div>

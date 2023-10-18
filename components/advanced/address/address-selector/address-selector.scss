@@ -1,9 +1,9 @@
-.gbx-address-selector {
+.ds-address-selector {
   &:before {
     font-size: $text_font-size-3;
     color: color(gray, light);
     width: 2rem;
-    @include --icon(mapmarker, middle);
+    @include ds-icon(mapmarker, middle);
   }
 
   & > input {

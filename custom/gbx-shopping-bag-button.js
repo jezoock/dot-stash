@@ -1,6 +1,6 @@
 import { proxyCustomElement, HTMLElement, h } from '@stencil/core/internal/client';
 
-const GreenboxShoppingBagButton = /*@__PURE__*/ proxyCustomElement(class GreenboxShoppingBagButton extends HTMLElement {
+const DSShoppingBagButton = /*@__PURE__*/ proxyCustomElement(class DSShoppingBagButton extends HTMLElement {
   constructor() {
     super();
     this.__registerHost();
@@ -11,40 +11,40 @@ const GreenboxShoppingBagButton = /*@__PURE__*/ proxyCustomElement(class Greenbo
    * Request shopping maodal display
    */
   handleButtonClick() {
-    /* Greenbox_eventDispatch(
-      ["gbx-shopping-bag"],
+    /* DS_eventDispatch(
+      ["ds-shopping-bag"],
       "request_shoppingbag_open"
     ); */
     console.log("here");
   }
   render() {
     return (h("button", { class: {
-        "gbx-button": true,
+        "ds-button": true,
         "--color-1": true,
         "--medium": true,
         "--banner-act": true
       }, onClick: this.handleButtonClick }, this.label));
   }
-}, [0, "gbx-shopping-bag-button", {
+}, [0, "ds-shopping-bag-button", {
     "label": [1]
   }]);
 function defineCustomElement$1() {
   if (typeof customElements === "undefined") {
     return;
   }
-  const components = ["gbx-shopping-bag-button"];
+  const components = ["ds-shopping-bag-button"];
   components.forEach(tagName => { switch (tagName) {
-    case "gbx-shopping-bag-button":
+    case "ds-shopping-bag-button":
       if (!customElements.get(tagName)) {
-        customElements.define(tagName, GreenboxShoppingBagButton);
+        customElements.define(tagName, DSShoppingBagButton);
       }
       break;
   } });
 }
 
-const GbxShoppingBagButton = GreenboxShoppingBagButton;
+const GbxShoppingBagButton = DSShoppingBagButton;
 const defineCustomElement = defineCustomElement$1;
 
 export { GbxShoppingBagButton, defineCustomElement };
 
-//# sourceMappingURL=gbx-shopping-bag-button.js.map
+//# sourceMappingURL=ds-shopping-bag-button.js.map

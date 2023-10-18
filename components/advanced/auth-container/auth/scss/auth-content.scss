@@ -1,20 +1,20 @@
-.gbx-lightbox {
-  .gbx-previous-button {
+.ds-lightbox {
+  .ds-previous-button {
     margin: 1.5rem 1.5rem 1.5rem 1.5rem;
   }
 
-  .gbx-auth-content {
+  .ds-auth-content {
     &__container {
       padding: 0 1.5rem 1.5rem 1.5rem;
 
-      & > .gbx-auth-content-header {
+      & > .ds-auth-content-header {
         width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
       }
 
-      & .gbx-auth-content-components {
+      & .ds-auth-content-components {
         width: 100%;
 
         &__login,
@@ -39,7 +39,7 @@
   }
 
   @media (min-width: $grid-big-screen) {
-    .gbx-auth-content {
+    .ds-auth-content {
       height: 897px;
 
       &:before {
@@ -49,7 +49,7 @@
       &__container {
         height: 897px;
 
-        & .gbx-auth-content-components {
+        & .ds-auth-content-components {
           height: 100%;
 
           &__login,
@@ -65,7 +65,7 @@
   }
 
   @media (min-width: $grid-md-min) and (max-width: $grid-macbook-13p-max) {
-    .gbx-auth-content {
+    .ds-auth-content {
       height: 750px;
 
       &:before {
@@ -76,7 +76,7 @@
       &__container {
         height: 750px;
 
-        & .gbx-auth-content-components {
+        & .ds-auth-content-components {
           height: 95%;
           overflow: auto;
 
@@ -105,7 +105,7 @@
   }
 
   @media (min-width: $grid-md-min) {
-    .gbx-auth-content {
+    .ds-auth-content {
       width: 100%;
       display: flex;
       flex-wrap: wrap;
@@ -132,14 +132,14 @@
     }
   }
 
-  @media (max-width: $grid-sm-max) {
-    .gbx-auth-content {
+  @include break-p(null, sm) {
+    .ds-auth-content {
       height: 100%;
 
       &__container {
         height: 100%;
 
-        & .gbx-auth-content-components {
+        & .ds-auth-content-components {
           height: 95%;
           overflow: auto;
         }

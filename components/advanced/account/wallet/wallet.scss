@@ -1,4 +1,4 @@
-.gbx-wallet {
+.ds-wallet {
   overflow-x: auto;
   width: 100%;
   &__amount-line {
@@ -9,7 +9,7 @@
     &:before {
       font-size: 5.5rem;
       font-weight: 500;
-      @include --icon(wallet);
+      @include ds-icon(wallet);
       margin-right: 15px;
     }
     & span {
@@ -91,14 +91,14 @@
   }
 }
 
-.gbx-wallet-pages {
+.ds-wallet-pages {
   display: flex;
   justify-content: flex-start;
   padding: 1rem;
   border-radius: 3px;
 }
 
-.gbx-wallet-page {
+.ds-wallet-page {
   border: 1px solid color(gray, light);
   border-right: none;
   display: inline-block;

@@ -19,9 +19,9 @@
 | `lightboxClass`          | `lightbox-class`             |             | `any`      | `{ "--dialog": true }` |
 | `lightboxClassObject`    | `lightbox-class-object`      |             | `any`      | `undefined`            |
 | `overlay`                | `overlay`                    |             | `boolean`  | `false`                |
-| `redirectToSmoodOnClose` | `redirect-to-smood-on-close` |             | `boolean`  | `false`                |
+| `redirectToOnClose` | `redirect-to-pronto-on-close` |             | `boolean`  | `false`                |
 | `shown`                  | `shown`                      |             | `boolean`  | `false`                |
-| `useSnack`               | `use-snack`                  |             | `boolean`  | `false`                |
+| `useSnack`               | `use-pronto`                  |             | `boolean`  | `false`                |
 
 
 ## Events

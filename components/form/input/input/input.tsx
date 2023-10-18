@@ -1,13 +1,13 @@
 import { Component, h, Event, EventEmitter, Prop, State, Watch } from '@stencil/core';
 import { DataCy } from "../../../../../utils/data-cy";
-import { Greenbox_computeCSSClassList, Greenbox_getDataCy } from "../../../../../utils";
+import { DS_computeCSSClassList, DS_getDataCy } from "../../../../../utils";
 
 @Component({
-  tag: 'gbx-input',
+  tag: 'ds-input',
   styleUrl: 'input.scss'
 })
 
-export class GreenboxInput {
+export class DSInput {
   @Prop() type: string = 'text';
   @Prop() inputId: string;
   @Prop() inputName: string;
@@ -31,7 +31,7 @@ export class GreenboxInput {
 
   @Watch('mods')
   modsWatcher(newMods) {
-    this.CSSClassList = Greenbox_computeCSSClassList('gbx-input', newMods);
+    this.CSSClassList = DS_computeCSSClassList('ds-input', newMods);
   }
   
   @Event() gbxKeyDown: EventEmitter;
@@ -40,7 +40,7 @@ export class GreenboxInput {
   @Event() gbxInputBlur: EventEmitter;
   
   constructor() {
-    this.CSSClassList = Greenbox_computeCSSClassList('gbx-input', this.mods);
+    this.CSSClassList = DS_computeCSSClassList('ds-input', this.mods);
 
     this.inputHandler = this.inputHandler.bind(this);
     this.inputBlurHandler = this.inputBlurHandler.bind(this);
@@ -84,7 +84,7 @@ export class GreenboxInput {
         onMouseOut={ this.inputMouseOutHandler }
       >
         <input
-          class="gbx-input__input"
+          class="ds-input__input"
           name={this.inputName}
           type={this.type}
           id={this.inputId}
@@ -96,7 +96,7 @@ export class GreenboxInput {
           onBlur={this.inputBlurHandler}
           autocomplete={this.autocomplete}
           value={this.value}
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: "Input"
           })}

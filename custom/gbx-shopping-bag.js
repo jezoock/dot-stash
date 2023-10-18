@@ -5,9 +5,9 @@ import { d as defineCustomElement$4 } from './shopping-bag-list.js';
 import { d as defineCustomElement$3 } from './shopping-bag-name.js';
 import { d as defineCustomElement$2 } from './shopping-bag-products.js';
 
-const shoppingBagCss = ".gbx-shopping-bag-button{font-weight:600;border-radius:0.35rem;transition:opacity ease 0.4s;}.gbx-shopping-bag-title{font-weight:700;display:flex;align-items:center;line-height:2rem;}.gbx-shopping-bag{display:none;}";
+const shoppingBagCss = ".ds-shopping-bag-button{font-weight:600;border-radius:0.35rem;transition:opacity ease 0.4s;}.ds-shopping-bag-title{font-weight:700;display:flex;align-items:center;line-height:2rem;}.ds-shopping-bag{display:none;}";
 
-const GreenboxShoppingBag = /*@__PURE__*/ proxyCustomElement(class GreenboxShoppingBag extends HTMLElement {
+const DSShoppingBag = /*@__PURE__*/ proxyCustomElement(class DSShoppingBag extends HTMLElement {
   isModalShownWatchHandler(newValue) {
     if (newValue === false) {
       // reset value:
@@ -20,8 +20,8 @@ const GreenboxShoppingBag = /*@__PURE__*/ proxyCustomElement(class GreenboxShopp
     if (newValue === true) {
       this.isModalShown = false;
       // open cart
-      /* Greenbox_eventDispatch(
-        ["gbx-cart-block"],
+      /* DS_eventDispatch(
+        ["ds-cart-block"],
         "request_cartBlockShow_event"
       ); */
     }
@@ -156,7 +156,7 @@ const GreenboxShoppingBag = /*@__PURE__*/ proxyCustomElement(class GreenboxShopp
   renderState() {
     switch (this.state) {
       case "details":
-        return this.editShoppingBag && (h("gbx-shopping-bag-details", { locale: this.settings.locale, shoppingBag: this.editShoppingBag, isAgeLegal: Boolean(this.cart.isAgeLegal), requestDeleteShoppingBagProducts: (shoppingBagId, products) => {
+        return this.editShoppingBag && (h("ds-shopping-bag-details", { locale: this.settings.locale, shoppingBag: this.editShoppingBag, isAgeLegal: Boolean(this.cart.isAgeLegal), requestDeleteShoppingBagProducts: (shoppingBagId, products) => {
             this.deleteShoppingBag(shoppingBagId, products);
           }, requestUpdateShoppingBag: (shoppingBagId, updateData) => {
             this.updateShoppingBag(Object.assign({ shoppingBagId }, updateData));
@@ -164,13 +164,13 @@ const GreenboxShoppingBag = /*@__PURE__*/ proxyCustomElement(class GreenboxShopp
             this.setState("list");
           } }));
       case "list":
-        return (h("gbx-shopping-bag-list", { locale: this.settings.locale, shoppingBags: this.shoppingBags, requestDisplayCreateForm: () => {
+        return (h("ds-shopping-bag-list", { locale: this.settings.locale, shoppingBags: this.shoppingBags, requestDisplayCreateForm: () => {
             this.setState("create");
           }, requestDisplayShoppingBag: shoppongBagId => {
             this.displayShoppingBag(shoppongBagId);
           } }));
       case "create":
-        return (h("gbx-shopping-bag-create-form", { locale: this.settings.locale, requestHideCreateForm: () => {
+        return (h("ds-shopping-bag-create-form", { locale: this.settings.locale, requestHideCreateForm: () => {
             this.setState("list");
           }, requestCreateShoppingBag: shoppingBagName => {
             this.createShoppingBag(shoppingBagName);
@@ -179,15 +179,15 @@ const GreenboxShoppingBag = /*@__PURE__*/ proxyCustomElement(class GreenboxShopp
   }
   render() {
     return (h("div", { class: {
-        "gbx-shopping-bag": true,
+        "ds-shopping-bag": true,
         "--logged": this.isLogged,
         [`--${this.mode}`]: true
-      } }, h("button", { type: "button", class: "gbx-shopping-bag__icon", onClick: this.toggleModal, "data-cy": this.pageName + "_Button_ShoppingBag" }, h("slot", null)), this.isModalShown && (h("gbx-modal", { shown: this.isModalShown, onGbxModalClose: () => {
+      } }, h("button", { type: "button", class: "ds-shopping-bag__icon", onClick: this.toggleModal, "data-cy": this.pageName + "_Button_ShoppingBag" }, h("slot", null)), this.isModalShown && (h("ds-modal", { shown: this.isModalShown, onGbxModalClose: () => {
         this.isModalShown = false;
       }, isLayoutDisabled: true, overlay: true, lightboxClass: {
         "--page": this.settings.isMobile,
         "--dialog": window.innerWidth > 767
-      } }, h("div", { slot: "content" }, this.isLoading && (h("gbx-loader", null)), h("button", { type: "button", class: "gbx-shopping-bag__nav-button", onClick: this.handleNavButtonClick }), h("div", { class: `gbx-shopping-bag__content --${this.state}` }, this.renderState()))))));
+      } }, h("div", { slot: "content" }, this.isLoading && (h("ds-loader", null)), h("button", { type: "button", class: "ds-shopping-bag__nav-button", onClick: this.handleNavButtonClick }), h("div", { class: `ds-shopping-bag__content --${this.state}` }, this.renderState()))))));
   }
   static get watchers() { return {
     "isModalShown": ["isModalShownWatchHandler"],
@@ -195,7 +195,7 @@ const GreenboxShoppingBag = /*@__PURE__*/ proxyCustomElement(class GreenboxShopp
     "openCart": ["cartCreatedHandler"]
   }; }
   static get style() { return shoppingBagCss; }
-}, [4, "gbx-shopping-bag", {
+}, [4, "ds-shopping-bag", {
     "mode": [513],
     "pageName": [1, "page-name"],
     "isAgeLegal": [4, "is-age-legal"],
@@ -216,34 +216,34 @@ function defineCustomElement$1() {
   if (typeof customElements === "undefined") {
     return;
   }
-  const components = ["gbx-shopping-bag", "gbx-shopping-bag-create-form", "gbx-shopping-bag-details", "gbx-shopping-bag-list", "gbx-shopping-bag-name", "gbx-shopping-bag-products"];
+  const components = ["ds-shopping-bag", "ds-shopping-bag-create-form", "ds-shopping-bag-details", "ds-shopping-bag-list", "ds-shopping-bag-name", "ds-shopping-bag-products"];
   components.forEach(tagName => { switch (tagName) {
-    case "gbx-shopping-bag":
+    case "ds-shopping-bag":
       if (!customElements.get(tagName)) {
-        customElements.define(tagName, GreenboxShoppingBag);
+        customElements.define(tagName, DSShoppingBag);
       }
       break;
-    case "gbx-shopping-bag-create-form":
+    case "ds-shopping-bag-create-form":
       if (!customElements.get(tagName)) {
         defineCustomElement$6();
       }
       break;
-    case "gbx-shopping-bag-details":
+    case "ds-shopping-bag-details":
       if (!customElements.get(tagName)) {
         defineCustomElement$5();
       }
       break;
-    case "gbx-shopping-bag-list":
+    case "ds-shopping-bag-list":
       if (!customElements.get(tagName)) {
         defineCustomElement$4();
       }
       break;
-    case "gbx-shopping-bag-name":
+    case "ds-shopping-bag-name":
       if (!customElements.get(tagName)) {
         defineCustomElement$3();
       }
       break;
-    case "gbx-shopping-bag-products":
+    case "ds-shopping-bag-products":
       if (!customElements.get(tagName)) {
         defineCustomElement$2();
       }
@@ -251,9 +251,9 @@ function defineCustomElement$1() {
   } });
 }
 
-const GbxShoppingBag = GreenboxShoppingBag;
+const GbxShoppingBag = DSShoppingBag;
 const defineCustomElement = defineCustomElement$1;
 
 export { GbxShoppingBag, defineCustomElement };
 
-//# sourceMappingURL=gbx-shopping-bag.js.map
+//# sourceMappingURL=ds-shopping-bag.js.map

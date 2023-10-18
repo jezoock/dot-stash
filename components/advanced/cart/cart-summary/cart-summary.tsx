@@ -1,10 +1,10 @@
 import { Component, Event, EventEmitter, h, Prop, State, Watch } from '@stencil/core';
 import { translations } from "./translations";
-import { Greenbox_formatPrice, Greenbox_isMobile, Greenbox_setTranslations } from "../../../../utils";
+import { DS_formatPrice, DS_isMobile, DS_setTranslations } from "../../../../utils";
 import { TooltipPosition } from "../../../ui/tooltip/tooltip-position.enum";
 
 @Component({
-  tag: 'gbx-cart-summary',
+  tag: 'ds-cart-summary',
   styleUrls: [
     'scss/cart-summary.scss',
     'scss/prices-block.scss',
@@ -13,7 +13,7 @@ import { TooltipPosition } from "../../../ui/tooltip/tooltip-position.enum";
     'scss/loader.scss'
   ]
 })
-export class GreenboxCartSummary {
+export class DSCartSummary {
   /**
    * @type {any} Cart informations
    */
@@ -53,7 +53,7 @@ export class GreenboxCartSummary {
     this.removeWalletButtonClickHandler = this.removeWalletButtonClickHandler.bind(this);
     this.handleEditButtonClick = this.handleEditButtonClick.bind(this);
 
-    this.translations = this.translations = Greenbox_setTranslations(translations, ['gbx_cartSummary']);
+    this.translations = this.translations = DS_setTranslations(translations, ['gbx_cartSummary']);
   }
 
   /**
@@ -119,15 +119,15 @@ export class GreenboxCartSummary {
     const amount = this.cart.tips?.driver?.amount || null;
     return (
       <div>
-        <div class="gbx-cart-summary__products">
+        <div class="ds-cart-summary__products">
           {this.cart.products.length !== 0
             ? (
               <ul>
                 {this.cart.products.map(product => {
                   return (
-                    <li class="gbx-price-row">
+                    <li class="ds-price-row">
                       <span>{product.quantity} x {product.name}</span>
-                      <strong>{Greenbox_formatPrice({ price: product.totalPrice / 100, isFrCurrency: true })}</strong>
+                      <strong>{DS_formatPrice({ price: product.totalPrice / 100, isFrCurrency: true })}</strong>
                     </li>
                   );
                 })}
@@ -137,22 +137,22 @@ export class GreenboxCartSummary {
             )}
         </div>
 
-        <footer class="gbx-cart-summary__footer">
-          <ul class="gbx-cart-summary__sub-total">
-            <li class="gbx-price-row --sub-total">
+        <footer class="ds-cart-summary__footer">
+          <ul class="ds-cart-summary__sub-total">
+            <li class="ds-price-row --sub-total">
               <span>{this.translations.subTotal}</span>
-              <strong>{Greenbox_formatPrice({ price: this.cart.totalProducts / 100, isFrCurrency: true })}</strong>
+              <strong>{DS_formatPrice({ price: this.cart.totalProducts / 100, isFrCurrency: true })}</strong>
             </li>
 
-            <li class="gbx-price-row --sub-total">
-              <gbx-button buttonMods={["checkout", "link", "underline", "no-padding"]}>
-                <gbx-tooltip position={TooltipPosition[Greenbox_isMobile() ? "TOP" : "RIGHT"]}>
+            <li class="ds-price-row --sub-total">
+              <ds-button buttonMods={["checkout", "link", "underline", "no-padding"]}>
+                <ds-tooltip position={TooltipPosition[DS_isMobile() ? "TOP" : "RIGHT"]}>
                   <span>{this.translations.deliveryFee}</span>
                   <div slot="message">{this.translations.deliveryFeeMessage}</div>
-                </gbx-tooltip>
-              </gbx-button>
+                </ds-tooltip>
+              </ds-button>
               <strong>
-                {Greenbox_formatPrice({
+                {DS_formatPrice({
                   price: (this.isSmallFeeShown() && !isNaN(this.cart.fees.shipping) ? this.cart.fees.shipping : this.cart.totalShipping) / 100,
                   isFrCurrency: true,
                 })}
@@ -160,37 +160,37 @@ export class GreenboxCartSummary {
             </li>
 
             {this.cart?.serviceFee > 0 && !isNaN(this.cart.serviceFee) && (
-              <li class="gbx-price-row --sub-total">
+              <li class="ds-price-row --sub-total">
                 <span>
                   {this.translations.serviceFee}
-                  <gbx-tooltip
+                  <ds-tooltip
                     icon="info"
-                    position={TooltipPosition[Greenbox_isMobile() ? "TOP" : "RIGHT"]}
+                    position={TooltipPosition[DS_isMobile() ? "TOP" : "RIGHT"]}
                   >
                     <div slot="message">
                       {this.translations.serviceFeeMessage}
                     </div>
-                  </gbx-tooltip>
+                  </ds-tooltip>
                 </span>
-                <strong>{Greenbox_formatPrice({ price: this.cart.serviceFee / 100, isFrCurrency: true })}</strong>
+                <strong>{DS_formatPrice({ price: this.cart.serviceFee / 100, isFrCurrency: true })}</strong>
               </li>
             )}
 
             {this.isSmallFeeShown() && !isNaN(this.cart.fees.smallFee) && (
-              <li class="gbx-price-row --sub-total">
+              <li class="ds-price-row --sub-total">
                 <span>
                   {this.translations.smallFee}
-                  <gbx-tooltip
+                  <ds-tooltip
                     icon="info"
-                    position={TooltipPosition[Greenbox_isMobile() ? "TOP" : "RIGHT"]}
+                    position={TooltipPosition[DS_isMobile() ? "TOP" : "RIGHT"]}
                   >
                     <div slot="message">
                       {this.translations.smallFeeMessage}
                     </div>
-                  </gbx-tooltip>
+                  </ds-tooltip>
                 </span>
                 <strong>
-                  {Greenbox_formatPrice({
+                  {DS_formatPrice({
                     price: this.cart.fees.smallFee / 100,
                     isFrCurrency: true,
                   })}
@@ -199,9 +199,9 @@ export class GreenboxCartSummary {
             )}
 
             {amount && (
-              <li class="gbx-price-row --sub-total">
+              <li class="ds-price-row --sub-total">
                 <span>{this.translations.driverTipsCart}</span>
-                <strong>{Greenbox_formatPrice({ price: amount / 100, isFrCurrency: true })}</strong>
+                <strong>{DS_formatPrice({ price: amount / 100, isFrCurrency: true })}</strong>
               </li>
             )}
 
@@ -210,21 +210,21 @@ export class GreenboxCartSummary {
             {this.cart.vouchers.map((voucher, index) => {
               return (
                 <li class={{
-                  "gbx-price-row": true,
+                  "ds-price-row": true,
                   "--sub-total": true
                 }}>
                   <span>
                     {voucher.code}
                     {this.voucherStates[index] && this.voucherStates[index].isRemoved ? (
-                      <gbx-loader
+                      <ds-loader
                         mode={["inline", "bold"]}
                         id={`loader-voucher-${voucher.code}`}
-                        class="gbx-cart-summary__loader"
+                        class="ds-cart-summary__loader"
                       />
                     ) : (
                       <button
                         class={{
-                          "gbx-button": true,
+                          "ds-button": true,
                           "--remove": true
                         }}
                         id={`voucher-${voucher.code}`}
@@ -234,19 +234,19 @@ export class GreenboxCartSummary {
                       />
                     )}
                   </span>
-                  <strong>{Greenbox_formatPrice({ price: (-1 * voucher.discount) / 100, isFrCurrency: true })} </strong>
+                  <strong>{DS_formatPrice({ price: (-1 * voucher.discount) / 100, isFrCurrency: true })} </strong>
                 </li>
               );
             })}
 
             {this.cart.totalWalletUsage > 0 && (
-              <li class="gbx-price-row">
+              <li class="ds-price-row">
                 <span>
                   {this.translations.wallet}
                   {!this.isWalletRemoved && (
                     <button
                       class={{
-                        "gbx-button": true,
+                        "ds-button": true,
                         "--remove": true
                       }}
                       id="wallet-button"
@@ -254,40 +254,40 @@ export class GreenboxCartSummary {
                     />
                   )}
                   {this.isWalletRemoved && (
-                    <gbx-loader
+                    <ds-loader
                       mode={["inline", "bold"]}
-                      class="gbx-cart-summary__loader"
+                      class="ds-cart-summary__loader"
                     />
                   )}
                 </span>
-                <strong>{Greenbox_formatPrice({ price: (-1 * this.cart.totalWalletUsage) / 100, isFrCurrency: true })}</strong>
+                <strong>{DS_formatPrice({ price: (-1 * this.cart.totalWalletUsage) / 100, isFrCurrency: true })}</strong>
               </li>
             )}
           </ul>
 
           <hr />
 
-          <div class="gbx-cart-summary__total">
+          <div class="ds-cart-summary__total">
             <ul>
-              <li class="gbx-price-row --total">
+              <li class="ds-price-row --total">
                 {this.extraAuthorization > 0 && this.isDatatransEnabled ? (
                   <span>
                     {this.translations.estimatedTotalOrder}
-                    <gbx-tooltip icon="info" position={Greenbox_isMobile() ? TooltipPosition.TOP : TooltipPosition.RIGHT}>
+                    <ds-tooltip icon="info" position={DS_isMobile() ? TooltipPosition.TOP : TooltipPosition.RIGHT}>
                       <div slot="message">{this.translations.preAuthorization}</div>
-                    </gbx-tooltip>
+                    </ds-tooltip>
                   </span>
                 ) : (
                   <span>
                     {this.translations.totalOrder}
                   </span>
                 )}
-                <strong>{Greenbox_formatPrice({ price: totalOrder, isFrCurrency: true })}</strong>
+                <strong>{DS_formatPrice({ price: totalOrder, isFrCurrency: true })}</strong>
               </li>
             </ul>
           </div>
 
-          <gbx-cart-deadline />
+          <ds-cart-deadline />
         </footer>
       </div>
     );
@@ -295,26 +295,26 @@ export class GreenboxCartSummary {
 
   render() {
     return (
-      <div class={{ "gbx-cart-summary": true }}>
-        <header class="gbx-cart-summary__header">
+      <div class={{ "ds-cart-summary": true }}>
+        <header class="ds-cart-summary__header">
           <strong>{this.translations.title}</strong>
-          <gbx-button
+          <ds-button
             buttonMods={["link", "checkout"]}
             buttonType="button"
             onClick={this.handleEditButtonClick}
           >
             {this.translations.edit}
-          </gbx-button>
+          </ds-button>
         </header>
 
-        <div class="gbx-cart-summary__content">
+        <div class="ds-cart-summary__content">
           {this.cart.products && this.cart.products.length > 0
             ? this.renderCartSummary()
             : (
-              <gbx-loader
+              <ds-loader
                 mode={["inline", "bold"]}
                 class={{
-                  "gbx-cart-summary__loader": true,
+                  "ds-cart-summary__loader": true,
                   "--global": true
                 }}
               />

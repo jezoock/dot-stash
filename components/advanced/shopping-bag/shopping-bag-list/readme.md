@@ -1,4 +1,4 @@
-# gbx-shopping-bag-list
+# ds-shopping-bag-list
 
 
 
@@ -23,13 +23,13 @@ Display a shopping bag list
 
 ### Used by
 
- - [gbx-shopping-bag](..)
+ - [ds-shopping-bag](..)
 
 ### Graph
 ```mermaid
 graph TD;
-  gbx-shopping-bag --> gbx-shopping-bag-list
-  style gbx-shopping-bag-list fill:#f9f,stroke:#333,stroke-width:4px
+  ds-shopping-bag --> ds-shopping-bag-list
+  style ds-shopping-bag-list fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

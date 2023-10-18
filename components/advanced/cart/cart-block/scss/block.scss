@@ -1,14 +1,14 @@
-.gbx-block {
+.ds-block {
   &.--cart-list {
     display: flex;
     flex-direction: column;
     height: 100%;
 
-    & .gbx-block {
+    & .ds-block {
       &__header {
         position: relative;
         padding: 1.625rem 3rem 1.625rem 0.75rem;
-        & > gbx-button {
+        & > ds-button {
           position: absolute;
           top: 0;
           right: 0;

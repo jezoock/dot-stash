@@ -1,12 +1,12 @@
 import { Component, h, Prop, State, Event, EventEmitter, Watch } from "@stencil/core";
 import { translations } from "./translations";
-import { Greenbox_uuid } from "../../../utils";
+import { DS_uuid } from "../../../utils";
 
 @Component({
-  tag: "gbx-address-autocomplete",
+  tag: "ds-address-autocomplete",
   styleUrl: "address-autocomplete.scss"
 })
-export class GreenboxAddressAutocomplete {
+export class DSAddressAutocomplete {
 
   @Prop() peliasUri: string = "";
   @Prop({ mutable: true }) minChar: number = 4;
@@ -50,7 +50,7 @@ export class GreenboxAddressAutocomplete {
       !this._sessionToken ||
       (new Date() as any) - (this._sessionTokenLastUsed as any) > 30000
     ) {
-      this._sessionToken = Greenbox_uuid();
+      this._sessionToken = DS_uuid();
     }
     this._sessionTokenLastUsed = new Date();
     return this._sessionToken;
@@ -275,11 +275,11 @@ export class GreenboxAddressAutocomplete {
     const { setPlace, offset } = this;
 
     return (
-      <div class="gbx-autocomplete">
+      <div class="ds-autocomplete">
 
         <label>{this.translations.addressInput}</label>
 
-        <div class="gbx-autocomplete__input-container">
+        <div class="ds-autocomplete__input-container">
           <input
             type="text"
             ref={el => (this.input = el as HTMLInputElement)}
@@ -296,7 +296,7 @@ export class GreenboxAddressAutocomplete {
         {this.items && this.items.length > 0 && (
           <ul
             class={{
-              "gbx-autocomplete__results": true,
+              "ds-autocomplete__results": true,
               "--from-google": this.fromGoogle
             }}>
             {this.items.map((item, index) => {
@@ -304,7 +304,7 @@ export class GreenboxAddressAutocomplete {
                 <li
                   onClick={() => setPlace(item)}
                   class={{
-                    "gbx-autocomplete__result-item": true,
+                    "ds-autocomplete__result-item": true,
                     "--hover": index === offset
                   }}
                   data-cy={this.pageName + '_Button_GbxAutocompleteItem'}>

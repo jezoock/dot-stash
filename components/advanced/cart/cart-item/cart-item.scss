@@ -1,4 +1,4 @@
-.gbx-cart-item {
+.ds-cart-item {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-around;
@@ -51,7 +51,7 @@
         padding: 0;
 
         &::before {
-          @include --icon(check, middle);
+          @include ds-icon(check, middle);
           color: white;
           background-color: transparent;
         }
@@ -86,14 +86,14 @@
 
   &__note-to-store {
     &:before {
-      @include --icon(edit);
+      @include ds-icon(edit);
       margin-right: 0.5rem;
     }
   }
 
   &__locked-note {
     &:before {
-      @include --icon(lock);
+      @include ds-icon(lock);
       margin-right: 0.5rem;
     }
   }
@@ -165,7 +165,7 @@
     font-weight: 600;
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     height: 160px;
     &__price {
       width: calc(100% - 175px);
@@ -243,7 +243,7 @@
     }
   }
 
-  @media (min-width: $grid-md-min) and (max-width: $grid-md-max) {
+  @include break-p(md, md) {
     &__name {
       &-promo {
         display: block;
@@ -257,7 +257,7 @@
     }
   }
 
-  @media (min-width: $grid-lg-min) {
+  @include break-p(lg) {
     &__price {
       width: 100%;
       padding: 0 0.5rem 0 0;

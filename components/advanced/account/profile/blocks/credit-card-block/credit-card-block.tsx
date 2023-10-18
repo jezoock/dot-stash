@@ -1,23 +1,23 @@
 import { Component, h, Prop, Listen, Event, EventEmitter, State } from '@stencil/core';
 import { translations } from "./translations";
 import { EventDetails, Translations } from "../../../../../interfaces";
-import { Greenbox_setTranslations } from "../../../../../../utils";
+import { DS_setTranslations } from "../../../../../../utils";
 
 @Component({
-	tag: 'gbx-credit-card-block',
+	tag: 'ds-credit-card-block',
 	styleUrls: [
 		'credit-card-block.scss',
 	]
 })
-export class GreenboxCreditCardBlock {
+export class DSCreditCardBlock {
 
 	@Prop({ mutable: true, reflect: true}) creditCards: any;
 	
 	@State() isModalShown: boolean;
 
 	translations: Translations;
-	removedCardId: string = "";
-  removedCardType: string = "";
+	removedCardId = "";
+  removedCardType = "";
 
 	@Event() request_creditCardDelete_event: EventEmitter;
 
@@ -36,7 +36,7 @@ export class GreenboxCreditCardBlock {
 	}
 
 	constructor() {
-		this.translations = Greenbox_setTranslations(translations, ['gbx_creditCardBlock']);
+		this.translations = DS_setTranslations(translations, ['gbx_creditCardBlock']);
 
 		this.onModalCloseHandler = this.onModalCloseHandler.bind(this);
 		this.cancelButtonClickHandler = this.cancelButtonClickHandler.bind(this);
@@ -86,23 +86,23 @@ export class GreenboxCreditCardBlock {
 
 	render() {
 		return (
-			<gbx-block
+			<ds-block
 				blockTag="section"
 				blockMods={["account","credit-cards"]}
 			>
 
-				<gbx-title
+				<ds-title
 					slot="header"
 					heading={3}
-					titleMods={["block", "main"]}
+					mods={["block", "main"]}
 				>
 					{this.translations.title.paymentCard}
-				</gbx-title>
+				</ds-title>
 
-				<gbx-credit-card-list creditCards={this.creditCards} />
+				<ds-credit-card-list creditCards={this.creditCards} />
 
 				{this.isModalShown && (
-          <gbx-modal
+          <ds-modal
 						shown={this.isModalShown}
 						onGbxModalClose={this.onModalCloseHandler}
 						overlay={true}
@@ -111,19 +111,19 @@ export class GreenboxCreditCardBlock {
 							"--delete-confirm": true,
             }}
 					>
-						<gbx-block
+						<ds-block
 							slot="content"
 							blockMods={["modal"]}
 						>
 
-							<gbx-title
+							<ds-title
 								slot="header"
-								titleMods={["modal", "sub"]}
+								mods={["modal", "sub"]}
 							>
 								{this.translations.title.confirmDelete}
-							</gbx-title>
+							</ds-title>
 
-							<gbx-button
+							<ds-button
 								slot="header"
 								buttonMods={["modal-close", "sm"]}
 								onGbxButtonClick={this.closeButtonClickHandler}
@@ -134,26 +134,26 @@ export class GreenboxCreditCardBlock {
               </p>
 
 							<menu slot="footer">
-								<gbx-button
+								<ds-button
 									buttonMods={["medium", "gray"]}
 									onGbxButtonClick={this.cancelButtonClickHandler}
 								>
 									{this.translations.button.cancel}
-								</gbx-button>
-								<gbx-button
+								</ds-button>
+								<ds-button
 									buttonMods={["medium", "color-2"]}
 									onGbxButtonClick={this.okButtonClickHandler}
 								>
 									{this.translations.button.ok}
-								</gbx-button>
+								</ds-button>
 							</menu>
 
-						</gbx-block>
+						</ds-block>
 
-          </gbx-modal>
+          </ds-modal>
         )}
 
-			</gbx-block>
+			</ds-block>
 		);
 	}
 }

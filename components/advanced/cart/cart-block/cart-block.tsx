@@ -1,9 +1,9 @@
 import { Component, Event, EventEmitter, h, Listen, Prop, State } from '@stencil/core';
 import {
-  Greenbox_eventDispatch,
-  Greenbox_getDataCy,
-  Greenbox_setTranslations,
-  Greenbox_triggerTrackingEvent,
+  DS_eventDispatch,
+  DS_getDataCy,
+  DS_setTranslations,
+  DS_triggerTrackingEvent,
 } from '../../../../../utils';
 import { translations } from './translations';
 import { EventDetails, SnackbarOptions, Translations } from '../../../../interfaces';
@@ -13,7 +13,7 @@ import { Universe } from '../../../../../utils/universe';
 import { SNACKBAR_OPTIONS } from './snackbar-options';
 
 @Component({
-  tag: "gbx-cart-block",
+  tag: "ds-cart-block",
   styleUrls: [
     "cart-block.scss",
     "./scss/sidebar.scss",
@@ -42,7 +42,7 @@ export class GbxCartBlock {
     onClose: () => {}
   };
 
-  translations: Translations = Greenbox_setTranslations( translations, "gbx_cartBlock" );
+  translations: Translations = DS_setTranslations( translations, "gbx_cartBlock" );
   sidebar: HTMLGbxSidebarElement;
   timeout: NodeJS.Timeout;
 
@@ -145,7 +145,7 @@ export class GbxCartBlock {
   //#endregion
 
   toggleCartDisplay(cartId: string, mustShow: boolean): void {
-    Greenbox_eventDispatch(
+    DS_eventDispatch(
       [`#cart-${cartId}`],
       "request_cartContentDisplayToggle_event",
       { mustShow }
@@ -194,24 +194,24 @@ export class GbxCartBlock {
 
   open(): void {
     // current displayed block should be handled in app redux store
-    Greenbox_eventDispatch(
-      ["gbx-account-block"],
+    DS_eventDispatch(
+      ["ds-account-block"],
       "cartBlock_request_blockHide_event"
     );
-    Greenbox_eventDispatch(["gbx-shop-header"], "request_sidebarHide_event");
-    Greenbox_eventDispatch(this.sidebar, `request_sidebarShow_event`);
+    DS_eventDispatch(["ds-shop-header"], "request_sidebarHide_event");
+    DS_eventDispatch(this.sidebar, `request_sidebarShow_event`);
 
     if (history.pushState) {
       history.pushState(null, document.title, location.href);
     }
 
-    Greenbox_triggerTrackingEvent({ eventName: 'VIEW_BASKET' });
+    DS_triggerTrackingEvent({ eventName: 'VIEW_BASKET' });
 
     this.showContent = true;
   }
 
   close(): void {
-    Greenbox_eventDispatch(this.sidebar, `request_sidebarHide_event`);
+    DS_eventDispatch(this.sidebar, `request_sidebarHide_event`);
     this.showContent = false;
   }
 
@@ -247,38 +247,38 @@ export class GbxCartBlock {
     const [activeCart] = this.carts.filter( ({isActive}) => isActive );
 
     return (
-      <div class="gbx-cart-block">
-        <gbx-button
-          class="gbx-cart-block__icon"
+      <div class="ds-cart-block">
+        <ds-button
+          class="ds-cart-block__icon"
           onClick={this.cartIconClickHandler}
           buttonType="button"
           buttonMods={[`${this.universe === Universe.GROCERY ? 'cart-icon' : 'cart-icon-resto'}`]}
         >
           <span class={{
-            "gbx-cart-block__count": this.universe === Universe.GROCERY,
-            "gbx-cart-block__count-resto": this.universe === Universe.RESTAURANT,
+            "ds-cart-block__count": this.universe === Universe.GROCERY,
+            "ds-cart-block__count-resto": this.universe === Universe.RESTAURANT,
           }}>{activeCart?.productCount || 0}</span>
-        </gbx-button>
+        </ds-button>
 
         <snk-sidebar
           ref={(el) => (this.sidebar = el)}
-          class="gbx-cart-block__content"
+          class="ds-cart-block__content"
           mods="cart"
         >
-          <gbx-block blockMods="cart-list">
-            <gbx-title
+          <ds-block blockMods="cart-list">
+            <ds-title
               slot="header"
               titleType={TitleType.TITLE2}
-              titleMods={["block", "cart"]}
+              mods={["block", "cart"]}
               heading={3}
-              useSnack={true}
+              
               dataCy={{
                 pageName: PageName.LOGIN,
                 elementName: "cartBlockTitle",
               }}
             >
               {this.translations.title.orders}
-            </gbx-title>
+            </ds-title>
             {this.snackBar.isSnackBarShown && (
               <snk-snackbar
                 message={this.snackBar.message}
@@ -288,21 +288,21 @@ export class GbxCartBlock {
                 onClose={this.snackBar.onClose}
               />
             )}
-            <gbx-button
+            <ds-button
               slot="header"
-              class="gbx-cart-block__menu"
+              class="ds-cart-block__menu"
               buttonType="button"
-              buttonMods={["snack", "cart-block", "close"]}
+              buttonMods={[ "cart-block", "close"]}
               onClick={this.closeButtonClickHandler}
             />
 
-            <div class="gbx-cart-block__content">
+            <div class="ds-cart-block__content">
               {this.carts.length ? (
                 this.carts.map(cart => {
-                  return <gbx-mini-cart
+                  return <ds-mini-cart
                     key={`cart-${cart.id}`}
                     id={`cart-${cart.id}`}
-                    class="gbx-cart-block__cart"
+                    class="ds-cart-block__cart"
                     cart={cart}
                     isActive={this.activeCartId === cart.id}
                     isLoggedIn={this.isLoggedIn}
@@ -310,8 +310,8 @@ export class GbxCartBlock {
                 })
               ) : (
                 <p
-                  class="gbx-cart-block__empty-cart"
-                  data-cy={Greenbox_getDataCy({
+                  class="ds-cart-block__empty-cart"
+                  data-cy={DS_getDataCy({
                     pageName: PageName.CART,
                     elementType: "Label",
                     elementName: "CartEmpty",
@@ -321,7 +321,7 @@ export class GbxCartBlock {
                 </p>
               )}
             </div>
-          </gbx-block>
+          </ds-block>
         </snk-sidebar>
       </div>
     );

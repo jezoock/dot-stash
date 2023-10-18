@@ -6,11 +6,11 @@ import { translations } from "../translations";
  * Display shopping bag details & products
  */
 @Component({
-  tag: 'gbx-shopping-bag-details',
+  tag: 'ds-shopping-bag-details',
   styleUrl: 'shopping-bag-details.scss'
 })
 
-export class GreenboxShoppingBagDetails {
+export class DSShoppingBagDetails {
   /**
    * Shopping bag to show details of
    */
@@ -196,7 +196,7 @@ export class GreenboxShoppingBagDetails {
   }
 
   private showToast(message: string, type: string): void {
-    /* Greenbox_eventDispatch(
+    /* DS_eventDispatch(
       ['body'],
       'toaster_show_event',
       {
@@ -239,18 +239,18 @@ export class GreenboxShoppingBagDetails {
 
     return (
       <div class={{
-        "gbx-shopping-bag-details": true,
+        "ds-shopping-bag-details": true,
         "--favorite": !isEditable
       }}>
 
-        <gbx-shopping-bag-name
+        <ds-shopping-bag-name
           name={shoppingBagName}
           isDisabled={!isEditable}
           toggleDeleteMessage={this.toggleDeleteMessage}
           requestUpdateShoppingBag={this.updateShoppingBag}
         />
         <menu class={{
-          "display-block": /* Greenbox_isMobile() && */ this.isDeleteMessageShown,
+          "display-block": /* DS_isMobile() && */ this.isDeleteMessageShown,
         }}>
           {this.isDeleteMessageShown ? (
             <Fragment>
@@ -260,7 +260,7 @@ export class GreenboxShoppingBagDetails {
               <button
                 type="button"
                 class={{
-                  "gbx-shopping-bag-button": true,
+                  "ds-shopping-bag-button": true,
                   "--cancel": true
                 }}
                 onClick={this.toggleDeleteMessage}
@@ -270,7 +270,7 @@ export class GreenboxShoppingBagDetails {
               <button
                 type="button"
                 class={{
-                  "gbx-shopping-bag-button": true,
+                  "ds-shopping-bag-button": true,
                   "--ok": true
                 }}
                 onClick={this.deleteButtonClickHandler}
@@ -283,14 +283,14 @@ export class GreenboxShoppingBagDetails {
                 <button
                   type="button"
                   class={{
-                    "gbx-shopping-bag-button": true,
+                    "ds-shopping-bag-button": true,
                     "--back": true
                   }}
                   onClick={this.requestNavigationBack}
                 >
                   {this.translations.buttons.back}
                 </button>
-                <div class="gbx-shopping-bag-details__item-count">
+                <div class="ds-shopping-bag-details__item-count">
                   {this.translations[productCount > 1 ? "productsCount" : "productCount"].replace('%products%', productCount)}
                 </div>
               </Fragment>
@@ -298,7 +298,7 @@ export class GreenboxShoppingBagDetails {
         </menu>
 
         {productCount > 0 && (
-          <gbx-shopping-bag-products
+          <ds-shopping-bag-products
             products={products}
             selectedProductIds={this.selectedProductIds}
             toggleProductSelection={this.toggleProductSelection}
@@ -306,11 +306,11 @@ export class GreenboxShoppingBagDetails {
           />
         )}
 
-        {/* Greenbox_isMobile() &&  */(
+        {/* DS_isMobile() &&  */(
           <button
             type="button"
             class={{
-              "gbx-shopping-bag-button": true,
+              "ds-shopping-bag-button": true,
               "--delete-alt": true
             }}
             onClick={this.deleteProducts}
@@ -321,11 +321,11 @@ export class GreenboxShoppingBagDetails {
 
         {productCount > 0 && (
           <footer>
-            {isEditable && /* !Greenbox_isMobile() && */ (
+            {isEditable && /* !DS_isMobile() && */ (
               <button
                 type="button"
                 class={{
-                  "gbx-shopping-bag-button": true,
+                  "ds-shopping-bag-button": true,
                   "--delete-alt": true
                 }}
                 onClick={this.deleteProducts}
@@ -333,8 +333,8 @@ export class GreenboxShoppingBagDetails {
                 {this.translations.buttons.delete}
               </button>
             )}
-            <div class="gbx-shopping-bag-details__total">
-              <div class="gbx-shopping-bag-details__price">
+            <div class="ds-shopping-bag-details__total">
+              <div class="ds-shopping-bag-details__price">
                 <span>
                   {productCount} {this.translations[productCount > 1 ? "products" : "product"]}
                 </span>
@@ -344,7 +344,7 @@ export class GreenboxShoppingBagDetails {
               </div>
               <button
                 class={{
-                  "gbx-shopping-bag-button": true,
+                  "ds-shopping-bag-button": true,
                   "--add-to-cart": true
                 }}
                 onClick={this.addToCartButtonClickHandler}

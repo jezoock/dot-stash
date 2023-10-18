@@ -13,16 +13,16 @@ import Fragment from "stencil-fragment";
 import { Universe } from "../../../../utils/universe";
 import { Translations } from "../../../interfaces";
 import {
-  Greenbox_getAppSettings,
-  Greenbox_injectSDK,
-  Greenbox_setTranslations,
-  Greenbox_triggerTrackingEvent,
+  DS_getAppSettings,
+  DS_injectSDK,
+  DS_setTranslations,
+  DS_triggerTrackingEvent,
 } from "../../../../utils";
 import { translations } from "./translations";
 
 declare var gapi;
 @Component({
-  tag: "gbx-auth",
+  tag: "ds-auth",
   styleUrls: ["./auth.scss", "./scss/auth-content.scss"],
 })
 export class GbxAuth {
@@ -78,14 +78,14 @@ export class GbxAuth {
   @Listen("notify_startRegisterProcess_event")
   notify_startRegisterProcess_eventHandler({ detail: registerData }) {
     this.request_registerProcess_event.emit(registerData);
-    Greenbox_triggerTrackingEvent({ eventName: 'SUBMIT_SIGNUP', eventDetails: {} });
+    DS_triggerTrackingEvent({ eventName: 'SUBMIT_SIGNUP', eventDetails: {} });
   }
 
   constructor() {
     this.previousButtonClickHandler = this.previousButtonClickHandler.bind(this);
     this.closeButtonClickHandler = this.closeButtonClickHandler.bind(this);
 
-    this.translations = Greenbox_setTranslations(translations, ["gbx_auth"]);
+    this.translations = DS_setTranslations(translations, ["gbx_auth"]);
   }
 
   @Listen("request_closeModal_event")
@@ -142,7 +142,7 @@ export class GbxAuth {
     const sdkFacebook = document.getElementById("facebook-jssdk");
 
     if (!sdkFacebook) {
-      Greenbox_injectSDK("facebookConnect").then(() => {
+      DS_injectSDK("facebookConnect").then(() => {
         this.initSDK("facebook")
       });
     } else {
@@ -159,13 +159,13 @@ export class GbxAuth {
       const sdkApple = document.getElementById("apple-sdk");
 
       if (!sdkGoogle) {
-        Greenbox_injectSDK("googleAuth").then(() => this.initSDK("google"));
+        DS_injectSDK("googleAuth").then(() => this.initSDK("google"));
       } else if (gapi) {
         this.initSDK("google");
       }
 
       if (!sdkApple) {
-        Greenbox_injectSDK("appleConnect").then(() =>
+        DS_injectSDK("appleConnect").then(() =>
           this.initSDK("apple")
         );
       } else {
@@ -187,7 +187,7 @@ export class GbxAuth {
   initSDK(type) {
     const {
       credentials: { facebook: credentials },
-    } = Greenbox_getAppSettings();
+    } = DS_getAppSettings();
 
     if (type === "facebook") {
       window["fbAsyncInit"] = function () {
@@ -226,7 +226,7 @@ export class GbxAuth {
       }
     } else if (type === "apple") {
         window["AppleID"].auth.init({
-          clientId: 'ch.smood.service',
+          clientId: 'ch.dot-jez.service',
           scope: 'name email',
           redirectURI: window.location.href.split('/').slice(0,3).join('/'),
           usePopup: true,
@@ -263,18 +263,18 @@ export class GbxAuth {
     const isB2B = !!new URL(window.location.href).searchParams.get('b2bInvitationToken');
 
     const classes = {
-      'gbx-auth-content': true,
-      'gbx-auth-content-b2b': isB2B,
+      'ds-auth-content': true,
+      'ds-auth-content-b2b': isB2B,
     };
 
     return (
       <Fragment>
-        <gbx-modal
+        <ds-modal
           shown={this.isModalShown}
           isLayoutDisabled={false}
           overlay={false}
           lightboxClass={{
-            "--snack": true,
+            "--pronto": true,
             "--dialog": false,
             "--no-layout": false,
             "--auth": true,
@@ -284,48 +284,48 @@ export class GbxAuth {
           isSubtitleDisabled={true}
           isFooterDisabled={true}
           isClosingDisabled={true}
-          useSnack={true}
+          
           universe={this.universe}
         >
           <div class={classes} slot="content">
-            <div class="gbx-auth-content__container">
-              <div class="gbx-auth-content-header">
-                <div class="gbx-auth-content-header__previous-button">
+            <div class="ds-auth-content__container">
+              <div class="ds-auth-content-header">
+                <div class="ds-auth-content-header__previous-button">
                   {[
                     AuthDisplayedView.REGISTER,
                     AuthDisplayedView.ACCOUNT_VALIDATION,
                     AuthDisplayedView.RESET_PASSWORD,
                   ].includes(this.displayedView) && (
-                    <gbx-button
-                      buttonMods={["snack", "previous"]}
+                    <ds-button
+                      buttonMods={[ "previous"]}
                       onGbxButtonClick={this.previousButtonClickHandler}
                     >
                       {this.translations.button.back}
-                    </gbx-button>
+                    </ds-button>
                   )}
                 </div>
 
-                <div class="gbx-auth-content-header__close-button">
-                  <gbx-button
-                    useSnack={true}
-                    buttonMods={["snack", "close"]}
+                <div class="ds-auth-content-header__close-button">
+                  <ds-button
+                    
+                    buttonMods={[ "close"]}
                     onGbxButtonClick={this.closeButtonClickHandler}
                   />
                 </div>
               </div>
 
-              <div class="gbx-auth-content-components">
+              <div class="ds-auth-content-components">
                 {this.displayedView === AuthDisplayedView.LOGIN && (
-                  <gbx-login
+                  <ds-login
                     isGrocery={this.isGrocery}
-                    class="gbx-auth-content-components__login"
+                    class="ds-auth-content-components__login"
                     hasLoginFailed={this.hasLoginFailed}
                   />
                 )}
 
                 {this.displayedView === AuthDisplayedView.REGISTER && (
-                  <gbx-register
-                    class="gbx-auth-content-components__register"
+                  <ds-register
+                    class="ds-auth-content-components__register"
                     registerData={this.registerData}
                     isRegisterProcessing={this.isRegisterProcessing}
                     hasRegistrationFailed={this.hasRegistrationFailed}
@@ -333,8 +333,8 @@ export class GbxAuth {
                 )}
 
                 {this.displayedView === AuthDisplayedView.ACCOUNT_VALIDATION && (
-                  <gbx-account-validation
-                    class="gbx-auth-content-components__account-validation"
+                  <ds-account-validation
+                    class="ds-auth-content-components__account-validation"
                     isValidationProcessing={this.isValidationProcessing}
                     isValidationInError={this.isValidationInError}
                     isResendValidationCodeProcessing={
@@ -348,22 +348,22 @@ export class GbxAuth {
                 )}
 
                 {this.displayedView === AuthDisplayedView.RESET_PASSWORD && (
-                  <gbx-reset-password class="gbx-auth-content-components__reset-password" />
+                  <ds-reset-password class="ds-auth-content-components__reset-password" />
                 )}
 
                 {this.displayedView === AuthDisplayedView.THANKS_FOR_REGISTER && (
-                  <gbx-thanks-for-registering
-                    class="gbx-auth-content-components__thanks-for-register"
+                  <ds-thanks-for-registering
+                    class="ds-auth-content-components__thanks-for-register"
                     userFirstName={this.userFirstName}
                   />
                 )}
 
                 {this.displayedView === AuthDisplayedView.B2B_SIGNUP_SUCCESS && (
-                  <gbx-b2b-success />
+                  <ds-b2b-success />
                 )}
 
                 {this.displayedView === AuthDisplayedView.B2B_SIGNUP_ERROR && (
-                  <gbx-b2b-failure
+                  <ds-b2b-failure
                     tryAgainClickHandler={this.previousButtonClickHandler}
                   />
                 )}
@@ -371,8 +371,8 @@ export class GbxAuth {
               </div>
             </div>
           </div>
-        </gbx-modal>
-        <gbx-registration-help isModalHelpShown={this.isModalHelpShown} />
+        </ds-modal>
+        <ds-registration-help isModalHelpShown={this.isModalHelpShown} />
       </Fragment>
     );
   }

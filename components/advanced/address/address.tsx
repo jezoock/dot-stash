@@ -5,10 +5,10 @@ import { translations } from "./translations";
 import { TransAddTranslations } from "../../_redux/actions/localization";
 
 @Component({
-  tag: "gbx-address",
+  tag: "ds-address",
   styleUrl: "address.scss"
 })
-export class GreenboxAddress {
+export class DSAddress {
   @Prop({ mutable: true }) address: any;
   @Prop({ mutable: true }) index: any;
   @Prop({ mutable: true }) isDefault: any;
@@ -87,11 +87,11 @@ export class GreenboxAddress {
 
   render() {
     return (
-      <div class="gbx-address">
+      <div class="ds-address">
         <address>
           <span>{this.address.formatted}</span>
           <button
-            class="gbx-address__remove-button"
+            class="ds-address__remove-button"
             onClick={evt => {
               this.delete(evt);
             }}
@@ -101,8 +101,8 @@ export class GreenboxAddress {
         <label
           htmlFor={"address-" + this.index}
           class={
-            "gbx-radio-old gbx-radio-old--square" +
-            (this.isDefault ? " gbx-js--checked" : "")
+            "ds-radio-old ds-radio-old--square" +
+            (this.isDefault ? " ds-js--checked" : "")
           }>
           <input
             type="radio"

@@ -10,18 +10,18 @@ import {
 } from "@stencil/core";
 import { Unsubscribe } from "redux";
 import { Action, Store } from "@stencil/redux";
-import { GreenboxCredentials } from "../../interfaces";
+import { DSCredentials } from "../../interfaces";
 import {
-  Greenbox_closeModal,
-  Greenbox_eventDispatch,
-  Greenbox_getAppLocale,
-  Greenbox_setTranslations,
-  Greenbox_triggerTrackingEvent,
+  DS_closeModal,
+  DS_eventDispatch,
+  DS_getAppLocale,
+  DS_setTranslations,
+  DS_triggerTrackingEvent,
 } from '../../../utils';
 import { AskResetPasswordAction } from "../../../_redux/actions/user";
 import { default as Cookies } from "js-cookie";
 import { PhoneValidation } from "../../../utils/phone-validation";
-import { GreenboxUserProfile, Translations } from "../../interfaces";
+import { DSUserProfile, Translations } from "../../interfaces";
 import {
   AccountValidationAction,
   RegisterAction,
@@ -33,14 +33,14 @@ import {
   RemoveRegisterErrorAction,
 } from "../../../_redux/actions/user";
 import { notifyFieldsError } from "../../ui/form/utils";
-import GreenboxAPI from "../../../_redux/services";
+import DSAPI from "../../../_redux/services";
 import { translations as RegisterTranslations } from "./auth/register/form/translations";
 import { AuthDisplayedView } from "./auth/auth-displayed-view.enum";
 import { redirectToCheckout } from '../../../utils/redirect-to-checkout';
 
 declare var gapi;
 @Component({
-  tag: "gbx-auth-container",
+  tag: "ds-auth-container",
 })
 export class GbxAuthContainer {
   @Prop({ context: "store" }) store: Store;
@@ -55,7 +55,7 @@ export class GbxAuthContainer {
   @State() view: AuthDisplayedView = undefined;
   @State() apiMessage: any;
 
-  @State() user: GreenboxUserProfile;
+  @State() user: DSUserProfile;
 
   //#region Registration
   @State() registerData: any;
@@ -98,7 +98,7 @@ export class GbxAuthContainer {
 
   @Prop() notRegistered: any;
 
-  @State() credentials: GreenboxCredentials = { username: "", password: "" };
+  @State() credentials: DSCredentials = { username: "", password: "" };
   @State() message: string = "";
   @State() error: boolean = false;
   @State() hasLoginFailed: boolean = false;
@@ -107,8 +107,8 @@ export class GbxAuthContainer {
   handlePasswordResetFeedback() {
     if (this.apiMessage?.success) {
       const { success }: { success: boolean } = this.apiMessage;
-      Greenbox_eventDispatch(
-        "gbx-reset-password",
+      DS_eventDispatch(
+        "ds-reset-password",
         "notify_resetPasswordOutcome_event",
         { success }
       );
@@ -155,14 +155,14 @@ export class GbxAuthContainer {
   @Watch("registerRedirect")
   registerRedirectWatcher() {
     if (this.registerRedirect) {
-      Greenbox_triggerTrackingEvent({ eventName: 'SUCCESS_SIGNUP', eventDetails: { customerId: this.user.id } });
+      DS_triggerTrackingEvent({ eventName: 'SUCCESS_SIGNUP', eventDetails: { customerId: this.user.id } });
       
-      Greenbox_eventDispatch(["gbx-auth"], "request_changeView_event", {
+      DS_eventDispatch(["ds-auth"], "request_changeView_event", {
         view: AuthDisplayedView.THANKS_FOR_REGISTER,
       });
 
       if (this.user?.firstname) {
-        Greenbox_eventDispatch(["gbx-auth"], "request_firstNameUpdate_event", {
+        DS_eventDispatch(["ds-auth"], "request_firstNameUpdate_event", {
           firstname: this.user.firstname,
         });
       }
@@ -179,7 +179,7 @@ export class GbxAuthContainer {
     if (this.hasLoginFailed) {
       this.RemoveLoginErrorAction();
     }
-    Greenbox_closeModal("authLightbox");
+    DS_closeModal("authLightbox");
   }
 
   @Listen("request_resetPassword_event")
@@ -198,7 +198,7 @@ export class GbxAuthContainer {
     const e = await this.UserLoginAction(detail);
 
     if (e) {
-      Greenbox_triggerTrackingEvent({
+      DS_triggerTrackingEvent({
         eventName: 'SUCCESS_LOGIN',
         eventDetails: {
           login_type: 'Email',
@@ -210,9 +210,9 @@ export class GbxAuthContainer {
       const b2bInvitationToken = url.searchParams.get("b2bInvitationToken");
       
       if (b2bInvitationToken) {
-        Greenbox_eventDispatch(window, 'request_continueB2BLoginFlow_event');
+        DS_eventDispatch(window, 'request_continueB2BLoginFlow_event');
       } else {
-        Greenbox_closeModal("authLightbox");
+        DS_closeModal("authLightbox");
       }
     }
 
@@ -220,9 +220,9 @@ export class GbxAuthContainer {
     const b2bInvitationToken = url.searchParams.get("b2bInvitationToken");
 
     if (b2bInvitationToken) {
-      Greenbox_eventDispatch(window, 'request_continueB2BLoginFlow_event');
+      DS_eventDispatch(window, 'request_continueB2BLoginFlow_event');
     } else {
-      Greenbox_closeModal("authLightbox");
+      DS_closeModal("authLightbox");
     }
 
     await this.redirectToCheckoutIfNeeded();
@@ -230,7 +230,7 @@ export class GbxAuthContainer {
 
   @Listen("request_facebookAuthButton_event")
   async request_facebookAuthButton_eventHandler({ detail }) {
-    Greenbox_triggerTrackingEvent({
+    DS_triggerTrackingEvent({
       eventName: 'SUCCESS_LOGIN',
       eventDetails: {
         login_type: 'Facebook',
@@ -244,7 +244,7 @@ export class GbxAuthContainer {
 
   @Listen("request_appleAuthButton_event")
   async request_appleAuthButton_eventHandler({ detail }) {
-    Greenbox_triggerTrackingEvent({
+    DS_triggerTrackingEvent({
       eventName: 'SUCCESS_LOGIN',
       eventDetails: {
         login_type: 'Apple',
@@ -258,7 +258,7 @@ export class GbxAuthContainer {
 
   @Listen("request_googleAuthButton_event")
   async request_googleAuthButton_eventHandler({ detail }) {
-    Greenbox_triggerTrackingEvent({
+    DS_triggerTrackingEvent({
       eventName: 'SUCCESS_LOGIN',
       eventDetails: {
         login_type: 'Google',
@@ -298,7 +298,7 @@ export class GbxAuthContainer {
     this.isResendValidationCodeSend = false;
 
     try {
-      await GreenboxAPI.resendValidationCode(this.validation?.to);
+      await DSAPI.resendValidationCode(this.validation?.to);
       this.isResendValidationCodeProcessing = false;
       this.isResendValidationCodeInError = false;
       this.isResendValidationCodeSend = true;
@@ -315,7 +315,7 @@ export class GbxAuthContainer {
   @Watch("user")
   watchUser() {
     if (this.user?.id) {
-      Greenbox_eventDispatch("gbx-cart-block", "request_cartStepSet_event", {
+      DS_eventDispatch("ds-cart-block", "request_cartStepSet_event", {
         step: 0,
       });
     }
@@ -329,7 +329,7 @@ export class GbxAuthContainer {
           if (newMessage.code && newMessage.code === "E_UNAUTHORIZED") {
             this.hasLoginFailed = true;
           } else {
-            Greenbox_eventDispatch("request_authFormDisplay_event", {
+            DS_eventDispatch("request_authFormDisplay_event", {
               success: newMessage.success,
             });
           }
@@ -398,7 +398,7 @@ export class GbxAuthContainer {
 
   constructor() {
     this.translations = {
-      registerForm: Greenbox_setTranslations(RegisterTranslations, [
+      registerForm: DS_setTranslations(RegisterTranslations, [
         "gbx_registerForm",
       ]),
     };
@@ -467,7 +467,7 @@ export class GbxAuthContainer {
     const finalData = {
       ...this.registerData,
       sponsorKey,
-      locale: Greenbox_getAppLocale(),
+      locale: DS_getAppLocale(),
     };
 
     await this.RegisterAction(finalData);
@@ -481,7 +481,7 @@ export class GbxAuthContainer {
 
   render() {
     return (
-      <gbx-auth
+      <ds-auth
         displayedView={this.view}
         isGrocery={this.isGrocery}
         settings={this.settings}

@@ -15,8 +15,8 @@ import {
   AccountValidationAction
 } from '../../../../_redux/actions/user';
 import { ErrorCodeList, EventDetails, Translations } from '../../../interfaces';
-import { Greenbox_eventDispatch, Greenbox_setTranslations, Greenbox_getInputValue } from '../../../../utils';
-import GreenboxAPI from "../../../../_redux/services";
+import { DS_eventDispatch, DS_setTranslations, DS_getInputValue } from '../../../../utils';
+import DSAPI from "../../../../_redux/services";
 import { InputFieldType } from '../../../ui/form/field/input/input-field-type.enum';
 import { ValidatorType } from '../../../ui/form/validator/validator-type.enum';
 import { notifyFieldsError } from '../../../ui/form/utils';
@@ -25,10 +25,10 @@ import { AlertLevel } from '../../../ui/alert/alert-level.enum';
 import { default as Cookies } from "js-cookie";
 
 @Component({
-  tag: 'gbx-profile',
+  tag: 'ds-profile',
   styleUrl: 'profile.scss',
 })
-export class GreenboxProfile {
+export class DSProfile {
   
   @Prop() isValidationProcessCanceled: boolean;
   @Prop({ context: 'store' }) store: Store;
@@ -61,7 +61,7 @@ export class GreenboxProfile {
   @State() mustDisplayPaymentMethodsBlock: boolean = true;
   @State() isAddressesPageActive: boolean;
 
-  translations: Translations = Greenbox_setTranslations(translations, ['gbx_profile']);
+  translations: Translations = DS_setTranslations(translations, ['gbx_profile']);
 
   GetProfileAction: typeof GetProfileAction;
   PutProfileAction: typeof PutProfileAction;
@@ -95,8 +95,8 @@ export class GreenboxProfile {
     if (newMessage?.for) {
       switch (newMessage.for) {
         case "CHANGE_PASSWORD":
-          Greenbox_eventDispatch(
-            'gbx-password-change-block',
+          DS_eventDispatch(
+            'ds-password-change-block',
             'request_passwordDisplayMessage_event',
             { success: newMessage.success }
           );
@@ -113,8 +113,8 @@ export class GreenboxProfile {
 
   @Watch("settings")
   settingsHandler(newSettings) { 
-    if (newSettings?.smoodSettings?.customerWebsiteConfig?.account?.pages?.paymentMethods) {
-      const { smoodSettings: { customerWebsiteConfig: { account: { pages: { paymentMethods: { isActive, featureFlagCookieName } } } } } } = newSettings;
+    if (newSettings?.prontoSettings?.customerWebsiteConfig?.account?.pages?.paymentMethods) {
+      const { prontoSettings: { customerWebsiteConfig: { account: { pages: { paymentMethods: { isActive, featureFlagCookieName } } } } } } = newSettings;
       const featureFlagCookie = Cookies.get(featureFlagCookieName);
       this.mustDisplayPaymentMethodsBlock = !(isActive || featureFlagCookie);
     }
@@ -158,7 +158,7 @@ export class GreenboxProfile {
       try {
         await this.DeleteDatatransCardAction(cardId);
 
-        Greenbox_eventDispatch(
+        DS_eventDispatch(
           ['body'], 'toaster_show_event',
           {
             type: 'valid',
@@ -169,7 +169,7 @@ export class GreenboxProfile {
           }
         );
       } catch (e) {
-        Greenbox_eventDispatch(
+        DS_eventDispatch(
           ['body'],
           'toaster_show_event',
           {
@@ -222,7 +222,7 @@ export class GreenboxProfile {
     this.isResendValidationCodeSend = false;
 
     try {
-      await GreenboxAPI.resendValidationCode(this.validation?.to);
+      await DSAPI.resendValidationCode(this.validation?.to);
       this.isResendValidationCodeProcessing = false;
       this.isResendValidationCodeInError = false;
       this.isResendValidationCodeSend = true;
@@ -330,9 +330,9 @@ export class GreenboxProfile {
       cumulusNumber?: string;
       allowPushNotifications: boolean;
     } = {
-      firstname: Greenbox_getInputValue('profileForm', 'firstname').trim(),
-      lastname: Greenbox_getInputValue('profileForm', 'lastname').trim(),
-      company: Greenbox_getInputValue('profileForm', 'company'),
+      firstname: DS_getInputValue('profileForm', 'firstname').trim(),
+      lastname: DS_getInputValue('profileForm', 'lastname').trim(),
+      company: DS_getInputValue('profileForm', 'company'),
       newsletter: this.subscribeNewsletter,
       allowPushNotifications: this.allowPushNotifications,
     };
@@ -341,12 +341,12 @@ export class GreenboxProfile {
       data.phone = this.userData.phone;
     }
 
-    const profileEmail = Greenbox_getInputValue('profileForm', 'email');
+    const profileEmail = DS_getInputValue('profileForm', 'email');
     if (profileEmail !== this.user.email) {
       data.email = profileEmail;
     }
 
-    const profileCumulus = Greenbox_getInputValue('profileForm', 'cumulus');
+    const profileCumulus = DS_getInputValue('profileForm', 'cumulus');
     if (profileCumulus !== this.user.cumulNumber) {
       data.cumulusNumber = profileCumulus;
     }
@@ -364,22 +364,22 @@ export class GreenboxProfile {
 
 
   checkIfAddressesPageIsActive() : boolean{
-    const addressesPageFeatureFlagCookieName = this.settings?.smoodSettings?.customerWebsiteConfig?.account?.pages?.addresses?.featureFlagCookieName
+    const addressesPageFeatureFlagCookieName = this.settings?.prontoSettings?.customerWebsiteConfig?.account?.pages?.addresses?.featureFlagCookieName
     const doesCookieAddressesPageFeatureFlagExists = Cookies.get(addressesPageFeatureFlagCookieName) !== undefined;
-    this.isAddressesPageActive = this.settings?.smoodSettings?.customerWebsiteConfig?.account?.pages?.addresses?.isActive || doesCookieAddressesPageFeatureFlagExists;
+    this.isAddressesPageActive = this.settings?.prontoSettings?.customerWebsiteConfig?.account?.pages?.addresses?.isActive || doesCookieAddressesPageFeatureFlagExists;
     return this.isAddressesPageActive
   }
 
   render() {
     return (
-      <div class="gbx-profile">
+      <div class="ds-profile">
 
         {this.loading && (
-          <gbx-loader message="Loading" />
+          <ds-loader message="Loading" />
         )}
 
         {this.showPhoneValidation && (
-          <gbx-account-validation
+          <ds-account-validation
             isValidationProcessing={this.isValidationProcessing}
             isValidationInError={this.isValidationInError}
             isResendValidationCodeProcessing={this.isResendValidationCodeProcessing}
@@ -388,22 +388,22 @@ export class GreenboxProfile {
           />
         )}
 
-        <div class="gbx-profile__form">
+        <div class="ds-profile__form">
 
-          <gbx-block
+          <ds-block
             blockTag="section"
             blockMods={['account', 'user-info']}
           >
-            <gbx-title
+            <ds-title
               slot="header"
               heading={3}
-              titleMods={['block', 'main']}
+              mods={['block', 'main']}
             >
               {this.translations.title.personalInfos}
-            </gbx-title>
+            </ds-title>
 
             {this.isValidationProcessCanceled && (
-              <gbx-alert
+              <ds-alert
                 level={AlertLevel.INFO}
                 message={this.translations.message.error.phone.notUpdated}
               />
@@ -411,33 +411,33 @@ export class GreenboxProfile {
 
             <form
               class={{
-                'gbx-form': true,
+                'ds-form': true,
                 '--default': true,
               }}
               id="profileForm"
               onSubmit={(e) => this.putProfileForm(e)}
             >
               {this.formCheckMessage && (
-                <gbx-message
+                <ds-message
                   messages={this.formCheckMessage}
                   messageMods={['error']}
                   messageTimer={3000}
                   messageGetFocus={true}
-                  messageFocusElement={'.gbx-lightbox.--profile .gbx-modal__content'}
+                  messageFocusElement={'.ds-lightbox.--profile .ds-modal__content'}
                 />
               )}
 
               {this.hasMessage && this.apiMessage?.for === 'PUT_PROFILE' && (
-                <gbx-message
+                <ds-message
                   messages={this.translations.updateProfile[ this.apiMessage.success ? 'success' : 'error' ]}
                   messageMods={[this.apiMessage.success ? 'valid' : 'error']}
                   messageTimer={3000}
                   messageGetFocus={true}
-                  messageFocusElement={'.gbx-lightbox.--profile .gbx-modal__content'}
+                  messageFocusElement={'.ds-lightbox.--profile .ds-modal__content'}
                 />
               )}
 
-              <fieldset class="gbx-form__input">
+              <fieldset class="ds-form__input">
                 <label htmlFor="profileFormFirstname">
                   {this.translations.settings.firstname}
                 </label>
@@ -448,7 +448,7 @@ export class GreenboxProfile {
                   value={this.user.firstname} />
               </fieldset>
 
-              <fieldset class="gbx-form__input">
+              <fieldset class="ds-form__input">
                 <label htmlFor="profileFormLastname">
                   {this.translations.settings.lastname}
                 </label>
@@ -460,7 +460,7 @@ export class GreenboxProfile {
                 />
               </fieldset>
 
-              <fieldset class="gbx-form__input">
+              <fieldset class="ds-form__input">
                 <label htmlFor="profileFormEmail">
                   {this.translations.settings.email}
                 </label>
@@ -472,8 +472,8 @@ export class GreenboxProfile {
                 />
               </fieldset>
 
-              <fieldset class="gbx-form__input">
-                <gbx-input-field
+              <fieldset class="ds-form__input">
+                <ds-input-field
                   id="profile-input-field-phone"
                   value={this.user.phones && this.user.phones[0]}
                   inputName="phone"
@@ -486,7 +486,7 @@ export class GreenboxProfile {
                 />
               </fieldset>
 
-              <fieldset class="gbx-form__input">
+              <fieldset class="ds-form__input">
                 <label htmlFor="profileFormCompany">
                   {this.translations.settings.company}
                 </label>
@@ -498,7 +498,7 @@ export class GreenboxProfile {
                 />
               </fieldset>
 
-              <fieldset class="gbx-form__input">
+              <fieldset class="ds-form__input">
                 <label htmlFor="profileFormCumulus">
                   {this.translations.settings.cumulus}
                 </label>
@@ -509,13 +509,13 @@ export class GreenboxProfile {
                   value={this.user.cumulusNumber}
                 />
                 <span
-                  class="gbx-profile__cumulus-info"
+                  class="ds-profile__cumulus-info"
                   innerHTML={this.translations.settings.cumulusInfo}
                 />
               </fieldset>
 
-              <fieldset class="gbx-form__checkbox">
-                <gbx-checkbox
+              <fieldset class="ds-form__checkbox">
+                <ds-checkbox
                   inputId="profileFormNewsletter"
                   isChecked={this.subscribeNewsletter}
                   onClick={this.toggleNewsletter}
@@ -526,8 +526,8 @@ export class GreenboxProfile {
                 </label>
               </fieldset>
 
-              <fieldset class="gbx-form__checkbox">
-                <gbx-checkbox
+              <fieldset class="ds-form__checkbox">
+                <ds-checkbox
                   inputId="allowPushNotifications"
                   isChecked={this.user.allowPushNotifications}
                   onClick={this.toggleAllowPushNotifications}
@@ -538,11 +538,11 @@ export class GreenboxProfile {
                 </label>
               </fieldset>
 
-              <fieldset class="gbx-form__input">
+              <fieldset class="ds-form__input">
                 <button
                   type="submit"
                   class={{
-                    'gbx-button': true,
+                    'ds-button': true,
                     '--profile': true,
                     '--color-2': true,
                   }}>
@@ -550,19 +550,19 @@ export class GreenboxProfile {
                 </button>
               </fieldset>
             </form>
-          </gbx-block>
+          </ds-block>
 
-          <gbx-password-change-block />
+          <ds-password-change-block />
           
           {!this.isAddressesPageActive && (
-            <gbx-address-block
+            <ds-address-block
               defaultAddress={this.user.defaultAddress}
               addresses={this.user.addresses}
             />
           )}
           
           {this.mustDisplayPaymentMethodsBlock && (
-            <gbx-credit-card-block creditCards={this.user.creditCards} />
+            <ds-credit-card-block creditCards={this.user.creditCards} />
           )}
 
         </div>

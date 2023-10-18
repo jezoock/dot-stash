@@ -3,17 +3,17 @@ import { Store } from "@stencil/redux";
 import { translations } from "./translations";
 import { OrdersFetchOneAction } from "../../../../../_redux/actions/orders";
 import dayjs from "dayjs";
-import { Greenbox_eventDispatch, Greenbox_getAppSettings, Greenbox_setTranslations, Greenbox_triggerTrackingEvent } from '../../../../../utils';
+import { DS_eventDispatch, DS_getAppSettings, DS_setTranslations, DS_triggerTrackingEvent } from '../../../../../utils';
 import { Translations } from "../../../../interfaces";
 
 @Component({
-  tag: "gbx-order-details",
+  tag: "ds-order-details",
   styleUrls: [
     "./order-details.scss",
     "./scss/modal.scss"
   ]
 })
-export class GreenboxOrderDetails {
+export class DSOrderDetails {
   @Prop() orderId: string = null;
   @Prop({ mutable: true }) fromCheckout: boolean = false;
   @Prop() datalayerPushed: boolean = false;
@@ -24,7 +24,7 @@ export class GreenboxOrderDetails {
   @State() loading: boolean = true;
   @State() loadingOrderMessages: boolean = true;
 
-  translations: Translations = Greenbox_setTranslations(translations, "gbx_orderDetails");
+  translations: Translations = DS_setTranslations(translations, "gbx_orderDetails");
 
   @Event() orderDetails_request_dismissDetails_event: EventEmitter;
   @Event() orderDetails_notice_componentInitialized_event: EventEmitter;
@@ -59,8 +59,8 @@ export class GreenboxOrderDetails {
   }
 
   dismiss() {
-    Greenbox_eventDispatch(
-      ["gbx-orders"],
+    DS_eventDispatch(
+      ["ds-orders"],
       "orderDetails_request_dismissDetails_event"
     );
   }
@@ -68,7 +68,7 @@ export class GreenboxOrderDetails {
   async trackOrder() {
     this.datalayerPushed = true;
 
-    const { userId: customerId, locale } = Greenbox_getAppSettings();
+    const { userId: customerId, locale } = DS_getAppSettings();
 
     const orderForTracking = {
       ...this.order,
@@ -79,7 +79,7 @@ export class GreenboxOrderDetails {
       firstOrderForCustomer: this.order.firstOrderForCustomer?.toString(),
     };
 
-    Greenbox_triggerTrackingEvent({ eventName: 'VIEW_ORDER_CONFIRMATION', eventDetails: orderForTracking });
+    DS_triggerTrackingEvent({ eventName: 'VIEW_ORDER_CONFIRMATION', eventDetails: orderForTracking });
 
     /* TO KEEP - Need confirmation conversion will still be handled by gtm before removing */
     /* if (typeof window.gtag === 'function' && typeof window.GOOGLE_ADWORDS_ID !== 'undefined' && typeof window.GOOGLE_ADWORDS_LABEL !== 'undefined') {
@@ -93,48 +93,48 @@ export class GreenboxOrderDetails {
 
   render() {
     return (
-      <div class="gbx-order-details">
+      <div class="ds-order-details">
         <button
           onClick={() => this.dismiss()}
           class={{
-            "gbx-order-details__return": true,
-            "gbx-button": true,
+            "ds-order-details__return": true,
+            "ds-button": true,
             "--back": true
           }}>
           {this.translations.buttons.back}
         </button>
         {!this.loading && this.order && (
-          <div class="gbx-order-details__content">
-            <div class="gbx-order-details__top-content">
-              <div class="gbx-order-details__steps">
-                <gbx-order-step
+          <div class="ds-order-details__content">
+            <div class="ds-order-details__top-content">
+              <div class="ds-order-details__steps">
+                <ds-order-step
                   status={this.order.status}
                   takeaway={this.order.takeaway}
                 />
               </div>
-              <div class="gbx-order-details__informations">
-                <gbx-order-informations order={this.order} />
+              <div class="ds-order-details__informations">
+                <ds-order-informations order={this.order} />
               </div>
             </div>
             {!this.loading && this.order.takeawayCode && (
-              <div class="gbx-order-details__takeaway-label">
-                {this.translations.cart.header.takeawayCode} <span class="gbx-order-details__takeaway-code"> {this.order.takeawayCode}</span>
+              <div class="ds-order-details__takeaway-label">
+                {this.translations.cart.header.takeawayCode} <span class="ds-order-details__takeaway-code"> {this.order.takeawayCode}</span>
               </div>
             )}
-            <div class="gbx-order-details__bottom-content">
-              <div class="gbx-order-details__cart">
-                <gbx-order-cart order={this.order} />
+            <div class="ds-order-details__bottom-content">
+              <div class="ds-order-details__cart">
+                <ds-order-cart order={this.order} />
               </div>
-              <div class="gbx-order-details__messages">
+              <div class="ds-order-details__messages">
                 {!this.loadingOrderMessages && (
-                  <gbx-order-messages
+                  <ds-order-messages
                     status={this.order.status}
                     orderId={this.order.id}
                     messages={this.order.messages}
                   />
                 )}
                 {this.loadingOrderMessages && (
-                  <gbx-loader
+                  <ds-loader
                     message={this.translations.loading}
                   />
                 )}
@@ -143,7 +143,7 @@ export class GreenboxOrderDetails {
           </div>
         )}
         {this.loading && (
-          <gbx-loader message={this.translations.loading} />
+          <ds-loader message={this.translations.loading} />
         )}
       </div>
     );

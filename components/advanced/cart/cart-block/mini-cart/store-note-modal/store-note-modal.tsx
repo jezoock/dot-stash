@@ -1,6 +1,6 @@
 import { Prop, h, Component, Event, EventEmitter } from "@stencil/core";
 import { Cart } from "../../../../../../../../api-types";
-import { Greenbox_getDataCy, Greenbox_setTranslations } from "../../../../../../../utils";
+import { DS_getDataCy, DS_setTranslations } from "../../../../../../../utils";
 import { PageName } from "../../../../../../../enums/page-name.enum";
 import { EventDetails } from "../../../../../../interfaces";
 import { ButtonLevel } from "../../../../../../ui/button/button-level.enum";
@@ -14,7 +14,7 @@ import Translations from './translations';
 export class StoreNoteModal {
   @Prop({ mutable: true }) note: string = "";
 
-  private translations = Greenbox_setTranslations(Translations, componentName);
+  private translations = DS_setTranslations(Translations, componentName);
   private textareaMaxLength = 140;
   private textareaColumns = 41;
 
@@ -107,19 +107,19 @@ export class StoreNoteModal {
             }}
           />
 
-          <gbx-button
+          <ds-button
             class={`${componentName}__confirm-note`}
             useSnack
             buttonLevel={ButtonLevel.PRIMARY}
             buttonMods={[ "cart-block", "checkout", "default", "label" ]}
             onClick={this.buttonClickHandler}
-            data-cy={Greenbox_getDataCy({
+            data-cy={DS_getDataCy({
               pageName: PageName.CART,
               elementName: 'confirm-note'
             })}
           >
             {this.translations.confirm}
-          </gbx-button>
+          </ds-button>
         </div>
       </snk-mini-cart-modal>
     );

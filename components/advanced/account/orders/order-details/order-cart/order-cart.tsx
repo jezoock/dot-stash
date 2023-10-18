@@ -1,15 +1,15 @@
 import { Component, Prop, h, State } from "@stencil/core";
 import Fragment from "stencil-fragment";
-import { Greenbox_formatPrice } from "../../../../../../utils";
+import { DS_formatPrice } from "../../../../../../utils";
 import { Action, Store } from "@stencil/redux";
 import { translations } from "./translations";
 import { TransAddTranslations } from "../../../../../../_redux/actions/localization";
 
 @Component({
-  tag: "gbx-order-cart",
+  tag: "ds-order-cart",
   styleUrl: "order-cart.scss"
 })
-export class GreenboxOrderCart {
+export class DSOrderCart {
   @Prop({ mutable: true, reflect: true }) order: any;
 
   @Prop({ context: "store" }) store: Store;
@@ -149,22 +149,22 @@ export class GreenboxOrderCart {
 
   render() {
     return (
-      <div class="gbx-order-cart__container">
-        <div class="gbx-order-cart__content">
-          <div class="gbx-order-cart__price-adjustment-info" innerHTML={this.translations.gbx_orderCart.priceAdjustmentInfo} />
-          <ul class="gbx-order-cart__item-list">
+      <div class="ds-order-cart__container">
+        <div class="ds-order-cart__content">
+          <div class="ds-order-cart__price-adjustment-info" innerHTML={this.translations.gbx_orderCart.priceAdjustmentInfo} />
+          <ul class="ds-order-cart__item-list">
             {
               (!this.productsList || !this.productsList.length) &&
               (!this.substitutedProductsList || !this.substitutedProductsList.length) &&
-              <li class="gbx-order-cart__empty" />
+              <li class="ds-order-cart__empty" />
             }
             {
               this.productsList &&
               this.productsList.length > 0 &&
               this.productsList.map(product => {
                 return (
-                  <li class="gbx-order-cart__product">
-                    <gbx-order-cart-product product={product} />
+                  <li class="ds-order-cart__product">
+                    <ds-order-cart-product product={product} />
                   </li>
                 );
               })
@@ -173,14 +173,14 @@ export class GreenboxOrderCart {
           {
             this.substitutedProductsList &&
             this.substitutedProductsList.length > 0 && (
-              <div class="gbx-order-cart__substituted-products">
+              <div class="ds-order-cart__substituted-products">
                 <h4>{this.translations.gbx_orderCart.substitutedProducts}</h4>
                 <ul>
                   {
                     this.substitutedProductsList.map(substitutedProduct => {
                       return (
-                        <li class="gbx-order-cart__product-substitution">
-                          <gbx-order-cart-product-substitution substitutedProduct={substitutedProduct} />
+                        <li class="ds-order-cart__product-substitution">
+                          <ds-order-cart-product-substitution substitutedProduct={substitutedProduct} />
                         </li>
                       )
                     })
@@ -190,42 +190,42 @@ export class GreenboxOrderCart {
             )
           }
         </div>
-        <footer class="gbx-order-cart__footer">
-          <div class="gbx-order-cart-footer-summary">
+        <footer class="ds-order-cart__footer">
+          <div class="ds-order-cart-footer-summary">
             {this.order.deliveryMode !== "takeaway" && (
               <Fragment>
-                <span class="gbx-order-cart-footer-summary__label">{this.translations.gbx_orderCart.deliveryFees}</span>
+                <span class="ds-order-cart-footer-summary__label">{this.translations.gbx_orderCart.deliveryFees}</span>
                 {this.isSmallFeeShown() && !isNaN(this.order.fees.shipping) ? (
-                  <span class="gbx-order-cart-footer-summary__price">
-                    {Greenbox_formatPrice({ price: this.order.fees.shipping })}
+                  <span class="ds-order-cart-footer-summary__price">
+                    {DS_formatPrice({ price: this.order.fees.shipping })}
                   </span>
                 ) : (
-                  <span class="gbx-order-cart-footer-summary__price">
-                    {Greenbox_formatPrice({ price: this.order.totalShipping })}
+                  <span class="ds-order-cart-footer-summary__price">
+                    {DS_formatPrice({ price: this.order.totalShipping })}
                   </span>
                 )}
               </Fragment>
             )}
             {this.order.tips?.driver?.amount && (
               <Fragment>
-                <span class="gbx-order-cart-footer-summary__label">{this.translations.gbx_orderCart.driverTips}</span>
-                <span class="gbx-order-cart-footer-summary__price">{Greenbox_formatPrice({ price: this.order.tips.driver.amount })}</span>
+                <span class="ds-order-cart-footer-summary__label">{this.translations.gbx_orderCart.driverTips}</span>
+                <span class="ds-order-cart-footer-summary__price">{DS_formatPrice({ price: this.order.tips.driver.amount })}</span>
               </Fragment>
             )}
             {this.order?.serviceFee && this.order.serviceFee > 0 && (
               <Fragment>
-                <span class="gbx-order-cart-footer-summary__label">{this.translations.gbx_orderCart.serviceFee}</span>
-                <span class="gbx-order-cart-footer-summary__price">{Greenbox_formatPrice({ price: this.order.serviceFee })}</span>
+                <span class="ds-order-cart-footer-summary__label">{this.translations.gbx_orderCart.serviceFee}</span>
+                <span class="ds-order-cart-footer-summary__price">{DS_formatPrice({ price: this.order.serviceFee })}</span>
               </Fragment>
             )}
             {this.isSmallFeeShown() && !isNaN(this.order.fees.smallFee) && (
               <Fragment>
-                <span class="gbx-order-cart-footer-summary__label">{this.translations.gbx_orderCart.smallFee}</span>
-                <span class="gbx-order-cart-footer-summary__price">{Greenbox_formatPrice({ price: this.order.fees.smallFee })}</span>
+                <span class="ds-order-cart-footer-summary__label">{this.translations.gbx_orderCart.smallFee}</span>
+                <span class="ds-order-cart-footer-summary__price">{DS_formatPrice({ price: this.order.fees.smallFee })}</span>
               </Fragment>
             )}
-            <span class="gbx-order-cart-footer-summary__label">{this.translations.gbx_orderCart.totalOrder}</span>
-            <span class="gbx-order-cart-footer-summary__price --highlight"> {Greenbox_formatPrice({ price: this.order.totalPaid })} </span>
+            <span class="ds-order-cart-footer-summary__label">{this.translations.gbx_orderCart.totalOrder}</span>
+            <span class="ds-order-cart-footer-summary__price --highlight"> {DS_formatPrice({ price: this.order.totalPaid })} </span>
           </div>
         </footer>
       </div>

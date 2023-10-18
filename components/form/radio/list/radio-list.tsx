@@ -7,10 +7,10 @@ import { RadioItemStyle } from '../item/radio-item-style.enum';
  * This component define a list of radio items.
  */
 @Component({
-  tag: 'gbx-radio-list',
+  tag: 'ds-radio-list',
   styleUrl: 'radio-list.scss'
 })
-export class GreenboxRadioList {
+export class DSRadioList {
 
   @Prop() itemList: RadioItem[] = [];
   @Prop() radioItemStyle: RadioItemStyle;
@@ -32,10 +32,10 @@ export class GreenboxRadioList {
 
   render() {
     return (
-      <div class="gbx-radio-list">
+      <div class="ds-radio-list">
         {this.itemList.map((item) => {
           return (
-            <gbx-radio-item
+            <ds-radio-item
               label={item.label}
               radioId={item.id}
               name={item.name}

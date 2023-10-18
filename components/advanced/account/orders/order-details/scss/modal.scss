@@ -1,7 +1,7 @@
-.gbx-lightbox {
+.ds-lightbox {
   &.--order-review {
     @media (min-width: $grid-md-min) {
-      & .gbx-order-details__informations {
+      & .ds-order-details__informations {
         padding: 5rem 0 0 0;
       }
     }

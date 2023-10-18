@@ -12,10 +12,10 @@ import { RadioItemCheckStyle } from './radio-item-check-style.enum';
  * This component define a radio item.
  */
 @Component({
-  tag: 'gbx-radio-item',
+  tag: 'ds-radio-item',
   styleUrl: 'radio-item.scss'
 })
-export class GreenboxRadioItem {
+export class DSRadioItem {
 
   @Prop() label: string;
   @Prop() radioId: string;
@@ -46,14 +46,14 @@ export class GreenboxRadioItem {
 
   render() {
     return (
-      <div class="gbx-radio-item">
-        <label class="gbx-radio-item-label">
-          <span class="gbx-radio-item-label__label">
+      <div class="ds-radio-item">
+        <label class="ds-radio-item-label">
+          <span class="ds-radio-item-label__label">
             {this.label}
           </span>
 
           <input
-            class="gbx-radio-item-label__input"
+            class="ds-radio-item-label__input"
             type="radio"
             id={this.radioId}
             name={this.name}
@@ -62,7 +62,7 @@ export class GreenboxRadioItem {
           />
 
           <div class={{
-            'gbx-radio-item-label__radio': true,
+            'ds-radio-item-label__radio': true,
             '--checked': this.isChecked,
             '--unchecked': !this.isChecked,
             [`--${this.radioItemStyle}`]: true,

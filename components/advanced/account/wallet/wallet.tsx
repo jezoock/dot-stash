@@ -5,7 +5,7 @@ import { translations } from "./translations";
 import { TransAddTranslations } from "../../../../_redux/actions/localization";
 import { ListAccountHistoriesAction } from "../../../../_redux/actions/user";
 import dayjs from "dayjs";
-import { Greenbox_formatPrice } from "../../../../utils";
+import { DS_formatPrice } from "../../../../utils";
 
 interface AccountHistoryEntry {
   action: string
@@ -24,10 +24,10 @@ interface AccountHistoryEntry {
 }
 
 @Component({
-  tag: "gbx-wallet",
+  tag: "ds-wallet",
   styleUrl: "wallet.scss"
 })
-export class GreenboxWallet {
+export class DSWallet {
 
   @Prop({ context: "store" }) store: Store;
 
@@ -114,13 +114,13 @@ export class GreenboxWallet {
 
   render() {
     return (
-      <div class="gbx-wallet">
+      <div class="ds-wallet">
 
-        <div class="gbx-wallet__amount-line">
-          {Greenbox_formatPrice({ price: this.user && this.user.wallet ? this.user.wallet : 0, currency: false })}{" "}
+        <div class="ds-wallet__amount-line">
+          {DS_formatPrice({ price: this.user && this.user.wallet ? this.user.wallet : 0, currency: false })}{" "}
           <span>CHF</span>
         </div>
-        <div class="gbx-wallet__description">
+        <div class="ds-wallet__description">
           {this.translations.gbx_accountWallet.description}
         </div>
 
@@ -142,23 +142,23 @@ export class GreenboxWallet {
             <tfoot>
               <tr>
                 <td colSpan={8}>
-                  <ul class="gbx-wallet-pages">
+                  <ul class="ds-wallet-pages">
                     {[...Array(this.user.accountHistories.nbPages)].map(
                       (_x, i) => {
                         let currentPage = i + 1;
                         return (
                           <li
                             class={{
-                              "gbx-wallet-page": true,
+                              "ds-wallet-page": true,
                               "--active": this.user.accountHistories.page === currentPage.toString()
                             }}>
-                            <gbx-button
+                            <ds-button
                               onClick={evt => {
                                 evt.preventDefault();
                                 this.loadPage(currentPage);
                               }}>
                               {currentPage}
-                            </gbx-button>
+                            </ds-button>
                           </li>
                         );
                       }
@@ -172,7 +172,7 @@ export class GreenboxWallet {
             {this.isLoading && (
               <tr>
                 <td colSpan={8}>
-                  <gbx-loader
+                  <ds-loader
                     message={
                       this.translations.page.common.loading
                     } />
@@ -182,7 +182,7 @@ export class GreenboxWallet {
             {!this.isLoading &&
               this.user.accountHistories?.histories?.length === 0 && (
                 <tr>
-                  <td colSpan={8} class="gbx-wallet__empty">
+                  <td colSpan={8} class="ds-wallet__empty">
                     {this.translations.gbx_accountWallet.noHistory}
                   </td>
                 </tr>
@@ -191,20 +191,20 @@ export class GreenboxWallet {
               this.user.accountHistories?.histories?.map((accountHistory: AccountHistoryEntry) => {
                 return (
                   <tr>
-                    <td class="gbx-wallet__date">
+                    <td class="ds-wallet__date">
                       {dayjs(accountHistory.createdAt).format(
                         "DD/MM/YYYY HH:mm"
                       )}
                     </td>
-                    <td class="gbx-wallet__amount">
-                      {Greenbox_formatPrice({ price: accountHistory.args.amount })}
+                    <td class="ds-wallet__amount">
+                      {DS_formatPrice({ price: accountHistory.args.amount })}
                     </td>
-                    <td class="gbx-wallet__order">
+                    <td class="ds-wallet__order">
                       {accountHistory.args.orderNumber
                         ? accountHistory.args.orderNumber
                         : ""}
                     </td>
-                    <td class="gbx-wallet__description">
+                    <td class="ds-wallet__description">
                       {this.formatDescription(accountHistory,
                         this.translations.gbx_accountWallet
                           .commonHistoryDescription[

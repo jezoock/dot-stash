@@ -1,4 +1,4 @@
-.gbx-shopping-bag-list {
+.ds-shopping-bag-list {
   overflow: hidden;
   /* & > ul {
     & > li {
@@ -20,7 +20,7 @@
         right: 0.5rem;
         transform: translateY(-50%);
         color: color(gray, base);
-        @include --icon(chevron-right);
+        @include ds-icon(chevron-right);
       }
       & > strong {
         font-weight: 600;

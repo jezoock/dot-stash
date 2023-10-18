@@ -2,13 +2,13 @@ import { h, Component, Prop, Event, EventEmitter } from "@stencil/core";
 import { translations } from "./translations";
 
 @Component({
-  tag: "gbx-address-dropdown",
+  tag: "ds-address-dropdown",
   styleUrls: [
     "./address-dropdown.scss",
     "./scss/button.scss"
   ]
 })
-export class GreenboxAddressDropdown {
+export class DSAddressDropdown {
 
   @Prop() locale: string = 'en';
   @Prop({ mutable: true }) addresses: any[] = [];
@@ -42,16 +42,16 @@ export class GreenboxAddressDropdown {
   render() {
     return (
       <menu
-        class="gbx-address-dropdown"
+        class="ds-address-dropdown"
         onClick={this.dropDownClickHandler}
         data-cy={this.pageName + '_Button_GbxAddressDropdown'}
       >
-        <div class="gbx-address-dropdown-list">
-          <ul class="gbx-address-dropdown-list__list">
+        <div class="ds-address-dropdown-list">
+          <ul class="ds-address-dropdown-list__list">
             {this.addresses.map(address => (
               <li
                 class={{
-                  "gbx-address-dropdown__list-item": true,
+                  "ds-address-dropdown__list-item": true,
                   "--selected": address.selected
                 }}
                 data-cy={this.pageName + '_Li_GbxAddressDropdownItem'}
@@ -59,7 +59,7 @@ export class GreenboxAddressDropdown {
                 <button
                   type="button"
                   class={{
-                    "gbx-button": true,
+                    "ds-button": true,
                     "--address-dropdown": true,
                     "--address-select": true
                   }}
@@ -77,7 +77,7 @@ export class GreenboxAddressDropdown {
           <button
             type="button"
             class={{
-              "gbx-button": true,
+              "ds-button": true,
               "--address-dropdown": true,
               "--new-address": true
             }}

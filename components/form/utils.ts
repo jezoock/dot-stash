@@ -1,6 +1,6 @@
 import { ValidatorType } from "./validator/validator-type.enum";
 import { Validator } from "./validator/validator";
-import { Greenbox_eventDispatch } from '../../../utils';
+import { DS_eventDispatch } from '../../../utils';
 
 /**
  * Determine if the field is required
@@ -18,15 +18,15 @@ export const notifyFieldsError = (error, messages): void => {
         const rule = invalidAttributes[attr][0].rule;
         const errorMessage = messages.error[attr] ? messages.error[attr][rule] : messages.error.global;
 
-        Greenbox_eventDispatch(
-          ['gbx-input-field'],
+        DS_eventDispatch(
+          ['ds-input-field'],
           'notify_fieldInError_event',
           { field: attr, errorMessage }
         );
 
         if (attr === 'password') {
-          Greenbox_eventDispatch(
-            ['gbx-input-field'],
+          DS_eventDispatch(
+            ['ds-input-field'],
             'notify_fieldInError_event',
             { field: 'confirmPassword', errorMessage: messages.error['confirmPassword'][rule] }
           );

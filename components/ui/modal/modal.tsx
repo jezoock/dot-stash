@@ -14,7 +14,7 @@ export class DSModal {
 
   @Prop({ mutable: true, reflect: true }) shown = false;
   @Prop() overlay = false;
-  @Prop() redirectToSmoodOnClose = false;
+  @Prop() redirectToOnClose = false;
   @Prop() isHeaderDisabled = false;
   @Prop() isSubtitleDisabled = false;
   @Prop() isFooterDisabled = false;
@@ -104,7 +104,7 @@ export class DSModal {
    * Request modal hide
    */
   hide(): void {
-    if (this.redirectToSmoodOnClose) {
+    if (this.redirectToOnClose) {
       window.location.href = window.location.origin;
     }
 

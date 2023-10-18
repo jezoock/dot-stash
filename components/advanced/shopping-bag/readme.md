@@ -1,4 +1,4 @@
-# gbx-shopping-bag
+# ds-shopping-bag
 
 
 
@@ -18,19 +18,19 @@
 
 ### Depends on
 
-- [gbx-shopping-bag-details](shopping-bag-details)
-- [gbx-shopping-bag-list](shopping-bag-list)
-- [gbx-shopping-bag-create-form](shopping-bag-create-form)
+- [ds-shopping-bag-details](shopping-bag-details)
+- [ds-shopping-bag-list](shopping-bag-list)
+- [ds-shopping-bag-create-form](shopping-bag-create-form)
 
 ### Graph
 ```mermaid
 graph TD;
-  gbx-shopping-bag --> gbx-shopping-bag-details
-  gbx-shopping-bag --> gbx-shopping-bag-list
-  gbx-shopping-bag --> gbx-shopping-bag-create-form
-  gbx-shopping-bag-details --> gbx-shopping-bag-name
-  gbx-shopping-bag-details --> gbx-shopping-bag-products
-  style gbx-shopping-bag fill:#f9f,stroke:#333,stroke-width:4px
+  ds-shopping-bag --> ds-shopping-bag-details
+  ds-shopping-bag --> ds-shopping-bag-list
+  ds-shopping-bag --> ds-shopping-bag-create-form
+  ds-shopping-bag-details --> ds-shopping-bag-name
+  ds-shopping-bag-details --> ds-shopping-bag-products
+  style ds-shopping-bag fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

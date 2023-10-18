@@ -1,7 +1,7 @@
-.gbx-order-cart-product {
+.ds-order-cart-product {
 
   &__container {
-    .gbx-order-cart-item {
+    .ds-order-cart-item {
       display: flex;
       flex-wrap: nowrap;
       align-items: center;
@@ -29,7 +29,7 @@
         order: 3;
         button {
           &:before {
-            @include --icon(trash);
+            @include ds-icon(trash);
             font-size: $title_font-size-1;
             padding: 0.3rem 0;
             color: color(gray, dark);
@@ -195,7 +195,7 @@
       }
 
       &--checkout {
-        & .gbx-order-cart-item {
+        & .ds-order-cart-item {
           &__firstline {
             width: 100%;
           }
@@ -217,7 +217,7 @@
             font-weight: normal;
             & small {
               display: block;
-              &.gbx-order-cart-item__state {
+              &.ds-order-cart-item__state {
                 font-style: normal;
                 font-weight: 600;
                 &--adjusted {

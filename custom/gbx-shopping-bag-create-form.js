@@ -1,8 +1,8 @@
-import { G as GreenboxShoppingBagCreateForm, d as defineCustomElement$1 } from './shopping-bag-create-form.js';
+import { G as DSShoppingBagCreateForm, d as defineCustomElement$1 } from './shopping-bag-create-form.js';
 
-const GbxShoppingBagCreateForm = GreenboxShoppingBagCreateForm;
+const GbxShoppingBagCreateForm = DSShoppingBagCreateForm;
 const defineCustomElement = defineCustomElement$1;
 
 export { GbxShoppingBagCreateForm, defineCustomElement };
 
-//# sourceMappingURL=gbx-shopping-bag-create-form.js.map
+//# sourceMappingURL=ds-shopping-bag-create-form.js.map

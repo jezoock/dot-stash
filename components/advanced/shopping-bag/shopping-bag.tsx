@@ -2,7 +2,7 @@ import { Component, h, State, Prop, Watch, Listen } from "@stencil/core";
 import { AnyHTMLElement } from "@stencil/core/internal/stencil-private";
 
 @Component({
-  tag: "gbx-shopping-bag",
+  tag: "ds-shopping-bag",
   styleUrls: [
     "shopping-bag.scss",
     "./scss/title.scss",
@@ -10,7 +10,7 @@ import { AnyHTMLElement } from "@stencil/core/internal/stencil-private";
   ]
 })
 
-export class GreenboxShoppingBag {
+export class DSShoppingBag {
 
   @Prop({ reflect: true }) mode = "default";
   @Prop() pageName = "Grocery";
@@ -40,13 +40,13 @@ export class GreenboxShoppingBag {
   @Watch("loadingAddToCart")
   LoadingAddToCartHandler(newValue: any) {
     if (newValue === false) {
-      /* Greenbox_eventDispatch(
-        ["gbx-page-loader"],
+      /* DS_eventDispatch(
+        ["ds-page-loader"],
         "close_page_loader_event"
       ); */
     } else if (newValue === true) {
-      /* Greenbox_eventDispatch(
-        ["gbx-page-loader"],
+      /* DS_eventDispatch(
+        ["ds-page-loader"],
         "open_page_loader_event"
       ); */
     }
@@ -58,8 +58,8 @@ export class GreenboxShoppingBag {
     if (newValue === true) {
       this.isModalShown = false;
       // open cart
-      /* Greenbox_eventDispatch(
-        ["gbx-cart-block"],
+      /* DS_eventDispatch(
+        ["ds-cart-block"],
         "request_cartBlockShow_event"
       ); */
     }
@@ -173,12 +173,12 @@ export class GreenboxShoppingBag {
       this.isModalShown = !isModalShown;
     } else {
       if (this.settings.isMobile) {
-        /* Greenbox_eventDispatch(["greenbox-header"], "request_sidebarToggle_event");
-        Greenbox_eventDispatch(["greenbox-menu"], "change_currentTab_event", 1); */
+        /* DS_eventDispatch(["greenbox-header"], "request_sidebarToggle_event");
+        DS_eventDispatch(["greenbox-menu"], "change_currentTab_event", 1); */
       }
       if (!this.settings.isMobile) {
-        /* Greenbox_eventDispatch(
-          ["gbx-account-block"],
+        /* DS_eventDispatch(
+          ["ds-account-block"],
           "open_connection_event"
         ); */
       }
@@ -201,7 +201,7 @@ export class GreenboxShoppingBag {
     switch (this.state) {
       case "details":
         return this.editShoppingBag && (
-          <gbx-shopping-bag-details
+          <ds-shopping-bag-details
             locale={this.settings.locale}
             shoppingBag={this.editShoppingBag}
             isAgeLegal={Boolean(this.cart.isAgeLegal)}
@@ -218,7 +218,7 @@ export class GreenboxShoppingBag {
         );
       case "list":
         return (
-          <gbx-shopping-bag-list
+          <ds-shopping-bag-list
             locale={this.settings.locale}
             shoppingBags={this.shoppingBags}
             requestDisplayCreateForm={() => {
@@ -231,7 +231,7 @@ export class GreenboxShoppingBag {
         );
       case "create":
         return (
-          <gbx-shopping-bag-create-form
+          <ds-shopping-bag-create-form
             locale={this.settings.locale}
             requestHideCreateForm={() => {
               this.setState("list");
@@ -247,20 +247,20 @@ export class GreenboxShoppingBag {
   render() {
     return (
       <div class={{
-        "gbx-shopping-bag": true,
+        "ds-shopping-bag": true,
         "--logged": this.isLogged,
         [`--${this.mode}`]: true
       }}>
         <button
           type="button"
-          class="gbx-shopping-bag__icon"
+          class="ds-shopping-bag__icon"
           onClick={this.toggleModal}
           data-cy={this.pageName + "_Button_ShoppingBag"}
         >
           <slot />
         </button>
         {this.isModalShown && (
-          <gbx-modal
+          <ds-modal
             shown={this.isModalShown}
             onGbxModalClose={() => {
               this.isModalShown = false;
@@ -274,17 +274,17 @@ export class GreenboxShoppingBag {
           >
             <div slot="content">
               {this.isLoading && (
-                <gbx-loader />
+                <ds-loader />
               )}
               <button type="button"
-                class="gbx-shopping-bag__nav-button"
+                class="ds-shopping-bag__nav-button"
                 onClick={this.handleNavButtonClick}
               />
-              <div class={`gbx-shopping-bag__content --${this.state}`}>
+              <div class={`ds-shopping-bag__content --${this.state}`}>
                 {this.renderState()}
               </div>
             </div>
-          </gbx-modal>
+          </ds-modal>
         )}
       </div>
     )

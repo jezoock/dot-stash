@@ -1,10 +1,10 @@
 import { Component, Prop, h, Event, EventEmitter, Listen, State, Watch } from "@stencil/core";
-import { Greenbox_eventDispatch, Greenbox_setTranslations } from "../../../../../../../utils";
+import { DS_eventDispatch, DS_setTranslations } from "../../../../../../../utils";
 import { Translations } from "../../../../../../interfaces";
 import { translations } from "./translations";
 
 @Component({
-  tag: 'gbx-mini-cart-quantity-selector',
+  tag: 'ds-mini-cart-quantity-selector',
   styleUrl: './mini-cart-quantity-selector.scss'
 })
 
@@ -15,7 +15,7 @@ export class GbxMiniCartQuantitySelector {
   @Prop() minQuantity: number = 0;
   @Prop({ mutable: true }) itemId: string;
 
-  translations: Translations = Greenbox_setTranslations( translations, "gbx_mini_cart_quantity_selector" );
+  translations: Translations = DS_setTranslations( translations, "gbx_mini_cart_quantity_selector" );
 
   @State() currentQuantity: number = 0;
 
@@ -57,7 +57,7 @@ export class GbxMiniCartQuantitySelector {
   }
 
   private displayToasterError() {
-    Greenbox_eventDispatch(["body"], "toaster_show_event", {
+    DS_eventDispatch(["body"], "toaster_show_event", {
       message: this.translations.outOfStock,
       type: "error",
       closingDelay: 5000,
@@ -79,7 +79,7 @@ export class GbxMiniCartQuantitySelector {
   }
 
   render() {
-    const componentClassName = "gbx-mini-cart-quantity-selector";
+    const componentClassName = "ds-mini-cart-quantity-selector";
 
     return (
       <div class={componentClassName}>
@@ -88,7 +88,7 @@ export class GbxMiniCartQuantitySelector {
           onClick={this.decreaseButtonClickHandler}
         >
           {this.currentQuantity >= 1 && (
-            <gbx-button
+            <ds-button
               buttonMods={['cart-block', 'quantity', 'decrease']}
               class={`${componentClassName}__decrease-quantity`}
             />
@@ -104,7 +104,7 @@ export class GbxMiniCartQuantitySelector {
           onClick={this.increaseButtonClickHandler}
         >
           {this.currentQuantity !== this.maxQuantity && (
-            <gbx-button
+            <ds-button
               class={`${componentClassName}__increase-quantity`}
               buttonMods={['cart-block', 'quantity', 'increase']}
             />

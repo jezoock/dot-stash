@@ -1,8 +1,8 @@
 import { proxyCustomElement, HTMLElement, h } from '@stencil/core/internal/client';
 
-const shoppingBagProductsCss = ".gbx-shopping-bag-products{padding:2rem 0}";
+const shoppingBagProductsCss = ".ds-shopping-bag-products{padding:2rem 0}";
 
-const GreenboxShoppingBagProducts = /*@__PURE__*/ proxyCustomElement(class GreenboxShoppingBagProducts extends HTMLElement {
+const DSShoppingBagProducts = /*@__PURE__*/ proxyCustomElement(class DSShoppingBagProducts extends HTMLElement {
   componentWillLoad() {
     /* this.store.mapDispatchToProps(this, ({
       ShoppingBagUpdateProductsAction,
@@ -32,10 +32,10 @@ const GreenboxShoppingBagProducts = /*@__PURE__*/ proxyCustomElement(class Green
     this.toggleProductSelection = this.toggleProductSelection.bind(this);
   }
   render() {
-    return (h("div", { class: "gbx-shopping-bag-products" }, this.products.map(product => (h("gbx-cart-item", { item: product, isSelected: this.selectedProductIds.includes(product.id), toggleSelect: this.toggleProductSelection, itemImage: product.image ? product.image : 'unavailable' })))));
+    return (h("div", { class: "ds-shopping-bag-products" }, this.products.map(product => (h("ds-cart-item", { item: product, isSelected: this.selectedProductIds.includes(product.id), toggleSelect: this.toggleProductSelection, itemImage: product.image ? product.image : 'unavailable' })))));
   }
   static get style() { return shoppingBagProductsCss; }
-}, [0, "gbx-shopping-bag-products", {
+}, [0, "ds-shopping-bag-products", {
     "products": [16],
     "ShoppingBagUpdateProductsAction": [8, "shopping-bag-update-products-action"],
     "toggleProductSelection": [16],
@@ -46,16 +46,16 @@ function defineCustomElement() {
   if (typeof customElements === "undefined") {
     return;
   }
-  const components = ["gbx-shopping-bag-products"];
+  const components = ["ds-shopping-bag-products"];
   components.forEach(tagName => { switch (tagName) {
-    case "gbx-shopping-bag-products":
+    case "ds-shopping-bag-products":
       if (!customElements.get(tagName)) {
-        customElements.define(tagName, GreenboxShoppingBagProducts);
+        customElements.define(tagName, DSShoppingBagProducts);
       }
       break;
   } });
 }
 
-export { GreenboxShoppingBagProducts as G, defineCustomElement as d };
+export { DSShoppingBagProducts as G, defineCustomElement as d };
 
 //# sourceMappingURL=shopping-bag-products.js.map

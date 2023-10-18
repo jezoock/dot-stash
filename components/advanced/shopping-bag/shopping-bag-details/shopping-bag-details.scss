@@ -1,4 +1,4 @@
-.gbx-shopping-bag-details {
+.ds-shopping-bag-details {
   /* & > menu {
     border-top: 1px solid color(gray, light);
     border-bottom: 1px solid color(gray, light);
@@ -50,7 +50,7 @@
     order: 1;
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     & > menu {
       margin: 0 -1rem;
       padding: 1rem;

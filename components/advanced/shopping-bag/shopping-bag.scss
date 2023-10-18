@@ -1,7 +1,7 @@
 @import "./scss/button.scss";
 @import "./scss/title.scss";
 
-.gbx-shopping-bag {
+.ds-shopping-bag {
   display: none;
 
   /* &.--logged {
@@ -17,7 +17,7 @@
       font-size: $text_font-size-3;
       font-weight: 500;
       border: 2px solid #000;
-      @include --icon(close);
+      @include ds-icon(close);
       @include --rounded(2rem);
     }
   }
@@ -32,16 +32,16 @@
     &:before {
       color: color(gray, dark);
       font-size: $text_font-size-3;
-      @include --icon(list);
+      @include ds-icon(list);
     }
   }
 
-  @media (max-width: $grid-sm-max) {
-    & .gbx-lightbox__container {
+  @include break-p(null, sm) {
+    & .ds-lightbox__container {
       padding: 0;
       display: flex;
       justify-content: stretch;
-      & > .gbx-modal {
+      & > .ds-modal {
         width: 100%;
       }
     }
@@ -101,7 +101,7 @@
     }
   }
 
-  @media (min-width: $grid-md-min) and (max-width: $grid-md-max) {
+  @include break-p(md, md) {
     &__content {
       &:before {
         background-size: 80%;
@@ -113,7 +113,7 @@
     }
   }
 
-  @media (min-width: $grid-lg-min) {
+  @include break-p(lg) {
     &__content {
       &.--list,
       &.--create {

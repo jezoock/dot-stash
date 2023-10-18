@@ -1,8 +1,8 @@
-import { G as GreenboxShoppingBagList, d as defineCustomElement$1 } from './shopping-bag-list.js';
+import { G as DSShoppingBagList, d as defineCustomElement$1 } from './shopping-bag-list.js';
 
-const GbxShoppingBagList = GreenboxShoppingBagList;
+const GbxShoppingBagList = DSShoppingBagList;
 const defineCustomElement = defineCustomElement$1;
 
 export { GbxShoppingBagList, defineCustomElement };
 
-//# sourceMappingURL=gbx-shopping-bag-list.js.map
+//# sourceMappingURL=ds-shopping-bag-list.js.map

@@ -4,10 +4,10 @@ import { Component, h, Prop } from "@stencil/core";
  * Simple button component displaying the shopping list modal
  */
 @Component({
-	tag: 'gbx-shopping-bag-button'
+	tag: 'ds-shopping-bag-button'
 })
 
-export class GreenboxShoppingBagButton {
+export class DSShoppingBagButton {
 
 	/**
 	 * Displayed button label
@@ -22,8 +22,8 @@ export class GreenboxShoppingBagButton {
 	 * Request shopping maodal display
 	 */
 	handleButtonClick(): void {
-		/* Greenbox_eventDispatch(
-			["gbx-shopping-bag"],
+		/* DS_eventDispatch(
+			["ds-shopping-bag"],
 			"request_shoppingbag_open"
 		); */
 		console.log("here")
@@ -32,7 +32,7 @@ export class GreenboxShoppingBagButton {
 	render() {
 		return (
 			<button class={{
-				"gbx-button": true,
+				"ds-button": true,
 				"--color-1": true,
 				"--medium": true,
 				"--banner-act": true

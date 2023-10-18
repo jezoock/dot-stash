@@ -1,4 +1,4 @@
-.gbx-checkbox {
+.ds-checkbox {
   color: color(gray, dark);
   position: relative;
 
@@ -25,7 +25,6 @@
       width: 2rem;
       border-radius: 4px;
       border: 1px solid color(gray, light);
-      font-size: $text_font-size-3;
       line-height: 30px;
       text-align: center;
       font-weight: 700;
@@ -33,7 +32,7 @@
       content: "";
       @include --icon-font();
     }
-    & .gbx-checkbox {
+    & .ds-checkbox {
       &__label {
         width: calc(100% - 3rem);
         overflow: hidden;
@@ -52,7 +51,7 @@
         color: color(gray, light);
         border-color: color(gray, light);
       }
-      & .gbx-checkbox {
+      & .ds-checkbox {
         &__label {
           opacity: 0.5;
         }
@@ -83,21 +82,21 @@
   }
 
   &.--list-default {
-    & .gbx-checkbox {
+    & .ds-checkbox {
       &__label {
         font-size: 1rem;
       }
     }
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     font-size: $text_font-size-1;
   }
 
   .--resto & {
     &.--list-default {
       &.--default {
-        & .gbx-checkbox {
+        & .ds-checkbox {
           &__label {
             color: color(gray, resto-label);
           }

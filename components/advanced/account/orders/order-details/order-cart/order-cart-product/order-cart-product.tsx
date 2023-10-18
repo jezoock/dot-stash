@@ -1,14 +1,14 @@
 import { Component, Prop, h, State } from "@stencil/core";
-import { Greenbox_formatPrice, Greenbox_getImage } from "../../../../../../../utils";
+import { DS_formatPrice, DS_getImage } from "../../../../../../../utils";
 import { Action, Store } from "@stencil/redux";
 import { translations } from "./translations";
 import { TransAddTranslations } from "../../../../../../../_redux/actions/localization";
 
 @Component({
-  tag: "gbx-order-cart-product",
+  tag: "ds-order-cart-product",
   styleUrl: "order-cart-product.scss"
 })
-export class GreenboxOrderCart {
+export class DSOrderCart {
   @Prop({ mutable: true, reflect: true }) product: any;
 
   @Prop({ context: "store" }) store: Store;
@@ -42,47 +42,47 @@ export class GreenboxOrderCart {
 
   render() {
     return (
-      <div class="gbx-order-cart-product__container">
+      <div class="ds-order-cart-product__container">
         <div class={{
-          "gbx-order-cart-item": true,
-          "gbx-order-cart-item--readonly": true,
-          "gbx-order-cart-item--checkout": true
+          "ds-order-cart-item": true,
+          "ds-order-cart-item--readonly": true,
+          "ds-order-cart-item--checkout": true
         }}>
-          <div class="gbx-order-cart-item__firstline">
+          <div class="ds-order-cart-item__firstline">
             <div class={{
-              "gbx-order-cart-item__image": true,
-              "gbx-order-cart-item__image--no-pic": this.product.noPic
+              "ds-order-cart-item__image": true,
+              "ds-order-cart-item__image--no-pic": this.product.noPic
             }}>
-              <img src={Greenbox_getImage(this.product.image || "unavailable", 120)} />
+              <img src={DS_getImage(this.product.image || "unavailable", 120)} />
             </div>
-            <div class="gbx-order-cart-item__quantity">
+            <div class="ds-order-cart-item__quantity">
               <span>
                 x{this.product.quantity}
               </span>
               {this.product.oldQuantity && this.product.oldQuantity !== this.product.quantity && (
                 <div>
-                  <span class="gbx-order-cart-item__quantity--old-quantity">
+                  <span class="ds-order-cart-item__quantity--old-quantity">
                     x{this.product.oldQuantity}
                   </span>
                 </div>
               )}
             </div>
-            <div class="gbx-order-cart-item__name">
+            <div class="ds-order-cart-item__name">
               <span>
                 {this.product.name[this.settings.locale]}
               </span>
               {this.product.unavailable && (
-                <small class="gbx-order-cart-item__state gbx-order-cart-item__state--unavailable">
+                <small class="ds-order-cart-item__state ds-order-cart-item__state--unavailable">
                   {this.translations.gbx_orderCartProduct.unavailable}
                 </small>
               )}
               {!this.product.unavailable && this.product.insufficientStock && (
-                <small class="gbx-order-cart-item__state gbx-order-cart-item__state--insufficient-stock">
+                <small class="ds-order-cart-item__state ds-order-cart-item__state--insufficient-stock">
                   {this.translations.gbx_orderCartProduct.insufficientStock}
                 </small>
               )}
               {!this.product.unavailable && !this.product.insufficientStock && this.product.adjustedPrice && (
-                <small class="gbx-order-cart-item__state gbx-order-cart-item__state--adjusted">
+                <small class="ds-order-cart-item__state ds-order-cart-item__state--adjusted">
                   {this.translations.gbx_orderCartProduct.adjustedPrice}
                 </small>
               )}
@@ -93,26 +93,26 @@ export class GreenboxOrderCart {
               )}
             </div>
             <div class={
-              "gbx-order-cart-item__price" +
-              (this.product.unavailable ? " gbx-order-cart-item__price--strike" : "")
+              "ds-order-cart-item__price" +
+              (this.product.unavailable ? " ds-order-cart-item__price--strike" : "")
             }>
               {(!this.product.promotionTotalPrice || this.product.promotionTotalPrice == 0) && (
                 <span>
-                  {Greenbox_formatPrice({ price: this.product.totalPrice })}
+                  {DS_formatPrice({ price: this.product.totalPrice })}
                 </span>
               )}
               {this.product.oldTotalPrice && this.product.oldTotalPrice !== this.product.totalPrice && (
                 <div>
-                  <span class="gbx-order-cart-item__price--old-price">
-                    {Greenbox_formatPrice({ price: this.product.oldTotalPrice })}
+                  <span class="ds-order-cart-item__price--old-price">
+                    {DS_formatPrice({ price: this.product.oldTotalPrice })}
                   </span>
                 </div>
               )}
               {!this.product.oldTotalPrice && this.product.promotionTotalPrice && this.product.promotionTotalPrice > 0 && (
                 <div>
-                  <span>{Greenbox_formatPrice({ price: this.product.promotionTotalPrice / 100 })}</span><br />
-                  <span class="gbx-order-cart-item__price--old-price">
-                    {Greenbox_formatPrice({ price: this.product.totalPrice / 100, currency: false })}
+                  <span>{DS_formatPrice({ price: this.product.promotionTotalPrice / 100 })}</span><br />
+                  <span class="ds-order-cart-item__price--old-price">
+                    {DS_formatPrice({ price: this.product.totalPrice / 100, currency: false })}
                   </span>
                 </div>
               )}

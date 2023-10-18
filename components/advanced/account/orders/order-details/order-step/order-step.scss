@@ -1,4 +1,4 @@
-.gbx-step {
+.ds-step {
   position: relative;
   color: color(gray, base);
   list-style-type: none;
@@ -12,17 +12,17 @@
     flex-wrap: wrap;
     margin: 0 0 2rem 0;
     &--steps-2 {
-      & .gbx-step {
+      & .ds-step {
         width: 50%;
       }
     }
     &--steps-3 {
-      & .gbx-step {
+      & .ds-step {
         width: 33.333%;
       }
     }
     &--steps-4 {
-      & .gbx-step {
+      & .ds-step {
         width: 25%;
       }
     }
@@ -68,7 +68,7 @@
     }
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     &-list {
       padding-bottom: 50px;
       margin: 0;

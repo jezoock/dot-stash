@@ -1,9 +1,9 @@
 import { proxyCustomElement, HTMLElement, h } from '@stencil/core/internal/client';
 import { t as translations } from './translations.js';
 
-const shoppingBagCreateFormCss = ".gbx-shopping-bag-create-form>menu>button{width:48%}";
+const shoppingBagCreateFormCss = ".ds-shopping-bag-create-form>menu>button{width:48%}";
 
-const GreenboxShoppingBagCreateForm = /*@__PURE__*/ proxyCustomElement(class GreenboxShoppingBagCreateForm extends HTMLElement {
+const DSShoppingBagCreateForm = /*@__PURE__*/ proxyCustomElement(class DSShoppingBagCreateForm extends HTMLElement {
   constructor() {
     super();
     this.__registerHost();
@@ -33,24 +33,24 @@ const GreenboxShoppingBagCreateForm = /*@__PURE__*/ proxyCustomElement(class Gre
   }
   render() {
     return (h("form", { class: {
-        "gbx-shopping-bag-create-form": true,
-        "gbx-form": true,
+        "ds-shopping-bag-create-form": true,
+        "ds-form": true,
         "--default": true
       }, onSubmit: this.formSubmitHandler }, h("div", { class: {
-        "gbx-shopping-bag-title": true,
+        "ds-shopping-bag-title": true,
         "--create": true
       } }, this.translations.createForm.title), h("fieldset", { class: {
-        "gbx-form__input": true
+        "ds-form__input": true
       } }, h("label", { htmlFor: "shoppingBagName" }, this.translations.createForm.content), h("input", { type: "text", id: "shoppingBagName", name: "shoppingBagName", value: this.inputValue, onChange: this.inputChangeHandler, onKeyUp: this.inputChangeHandler })), h("menu", null, h("button", { class: {
-        "gbx-shopping-bag-button": true,
+        "ds-shopping-bag-button": true,
         "--back": true
       }, type: "button", onClick: this.requestHideCreateForm }, this.translations.buttons.cancel), h("button", { class: {
-        "gbx-shopping-bag-button": true,
+        "ds-shopping-bag-button": true,
         "--create": true
       }, disabled: this.inputValue === "" }, this.translations.buttons.add))));
   }
   static get style() { return shoppingBagCreateFormCss; }
-}, [0, "gbx-shopping-bag-create-form", {
+}, [0, "ds-shopping-bag-create-form", {
     "locale": [1],
     "requestCreateShoppingBag": [8, "request-create-shopping-bag"],
     "requestHideCreateForm": [8, "request-hide-create-form"],
@@ -60,16 +60,16 @@ function defineCustomElement() {
   if (typeof customElements === "undefined") {
     return;
   }
-  const components = ["gbx-shopping-bag-create-form"];
+  const components = ["ds-shopping-bag-create-form"];
   components.forEach(tagName => { switch (tagName) {
-    case "gbx-shopping-bag-create-form":
+    case "ds-shopping-bag-create-form":
       if (!customElements.get(tagName)) {
-        customElements.define(tagName, GreenboxShoppingBagCreateForm);
+        customElements.define(tagName, DSShoppingBagCreateForm);
       }
       break;
   } });
 }
 
-export { GreenboxShoppingBagCreateForm as G, defineCustomElement as d };
+export { DSShoppingBagCreateForm as G, defineCustomElement as d };
 
 //# sourceMappingURL=shopping-bag-create-form.js.map

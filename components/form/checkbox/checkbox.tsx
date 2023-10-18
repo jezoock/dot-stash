@@ -1,14 +1,14 @@
 import { Component, h, Prop, Event, EventEmitter } from '@stencil/core';
-import { Greenbox_computeCSSClassList, Greenbox_getDataCy, Greenbox_uuid } from "../../../../utils";
+import { DS_computeCSSClassList, DS_getDataCy, DS_uuid } from "../../../../utils";
 import { DataCy } from "../../../../utils/data-cy";
 
 @Component({
-	tag: 'gbx-checkbox',
+	tag: 'ds-checkbox',
 	styleUrl: 'checkbox.scss'
 })
 export class GbxCheckbox {
 
-	@Prop({ attribute: "id" }) inputId: string = `gbx-checkbox-${Greenbox_uuid()}`;
+	@Prop({ attribute: "id" }) inputId: string = `ds-checkbox-${DS_uuid()}`;
 	@Prop({ attribute: "name" }) inputName: string = "";
 	@Prop({ attribute: "value" }) inputValue: string = "";
 	@Prop({ attribute: "checked", mutable: true, reflect: true }) isChecked: boolean = false;
@@ -44,11 +44,11 @@ export class GbxCheckbox {
 		return (
 			<div
 				class={{
-					...Greenbox_computeCSSClassList("gbx-checkbox", this.type),
+					...DS_computeCSSClassList("ds-checkbox", this.type),
 					"--checked": this.isChecked,
 					"--disabled": this.isDisabled
 				}}
-        data-cy={Greenbox_getDataCy({
+        data-cy={DS_getDataCy({
           ...this.dataCy,
           elementType: "Checkbox"
         })}
@@ -60,14 +60,14 @@ export class GbxCheckbox {
 					value={this.inputValue}
 					checked={this.isChecked}
 					onClick={this.inputClickHandler}
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: "InputCheckbox"
           })}
 				/>
 				<div
-          class="gbx-checkbox__label"
-          data-cy={Greenbox_getDataCy({
+          class="ds-checkbox__label"
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: "InputCheckboxLabel"
           })}

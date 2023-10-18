@@ -1,15 +1,15 @@
 import { Component, h, Prop, Event, EventEmitter } from '@stencil/core';
 import { translations } from "./translations";
-import { Greenbox_setTranslations } from "../../../../../../../utils";
+import { DS_setTranslations } from "../../../../../../../utils";
 import { Translations } from '../../../../../../interfaces';
 
 @Component({
-  tag: 'gbx-address-list',
+  tag: 'ds-address-list',
   styleUrls: [
     'address-list.scss',
   ]
 })
-export class GreenboxAddressList {
+export class DSAddressList {
 
   @Prop() defaultAddress: any;
   @Prop() addresses: any[] = [];
@@ -23,7 +23,7 @@ export class GreenboxAddressList {
     this.setAsDefaultAddressButtonClickHandler = this.setAsDefaultAddressButtonClickHandler.bind(this);
     this.deleteAddressButtonClickHandler = this.deleteAddressButtonClickHandler.bind(this);
 
-    this.translations = Greenbox_setTranslations(translations, ["gbx_addressList"]);
+    this.translations = DS_setTranslations(translations, ["gbx_addressList"]);
   }
 
   isDefaultAddress(address: any): boolean {
@@ -34,7 +34,7 @@ export class GreenboxAddressList {
       return false;
     }
 
-    for (var i = 0; i < defProps.length; i++) {
+    for (let i = 0; i < defProps.length; i++) {
       const propName: string = defProps[i];
       if (this.defaultAddress[propName] != address[propName]) {
         return false;
@@ -54,7 +54,7 @@ export class GreenboxAddressList {
   render() {
     return (
       <ul class={{
-        "gbx-address-list": true,
+        "ds-address-list": true,
         "--empty": this.addresses?.length === 0
       }}>
 
@@ -63,30 +63,30 @@ export class GreenboxAddressList {
 
             const isDefaultAddress: boolean = this.isDefaultAddress(address);
             return (
-              <li class="gbx-address-list__item">
+              <li class="ds-address-list__item">
 
                 <address>
                   <span>{address.formatted}</span>
-                  <gbx-button
+                  <ds-button
                     buttonMods={["trash"]}
                     onGbxButtonClick={ () => this.deleteAddressButtonClickHandler(index, address.formatted) }
                   />
                 </address>
 
-                <gbx-checkbox
+                <ds-checkbox
                   type={["default", "list-default"]}
                   isChecked={isDefaultAddress}
                   onGbxCheckboxClick={ () => this.setAsDefaultAddressButtonClickHandler(address) }
                 >
                   <span slot="label">{this.translations.label.defaultAddress}</span>
-                </gbx-checkbox>
+                </ds-checkbox>
 
               </li>
             );
           })
         )}
         {(!this.addresses || this.addresses.length === 0) && (
-          <li class="gbx-address-list__item">
+          <li class="ds-address-list__item">
             {this.translations.text.noAddress}
           </li>
         )}

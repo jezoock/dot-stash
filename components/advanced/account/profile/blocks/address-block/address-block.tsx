@@ -1,20 +1,20 @@
 import { Component, h, Prop, Event, EventEmitter, Listen } from '@stencil/core';
 import { UserAddress } from "../../../../../interfaces";
-import { Greenbox_setTranslations } from "../../../../../../utils";
+import { DS_setTranslations } from "../../../../../../utils";
 import { translations } from "./translations";
 import { EventDetails } from "../../../../../interfaces";
 
 @Component({
-	tag: 'gbx-address-block',
+	tag: 'ds-address-block',
 	styleUrls: [
 		'address-block.scss'
 	]
 })
-export class GreenboxAddressBlock {
+export class DSAddressBlock {
 
 	@Prop() defaultAddress: UserAddress;
 	@Prop() addresses: UserAddress[] = [];
-	@Prop() isModalShown: boolean = false;
+	@Prop() isModalShown = false;
 
 	translations: any;
 	removedAddress: { index: number, address: string };
@@ -36,7 +36,7 @@ export class GreenboxAddressBlock {
 
 
 	constructor() {
-		this.translations = Greenbox_setTranslations(translations, ["gbx_addressBlock"]);
+		this.translations = DS_setTranslations(translations, ["gbx_addressBlock"]);
 		this.okButtonClickHandler = this.okButtonClickHandler.bind(this);
 		this.cancelButtonClickHandler = this.cancelButtonClickHandler.bind(this);
 		this.closeButtonClickHandler = this.closeButtonClickHandler.bind(this);
@@ -86,26 +86,26 @@ export class GreenboxAddressBlock {
 	render() {
 		return (
 
-			<gbx-block
+			<ds-block
 				blockTag="section"
 				blockMods={["account","credit-cards"]}
 			>
 				
-				<gbx-title
+				<ds-title
 					slot="header"
 					heading={3}
-					titleMods={["block", "main"]}
+					mods={["block", "main"]}
 				>
 					{this.translations.title.addresses}
-				</gbx-title>
+				</ds-title>
 
-				<gbx-address-list
+				<ds-address-list
 					defaultAddress={this.defaultAddress}
 					addresses={this.addresses}
 				/>
 
 				{this.isModalShown && (
-          <gbx-modal
+          <ds-modal
 						shown={this.isModalShown}
 						onGbxModalClose={this.onModalCloseHandler}
 						overlay={true}
@@ -115,19 +115,19 @@ export class GreenboxAddressBlock {
             }}
 					>
 
-						<gbx-block
+						<ds-block
 							slot="content"
 							blockMods={["modal"]}
 						>
 
-							<gbx-title
+							<ds-title
 								slot="header"
-								titleMods={["modal", "sub"]}
+								mods={["modal", "sub"]}
 							>
 								{this.translations.title.confirmDelete}
-							</gbx-title>
+							</ds-title>
 
-							<gbx-button
+							<ds-button
 								slot="header"
 								buttonMods={["modal-close", "sm"]}
 								onGbxButtonClick={this.closeButtonClickHandler}
@@ -137,26 +137,26 @@ export class GreenboxAddressBlock {
 							<p>{this.removedAddress.address}</p>
 
 							<menu slot="footer">
-								<gbx-button
+								<ds-button
 									buttonMods={["medium", "gray"]}
 									onGbxButtonClick={this.cancelButtonClickHandler}
 								>
 									{this.translations.button.cancel}
-								</gbx-button>
-								<gbx-button
+								</ds-button>
+								<ds-button
 									buttonMods={["medium", "color-2"]}
 									onGbxButtonClick={this.okButtonClickHandler}
 								>
 									{this.translations.button.ok}
-								</gbx-button>
+								</ds-button>
 							</menu>
 
-						</gbx-block>
+						</ds-block>
 
-          </gbx-modal>
+          </ds-modal>
         )}
 
-			</gbx-block>
+			</ds-block>
 		);
 	}
 }

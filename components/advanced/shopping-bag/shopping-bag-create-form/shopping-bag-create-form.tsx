@@ -5,10 +5,10 @@ import { translations } from "../translations";
  * Create shopping bag form
  */
 @Component({
-	tag: 'gbx-shopping-bag-create-form',
+	tag: 'ds-shopping-bag-create-form',
 	styleUrl: 'shopping-bag-create-form.scss'
 })
-export class GreenboxShoppingBagCreateForm {
+export class DSShoppingBagCreateForm {
 
 	/**
 	 * Locale used for translations
@@ -55,20 +55,20 @@ export class GreenboxShoppingBagCreateForm {
 	render() {
 		return (
 			<form class={{
-				"gbx-shopping-bag-create-form": true,
-				"gbx-form": true,
+				"ds-shopping-bag-create-form": true,
+				"ds-form": true,
 				"--default": true
 			}}
 				onSubmit={this.formSubmitHandler}>
 				<div class={{
-					"gbx-shopping-bag-title": true,
+					"ds-shopping-bag-title": true,
 					"--create": true
 				}}>
 					{this.translations.createForm.title}
 				</div>
 				<fieldset
 					class={{
-						"gbx-form__input": true
+						"ds-form__input": true
 					}}
 				>
 					<label htmlFor="shoppingBagName">
@@ -83,7 +83,7 @@ export class GreenboxShoppingBagCreateForm {
 				</fieldset>
 				<menu>
 					<button class={{
-						"gbx-shopping-bag-button": true,
+						"ds-shopping-bag-button": true,
 						"--back": true
 					}}
 						type="button"
@@ -91,7 +91,7 @@ export class GreenboxShoppingBagCreateForm {
 						{this.translations.buttons.cancel}
 					</button>
 					<button class={{
-						"gbx-shopping-bag-button": true,
+						"ds-shopping-bag-button": true,
 						"--create": true
 					}}
 						disabled={this.inputValue === ""}>

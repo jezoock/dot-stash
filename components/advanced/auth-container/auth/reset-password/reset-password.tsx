@@ -1,6 +1,6 @@
 import { Component, Event, EventEmitter, h, Listen, State } from "@stencil/core";
 import { Translations } from "../../../../interfaces";
-import { Greenbox_eventDispatch, Greenbox_isMobile, Greenbox_setTranslations } from "../../../../../utils";
+import { DS_eventDispatch, DS_isMobile, DS_setTranslations } from "../../../../../utils";
 import { translations } from "./translations";
 import { ValidatorType } from "../../../../ui/form/validator/validator-type.enum";
 import { InputFieldType } from "../../../../ui/form/field/input/input-field-type.enum";
@@ -12,7 +12,7 @@ import { Validator } from "../../../../ui/form/validator/validator";
 import { AuthDisplayedView } from "../auth-displayed-view.enum";
 
 @Component({
-  tag: 'gbx-reset-password',
+  tag: 'ds-reset-password',
   styleUrl: 'reset-password.scss',
 })
 export class GbxResetPassword {
@@ -29,18 +29,18 @@ export class GbxResetPassword {
 
   @Listen('notify_resetPasswordOutcome_event')
   notify_resetPassword_outcome_eventHandler({ detail: { success } }: { detail: { success: boolean } }) {
-    const toasterPosition = Greenbox_isMobile() ? "top" : "bottom";
+    const toasterPosition = DS_isMobile() ? "top" : "bottom";
     const toasterSettings = {
       innerJSX: <span>{this.translations[success ? 'sentLink' : 'serverError']}</span>,
       closingDelay: 4000,
       type: success ? 'valid' : 'warning',
       position: [toasterPosition, 'right']
     };
-    Greenbox_eventDispatch('body', 'toaster_show_event', toasterSettings);
+    DS_eventDispatch('body', 'toaster_show_event', toasterSettings);
   }
 
   constructor() {
-    this.translations = Greenbox_setTranslations(translations, 'gbx_resetPassword');
+    this.translations = DS_setTranslations(translations, 'gbx_resetPassword');
 
     this.emailValidator = {
       type: ValidatorType.EMAIL,
@@ -81,17 +81,17 @@ export class GbxResetPassword {
 
   render() {
     return (
-      <div class="gbx-forgot-password__container">
-        <gbx-title
-          useSnack={true}
-          titleMods={['auth', 'reset-password']}
+      <div class="ds-forgot-password__container">
+        <ds-title
+          
+          mods={['auth', 'reset-password']}
           titleType={TitleType.TITLE2}
           heading={4}
         >
           {this.translations.forgotPassword}
-        </gbx-title>
+        </ds-title>
 
-        <gbx-input-field
+        <ds-input-field
           id="input-field-forgot-password"
           inputName="forgot-password"
           value={this.userEmail}
@@ -103,9 +103,9 @@ export class GbxResetPassword {
           dataCy={{ pageName: PageName.REGISTRATION, elementName: "email-field" }}
         />
 
-        <gbx-button
-          useSnack={true}
-          class="gbx-forgot-password__request-password-reset"
+        <ds-button
+          
+          class="ds-forgot-password__request-password-reset"
           buttonMods={["label", "password-reset", "default"]}
           buttonLevel={ButtonLevel.PRIMARY}
           dataCy={{ pageName: PageName.REGISTRATION, elementName: 'send-reset-request-button' }}
@@ -113,18 +113,18 @@ export class GbxResetPassword {
           onGbxButtonClick={this.passwordResetHandler}
         >
           {this.translations.recoverPassword}
-        </gbx-button>
+        </ds-button>
 
-        <div class="gbx-forgot-password__cancel-button-container">
-          <gbx-button
-            useSnack={true}
+        <div class="ds-forgot-password__cancel-button-container">
+          <ds-button
+            
             buttonMods={['link', 'dotted']}
             buttonLevel={ButtonLevel.LINK}
             onGbxButtonClick={this.cancelToLoginViewHandler}
             dataCy={{ pageName: PageName.REGISTRATION, elementName: 'cancel-to-login' }}
           >
             {this.translations.cancel}
-          </gbx-button>
+          </ds-button>
         </div>
       </div>
     );

@@ -2,9 +2,9 @@ import { proxyCustomElement, HTMLElement, h } from '@stencil/core/internal/clien
 import { F as Fragment } from './index2.js';
 import { t as translations } from './translations.js';
 
-const shoppingBagNameCss = ".gbx-shopping-bag-title{}";
+const shoppingBagNameCss = ".ds-shopping-bag-title{}";
 
-const GreenboxShoppingBagName = /*@__PURE__*/ proxyCustomElement(class GreenboxShoppingBagName extends HTMLElement {
+const DSShoppingBagName = /*@__PURE__*/ proxyCustomElement(class DSShoppingBagName extends HTMLElement {
   constructor() {
     super();
     this.__registerHost();
@@ -62,14 +62,14 @@ const GreenboxShoppingBagName = /*@__PURE__*/ proxyCustomElement(class GreenboxS
     this.toggleEditForm();
   }
   render() {
-    return (h("form", { class: "gbx-shopping-bag-name", onSubmit: this.formSubmitHandler }, h("div", { class: {
-        "gbx-shopping-bag-title": true,
+    return (h("form", { class: "ds-shopping-bag-name", onSubmit: this.formSubmitHandler }, h("div", { class: {
+        "ds-shopping-bag-title": true,
         "--details": !this.isEditing,
         "--edit": this.isEditing
-      } }, this.isEditing ? (h(Fragment, null, h("input", { type: "text", id: "shoppingBagName", name: "shoppingBagName", value: this.inputValue, onChange: this.inputChangeHandler, onKeyUp: this.inputChangeHandler }), h("button", { class: "gbx-shopping-bag-title__button --save", disabled: this.inputValue === "" }, h("span", null, this.translations.buttons.ok)), h("button", { class: "gbx-shopping-bag-title__button --cancel", type: "button", onClick: this.cancelButtonClickHandler }, h("span", null, this.translations.buttons.cancel)))) : (h(Fragment, null, h("strong", null, this.name), !this.isDisabled && (h(Fragment, null, h("button", { type: "button", class: "gbx-shopping-bag-title__button --edit", onClick: this.editButtonClickHandler }), h("button", { type: "button", class: 'gbx-shopping-bag-title__delete-products', onClick: this.toggleDeleteMessage }, this.translations.buttons.deleteList))))))));
+      } }, this.isEditing ? (h(Fragment, null, h("input", { type: "text", id: "shoppingBagName", name: "shoppingBagName", value: this.inputValue, onChange: this.inputChangeHandler, onKeyUp: this.inputChangeHandler }), h("button", { class: "ds-shopping-bag-title__button --save", disabled: this.inputValue === "" }, h("span", null, this.translations.buttons.ok)), h("button", { class: "ds-shopping-bag-title__button --cancel", type: "button", onClick: this.cancelButtonClickHandler }, h("span", null, this.translations.buttons.cancel)))) : (h(Fragment, null, h("strong", null, this.name), !this.isDisabled && (h(Fragment, null, h("button", { type: "button", class: "ds-shopping-bag-title__button --edit", onClick: this.editButtonClickHandler }), h("button", { type: "button", class: 'ds-shopping-bag-title__delete-products', onClick: this.toggleDeleteMessage }, this.translations.buttons.deleteList))))))));
   }
   static get style() { return shoppingBagNameCss; }
-}, [0, "gbx-shopping-bag-name", {
+}, [0, "ds-shopping-bag-name", {
     "locale": [1],
     "name": [1025],
     "isDisabled": [4, "disabled"],
@@ -82,16 +82,16 @@ function defineCustomElement() {
   if (typeof customElements === "undefined") {
     return;
   }
-  const components = ["gbx-shopping-bag-name"];
+  const components = ["ds-shopping-bag-name"];
   components.forEach(tagName => { switch (tagName) {
-    case "gbx-shopping-bag-name":
+    case "ds-shopping-bag-name":
       if (!customElements.get(tagName)) {
-        customElements.define(tagName, GreenboxShoppingBagName);
+        customElements.define(tagName, DSShoppingBagName);
       }
       break;
   } });
 }
 
-export { GreenboxShoppingBagName as G, defineCustomElement as d };
+export { DSShoppingBagName as G, defineCustomElement as d };
 
 //# sourceMappingURL=shopping-bag-name.js.map

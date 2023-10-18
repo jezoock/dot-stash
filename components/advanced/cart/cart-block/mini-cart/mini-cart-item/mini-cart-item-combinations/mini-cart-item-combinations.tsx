@@ -1,5 +1,5 @@
 import { Component, h, Prop } from '@stencil/core';
-import { Greenbox_formatPrice } from '../../../../../../../../utils';
+import { DS_formatPrice } from '../../../../../../../../utils';
 
 @Component({
   tag: 'snk-mini-cart-item-combinations',
@@ -16,7 +16,7 @@ export class SNKMiniCartItemCombinations {
           <li class="snk-mini-cart-item-combinations__combination">
             <strong>{choice.name} x {choice.quantity}</strong>
             {Boolean(choice.totalPrice) && (
-              <span> ({Greenbox_formatPrice({ price: choice.totalPrice, cents: true, isFrCurrency: false })})</span>
+              <span> ({DS_formatPrice({ price: choice.totalPrice, cents: true, isFrCurrency: false })})</span>
             )}
           </li>
         ))}

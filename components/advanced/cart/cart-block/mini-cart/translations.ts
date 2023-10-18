@@ -54,7 +54,7 @@ export const translations = {
           ok: "OK"
         }
       },
-      tooltipSwitchAndCollect : "Choisissez l'option Click&Collect lors de votre commande, récupérez votre repas et faites-vous rembourser 20% du montant de votre commande sur votre porte-monnaie Smood.",
+      tooltipSwitchAndCollect : "Choisissez l'option Click&Collect lors de votre commande, récupérez votre repas et faites-vous rembourser 20% du montant de votre commande sur votre porte-monnaie dot-jez.",
       snackBar: {
         orderRemoved: "Cette commande a été retirée de votre panier.",
         itemRemoved: "Un élément a été supprimé.",
@@ -116,7 +116,7 @@ export const translations = {
           ok: "OK"
         }
       },
-      tooltipSwitchAndCollect : "Choose Click&Collect option while ordering, collect your meal and get refund 20% of the amount of your order on your Smood wallet.",
+      tooltipSwitchAndCollect : "Choose Click&Collect option while ordering, collect your meal and get refund 20% of the amount of your order on your  wallet.",
       snackBar: {
         orderRemoved: "This order has been removed from your basket.",
         itemRemoved: "An item has been removed.",
@@ -178,7 +178,7 @@ export const translations = {
           ok: "OK"
         }
       },
-      tooltipSwitchAndCollect : "Wählen Sie bei der Bestellung die Option Click&Collect, holen Sie Ihr Essen ab und erhalten Sie 20 % des Bestellwerts auf Ihre Smood-Geldbörse zurück.",
+      tooltipSwitchAndCollect : "Wählen Sie bei der Bestellung die Option Click&Collect, holen Sie Ihr Essen ab und erhalten Sie 20 % des Bestellwerts auf Ihre -Geldbörse zurück.",
       snackBar: {
         orderRemoved: "Diese Bestellung wurde aus Ihrem Warenkorb entfernt.",
         itemRemoved: "Ein Artikel wurde entfernt.",
@@ -241,7 +241,7 @@ export const translations = {
         }
       },
 
-      tooltipSwitchAndCollect : "Scegli l'opzione Click&Collect durante l'ordine, ritira il tuo pasto e fatti rimborsare il 20% dell'importo del tuo ordine sul tuo portafoglio Smood.",
+      tooltipSwitchAndCollect : "Scegli l'opzione Click&Collect durante l'ordine, ritira il tuo pasto e fatti rimborsare il 20% dell'importo del tuo ordine sul tuo portafoglio dot-jez.",
       snackBar: {
         orderRemoved: "Questo ordine è stato rimosso dal tuo carrello.",
         itemRemoved: "Un elemento è stato rimosso.",

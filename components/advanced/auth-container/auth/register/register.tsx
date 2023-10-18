@@ -1,12 +1,12 @@
 import { Component, Event, EventEmitter, h, Listen, Prop } from "@stencil/core";
 import { Translations } from "../../../../interfaces";
-import { Greenbox_setTranslations, Greenbox_triggerTrackingEvent } from "../../../../../utils";
+import { DS_setTranslations, DS_triggerTrackingEvent } from "../../../../../utils";
 import { translations } from "./translations";
 import { TitleType } from "../../../../ui/title/title-type.enum";
 import { AlertLevel } from "../../../../ui/alert/alert-level.enum";
 
 @Component({
-  tag: 'gbx-register',
+  tag: 'ds-register',
   styleUrl: 'register.scss',
 })
 export class GbxRegister {
@@ -26,35 +26,35 @@ export class GbxRegister {
   }
 
   constructor() {
-    this.translations = Greenbox_setTranslations(translations, ['gbx_register']);
+    this.translations = DS_setTranslations(translations, ['gbx_register']);
   }
 
   componentDidLoad() {
-    Greenbox_triggerTrackingEvent({ eventName: 'BEGIN_SIGNUP', eventDetails: {} });
+    DS_triggerTrackingEvent({ eventName: 'BEGIN_SIGNUP', eventDetails: {} });
   }
 
   render() {
     return (
-      <div class="gbx-register">
-        <div class="gbx-register__title">
-          <gbx-title
-            useSnack={true}
-            titleMods={['auth', 'register']}
+      <div class="ds-register">
+        <div class="ds-register__title">
+          <ds-title
+            
+            mods={['auth', 'register']}
             titleType={TitleType.TITLE2}
             heading={2}
           >
             {this.translations.title}
-          </gbx-title>
+          </ds-title>
         </div>
 
         {this.hasRegistrationFailed && (
-          <gbx-alert
+          <ds-alert
             level={AlertLevel.ERROR}
             message={this.translations.error.registration}
           />
         )}
 
-        <gbx-register-form
+        <ds-register-form
           registerData={this.registerData}
           isRegisterProcessing={this.isRegisterProcessing}
         />

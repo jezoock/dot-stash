@@ -2,12 +2,12 @@ import { h, Component, Prop, State, Event, EventEmitter } from "@stencil/core";
 import { translations } from "./translations";
 
 @Component({
-  tag: "gbx-address-selector",
+  tag: "ds-address-selector",
   styleUrls: [
     "./address-selector.scss",
   ]
 })
-export class GreenboxAddressSelector {
+export class DSAddressSelector {
 
   @Prop() addresses: any[] = [];
   @Prop() locale: string = 'en';
@@ -45,7 +45,7 @@ export class GreenboxAddressSelector {
   }
 
   bodyClickHandler(event: MouseEvent) {
-    if (!(event.target as HTMLDivElement).closest(".gbx-address-selector")) {
+    if (!(event.target as HTMLDivElement).closest(".ds-address-selector")) {
       this.closeDropdown();
     }
   }
@@ -67,7 +67,7 @@ export class GreenboxAddressSelector {
 
   render() {
     return (
-      <div class="gbx-address-selector">
+      <div class="ds-address-selector">
 
         <input
           type="text"
@@ -79,7 +79,7 @@ export class GreenboxAddressSelector {
         />
 
         {this.showDropdown && (
-          <gbx-address-dropdown
+          <ds-address-dropdown
             locale={this.locale}
             addresses={this.addresses}
             onGbxNewAddressClick={this.requestNewAddresFormDisplay}

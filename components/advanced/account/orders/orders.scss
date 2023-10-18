@@ -1,4 +1,4 @@
-.gbx-account-order {
+.ds-account-order {
   overflow-x: auto;
   width: 100%;
   min-height: 200px;
@@ -78,14 +78,14 @@
   }
 }
 
-.gbx-order-pages {
+.ds-order-pages {
   display: flex;
   justify-content: flex-start;
   padding: 1rem;
   border-radius: 3px;
 }
 
-.gbx-order-page {
+.ds-order-page {
   border: 1px solid color(gray, light);
   border-right: none;
   display: inline-block;

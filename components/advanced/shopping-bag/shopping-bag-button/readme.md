@@ -1,4 +1,4 @@
-# gbx-shopping-bag-button
+# ds-shopping-bag-button
 
 
 

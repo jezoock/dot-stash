@@ -1,4 +1,4 @@
-# gbx-shopping-bag-create-form
+# ds-shopping-bag-create-form
 
 
 
@@ -22,13 +22,13 @@ Create shopping bag form
 
 ### Used by
 
- - [gbx-shopping-bag](..)
+ - [ds-shopping-bag](..)
 
 ### Graph
 ```mermaid
 graph TD;
-  gbx-shopping-bag --> gbx-shopping-bag-create-form
-  style gbx-shopping-bag-create-form fill:#f9f,stroke:#333,stroke-width:4px
+  ds-shopping-bag --> ds-shopping-bag-create-form
+  style ds-shopping-bag-create-form fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

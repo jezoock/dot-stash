@@ -1,7 +1,7 @@
 @import "./scss/button.scss";
 @import "./scss/loader.scss";
 
-.gbx-mini-cart {
+.ds-mini-cart {
   position: relative;
   
   &__checkout-prompt {
@@ -26,8 +26,8 @@
   &__smallfee {
     padding: 0 0 1rem 1rem;
     color: snk-color(primary, base);
-    & > gbx-tooltip {
-      & .gbx-tooltip.--icon {
+    & > ds-tooltip {
+      & .ds-tooltip.--icon {
         margin: 0 0.5rem 0 0;
       }
     }
@@ -98,7 +98,7 @@
 
   &.--collapsible {
     &.--show-content {
-      & .gbx-mini-cart {
+      & .ds-mini-cart {
         &__content {
           border-radius: 0 0 1rem 1rem;
           box-shadow: 0 5px 10px rgba(0,0,0,0.1);
@@ -112,9 +112,9 @@
 
   
 
-  & .gbx-lightbox__container {
+  & .ds-lightbox__container {
     padding: 0 0.75rem;
-    & .gbx-modal {
+    & .ds-modal {
       border-radius: 0.125rem;
       & [slot="content"] {
         & > span {
@@ -134,7 +134,7 @@
     }
   }
 
-  & .gbx-lightbox {
+  & .ds-lightbox {
     &:before {
       content: "";
       display: block;
@@ -148,11 +148,11 @@
     }
   }
 
-  .gbx-lightbox {
+  .ds-lightbox {
     &.--min-order {
-      & .gbx-lightbox__container{
+      & .ds-lightbox__container{
         background: rgba(0, 0, 0, 0.5);
-        & .gbx-modal {
+        & .ds-modal {
           top: 13%;
         }
       }
@@ -161,7 +161,7 @@
         & > span {
           font-size: 1rem;
         }
-        & .gbx-title {
+        & .ds-title {
           font-family: $font-main;
           text-align: center;
         }
@@ -188,7 +188,7 @@
     }
   }
   
-  @media (min-width: $grid-lg-min) {
+  @include break-p(lg) {
     &__checkout-prompt {
       padding: 0 1.5rem 0 0;
     }

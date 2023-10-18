@@ -14,13 +14,13 @@ import {
 import Fragment from "stencil-fragment";
 import { translations } from "./translations";
 import {
-  Greenbox_setTranslations,
-  Greenbox_redirect,
-  Greenbox_getAppSettings,
-  Greenbox_sortCart,
-  Greenbox_getAppTheme,
-  Greenbox_formatPrice,
-  Greenbox_eventDispatch,
+  DS_setTranslations,
+  DS_redirect,
+  DS_getAppSettings,
+  DS_sortCart,
+  DS_getAppTheme,
+  DS_formatPrice,
+  DS_eventDispatch,
   debounce,
 } from "../../../../../../utils";
 import { Translations } from "../../../../../interfaces";
@@ -31,13 +31,13 @@ import { CartUpdateProperty } from "./cart-update-property";
 import { AnyHTMLElement } from "@stencil/core/internal";
 import { TooltipPosition } from "../../../../../ui/tooltip/tooltip-position.enum";
 import { TitleType } from "../../../../../ui/title/title-type.enum";
-import GreenboxAPI from '../../../../../../_redux/services';
+import DSAPI from '../../../../../../_redux/services';
 
 @Component({
-  tag: "gbx-mini-cart",
+  tag: "ds-mini-cart",
   styleUrls: ["./mini-cart.scss"],
 })
-export class GreenboxMiniCart {
+export class DSMiniCart {
   //#region PROPS
 
   @Element() cartContainer: HTMLDivElement;
@@ -62,8 +62,8 @@ export class GreenboxMiniCart {
   minAmountOrder: any;
   user: any;
 
-  translations: Translations = Greenbox_setTranslations( translations, "gbx_miniCart" );
-  appTheme: string = Greenbox_getAppTheme();
+  translations: Translations = DS_setTranslations( translations, "gbx_miniCart" );
+  appTheme: string = DS_getAppTheme();
 
   displayedContentHeight: number = 0;
   visibleRowsHeight: number = 0;
@@ -266,12 +266,12 @@ export class GreenboxMiniCart {
   }
 
   undoQuantityUpdate( productId: string, previousQuantity: number ): void {
-    Greenbox_eventDispatch(
-      `#cart-product-${productId} gbx-mini-cart-quantity-selector`,
+    DS_eventDispatch(
+      `#cart-product-${productId} ds-mini-cart-quantity-selector`,
       "request_quantitySet_event",
       { quantity: previousQuantity }
     );
-    Greenbox_eventDispatch(
+    DS_eventDispatch(
       `#cart-product-${productId}`,
       "notify_productQuantityInputChange_event",
       { quantity: previousQuantity }
@@ -373,7 +373,7 @@ export class GreenboxMiniCart {
 
   getButtonHeight() {
     const toggleButton = this.cartContainer.querySelector(
-      ".gbx-mini-cart__expand-button"
+      ".ds-mini-cart__expand-button"
     ) as AnyHTMLElement;
     let buttonHeight = 0;
     if (this.isCollapsible && toggleButton) {
@@ -383,7 +383,7 @@ export class GreenboxMiniCart {
   }
 
   redirectToStore() {
-    Greenbox_redirect(this.cart.storeFullUrl);
+    DS_redirect(this.cart.storeFullUrl);
   }
 
   toggleProductDisplay(productId: string, mustShow: boolean): void {
@@ -400,7 +400,7 @@ export class GreenboxMiniCart {
   }
 
   toggleContentDisplay(mustShow: boolean): void {
-    const content = this.cartContainer.querySelector(".gbx-mini-cart__content") as AnyHTMLElement;
+    const content = this.cartContainer.querySelector(".ds-mini-cart__content") as AnyHTMLElement;
     if (content) {
       content.style.display = mustShow ? 'block' : 'none';
     }
@@ -427,7 +427,7 @@ export class GreenboxMiniCart {
 
   cartContentChangeHandler() {
     const products = this.cartContainer.querySelectorAll(
-      ".gbx-mini-cart__item"
+      ".ds-mini-cart__item"
     );
     const buttonHeight = this.getButtonHeight();
 
@@ -436,7 +436,7 @@ export class GreenboxMiniCart {
     let indexWithExcludedProducts = 0;
 
     products.forEach(prod => {
-      const prodComponent = prod.querySelector("gbx-mini-cart-item");
+      const prodComponent = prod.querySelector("ds-mini-cart-item");
       // If product is visible
       if (prodComponent.offsetParent) {
         const productRowHeight = (prod as AnyHTMLElement).offsetHeight;
@@ -500,10 +500,10 @@ export class GreenboxMiniCart {
         this.isMovModalShown = true;
       } else if (!isLoggedIn) {
         this.request_authModalOpen_event.emit({ redirectToCheckout: true });
-      } else if (!this.error.isBlocking && this.cart.totalProducts > 0 && Greenbox_getAppSettings().checkoutUrl) {
+      } else if (!this.error.isBlocking && this.cart.totalProducts > 0 && DS_getAppSettings().checkoutUrl) {
         try {
-          await GreenboxAPI.redirectToCheckout(this.cart.id);
-          Greenbox_redirect(Greenbox_getAppSettings().checkoutUrl);
+          await DSAPI.redirectToCheckout(this.cart.id);
+          DS_redirect(DS_getAppSettings().checkoutUrl);
         } catch (e) {
           console.error(e);
         }
@@ -566,13 +566,13 @@ export class GreenboxMiniCart {
     // uncomment the real canSwitchToTakeaway when everything it needs is implemented
     // const canSwitchToTakeaway = this.cart.deliveryMode !== "takeaway" && this.cart?.availableDeliveryModes?.includes("takeaway");
     const canSwitchToTakeaway = false;
-    const reducibleAmountFromTakeaway = +(+Greenbox_getAppSettings().clickNCollectCashbackAmount * totalProducts).toFixed(2);
+    const reducibleAmountFromTakeaway = +(+DS_getAppSettings().clickNCollectCashbackAmount * totalProducts).toFixed(2);
 
     return (
       <div
         class={{
-          "gbx-mini-cart": true,
-          "--snack": true,
+          "ds-mini-cart": true,
+          "--pronto": true,
           "--empty": isCartEmpty,
           "--filled": !isCartEmpty,
           "--active": isActive,
@@ -583,20 +583,20 @@ export class GreenboxMiniCart {
       >
         {!isActive && (
           <div
-            class="gbx-mini-cart__inactivity-overlay"
+            class="ds-mini-cart__inactivity-overlay"
             onClick={this.inactiveCartClickHandler}
           />
         )}
         {this.isSmallFeeShown() && (
-          <div class="gbx-mini-cart__smallfee">
-            <gbx-tooltip icon="info" position={TooltipPosition.BOTTOM_LEFT}>
+          <div class="ds-mini-cart__smallfee">
+            <ds-tooltip icon="info" position={TooltipPosition.BOTTOM_LEFT}>
               <div slot="message">
                 {this.translations.text.smallFeeMessage.replace(
                   "%mintotalproducts%",
                   (this.cart?.fees?.minTotalProducts / 100).toFixed(2)
                 )}
               </div>
-            </gbx-tooltip>
+            </ds-tooltip>
             <span>
               {this.translations.text.smallFee
                 .replace(
@@ -610,23 +610,23 @@ export class GreenboxMiniCart {
             </span>
           </div>
         )}
-        <gbx-title
+        <ds-title
           slot="title"
           titleType={TitleType.HEADING}
-          titleMods={["block", "cart"]}
+          mods={["block", "cart"]}
           heading={3}
-          useSnack={true}
+          
           dataCy={{
             pageName: PageName.MINICART,
             elementName: "miniCartTitle",
           }}
         >
           {isActive ? this.translations.title.activeCart : this.translations.title.inactiveCart}
-        </gbx-title>
+        </ds-title>
         <snk-mini-cart-header
-          class="gbx-mini-cart__store"
+          class="ds-mini-cart__store"
           store={{
-            fullLogoUrl: `${Greenbox_getAppSettings().cdnURL}${storeLogo}`,
+            fullLogoUrl: `${DS_getAppSettings().cdnURL}${storeLogo}`,
             name: storeName,
             fullUrl: storeFullUrl,
             type: this.cart.type,
@@ -634,27 +634,27 @@ export class GreenboxMiniCart {
         >
           {isActive && (
             <Fragment>
-              <gbx-button
+              <ds-button
                 slot="actions"
                 buttonType="button"
                 buttonLevel={ButtonLevel.LINK}
                 buttonMods={["default", "cart-block", "delete"]}
                 onClick={this.deleteCartButtonClickHandler}
-                useSnack={true}
+                
               >
                 {this.translations.button.remove}
-              </gbx-button>
+              </ds-button>
               {!this.isOnShopPage() && !!this.cart.storeFullUrl && (
-                <gbx-button
+                <ds-button
                   slot="actions"
                   buttonType="button"
-                  useSnack={true}
+                  
                   buttonLevel={ButtonLevel.LINK}
                   buttonMods={["default", "cart-block", "add-items"]}
                   onClick={this.addItemsButtonClickHandler}
                 >
                   {this.translations.button.addItems}
-                </gbx-button>
+                </ds-button>
               )}
             </Fragment>
           )}
@@ -662,17 +662,17 @@ export class GreenboxMiniCart {
 
         {!isCartEmpty && (
           <div
-            class="gbx-mini-cart__body"
+            class="ds-mini-cart__body"
             style={{ height: `${this.contentLayerHeight}px` }}
           >
-            <div class="gbx-mini-cart__content">
+            <div class="ds-mini-cart__content">
               <ul style={{ maxHeight: `${this.displayedContentHeight}px` }}>
-                {products.sort(Greenbox_sortCart).map((product) => (
-                  <li class="gbx-mini-cart__item">
+                {products.sort(DS_sortCart).map((product) => (
+                  <li class="ds-mini-cart__item">
                     {this.loadingCartItems[product.id] && (
-                      <gbx-loader mode={["mini-cart-item"]} />
+                      <ds-loader mode={["mini-cart-item"]} />
                     )}
-                    <gbx-mini-cart-item
+                    <ds-mini-cart-item
                       id={`cart-product-${product.id}`}
                       item={product}
                       isCartActive={isActive}
@@ -682,9 +682,9 @@ export class GreenboxMiniCart {
               </ul>
 
               {this.isCollapsible && (
-                <gbx-button
-                  class="gbx-mini-cart__expand-button"
-                  useSnack={true}
+                <ds-button
+                  class="ds-mini-cart__expand-button"
+                  
                   buttonType="button"
                   buttonMods={[
                     "cart-block",
@@ -698,7 +698,7 @@ export class GreenboxMiniCart {
                       this.isCollapsed ? "showMore" : "showLess"
                     ]
                   }
-                </gbx-button>
+                </ds-button>
               )}
             </div>
           </div>
@@ -730,7 +730,7 @@ export class GreenboxMiniCart {
         )}
 
         {this.isModalErrorShown && (
-          <gbx-modal
+          <ds-modal
             shown={true}
             isClosingDisabled={true}
             lightboxClass={{
@@ -738,21 +738,21 @@ export class GreenboxMiniCart {
             }}
           >
             <div slot="content">
-              <gbx-title
-                titleMods={["block", "cart"]}
+              <ds-title
+                mods={["block", "cart"]}
                 titleType={TitleType.HEADING}
                 heading={3}
               >
                 {this.translations.modal.text.orderError}
-              </gbx-title>
+              </ds-title>
               <p>
                 {this.translations.modal.text.orderErrorMessage.replace(
                   "%minTotalProducts%",
                   (this.cart.minTotalProducts / 100).toFixed(2)
                 )}
               </p>
-              <gbx-button
-                useSnack={true}
+              <ds-button
+                
                 buttonLevel={ButtonLevel.PRIMARY}
                 buttonMods={["label", "default"]}
                 onGbxButtonClick={this.okModalErrorClickHandler}
@@ -762,9 +762,9 @@ export class GreenboxMiniCart {
                 }}
               >
                 {this.translations.modal.button.ok}
-              </gbx-button>
+              </ds-button>
             </div>
-          </gbx-modal>
+          </ds-modal>
         )}
 
         {this.isMovModalShown && (
@@ -790,7 +790,7 @@ export class GreenboxMiniCart {
           </snk-confirm-modal>
         )}
 
-        <footer class="gbx-mini-cart__footer">
+        <footer class="ds-mini-cart__footer">
           <snk-store-note
             note={this.cart.noteToStore}
             isCartActive={isActive}
@@ -799,14 +799,14 @@ export class GreenboxMiniCart {
             <snk-click-and-collect-toggle
               cartId={this.cart.id}
               reducibleAmount={(reducibleAmountFromTakeaway / 100).toFixed(2)}
-              reduciblePercentage={+Greenbox_getAppSettings().clickNCollectCashbackAmount * 100}
+              reduciblePercentage={+DS_getAppSettings().clickNCollectCashbackAmount * 100}
             />
           )}
-          <gbx-button
+          <ds-button
             slot="header"
             buttonType="button"
             isDisabled={!enableNextStep}
-            useSnack={true}
+            
             buttonLevel={ButtonLevel.PRIMARY}
             buttonMods={["label", "default", "cart-block", "checkout"]}
             onClick={() => this.checkoutButtonClickHandler()}
@@ -814,19 +814,19 @@ export class GreenboxMiniCart {
               pageName: PageName.MINICART,
               elementName: "miniCartCheckout",
             }}
-            class="gbx-mini-cart__checkout-button"
+            class="ds-mini-cart__checkout-button"
           >
-            <span class="gbx-mini-cart__checkout-prompt">
+            <span class="ds-mini-cart__checkout-prompt">
               {this.translations.button.checkout}
             </span>
-            <strong class="gbx-mini-cart__subtotal">
-              {Greenbox_formatPrice({
+            <strong class="ds-mini-cart__subtotal">
+              {DS_formatPrice({
                 price: totalProducts,
                 cents: true,
                 isFrCurrency: false,
               })}
             </strong>
-          </gbx-button>
+          </ds-button>
         </footer>
       </div>
     );

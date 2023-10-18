@@ -4,9 +4,9 @@ import { t as translations } from './translations.js';
 import { d as defineCustomElement$2 } from './shopping-bag-name.js';
 import { d as defineCustomElement$1 } from './shopping-bag-products.js';
 
-const shoppingBagDetailsCss = ".gbx-shopping-bag-details{}";
+const shoppingBagDetailsCss = ".ds-shopping-bag-details{}";
 
-const GreenboxShoppingBagDetails = /*@__PURE__*/ proxyCustomElement(class GreenboxShoppingBagDetails extends HTMLElement {
+const DSShoppingBagDetails = /*@__PURE__*/ proxyCustomElement(class DSShoppingBagDetails extends HTMLElement {
   request_quantityUpdate_eventHandler({ detail }) {
     this.productInputQuantity_change_eventHandlerDebounced(detail);
   }
@@ -129,7 +129,7 @@ const GreenboxShoppingBagDetails = /*@__PURE__*/ proxyCustomElement(class Greenb
   async addShoppingBagProductsToCart() {
   }
   showToast(message, type) {
-    /* Greenbox_eventDispatch(
+    /* DS_eventDispatch(
       ['body'],
       'toaster_show_event',
       {
@@ -167,32 +167,32 @@ const GreenboxShoppingBagDetails = /*@__PURE__*/ proxyCustomElement(class Greenb
     const productCount = products ? products.length : 0;
     const total = this.getTotal();
     return (h("div", { class: {
-        "gbx-shopping-bag-details": true,
+        "ds-shopping-bag-details": true,
         "--favorite": !isEditable
-      } }, h("gbx-shopping-bag-name", { name: shoppingBagName, isDisabled: !isEditable, toggleDeleteMessage: this.toggleDeleteMessage, requestUpdateShoppingBag: this.updateShoppingBag }), h("menu", { class: {
-        "display-block": /* Greenbox_isMobile() && */ this.isDeleteMessageShown,
+      } }, h("ds-shopping-bag-name", { name: shoppingBagName, isDisabled: !isEditable, toggleDeleteMessage: this.toggleDeleteMessage, requestUpdateShoppingBag: this.updateShoppingBag }), h("menu", { class: {
+        "display-block": /* DS_isMobile() && */ this.isDeleteMessageShown,
       } }, this.isDeleteMessageShown ? (h(Fragment, null, h("div", null, this.translations.deleteMessage), h("button", { type: "button", class: {
-        "gbx-shopping-bag-button": true,
+        "ds-shopping-bag-button": true,
         "--cancel": true
       }, onClick: this.toggleDeleteMessage }, this.translations.buttons.cancel), h("button", { type: "button", class: {
-        "gbx-shopping-bag-button": true,
+        "ds-shopping-bag-button": true,
         "--ok": true
       }, onClick: this.deleteButtonClickHandler }, this.translations.buttons.ok))) : (h(Fragment, null, h("button", { type: "button", class: {
-        "gbx-shopping-bag-button": true,
+        "ds-shopping-bag-button": true,
         "--back": true
-      }, onClick: this.requestNavigationBack }, this.translations.buttons.back), h("div", { class: "gbx-shopping-bag-details__item-count" }, this.translations[productCount > 1 ? "productsCount" : "productCount"].replace('%products%', productCount))))), productCount > 0 && (h("gbx-shopping-bag-products", { products: products, selectedProductIds: this.selectedProductIds, toggleProductSelection: this.toggleProductSelection, shoppingBagId: id })), (h("button", { type: "button", class: {
-        "gbx-shopping-bag-button": true,
+      }, onClick: this.requestNavigationBack }, this.translations.buttons.back), h("div", { class: "ds-shopping-bag-details__item-count" }, this.translations[productCount > 1 ? "productsCount" : "productCount"].replace('%products%', productCount))))), productCount > 0 && (h("ds-shopping-bag-products", { products: products, selectedProductIds: this.selectedProductIds, toggleProductSelection: this.toggleProductSelection, shoppingBagId: id })), (h("button", { type: "button", class: {
+        "ds-shopping-bag-button": true,
         "--delete-alt": true
-      }, onClick: this.deleteProducts }, this.translations.buttons.delete)), productCount > 0 && (h("footer", null, isEditable && /* !Greenbox_isMobile() && */ (h("button", { type: "button", class: {
-        "gbx-shopping-bag-button": true,
+      }, onClick: this.deleteProducts }, this.translations.buttons.delete)), productCount > 0 && (h("footer", null, isEditable && /* !DS_isMobile() && */ (h("button", { type: "button", class: {
+        "ds-shopping-bag-button": true,
         "--delete-alt": true
-      }, onClick: this.deleteProducts }, this.translations.buttons.delete)), h("div", { class: "gbx-shopping-bag-details__total" }, h("div", { class: "gbx-shopping-bag-details__price" }, h("span", null, productCount, " ", this.translations[productCount > 1 ? "products" : "product"]), h("strong", null, total)), h("button", { class: {
-        "gbx-shopping-bag-button": true,
+      }, onClick: this.deleteProducts }, this.translations.buttons.delete)), h("div", { class: "ds-shopping-bag-details__total" }, h("div", { class: "ds-shopping-bag-details__price" }, h("span", null, productCount, " ", this.translations[productCount > 1 ? "products" : "product"]), h("strong", null, total)), h("button", { class: {
+        "ds-shopping-bag-button": true,
         "--add-to-cart": true
       }, onClick: this.addToCartButtonClickHandler, disabled: productCount === 0 }, this.translations.buttons.addToCart))))));
   }
   static get style() { return shoppingBagDetailsCss; }
-}, [0, "gbx-shopping-bag-details", {
+}, [0, "ds-shopping-bag-details", {
     "shoppingBag": [1032, "shopping-bag"],
     "locale": [1],
     "requestUpdateShoppingBag": [8, "request-update-shopping-bag"],
@@ -207,19 +207,19 @@ function defineCustomElement() {
   if (typeof customElements === "undefined") {
     return;
   }
-  const components = ["gbx-shopping-bag-details", "gbx-shopping-bag-name", "gbx-shopping-bag-products"];
+  const components = ["ds-shopping-bag-details", "ds-shopping-bag-name", "ds-shopping-bag-products"];
   components.forEach(tagName => { switch (tagName) {
-    case "gbx-shopping-bag-details":
+    case "ds-shopping-bag-details":
       if (!customElements.get(tagName)) {
-        customElements.define(tagName, GreenboxShoppingBagDetails);
+        customElements.define(tagName, DSShoppingBagDetails);
       }
       break;
-    case "gbx-shopping-bag-name":
+    case "ds-shopping-bag-name":
       if (!customElements.get(tagName)) {
         defineCustomElement$2();
       }
       break;
-    case "gbx-shopping-bag-products":
+    case "ds-shopping-bag-products":
       if (!customElements.get(tagName)) {
         defineCustomElement$1();
       }
@@ -227,6 +227,6 @@ function defineCustomElement() {
   } });
 }
 
-export { GreenboxShoppingBagDetails as G, defineCustomElement as d };
+export { DSShoppingBagDetails as G, defineCustomElement as d };
 
 //# sourceMappingURL=shopping-bag-details.js.map

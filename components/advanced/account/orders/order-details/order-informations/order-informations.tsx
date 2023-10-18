@@ -5,10 +5,10 @@ import { translations } from "./translations";
 import { TransAddTranslations } from "../../../../../../_redux/actions/localization";
 
 @Component({
-  tag: "gbx-order-informations",
+  tag: "ds-order-informations",
   styleUrl: "order-informations.scss"
 })
-export class GreenboxOrderInformations {
+export class DSOrderInformations {
   @Prop({ mutable: true, reflect: true }) order: any;
 
   @Prop({ context: "store" }) store: Store;
@@ -45,12 +45,12 @@ export class GreenboxOrderInformations {
 
   render() {
     return (
-      <header class="gbx-order-cart__header">
-        <div class="gbx-order-cart__line-information">
+      <header class="ds-order-cart__header">
+        <div class="ds-order-cart__line-information">
           <div>{this.translations.gbx_orderInformations.orderNumber}:</div>
           <div>{this.order.number}</div>
         </div>
-        <div class="gbx-order-cart__line-information">
+        <div class="ds-order-cart__line-information">
           <div>
             {
               this.translations.gbx_orderInformations[
@@ -65,7 +65,7 @@ export class GreenboxOrderInformations {
             />
           </div>
         </div>
-        <div class="gbx-order-cart__line-information">
+        <div class="ds-order-cart__line-information">
           <div>
             {
               this.translations.gbx_orderInformations.address[
@@ -77,17 +77,17 @@ export class GreenboxOrderInformations {
             {this.order.dropoffAddress && this.order.dropoffAddress.formatted}
           </div>
         </div>
-        <div class="gbx-order-cart__line-information">
+        <div class="ds-order-cart__line-information">
           {this.order.deliveryMode === "takeaway" ? (
             <Fragment>
               <div>
                 {this.translations.gbx_orderInformations.pickupAddress}:
               </div>
-              <div class="gbx-order-cart-pickup-address">
-                <div class="gbx-order-cart-pickup-address__shop-name">
+              <div class="ds-order-cart-pickup-address">
+                <div class="ds-order-cart-pickup-address__shop-name">
                   {this.order.restaurantName}
                 </div>
-                <div class="gbx-order-cart-pickup-address__google-link">
+                <div class="ds-order-cart-pickup-address__google-link">
                   <a
                     href={`https://www.google.fr/maps/place/${this.order.pickupAddress.formatted}`}
                     target="_blank"
@@ -103,11 +103,11 @@ export class GreenboxOrderInformations {
               {
                 this.order.shopInShopChildrenOrders?.map(childOrder => {
                   return (
-                  <div class="gbx-order-cart-pickup-address">
-                    <div class="gbx-order-cart-pickup-address__shop-name">
+                  <div class="ds-order-cart-pickup-address">
+                    <div class="ds-order-cart-pickup-address__shop-name">
                       {childOrder.restaurantName}
                     </div>
-                    <div class="gbx-order-cart-pickup-address__google-link">
+                    <div class="ds-order-cart-pickup-address__google-link">
                       <a
                         href={`https://www.google.fr/maps/place/${childOrder.pickupAddress.formatted}`}
                         target="_blank"

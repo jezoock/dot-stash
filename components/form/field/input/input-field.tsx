@@ -5,7 +5,7 @@ import { Component, Event, EventEmitter, h, Listen, Prop } from '@stencil/core';
 import { isFieldRequired } from '../../utils';
 import { FormValidator } from '../../validator/form-validator';
 import { Translations } from '../../../../interfaces';
-import { Greenbox_getDataCy, Greenbox_setTranslations } from '../../../../../utils';
+import { DS_getDataCy, DS_setTranslations } from '../../../../../utils';
 import { translations } from '../../translations';
 import { Validator } from '../../validator/validator';
 import { InputFieldType } from './input-field-type.enum';
@@ -14,7 +14,7 @@ import { DataCy } from "../../../../../utils/data-cy";
 //#endregion
 
 @Component({
-  tag: 'gbx-input-field',
+  tag: 'ds-input-field',
   styleUrls: [
     'input-field.scss',
     './scss/button.scss',
@@ -68,7 +68,7 @@ export class GbxInput {
   }
 
   constructor() {
-    this.translations = Greenbox_setTranslations(translations, ['gbx_form']);
+    this.translations = DS_setTranslations(translations, ['gbx_form']);
     this.inputHandler = this.inputHandler.bind(this);
     this.isRequired = isFieldRequired(this.validators);
   }
@@ -123,14 +123,14 @@ export class GbxInput {
   render() {
     return (
       <div
-        class="gbx-input-field"
-        data-cy={Greenbox_getDataCy({
+        class="ds-input-field"
+        data-cy={DS_getDataCy({
           ...this.dataCy,
           elementType: "InputField",
         })}
       >
         {this.label && (
-          <gbx-form-label
+          <ds-form-label
             fieldLabel={this.label}
             isInError={this.isInError}
             isRequired={this.isRequired}
@@ -139,7 +139,7 @@ export class GbxInput {
         )}
 
         {this.inputType === InputFieldType.INPUT && (
-          <gbx-input
+          <ds-input
             inputName={this.inputName}
             inputId={this.inputId}
             placeholder={this.inputPlaceholder}
@@ -156,7 +156,7 @@ export class GbxInput {
             )}
 
         {this.inputType === InputFieldType.PASSWORD && (
-          <gbx-input-password
+          <ds-input-password
             inputName={this.inputName}
             inputId={this.inputId}
             placeholder={this.inputPlaceholder}
@@ -172,7 +172,7 @@ export class GbxInput {
         )}
 
         {this.inputType === InputFieldType.PHONE && (
-          <gbx-input-phone
+          <ds-input-phone
             value={this.value}
             inputName={this.inputName}
             inputId={this.inputId}
@@ -186,7 +186,7 @@ export class GbxInput {
         {this.errorMessage && (
           <div
             id={`input-error-message-${this.inputName}`}
-            class={{ 'gbx-input-field__error-message': true }}
+            class={{ 'ds-input-field__error-message': true }}
           >
             {this.errorMessage}
           </div>

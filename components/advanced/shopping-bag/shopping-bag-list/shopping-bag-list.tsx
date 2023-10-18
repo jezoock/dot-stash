@@ -5,11 +5,11 @@ import { translations } from "../translations";
  * Display a shopping bag list
  */
 @Component({
-	tag: 'gbx-shopping-bag-list',
+	tag: 'ds-shopping-bag-list',
 	styleUrl: 'shopping-bag-list.scss'
 })
 
-export class GreenboxShoppingBagList {
+export class DSShoppingBagList {
 
 	/**
 	 * Locale used for translations
@@ -55,10 +55,10 @@ export class GreenboxShoppingBagList {
 
 	render() {
 		return (
-			<div class="gbx-shopping-bag-list">
+			<div class="ds-shopping-bag-list">
 
 				<div class={{
-					"gbx-shopping-bag-title": true,
+					"ds-shopping-bag-title": true,
 					"--list": true
 				}}>
 					<strong>{this.translations.title}</strong>
@@ -84,12 +84,12 @@ export class GreenboxShoppingBagList {
 				)}
 
 				{this.shoppingBags.length === 0 && (
-					<p class="gbx-shopping-bag__no-item">
+					<p class="ds-shopping-bag__no-item">
 						{this.translations.noList}
 					</p>
 				)}
 
-				<button class="gbx-shopping-bag-button --display-create-form"
+				<button class="ds-shopping-bag-button --display-create-form"
 					type="button"
 					onClick={this.handleButtonClick}>
 					{this.translations.buttons.create}

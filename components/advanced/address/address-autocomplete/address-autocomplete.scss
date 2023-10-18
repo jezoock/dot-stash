@@ -1,4 +1,4 @@
-.gbx-autocomplete {
+.ds-autocomplete {
   width: 100%;
   position: relative;
   background: #fff;
@@ -12,7 +12,7 @@
       font-size: $text_font-size-3;
       color: color(gray, light);
       width: 2rem;
-      @include --icon(mapmarker);
+      @include ds-icon(mapmarker);
       vertical-align: top;
     }
 
@@ -73,7 +73,7 @@
 
     &:before {
       font-size: $title_font-size-1;
-      @include --icon(mapmarker);
+      @include ds-icon(mapmarker);
     }
 
     &:hover,

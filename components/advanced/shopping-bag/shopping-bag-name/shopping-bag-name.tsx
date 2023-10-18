@@ -6,11 +6,11 @@ import { translations } from "../translations";
  * Component used to display and edit shopping bag name
  */
 @Component({
-	tag: 'gbx-shopping-bag-name',
+	tag: 'ds-shopping-bag-name',
 	styleUrl: 'shopping-bag-name.scss'
 })
 
-export class GreenboxShoppingBagName {
+export class DSShoppingBagName {
 
 	/**
 	 * Locale used for transaltions
@@ -93,11 +93,11 @@ export class GreenboxShoppingBagName {
 
 	render() {
 		return (
-			<form class="gbx-shopping-bag-name"
+			<form class="ds-shopping-bag-name"
 				onSubmit={this.formSubmitHandler}>
 
 				<div class={{
-					"gbx-shopping-bag-title": true,
+					"ds-shopping-bag-title": true,
 					"--details": !this.isEditing,
 					"--edit": this.isEditing
 				}}>
@@ -110,11 +110,11 @@ export class GreenboxShoppingBagName {
 								value={this.inputValue}
 								onChange={this.inputChangeHandler}
 								onKeyUp={this.inputChangeHandler} />
-							<button class="gbx-shopping-bag-title__button --save"
+							<button class="ds-shopping-bag-title__button --save"
 								disabled={this.inputValue === ""}>
 								<span>{this.translations.buttons.ok}</span>
 							</button>
-							<button class="gbx-shopping-bag-title__button --cancel"
+							<button class="ds-shopping-bag-title__button --cancel"
 								type="button"
 								onClick={this.cancelButtonClickHandler}>
 								<span>{this.translations.buttons.cancel}</span>
@@ -126,11 +126,11 @@ export class GreenboxShoppingBagName {
 								{!this.isDisabled && (
 									<Fragment>
 										<button type="button"
-											class="gbx-shopping-bag-title__button --edit"
+											class="ds-shopping-bag-title__button --edit"
 											onClick={this.editButtonClickHandler} />
 											<button
 											type="button"
-											class='gbx-shopping-bag-title__delete-products'
+											class='ds-shopping-bag-title__delete-products'
 											onClick={this.toggleDeleteMessage}
 										>
 											{this.translations.buttons.deleteList}

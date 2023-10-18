@@ -18,7 +18,6 @@ import { AuthDisplayedView } from "./advanced/auth-container/auth/auth-displayed
 import { FeedbackLevel } from "./form/feedback/feedback-level";
 import { InputFieldType } from "./form/field/input/input-field-type.enum";
 import { Validator } from "./form/validator/validator";
-import { CartUpdateProperty } from "./advanced/cart/cart-block/mini-cart/cart-update-property";
 import { RadioItem } from "./form/radio/item/radio-item.interface";
 import { RadioItemStyle } from "./form/radio/item/radio-item-style.enum";
 import { RadioItemCheckStyle } from "./form/radio/item/radio-item-check-style.enum";
@@ -36,7 +35,6 @@ export { AuthDisplayedView } from "./advanced/auth-container/auth/auth-displayed
 export { FeedbackLevel } from "./form/feedback/feedback-level";
 export { InputFieldType } from "./form/field/input/input-field-type.enum";
 export { Validator } from "./form/validator/validator";
-export { CartUpdateProperty } from "./advanced/cart/cart-block/mini-cart/cart-update-property";
 export { RadioItem } from "./form/radio/item/radio-item.interface";
 export { RadioItemStyle } from "./form/radio/item/radio-item-style.enum";
 export { RadioItemCheckStyle } from "./form/radio/item/radio-item-check-style.enum";
@@ -185,7 +183,7 @@ export namespace Components {
         "lightboxClass": any;
         "lightboxClassObject": any;
         "overlay": boolean;
-        "redirectToSmoodOnClose": boolean;
+        "redirectToOnClose": boolean;
         "shown": boolean;
         "useSnack": boolean;
     }
@@ -337,7 +335,6 @@ export namespace Components {
     interface GbxAccount {
         "avatarDisplay": boolean;
         "pageName": string;
-        "store": Store;
     }
     interface GbxAccountValidation {
         "isResendValidationCodeInError": boolean;
@@ -617,7 +614,6 @@ export namespace Components {
     interface GbxOrders {
         "fromCheckout": boolean;
         "orderId": string;
-        "store": Store;
     }
     interface GbxPasswordChangeBlock {
     }
@@ -1727,65 +1723,65 @@ declare global {
         "ds-trigger": HTMLDsTriggerElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
-        "gbx-account": HTMLGbxAccountElement;
-        "gbx-account-validation": HTMLGbxAccountValidationElement;
-        "gbx-address": HTMLGbxAddressElement;
-        "gbx-address-autocomplete": HTMLGbxAddressAutocompleteElement;
-        "gbx-address-block": HTMLGbxAddressBlockElement;
-        "gbx-address-dropdown": HTMLGbxAddressDropdownElement;
-        "gbx-address-list": HTMLGbxAddressListElement;
-        "gbx-address-search": HTMLGbxAddressSearchElement;
-        "gbx-address-selector": HTMLGbxAddressSelectorElement;
-        "gbx-auth": HTMLGbxAuthElement;
-        "gbx-auth-container": HTMLGbxAuthContainerElement;
-        "gbx-b2b-failure": HTMLGbxB2bFailureElement;
-        "gbx-b2b-success": HTMLGbxB2bSuccessElement;
-        "gbx-cart-block": HTMLGbxCartBlockElement;
-        "gbx-cart-item": HTMLGbxCartItemElement;
-        "gbx-cart-summary": HTMLGbxCartSummaryElement;
-        "gbx-checkbox": HTMLGbxCheckboxElement;
-        "gbx-credit-card": HTMLGbxCreditCardElement;
-        "gbx-credit-card-block": HTMLGbxCreditCardBlockElement;
-        "gbx-credit-card-list": HTMLGbxCreditCardListElement;
-        "gbx-field-feedback": HTMLGbxFieldFeedbackElement;
-        "gbx-form": HTMLGbxFormElement;
-        "gbx-form-label": HTMLGbxFormLabelElement;
-        "gbx-input": HTMLGbxInputElement;
-        "gbx-input-date": HTMLGbxInputDateElement;
-        "gbx-input-field": HTMLGbxInputFieldElement;
-        "gbx-input-password": HTMLGbxInputPasswordElement;
-        "gbx-input-phone": HTMLGbxInputPhoneElement;
-        "gbx-login": HTMLGbxLoginElement;
-        "gbx-mini-cart": HTMLGbxMiniCartElement;
-        "gbx-mini-cart-item": HTMLGbxMiniCartItemElement;
-        "gbx-mini-cart-quantity-selector": HTMLGbxMiniCartQuantitySelectorElement;
-        "gbx-order-cart": HTMLGbxOrderCartElement;
-        "gbx-order-cart-product": HTMLGbxOrderCartProductElement;
-        "gbx-order-cart-product-substitution": HTMLGbxOrderCartProductSubstitutionElement;
-        "gbx-order-details": HTMLGbxOrderDetailsElement;
-        "gbx-order-informations": HTMLGbxOrderInformationsElement;
-        "gbx-order-messages": HTMLGbxOrderMessagesElement;
-        "gbx-order-step": HTMLGbxOrderStepElement;
-        "gbx-orders": HTMLGbxOrdersElement;
-        "gbx-password-change-block": HTMLGbxPasswordChangeBlockElement;
-        "gbx-profile": HTMLGbxProfileElement;
-        "gbx-radio": HTMLGbxRadioElement;
-        "gbx-radio-item": HTMLGbxRadioItemElement;
-        "gbx-radio-list": HTMLGbxRadioListElement;
-        "gbx-register": HTMLGbxRegisterElement;
-        "gbx-register-form": HTMLGbxRegisterFormElement;
-        "gbx-reset-password": HTMLGbxResetPasswordElement;
-        "gbx-select": HTMLGbxSelectElement;
-        "gbx-shopping-bag": HTMLGbxShoppingBagElement;
-        "gbx-shopping-bag-button": HTMLGbxShoppingBagButtonElement;
-        "gbx-shopping-bag-create-form": HTMLGbxShoppingBagCreateFormElement;
-        "gbx-shopping-bag-details": HTMLGbxShoppingBagDetailsElement;
-        "gbx-shopping-bag-list": HTMLGbxShoppingBagListElement;
-        "gbx-shopping-bag-name": HTMLGbxShoppingBagNameElement;
-        "gbx-shopping-bag-products": HTMLGbxShoppingBagProductsElement;
-        "gbx-thanks-for-registering": HTMLGbxThanksForRegisteringElement;
-        "gbx-vouchers": HTMLGbxVouchersElement;
-        "gbx-wallet": HTMLGbxWalletElement;
+        "ds-account": HTMLGbxAccountElement;
+        "ds-account-validation": HTMLGbxAccountValidationElement;
+        "ds-address": HTMLGbxAddressElement;
+        "ds-address-autocomplete": HTMLGbxAddressAutocompleteElement;
+        "ds-address-block": HTMLGbxAddressBlockElement;
+        "ds-address-dropdown": HTMLGbxAddressDropdownElement;
+        "ds-address-list": HTMLGbxAddressListElement;
+        "ds-address-search": HTMLGbxAddressSearchElement;
+        "ds-address-selector": HTMLGbxAddressSelectorElement;
+        "ds-auth": HTMLGbxAuthElement;
+        "ds-auth-container": HTMLGbxAuthContainerElement;
+        "ds-b2b-failure": HTMLGbxB2bFailureElement;
+        "ds-b2b-success": HTMLGbxB2bSuccessElement;
+        "ds-cart-block": HTMLGbxCartBlockElement;
+        "ds-cart-item": HTMLGbxCartItemElement;
+        "ds-cart-summary": HTMLGbxCartSummaryElement;
+        "ds-checkbox": HTMLGbxCheckboxElement;
+        "ds-credit-card": HTMLGbxCreditCardElement;
+        "ds-credit-card-block": HTMLGbxCreditCardBlockElement;
+        "ds-credit-card-list": HTMLGbxCreditCardListElement;
+        "ds-field-feedback": HTMLGbxFieldFeedbackElement;
+        "ds-form": HTMLGbxFormElement;
+        "ds-form-label": HTMLGbxFormLabelElement;
+        "ds-input": HTMLGbxInputElement;
+        "ds-input-date": HTMLGbxInputDateElement;
+        "ds-input-field": HTMLGbxInputFieldElement;
+        "ds-input-password": HTMLGbxInputPasswordElement;
+        "ds-input-phone": HTMLGbxInputPhoneElement;
+        "ds-login": HTMLGbxLoginElement;
+        "ds-mini-cart": HTMLGbxMiniCartElement;
+        "ds-mini-cart-item": HTMLGbxMiniCartItemElement;
+        "ds-mini-cart-quantity-selector": HTMLGbxMiniCartQuantitySelectorElement;
+        "ds-order-cart": HTMLGbxOrderCartElement;
+        "ds-order-cart-product": HTMLGbxOrderCartProductElement;
+        "ds-order-cart-product-substitution": HTMLGbxOrderCartProductSubstitutionElement;
+        "ds-order-details": HTMLGbxOrderDetailsElement;
+        "ds-order-informations": HTMLGbxOrderInformationsElement;
+        "ds-order-messages": HTMLGbxOrderMessagesElement;
+        "ds-order-step": HTMLGbxOrderStepElement;
+        "ds-orders": HTMLGbxOrdersElement;
+        "ds-password-change-block": HTMLGbxPasswordChangeBlockElement;
+        "ds-profile": HTMLGbxProfileElement;
+        "ds-radio": HTMLGbxRadioElement;
+        "ds-radio-item": HTMLGbxRadioItemElement;
+        "ds-radio-list": HTMLGbxRadioListElement;
+        "ds-register": HTMLGbxRegisterElement;
+        "ds-register-form": HTMLGbxRegisterFormElement;
+        "ds-reset-password": HTMLGbxResetPasswordElement;
+        "ds-select": HTMLGbxSelectElement;
+        "ds-shopping-bag": HTMLGbxShoppingBagElement;
+        "ds-shopping-bag-button": HTMLGbxShoppingBagButtonElement;
+        "ds-shopping-bag-create-form": HTMLGbxShoppingBagCreateFormElement;
+        "ds-shopping-bag-details": HTMLGbxShoppingBagDetailsElement;
+        "ds-shopping-bag-list": HTMLGbxShoppingBagListElement;
+        "ds-shopping-bag-name": HTMLGbxShoppingBagNameElement;
+        "ds-shopping-bag-products": HTMLGbxShoppingBagProductsElement;
+        "ds-thanks-for-registering": HTMLGbxThanksForRegisteringElement;
+        "ds-vouchers": HTMLGbxVouchersElement;
+        "ds-wallet": HTMLGbxWalletElement;
         "snk-click-and-collect-toggle": HTMLSnkClickAndCollectToggleElement;
         "snk-confirm-modal": HTMLSnkConfirmModalElement;
         "snk-mini-cart-header": HTMLSnkMiniCartHeaderElement;
@@ -1925,7 +1921,7 @@ declare namespace LocalJSX {
         "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
         "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
         "overlay"?: boolean;
-        "redirectToSmoodOnClose"?: boolean;
+        "redirectToOnClose"?: boolean;
         "shown"?: boolean;
         "useSnack"?: boolean;
     }
@@ -2066,7 +2062,6 @@ declare namespace LocalJSX {
     interface GbxAccount {
         "avatarDisplay"?: boolean;
         "pageName"?: string;
-        "store"?: Store;
     }
     interface GbxAccountValidation {
         "isResendValidationCodeInError"?: boolean;
@@ -2408,7 +2403,6 @@ declare namespace LocalJSX {
     interface GbxOrders {
         "fromCheckout"?: boolean;
         "orderId"?: string;
-        "store"?: Store;
     }
     interface GbxPasswordChangeBlock {
         "onNotify_passwordChange_event"?: (event: GbxPasswordChangeBlockCustomEvent<any>) => void;
@@ -2699,65 +2693,65 @@ declare namespace LocalJSX {
         "ds-trigger": DsTrigger;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
-        "gbx-account": GbxAccount;
-        "gbx-account-validation": GbxAccountValidation;
-        "gbx-address": GbxAddress;
-        "gbx-address-autocomplete": GbxAddressAutocomplete;
-        "gbx-address-block": GbxAddressBlock;
-        "gbx-address-dropdown": GbxAddressDropdown;
-        "gbx-address-list": GbxAddressList;
-        "gbx-address-search": GbxAddressSearch;
-        "gbx-address-selector": GbxAddressSelector;
-        "gbx-auth": GbxAuth;
-        "gbx-auth-container": GbxAuthContainer;
-        "gbx-b2b-failure": GbxB2bFailure;
-        "gbx-b2b-success": GbxB2bSuccess;
-        "gbx-cart-block": GbxCartBlock;
-        "gbx-cart-item": GbxCartItem;
-        "gbx-cart-summary": GbxCartSummary;
-        "gbx-checkbox": GbxCheckbox;
-        "gbx-credit-card": GbxCreditCard;
-        "gbx-credit-card-block": GbxCreditCardBlock;
-        "gbx-credit-card-list": GbxCreditCardList;
-        "gbx-field-feedback": GbxFieldFeedback;
-        "gbx-form": GbxForm;
-        "gbx-form-label": GbxFormLabel;
-        "gbx-input": GbxInput;
-        "gbx-input-date": GbxInputDate;
-        "gbx-input-field": GbxInputField;
-        "gbx-input-password": GbxInputPassword;
-        "gbx-input-phone": GbxInputPhone;
-        "gbx-login": GbxLogin;
-        "gbx-mini-cart": GbxMiniCart;
-        "gbx-mini-cart-item": GbxMiniCartItem;
-        "gbx-mini-cart-quantity-selector": GbxMiniCartQuantitySelector;
-        "gbx-order-cart": GbxOrderCart;
-        "gbx-order-cart-product": GbxOrderCartProduct;
-        "gbx-order-cart-product-substitution": GbxOrderCartProductSubstitution;
-        "gbx-order-details": GbxOrderDetails;
-        "gbx-order-informations": GbxOrderInformations;
-        "gbx-order-messages": GbxOrderMessages;
-        "gbx-order-step": GbxOrderStep;
-        "gbx-orders": GbxOrders;
-        "gbx-password-change-block": GbxPasswordChangeBlock;
-        "gbx-profile": GbxProfile;
-        "gbx-radio": GbxRadio;
-        "gbx-radio-item": GbxRadioItem;
-        "gbx-radio-list": GbxRadioList;
-        "gbx-register": GbxRegister;
-        "gbx-register-form": GbxRegisterForm;
-        "gbx-reset-password": GbxResetPassword;
-        "gbx-select": GbxSelect;
-        "gbx-shopping-bag": GbxShoppingBag;
-        "gbx-shopping-bag-button": GbxShoppingBagButton;
-        "gbx-shopping-bag-create-form": GbxShoppingBagCreateForm;
-        "gbx-shopping-bag-details": GbxShoppingBagDetails;
-        "gbx-shopping-bag-list": GbxShoppingBagList;
-        "gbx-shopping-bag-name": GbxShoppingBagName;
-        "gbx-shopping-bag-products": GbxShoppingBagProducts;
-        "gbx-thanks-for-registering": GbxThanksForRegistering;
-        "gbx-vouchers": GbxVouchers;
-        "gbx-wallet": GbxWallet;
+        "ds-account": GbxAccount;
+        "ds-account-validation": GbxAccountValidation;
+        "ds-address": GbxAddress;
+        "ds-address-autocomplete": GbxAddressAutocomplete;
+        "ds-address-block": GbxAddressBlock;
+        "ds-address-dropdown": GbxAddressDropdown;
+        "ds-address-list": GbxAddressList;
+        "ds-address-search": GbxAddressSearch;
+        "ds-address-selector": GbxAddressSelector;
+        "ds-auth": GbxAuth;
+        "ds-auth-container": GbxAuthContainer;
+        "ds-b2b-failure": GbxB2bFailure;
+        "ds-b2b-success": GbxB2bSuccess;
+        "ds-cart-block": GbxCartBlock;
+        "ds-cart-item": GbxCartItem;
+        "ds-cart-summary": GbxCartSummary;
+        "ds-checkbox": GbxCheckbox;
+        "ds-credit-card": GbxCreditCard;
+        "ds-credit-card-block": GbxCreditCardBlock;
+        "ds-credit-card-list": GbxCreditCardList;
+        "ds-field-feedback": GbxFieldFeedback;
+        "ds-form": GbxForm;
+        "ds-form-label": GbxFormLabel;
+        "ds-input": GbxInput;
+        "ds-input-date": GbxInputDate;
+        "ds-input-field": GbxInputField;
+        "ds-input-password": GbxInputPassword;
+        "ds-input-phone": GbxInputPhone;
+        "ds-login": GbxLogin;
+        "ds-mini-cart": GbxMiniCart;
+        "ds-mini-cart-item": GbxMiniCartItem;
+        "ds-mini-cart-quantity-selector": GbxMiniCartQuantitySelector;
+        "ds-order-cart": GbxOrderCart;
+        "ds-order-cart-product": GbxOrderCartProduct;
+        "ds-order-cart-product-substitution": GbxOrderCartProductSubstitution;
+        "ds-order-details": GbxOrderDetails;
+        "ds-order-informations": GbxOrderInformations;
+        "ds-order-messages": GbxOrderMessages;
+        "ds-order-step": GbxOrderStep;
+        "ds-orders": GbxOrders;
+        "ds-password-change-block": GbxPasswordChangeBlock;
+        "ds-profile": GbxProfile;
+        "ds-radio": GbxRadio;
+        "ds-radio-item": GbxRadioItem;
+        "ds-radio-list": GbxRadioList;
+        "ds-register": GbxRegister;
+        "ds-register-form": GbxRegisterForm;
+        "ds-reset-password": GbxResetPassword;
+        "ds-select": GbxSelect;
+        "ds-shopping-bag": GbxShoppingBag;
+        "ds-shopping-bag-button": GbxShoppingBagButton;
+        "ds-shopping-bag-create-form": GbxShoppingBagCreateForm;
+        "ds-shopping-bag-details": GbxShoppingBagDetails;
+        "ds-shopping-bag-list": GbxShoppingBagList;
+        "ds-shopping-bag-name": GbxShoppingBagName;
+        "ds-shopping-bag-products": GbxShoppingBagProducts;
+        "ds-thanks-for-registering": GbxThanksForRegistering;
+        "ds-vouchers": GbxVouchers;
+        "ds-wallet": GbxWallet;
         "snk-click-and-collect-toggle": SnkClickAndCollectToggle;
         "snk-confirm-modal": SnkConfirmModal;
         "snk-mini-cart-header": SnkMiniCartHeader;
@@ -2807,95 +2801,95 @@ declare module "@stencil/core" {
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
-            "gbx-account": LocalJSX.GbxAccount & JSXBase.HTMLAttributes<HTMLGbxAccountElement>;
-            "gbx-account-validation": LocalJSX.GbxAccountValidation & JSXBase.HTMLAttributes<HTMLGbxAccountValidationElement>;
-            "gbx-address": LocalJSX.GbxAddress & JSXBase.HTMLAttributes<HTMLGbxAddressElement>;
-            "gbx-address-autocomplete": LocalJSX.GbxAddressAutocomplete & JSXBase.HTMLAttributes<HTMLGbxAddressAutocompleteElement>;
-            "gbx-address-block": LocalJSX.GbxAddressBlock & JSXBase.HTMLAttributes<HTMLGbxAddressBlockElement>;
-            "gbx-address-dropdown": LocalJSX.GbxAddressDropdown & JSXBase.HTMLAttributes<HTMLGbxAddressDropdownElement>;
-            "gbx-address-list": LocalJSX.GbxAddressList & JSXBase.HTMLAttributes<HTMLGbxAddressListElement>;
-            "gbx-address-search": LocalJSX.GbxAddressSearch & JSXBase.HTMLAttributes<HTMLGbxAddressSearchElement>;
-            "gbx-address-selector": LocalJSX.GbxAddressSelector & JSXBase.HTMLAttributes<HTMLGbxAddressSelectorElement>;
-            "gbx-auth": LocalJSX.GbxAuth & JSXBase.HTMLAttributes<HTMLGbxAuthElement>;
-            "gbx-auth-container": LocalJSX.GbxAuthContainer & JSXBase.HTMLAttributes<HTMLGbxAuthContainerElement>;
-            "gbx-b2b-failure": LocalJSX.GbxB2bFailure & JSXBase.HTMLAttributes<HTMLGbxB2bFailureElement>;
-            "gbx-b2b-success": LocalJSX.GbxB2bSuccess & JSXBase.HTMLAttributes<HTMLGbxB2bSuccessElement>;
-            "gbx-cart-block": LocalJSX.GbxCartBlock & JSXBase.HTMLAttributes<HTMLGbxCartBlockElement>;
-            "gbx-cart-item": LocalJSX.GbxCartItem & JSXBase.HTMLAttributes<HTMLGbxCartItemElement>;
-            "gbx-cart-summary": LocalJSX.GbxCartSummary & JSXBase.HTMLAttributes<HTMLGbxCartSummaryElement>;
-            "gbx-checkbox": LocalJSX.GbxCheckbox & JSXBase.HTMLAttributes<HTMLGbxCheckboxElement>;
-            "gbx-credit-card": LocalJSX.GbxCreditCard & JSXBase.HTMLAttributes<HTMLGbxCreditCardElement>;
-            "gbx-credit-card-block": LocalJSX.GbxCreditCardBlock & JSXBase.HTMLAttributes<HTMLGbxCreditCardBlockElement>;
-            "gbx-credit-card-list": LocalJSX.GbxCreditCardList & JSXBase.HTMLAttributes<HTMLGbxCreditCardListElement>;
+            "ds-account": LocalJSX.GbxAccount & JSXBase.HTMLAttributes<HTMLGbxAccountElement>;
+            "ds-account-validation": LocalJSX.GbxAccountValidation & JSXBase.HTMLAttributes<HTMLGbxAccountValidationElement>;
+            "ds-address": LocalJSX.GbxAddress & JSXBase.HTMLAttributes<HTMLGbxAddressElement>;
+            "ds-address-autocomplete": LocalJSX.GbxAddressAutocomplete & JSXBase.HTMLAttributes<HTMLGbxAddressAutocompleteElement>;
+            "ds-address-block": LocalJSX.GbxAddressBlock & JSXBase.HTMLAttributes<HTMLGbxAddressBlockElement>;
+            "ds-address-dropdown": LocalJSX.GbxAddressDropdown & JSXBase.HTMLAttributes<HTMLGbxAddressDropdownElement>;
+            "ds-address-list": LocalJSX.GbxAddressList & JSXBase.HTMLAttributes<HTMLGbxAddressListElement>;
+            "ds-address-search": LocalJSX.GbxAddressSearch & JSXBase.HTMLAttributes<HTMLGbxAddressSearchElement>;
+            "ds-address-selector": LocalJSX.GbxAddressSelector & JSXBase.HTMLAttributes<HTMLGbxAddressSelectorElement>;
+            "ds-auth": LocalJSX.GbxAuth & JSXBase.HTMLAttributes<HTMLGbxAuthElement>;
+            "ds-auth-container": LocalJSX.GbxAuthContainer & JSXBase.HTMLAttributes<HTMLGbxAuthContainerElement>;
+            "ds-b2b-failure": LocalJSX.GbxB2bFailure & JSXBase.HTMLAttributes<HTMLGbxB2bFailureElement>;
+            "ds-b2b-success": LocalJSX.GbxB2bSuccess & JSXBase.HTMLAttributes<HTMLGbxB2bSuccessElement>;
+            "ds-cart-block": LocalJSX.GbxCartBlock & JSXBase.HTMLAttributes<HTMLGbxCartBlockElement>;
+            "ds-cart-item": LocalJSX.GbxCartItem & JSXBase.HTMLAttributes<HTMLGbxCartItemElement>;
+            "ds-cart-summary": LocalJSX.GbxCartSummary & JSXBase.HTMLAttributes<HTMLGbxCartSummaryElement>;
+            "ds-checkbox": LocalJSX.GbxCheckbox & JSXBase.HTMLAttributes<HTMLGbxCheckboxElement>;
+            "ds-credit-card": LocalJSX.GbxCreditCard & JSXBase.HTMLAttributes<HTMLGbxCreditCardElement>;
+            "ds-credit-card-block": LocalJSX.GbxCreditCardBlock & JSXBase.HTMLAttributes<HTMLGbxCreditCardBlockElement>;
+            "ds-credit-card-list": LocalJSX.GbxCreditCardList & JSXBase.HTMLAttributes<HTMLGbxCreditCardListElement>;
             /**
              * This component display a message with a level for the input forms
              */
-            "gbx-field-feedback": LocalJSX.GbxFieldFeedback & JSXBase.HTMLAttributes<HTMLGbxFieldFeedbackElement>;
-            "gbx-form": LocalJSX.GbxForm & JSXBase.HTMLAttributes<HTMLGbxFormElement>;
+            "ds-field-feedback": LocalJSX.GbxFieldFeedback & JSXBase.HTMLAttributes<HTMLGbxFieldFeedbackElement>;
+            "ds-form": LocalJSX.GbxForm & JSXBase.HTMLAttributes<HTMLGbxFormElement>;
             /**
              * This component define a form label (for input, select etc..)
              */
-            "gbx-form-label": LocalJSX.GbxFormLabel & JSXBase.HTMLAttributes<HTMLGbxFormLabelElement>;
-            "gbx-input": LocalJSX.GbxInput & JSXBase.HTMLAttributes<HTMLGbxInputElement>;
-            "gbx-input-date": LocalJSX.GbxInputDate & JSXBase.HTMLAttributes<HTMLGbxInputDateElement>;
-            "gbx-input-field": LocalJSX.GbxInputField & JSXBase.HTMLAttributes<HTMLGbxInputFieldElement>;
-            "gbx-input-password": LocalJSX.GbxInputPassword & JSXBase.HTMLAttributes<HTMLGbxInputPasswordElement>;
-            "gbx-input-phone": LocalJSX.GbxInputPhone & JSXBase.HTMLAttributes<HTMLGbxInputPhoneElement>;
-            "gbx-login": LocalJSX.GbxLogin & JSXBase.HTMLAttributes<HTMLGbxLoginElement>;
-            "gbx-mini-cart": LocalJSX.GbxMiniCart & JSXBase.HTMLAttributes<HTMLGbxMiniCartElement>;
-            "gbx-mini-cart-item": LocalJSX.GbxMiniCartItem & JSXBase.HTMLAttributes<HTMLGbxMiniCartItemElement>;
-            "gbx-mini-cart-quantity-selector": LocalJSX.GbxMiniCartQuantitySelector & JSXBase.HTMLAttributes<HTMLGbxMiniCartQuantitySelectorElement>;
-            "gbx-order-cart": LocalJSX.GbxOrderCart & JSXBase.HTMLAttributes<HTMLGbxOrderCartElement>;
-            "gbx-order-cart-product": LocalJSX.GbxOrderCartProduct & JSXBase.HTMLAttributes<HTMLGbxOrderCartProductElement>;
-            "gbx-order-cart-product-substitution": LocalJSX.GbxOrderCartProductSubstitution & JSXBase.HTMLAttributes<HTMLGbxOrderCartProductSubstitutionElement>;
-            "gbx-order-details": LocalJSX.GbxOrderDetails & JSXBase.HTMLAttributes<HTMLGbxOrderDetailsElement>;
-            "gbx-order-informations": LocalJSX.GbxOrderInformations & JSXBase.HTMLAttributes<HTMLGbxOrderInformationsElement>;
-            "gbx-order-messages": LocalJSX.GbxOrderMessages & JSXBase.HTMLAttributes<HTMLGbxOrderMessagesElement>;
-            "gbx-order-step": LocalJSX.GbxOrderStep & JSXBase.HTMLAttributes<HTMLGbxOrderStepElement>;
-            "gbx-orders": LocalJSX.GbxOrders & JSXBase.HTMLAttributes<HTMLGbxOrdersElement>;
-            "gbx-password-change-block": LocalJSX.GbxPasswordChangeBlock & JSXBase.HTMLAttributes<HTMLGbxPasswordChangeBlockElement>;
-            "gbx-profile": LocalJSX.GbxProfile & JSXBase.HTMLAttributes<HTMLGbxProfileElement>;
-            "gbx-radio": LocalJSX.GbxRadio & JSXBase.HTMLAttributes<HTMLGbxRadioElement>;
+            "ds-form-label": LocalJSX.GbxFormLabel & JSXBase.HTMLAttributes<HTMLGbxFormLabelElement>;
+            "ds-input": LocalJSX.GbxInput & JSXBase.HTMLAttributes<HTMLGbxInputElement>;
+            "ds-input-date": LocalJSX.GbxInputDate & JSXBase.HTMLAttributes<HTMLGbxInputDateElement>;
+            "ds-input-field": LocalJSX.GbxInputField & JSXBase.HTMLAttributes<HTMLGbxInputFieldElement>;
+            "ds-input-password": LocalJSX.GbxInputPassword & JSXBase.HTMLAttributes<HTMLGbxInputPasswordElement>;
+            "ds-input-phone": LocalJSX.GbxInputPhone & JSXBase.HTMLAttributes<HTMLGbxInputPhoneElement>;
+            "ds-login": LocalJSX.GbxLogin & JSXBase.HTMLAttributes<HTMLGbxLoginElement>;
+            "ds-mini-cart": LocalJSX.GbxMiniCart & JSXBase.HTMLAttributes<HTMLGbxMiniCartElement>;
+            "ds-mini-cart-item": LocalJSX.GbxMiniCartItem & JSXBase.HTMLAttributes<HTMLGbxMiniCartItemElement>;
+            "ds-mini-cart-quantity-selector": LocalJSX.GbxMiniCartQuantitySelector & JSXBase.HTMLAttributes<HTMLGbxMiniCartQuantitySelectorElement>;
+            "ds-order-cart": LocalJSX.GbxOrderCart & JSXBase.HTMLAttributes<HTMLGbxOrderCartElement>;
+            "ds-order-cart-product": LocalJSX.GbxOrderCartProduct & JSXBase.HTMLAttributes<HTMLGbxOrderCartProductElement>;
+            "ds-order-cart-product-substitution": LocalJSX.GbxOrderCartProductSubstitution & JSXBase.HTMLAttributes<HTMLGbxOrderCartProductSubstitutionElement>;
+            "ds-order-details": LocalJSX.GbxOrderDetails & JSXBase.HTMLAttributes<HTMLGbxOrderDetailsElement>;
+            "ds-order-informations": LocalJSX.GbxOrderInformations & JSXBase.HTMLAttributes<HTMLGbxOrderInformationsElement>;
+            "ds-order-messages": LocalJSX.GbxOrderMessages & JSXBase.HTMLAttributes<HTMLGbxOrderMessagesElement>;
+            "ds-order-step": LocalJSX.GbxOrderStep & JSXBase.HTMLAttributes<HTMLGbxOrderStepElement>;
+            "ds-orders": LocalJSX.GbxOrders & JSXBase.HTMLAttributes<HTMLGbxOrdersElement>;
+            "ds-password-change-block": LocalJSX.GbxPasswordChangeBlock & JSXBase.HTMLAttributes<HTMLGbxPasswordChangeBlockElement>;
+            "ds-profile": LocalJSX.GbxProfile & JSXBase.HTMLAttributes<HTMLGbxProfileElement>;
+            "ds-radio": LocalJSX.GbxRadio & JSXBase.HTMLAttributes<HTMLGbxRadioElement>;
             /**
              * This component define a radio item.
              */
-            "gbx-radio-item": LocalJSX.GbxRadioItem & JSXBase.HTMLAttributes<HTMLGbxRadioItemElement>;
+            "ds-radio-item": LocalJSX.GbxRadioItem & JSXBase.HTMLAttributes<HTMLGbxRadioItemElement>;
             /**
              * This component define a list of radio items.
              */
-            "gbx-radio-list": LocalJSX.GbxRadioList & JSXBase.HTMLAttributes<HTMLGbxRadioListElement>;
-            "gbx-register": LocalJSX.GbxRegister & JSXBase.HTMLAttributes<HTMLGbxRegisterElement>;
-            "gbx-register-form": LocalJSX.GbxRegisterForm & JSXBase.HTMLAttributes<HTMLGbxRegisterFormElement>;
-            "gbx-reset-password": LocalJSX.GbxResetPassword & JSXBase.HTMLAttributes<HTMLGbxResetPasswordElement>;
+            "ds-radio-list": LocalJSX.GbxRadioList & JSXBase.HTMLAttributes<HTMLGbxRadioListElement>;
+            "ds-register": LocalJSX.GbxRegister & JSXBase.HTMLAttributes<HTMLGbxRegisterElement>;
+            "ds-register-form": LocalJSX.GbxRegisterForm & JSXBase.HTMLAttributes<HTMLGbxRegisterFormElement>;
+            "ds-reset-password": LocalJSX.GbxResetPassword & JSXBase.HTMLAttributes<HTMLGbxResetPasswordElement>;
             /**
              * This component define a select form.
              */
-            "gbx-select": LocalJSX.GbxSelect & JSXBase.HTMLAttributes<HTMLGbxSelectElement>;
-            "gbx-shopping-bag": LocalJSX.GbxShoppingBag & JSXBase.HTMLAttributes<HTMLGbxShoppingBagElement>;
+            "ds-select": LocalJSX.GbxSelect & JSXBase.HTMLAttributes<HTMLGbxSelectElement>;
+            "ds-shopping-bag": LocalJSX.GbxShoppingBag & JSXBase.HTMLAttributes<HTMLGbxShoppingBagElement>;
             /**
              * Simple button component displaying the shopping list modal
              */
-            "gbx-shopping-bag-button": LocalJSX.GbxShoppingBagButton & JSXBase.HTMLAttributes<HTMLGbxShoppingBagButtonElement>;
+            "ds-shopping-bag-button": LocalJSX.GbxShoppingBagButton & JSXBase.HTMLAttributes<HTMLGbxShoppingBagButtonElement>;
             /**
              * Create shopping bag form
              */
-            "gbx-shopping-bag-create-form": LocalJSX.GbxShoppingBagCreateForm & JSXBase.HTMLAttributes<HTMLGbxShoppingBagCreateFormElement>;
+            "ds-shopping-bag-create-form": LocalJSX.GbxShoppingBagCreateForm & JSXBase.HTMLAttributes<HTMLGbxShoppingBagCreateFormElement>;
             /**
              * Display shopping bag details & products
              */
-            "gbx-shopping-bag-details": LocalJSX.GbxShoppingBagDetails & JSXBase.HTMLAttributes<HTMLGbxShoppingBagDetailsElement>;
+            "ds-shopping-bag-details": LocalJSX.GbxShoppingBagDetails & JSXBase.HTMLAttributes<HTMLGbxShoppingBagDetailsElement>;
             /**
              * Display a shopping bag list
              */
-            "gbx-shopping-bag-list": LocalJSX.GbxShoppingBagList & JSXBase.HTMLAttributes<HTMLGbxShoppingBagListElement>;
+            "ds-shopping-bag-list": LocalJSX.GbxShoppingBagList & JSXBase.HTMLAttributes<HTMLGbxShoppingBagListElement>;
             /**
              * Component used to display and edit shopping bag name
              */
-            "gbx-shopping-bag-name": LocalJSX.GbxShoppingBagName & JSXBase.HTMLAttributes<HTMLGbxShoppingBagNameElement>;
-            "gbx-shopping-bag-products": LocalJSX.GbxShoppingBagProducts & JSXBase.HTMLAttributes<HTMLGbxShoppingBagProductsElement>;
-            "gbx-thanks-for-registering": LocalJSX.GbxThanksForRegistering & JSXBase.HTMLAttributes<HTMLGbxThanksForRegisteringElement>;
-            "gbx-vouchers": LocalJSX.GbxVouchers & JSXBase.HTMLAttributes<HTMLGbxVouchersElement>;
-            "gbx-wallet": LocalJSX.GbxWallet & JSXBase.HTMLAttributes<HTMLGbxWalletElement>;
+            "ds-shopping-bag-name": LocalJSX.GbxShoppingBagName & JSXBase.HTMLAttributes<HTMLGbxShoppingBagNameElement>;
+            "ds-shopping-bag-products": LocalJSX.GbxShoppingBagProducts & JSXBase.HTMLAttributes<HTMLGbxShoppingBagProductsElement>;
+            "ds-thanks-for-registering": LocalJSX.GbxThanksForRegistering & JSXBase.HTMLAttributes<HTMLGbxThanksForRegisteringElement>;
+            "ds-vouchers": LocalJSX.GbxVouchers & JSXBase.HTMLAttributes<HTMLGbxVouchersElement>;
+            "ds-wallet": LocalJSX.GbxWallet & JSXBase.HTMLAttributes<HTMLGbxWalletElement>;
             "snk-click-and-collect-toggle": LocalJSX.SnkClickAndCollectToggle & JSXBase.HTMLAttributes<HTMLSnkClickAndCollectToggleElement>;
             "snk-confirm-modal": LocalJSX.SnkConfirmModal & JSXBase.HTMLAttributes<HTMLSnkConfirmModalElement>;
             "snk-mini-cart-header": LocalJSX.SnkMiniCartHeader & JSXBase.HTMLAttributes<HTMLSnkMiniCartHeaderElement>;

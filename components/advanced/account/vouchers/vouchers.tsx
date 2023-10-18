@@ -2,13 +2,13 @@
 import { Component, h } from "@stencil/core";
 
 @Component({
-	tag: "gbx-vouchers",
+	tag: "ds-vouchers",
 	styleUrl: "vouchers.scss"
 })
-export class GreenboxAccountVouchers {
+export class DSAccountVouchers {
 	constructor() { }
 
 	render() {
-		return <div class="gbx-account-vouchers">Vouchers</div>;
+		return <div class="ds-account-vouchers">Vouchers</div>;
 	}
 }

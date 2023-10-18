@@ -1,6 +1,6 @@
 import { Component, Prop, Event, EventEmitter, h, State, Listen } from "@stencil/core";
 import { Cart } from "../../../../../../../../api-types";
-import { Greenbox_setTranslations, Greenbox_getAppTheme } from "../../../../../../../utils";
+import { DS_setTranslations, DS_getAppTheme } from "../../../../../../../utils";
 import Fragment from "stencil-fragment";
 import Translations from './translations';
 import { ButtonLevel } from "../../../../../../ui/button/button-level.enum";
@@ -19,11 +19,11 @@ export class SnkStoreNote {
 
 
   private allTranslations = {
-    resto: Greenbox_setTranslations(Translations, "snk-store-note-restaurant"),
-    grocery: Greenbox_setTranslations(Translations, "snk-store-note-grocery"),
+    resto: DS_setTranslations(Translations, "snk-store-note-restaurant"),
+    grocery: DS_setTranslations(Translations, "snk-store-note-grocery"),
   };
 
-  private translations = this.allTranslations[Greenbox_getAppTheme()];
+  private translations = this.allTranslations[DS_getAppTheme()];
 
   @Event() request_noteUpdate_event: EventEmitter;
 
@@ -57,9 +57,9 @@ export class SnkStoreNote {
 
         <snk-two-columns class={componentName}>
 
-          <gbx-icon
+          <ds-icon
             class={`${componentName}__info-icon`}
-            iconMods={["snack", "note"]}
+            iconMods={[ "note"]}
             slot="first-column-content"
           />
 
@@ -82,15 +82,15 @@ export class SnkStoreNote {
             </div>
 
             {this.isCartActive && (
-              <gbx-button
-                useSnack={true}
+              <ds-button
+                
                 buttonLevel={ButtonLevel.LINK}
                 buttonMods={['default', 'cart-block', 'store-notes']}
                 class={`${componentName}__add-edit`}
                 onClick={this.modalDisplayHandler}
               >
                 {storeNotesAddEdit}
-              </gbx-button>
+              </ds-button>
             )}
 
           </div>

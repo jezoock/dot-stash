@@ -25,7 +25,7 @@
       width: min(100%, 360px);
     }
 
-    @media (min-width: $grid-lg-min) {
+    @include break-p(lg) {
       width: min(100%, 400px);
     }
   }

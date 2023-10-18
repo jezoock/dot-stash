@@ -1,15 +1,15 @@
 import { Component, h, Event, EventEmitter, Prop } from '@stencil/core';
 import { DataCy } from "../../../../../utils/data-cy";
-import { Greenbox_getDataCy } from "../../../../../utils";
+import { DS_getDataCy } from "../../../../../utils";
 
 @Component({
-  tag: 'gbx-input-password',
+  tag: 'ds-input-password',
   styleUrls: [
     'input-password.scss',
     './scss/button.scss'
   ]
 })
-export class GreenboxInput {
+export class DSInput {
   @Prop() type: string = 'text';
   @Prop() inputId: string;
   @Prop() inputName: string;
@@ -46,15 +46,15 @@ export class GreenboxInput {
     return (
       <div
         class={{
-          "gbx-input-password": true,
+          "ds-input-password": true,
           "--password": true,
           '--valid': this.value && !this.isInError,
           '--error': this.isInError,
         }}
       >
 
-        <gbx-input
-          class="gbx-input-password__input"
+        <ds-input
+          class="ds-input-password__input"
           mods="password"
           inputName={this.inputName}
           placeholder={this.placeholder}
@@ -67,18 +67,18 @@ export class GreenboxInput {
           autocomplete={this.autocomplete}
           value={this.value}
           isInError={this.isInError}
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: "Input",
             elementName: "Password",
           })}
         />
 
-        <gbx-button
-          class="gbx-input-password__button"
+        <ds-button
+          class="ds-input-password__button"
           buttonMods={['auth', 'toggle-password']}
           buttonType="button"
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: "InputButton",
             elementName: "Password",

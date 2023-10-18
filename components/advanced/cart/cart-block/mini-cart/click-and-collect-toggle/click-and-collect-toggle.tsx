@@ -1,5 +1,5 @@
 import { Component, Prop, Event, EventEmitter, h, Listen } from "@stencil/core";
-import { Greenbox_eventDispatch, Greenbox_getDataCy, Greenbox_isMobile, Greenbox_setTranslations } from "../../../../../../../utils";
+import { DS_eventDispatch, DS_getDataCy, DS_isMobile, DS_setTranslations } from "../../../../../../../utils";
 import { TooltipPosition } from "../../../../../../ui/tooltip/tooltip-position.enum";
 import Translations from "./translations";
 import componentName from "./component-name";
@@ -19,7 +19,7 @@ export class ClickAndCollectToggle {
 
   @Listen('notify_updateDeliveryModeOutcome_event')
   notify_updateDeliveryModeOutcome_eventHandler({ detail: { success } }: { detail: { success: boolean } }) {
-    const toasterPosition = Greenbox_isMobile() ? "top" : "bottom";
+    const toasterPosition = DS_isMobile() ? "top" : "bottom";
     const toasterSettings = {
       innerJSX: <span>{this.translations[`deliveryModeUpdate${success ? 'Success' : 'Failure'}`]}</span>,
       closingDelay: 4000,
@@ -27,10 +27,10 @@ export class ClickAndCollectToggle {
       posiion: [toasterPosition, 'right']
     };
 
-    Greenbox_eventDispatch('body', 'toaster_show_event', toasterSettings);
+    DS_eventDispatch('body', 'toaster_show_event', toasterSettings);
   }
 
-  private translations = Greenbox_setTranslations(Translations, componentName);
+  private translations = DS_setTranslations(Translations, componentName);
 
   constructor() {
     this.hereButtonClickHandler = this.hereButtonClickHandler.bind(this);
@@ -46,7 +46,7 @@ export class ClickAndCollectToggle {
         {this.translations.switchPromptFirstPart.replace('%percentage%', this.reduciblePercentage)}
         <button
           onClick={this.hereButtonClickHandler}
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             pageName: PageName.CART,
             elementName: 'click-n-collect-toggle'
           })}
@@ -68,7 +68,7 @@ export class ClickAndCollectToggle {
           class={`${componentName}__icon-container`}
         >
 
-          <gbx-tooltip
+          <ds-tooltip
             icon="info"
             position={TooltipPosition.TOP_LEFT}
             class={`${componentName}__info-icon`}
@@ -76,7 +76,7 @@ export class ClickAndCollectToggle {
             <div slot="message">
               {this.translations.switchToClickNCollectTooltip.replace('%percentage%', this.reduciblePercentage)}
             </div>
-          </gbx-tooltip>
+          </ds-tooltip>
 
         </div>
         <div

@@ -1,13 +1,8 @@
 import { Component, h, Prop, State, Listen } from "@stencil/core";
 import { menu } from "./routes";
-import { Store } from "@stencil/redux";
-import { UserLogoutAction } from "../../../_redux/actions/user";
-import { Greenbox_eventDispatch, Greenbox_setTranslations } from "../../../utils";
-import { Translations } from "../../interfaces";
-import { translations } from "./translations";
 
 @Component({
-  tag: "gbx-account",
+  tag: "ds-account",
   styleUrls: [
     "./account.scss",
     "./scss/modal.scss",
@@ -15,25 +10,20 @@ import { translations } from "./translations";
     "./scss/button.scss"
   ]
 })
-export class GreenboxAccount {
+export class DSAccount {
 
-  @Prop({ mutable: true }) avatarDisplay: boolean = true;
-  @Prop({ context: "store" }) store: Store;
-  @Prop() pageName: string = "Grocery";
+  @Prop({ mutable: true }) avatarDisplay = true;
+  @Prop() pageName = "Grocery";
 
-  @State() showDropdown: boolean = false;
-  @State() showAccountModal: boolean = false;
-  @State() page: string = "";
+  @State() showDropdown = false;
+  @State() showAccountModal = false;
+  @State() page = "";
   @State() orderId: string;
   @State() menu: any[] = [];
   @State() apiSettings: any;
   @State() settings: any;
   @State() user: any;
   @State() logged: any;
-
-  translations: Translations = Greenbox_setTranslations(translations, ['gbx_account']);
-
-  UserLogoutAction: typeof UserLogoutAction;
 
   @Listen("request_orderDisplay_event")
   request_orderDisplay_eventHandler({ detail: { orderId } }) {
@@ -62,24 +52,11 @@ export class GreenboxAccount {
   }
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, ({
-                                        app: { settings, apiSettings },
-                                        user: { logged, user }
-                                      }) => ({
-      apiSettings,
-      settings,
-      user,
-      logged,
-    }));
-
-    this.store.mapDispatchToProps(this, {
-      UserLogoutAction
-    });
-
+    
     this.menu = menu;
 
     const urlParams: URLSearchParams = new URLSearchParams(window.location.search);
-    const myParam: string = 'openOrder';
+    const myParam = 'openOrder';
 
     if (urlParams.has(myParam)) {
       const newUrl = window.location.href.split('?');
@@ -99,12 +76,12 @@ export class GreenboxAccount {
    * @returns {Promise<any>}
    */
   async logout(): Promise<any> {
-    await this.UserLogoutAction();
-    Greenbox_eventDispatch(
-      ["gbx-checkout"],
+    /* await this.UserLogoutAction();
+    DS_eventDispatch(
+      ["ds-checkout"],
       "request_redirectToCart_event",
       { fromLogout: true }
-    );
+    ); */
   }
 
   /**
@@ -113,7 +90,7 @@ export class GreenboxAccount {
    * @param {string} pageName Page id
    * @param {boolean} redirect Redirect to a page
    * */
-  display(event: Event, pageName: string, redirect: boolean = false): void {
+  display(event: Event, pageName: string, redirect = false): void {
     if (!redirect) {
       event.preventDefault();
       this.page = pageName;
@@ -128,14 +105,14 @@ export class GreenboxAccount {
    */
   dispatch(event: Event, pageName: string): void {
     event.preventDefault();
-    if (pageName === "shoppingBag") {
+    /* if (pageName === "shoppingBag") {
       // open shopping bags
-      // /!\ error in Greenbox_eventDispatch if redimentionnement
-      Greenbox_eventDispatch(
-        ["gbx-shopping-bag"],
+      // /!\ error in DS_eventDispatch if redimentionnement
+      DS_eventDispatch(
+        ["ds-shopping-bag"],
         "request_shoppingbag_open"
       );
-    }
+    } */
   }
 
   close(): void {
@@ -149,10 +126,10 @@ export class GreenboxAccount {
     const body = document.querySelector("body");
     body.addEventListener("click", this.close);
     this.showDropdown = true;
-    Greenbox_eventDispatch(
-      "gbx-cart-block",
+    /* DS_eventDispatch(
+      "ds-cart-block",
       "request_cartBlockHide_event",
-    );
+    ); */
 
   }
 
@@ -174,7 +151,7 @@ export class GreenboxAccount {
   }
 
   appendModalToBody() {
-    document.querySelector("body").appendChild(document.querySelector("gbx-modal"));
+    document.querySelector("body").appendChild(document.querySelector("ds-modal"));
   }
 
   render() {
@@ -183,13 +160,13 @@ export class GreenboxAccount {
     return (
       <div
         class={{
-          "gbx-account": true,
+          "ds-account": true,
           "--dropdown-open": this.showDropdown,
           "--avatar": this.avatarDisplay
         }}
       >
         <button
-          class="gbx-account__avatar"
+          class="ds-account__avatar"
           type="button"
           onClick={this.toggle}
           data-cy="Grocery_Button_Avatar"
@@ -198,49 +175,49 @@ export class GreenboxAccount {
         </button>
 
         {(this.showDropdown || this.settings.isMobile) && (
-          <nav class="gbx-account-menu">
+          <nav class="ds-account-menu">
             <ul>
               {this.menu.map(menu => (
                 menu.isActive && (
                   <li>
                     <a
                       class={{
-                        "gbx-account-menu__item": true,
+                        "ds-account-menu__item": true,
                         [`--${menu.page}`]: true
                       }}
                       onClick={evt => {
                         this.display(evt, menu.page, menu.redirect);
                       }}
                       href={
-                        `/${this.settings.locale}/${menu.link === "parrainage" ? this.translations.sponsorshipLink : menu.link}`
+                        `/${this.settings.locale}/${menu.link === "parrainage" ? "this.translations.sponsorshipLink" : menu.link}`
                       }
                       data-cy={"Grocery_Button_" + menu.label.toUpperCase()}
                     >
-                      {this.translations[menu.label]}
+                      {"this.translations[menu.label]"}
                     </a>
                   </li>
                 )
               ))}
               {this.settings.isMobile && window.innerWidth < 768 && (
                 <li>
-                  <gbx-shopping-bag
+                  <ds-shopping-bag
                     mode="sidebar"
                   >
-                    {this.translations.shoppingBags}
-                  </gbx-shopping-bag>
+                    {"this.translations.shoppingBags"}
+                  </ds-shopping-bag>
                 </li>
               )}
               <li>
                 <button
                   type="button"
                   class={{
-                    "gbx-account-menu__item": true,
+                    "ds-account-menu__item": true,
                     "--logout": true
                   }}
                   onClick={this.logout}
                   data-cy="Grocery_Button_AccountLogout"
                 >
-                  {this.translations.logout}
+                  {"this.translations.logout"}
                 </button>
               </li>
             </ul>
@@ -248,7 +225,7 @@ export class GreenboxAccount {
         )}
 
         {this.showAccountModal && (
-          <gbx-modal
+          <ds-modal
             shown={this.showAccountModal}
             overlay={true}
             isHeaderDisabled={true}
@@ -262,38 +239,38 @@ export class GreenboxAccount {
             onGbxModalOpen={this.appendModalToBody}
           >
             <div slot="content">
-              <div class={{ "gbx-account-title": true }}>
-                <gbx-title
-                  titleMods={["gbx-title", "modal", "main"]}
+              <div class={{ "ds-account-title": true }}>
+                <ds-title
+                  mods={["ds-title", "modal", "main"]}
                   heading={3}
                 >
-                  {this.translations[this.page]}
-                </gbx-title>
+                  {"this.translations[this.page]"}
+                </ds-title>
 
-                <gbx-button
-                  useSnack={true}
-                  buttonMods={["snack", "close"]}
+                <ds-button
+                  
+                  buttonMods={[ "close"]}
                   onGbxButtonClick={this.closeButtonClickHandler}
                 />
               </div>
               {(this.page === "order" || this.page === "orders") && (
-                <gbx-orders orderId={this.orderId}  />
+                <ds-orders orderId={this.orderId}  />
               )}
 
               {this.page === "profile" && (
-                <gbx-profile />
+                <ds-profile />
               )}
 
               {this.page === "wallet" && (
-                <gbx-wallet />
+                <ds-wallet />
               )}
 
               {this.page === "vouchers" && (
-                <gbx-vouchers />
+                <ds-vouchers />
               )}
 
             </div>
-          </gbx-modal>
+          </ds-modal>
         )}
 
       </div>

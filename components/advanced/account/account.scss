@@ -2,7 +2,7 @@
 @import "./scss/block.scss";
 @import "./scss/button.scss";
 
-.gbx-account {
+.ds-account {
   position: relative;
   z-index: 1;
 
@@ -14,7 +14,7 @@
       margin: 0 0 0 0.75rem;
       transition: transform ease 0.6s;
       transform: rotateZ(0deg);
-      @include --icon(chevron-down, middle);
+      @include ds-icon(chevron-down, middle);
     }
 
     @media (min-width: $grid-lg-min) and (max-width: $grid-lg-max) {
@@ -41,7 +41,7 @@
       &:before {
         font-size: $text_font-size-3;
         padding: 0 0.75rem 0 0;
-        @include --icon(profil);
+        @include ds-icon(profil);
         @include --rounded(1.5rem);
         @media (min-width: $grid-lg-min) and (max-width: $grid-lg-max) {
           padding: 0;

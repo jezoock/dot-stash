@@ -10,13 +10,13 @@ export class SNKMiniCartModal {
   @Prop({ mutable: true }) isClosingDisabled: boolean = false;
   @Prop({ mutable: true }) isHeaderDisabled: boolean = false;
   
-  closeButtonMods: string[] = [ "snack", "cart-block", "close" ];
+  closeButtonMods: string[] = [  "cart-block", "close" ];
 
   render() {
     return (
-      <gbx-modal
+      <ds-modal
         shown={true}
-        closeButtonMods={[ "snack", "cart-modal", "close" ]}
+        closeButtonMods={[  "cart-modal", "close" ]}
         isClosingDisabled={this.isClosingDisabled}
         isFooterDisabled={true}
         isHeaderDisabled={this.modalTitle === ''}
@@ -28,22 +28,22 @@ export class SNKMiniCartModal {
         }}
       >
         {this.modalTitle && (
-          <gbx-title
+          <ds-title
             slot="title"
             titleType={TitleType.TITLE2}
-            titleMods={["block", "cart"]}
+            mods={["block", "cart"]}
             heading={3}
-            useSnack={true}
+            
             dataCy={{
               pageName: PageName.LOGIN,
               elementName: "cartBlockModalTitle",
             }}
           >
             {this.modalTitle}
-          </gbx-title>
+          </ds-title>
         )}
         <slot name="content" />
-      </gbx-modal>
+      </ds-modal>
     )
   }
 };

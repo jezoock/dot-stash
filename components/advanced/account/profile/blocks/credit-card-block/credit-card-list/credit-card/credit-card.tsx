@@ -2,18 +2,18 @@ import { Component, h, Prop } from '@stencil/core';
 import { CreditCard } from "../../../../../../../interfaces";
 
 @Component({
-	tag: 'gbx-credit-card',
+	tag: 'ds-credit-card',
 	styleUrl: 'credit-card.scss'
 })
-export class GreenboxCreditCard {
+export class DSCreditCard {
 
 	@Prop({ attribute: "card" }) card: CreditCard;
 
 	render() {
 		return (
-			<div class="gbx-credit-card">
+			<div class="ds-credit-card">
 				{this.card.paymentMethod && this.card.image && (
-					<div class="gbx-credit-card__image">
+					<div class="ds-credit-card__image">
 						<img
 							src={`/buildsGrocery/img/assetsGrocery/image/icons/cards/${this.card.image}`}
 							alt={`Logo ${this.card.paymentMethod}`}
@@ -22,7 +22,7 @@ export class GreenboxCreditCard {
 				)}
 
 				<span class={{
-					"gbx-credit-card__number": true,
+					"ds-credit-card__number": true,
 					"--with-card-img": !!this.card.paymentMethod
 				}}>
 					<span>****</span>
@@ -31,7 +31,7 @@ export class GreenboxCreditCard {
 					<strong>{this.card.last4}</strong>
 				</span>
 
-				<span class="gbx-credit-card__expire-date">
+				<span class="ds-credit-card__expire-date">
 					{`${this.card.expiryMonth} / ${this.card.expiryYear}`}
 				</span>
 

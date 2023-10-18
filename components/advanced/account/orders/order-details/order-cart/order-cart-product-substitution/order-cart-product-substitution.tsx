@@ -1,15 +1,15 @@
 import { Component, Prop, h, State } from "@stencil/core";
-// import { Greenbox_formatPrice } from "../../../../../../../utils";
+// import { DS_formatPrice } from "../../../../../../../utils";
 import { Action, Store } from "@stencil/redux";
-import {Greenbox_formatPrice} from "../../../../../../../utils";
+import {DS_formatPrice} from "../../../../../../../utils";
 import { translations } from "./translations";
 import { TransAddTranslations } from "../../../../../../../_redux/actions/localization";
 
 @Component({
-  tag: "gbx-order-cart-product-substitution",
+  tag: "ds-order-cart-product-substitution",
   styleUrl: "order-cart-product-substitution.scss"
 })
-export class GreenboxOrderCart {
+export class DSOrderCart {
   @Prop({ mutable: true, reflect: true }) substitutedProduct: any;
 
   @Prop({ context: "store" }) store: Store;
@@ -53,29 +53,29 @@ export class GreenboxOrderCart {
 
   render() {
     return (
-      <div class="gbx-order-cart-product-substitution__container">
-        <div class="gbx-order-cart-product-substitution__old-product">
-          <span class="gbx-order-cart-product-substitution__badge">{this.translations.gbx_orderCartProductSubstitution.unavailable}</span>
-          <div class="gbx-order-cart-product-substitution__image"
+      <div class="ds-order-cart-product-substitution__container">
+        <div class="ds-order-cart-product-substitution__old-product">
+          <span class="ds-order-cart-product-substitution__badge">{this.translations.gbx_orderCartProductSubstitution.unavailable}</span>
+          <div class="ds-order-cart-product-substitution__image"
                style={{ "background-image": "url(" + this.substitutedProduct.oldProduct.image + ")" }}>
           </div>
-          <span class="gbx-order-cart-product-substitution__name">
+          <span class="ds-order-cart-product-substitution__name">
             x{this.substitutedProduct.oldProduct.quantity} {this.substitutedProduct.oldProduct.name[this.settings.locale]}
           </span>
-          <span class="gbx-order-cart-product-substitution__price">
-            {Greenbox_formatPrice({ price: this.substitutedProduct.oldProduct.totalPrice })}
+          <span class="ds-order-cart-product-substitution__price">
+            {DS_formatPrice({ price: this.substitutedProduct.oldProduct.totalPrice })}
           </span>
         </div>
-        <img src={this.settings.imagesPath + "/arrow-right.png"} class="gbx-order-cart-product-substitution__arrow" />
-        <div class="gbx-order-cart-product-substitution__new-product">
-          <div class="gbx-order-cart-product-substitution__image"
+        <img src={this.settings.imagesPath + "/arrow-right.png"} class="ds-order-cart-product-substitution__arrow" />
+        <div class="ds-order-cart-product-substitution__new-product">
+          <div class="ds-order-cart-product-substitution__image"
                style={{ "background-image": "url(" + this.substitutedProduct.newProduct.image + ")" }}>
           </div>
-          <span class="gbx-order-cart-product-substitution__name">
+          <span class="ds-order-cart-product-substitution__name">
             x{this.substitutedProduct.newProduct.quantity} {this.substitutedProduct.newProduct.name[this.settings.locale]}
           </span>
-          <span class="gbx-order-cart-product-substitution__price">
-            {Greenbox_formatPrice({ price: this.substitutedProduct.newProduct.totalPrice })}
+          <span class="ds-order-cart-product-substitution__price">
+            {DS_formatPrice({ price: this.substitutedProduct.newProduct.totalPrice })}
           </span>
         </div>
       </div>

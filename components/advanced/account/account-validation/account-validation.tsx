@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
  * App imports
  */
 import { Translations } from '../../../interfaces';
-import { Greenbox_setTranslations } from '../../../../utils';
+import { DS_setTranslations } from '../../../../utils';
 import { translations } from './translations';
 import { ValidatorType } from '../../../ui/form/validator/validator-type.enum';
 import { Universe } from '../../../../utils/universe';
@@ -22,7 +22,7 @@ enum PhoneView {
 }
 
 @Component({
-  tag: 'gbx-account-validation',
+  tag: 'ds-account-validation',
   styleUrl: 'account-validation.scss',
 })
 export class GbxModalAccountValidation {
@@ -58,8 +58,8 @@ export class GbxModalAccountValidation {
 
   constructor() {
     this.translations = {
-      phoneValidation: Greenbox_setTranslations(translations, ['gbx_phoneNumber']),
-      cancelValidation: Greenbox_setTranslations(translations, ['gbx_cancelValidation']),
+      phoneValidation: DS_setTranslations(translations, ['gbx_phoneNumber']),
+      cancelValidation: DS_setTranslations(translations, ['gbx_cancelValidation']),
     };
     this.timerInMs = this.baseTimerInMs;
 
@@ -117,7 +117,7 @@ export class GbxModalAccountValidation {
   }
 
   private redirectToHelpCenterButtonClickHandler(): void {
-    window.open('https://support.smood.ch/', '_blank');
+    window.open('https://support.dot-jez.com/', '_blank');
   }
 
   /**
@@ -143,53 +143,53 @@ export class GbxModalAccountValidation {
 
   render() {
     return (
-      <div class="gbx-account-validation">
+      <div class="ds-account-validation">
         {this.isValidationProcessing && (
-          <gbx-loader message={this.translations.phoneValidation.messages.validationInProgress}/>
+          <ds-loader message={this.translations.phoneValidation.messages.validationInProgress}/>
         )}
 
         {this.isResendValidationCodeProcessing && (
-          <gbx-loader message={this.translations.phoneValidation.messages.resendValidationCodeInProgress}/>
+          <ds-loader message={this.translations.phoneValidation.messages.resendValidationCodeInProgress}/>
         )}
 
-        <gbx-title
+        <ds-title
           titleType={TitleType.TITLE2}
-          useSnack={true}
-          titleMods={['auth', 'registered']}
+          
+          mods={['auth', 'registered']}
         >
           {this.translations.phoneValidation.title}
-          </gbx-title>
+          </ds-title>
 
-        <p class="gbx-phone-validation-content">
+        <p class="ds-phone-validation-content">
           <span>{this.translations.phoneValidation.paragraph.or}</span>
 
-          <span class="gbx-phone-validation-content__resend-code">
-            <gbx-button
+          <span class="ds-phone-validation-content__resend-code">
+            <ds-button
               onClick={this.resendCodeClickHandler}
-              useSnack={true}
+              
               buttonLevel={ButtonLevel.LINK}
               isDisabled={!this.canUserRequestNewCode}
             >
               {this.translations.phoneValidation.paragraph.resend}
-            </gbx-button>
+            </ds-button>
           </span>
 
-          <span class="gbx-phone-validation-content__countdown">
+          <span class="ds-phone-validation-content__countdown">
               ({this.formatCodeExpirationTime()})
             </span>
         </p>
 
         {(this.isResendValidationCodeInError || this.isResendValidationCodeSend) && (
-          <div class="gbx-phone-validation-alert-message">
+          <div class="ds-phone-validation-alert-message">
             {this.isResendValidationCodeInError && (
-              <gbx-alert
+              <ds-alert
                 level={AlertLevel.ERROR}
                 message={this.translations.phoneValidation.messages.errors.resendCode}
               />
             )}
 
             {this.isResendValidationCodeSend && (
-              <gbx-alert
+              <ds-alert
                 level={AlertLevel.VALID}
                 message={this.translations.phoneValidation.messages.valid.resendCode}
               />
@@ -199,7 +199,7 @@ export class GbxModalAccountValidation {
         )}
 
         <form novalidate>
-          <gbx-input-field
+          <ds-input-field
             inputPlaceholder={this.translations.phoneValidation.input.placeholder.replace('%charac%', this.codeLength)}
             inputId="register-phone-validation-digits"
             inputName="digits"
@@ -224,9 +224,9 @@ export class GbxModalAccountValidation {
           />
         </form>
 
-        <div class="gbx-account-validation__button">
-          <gbx-button
-            useSnack={true}
+        <div class="ds-account-validation__button">
+          <ds-button
+            
             buttonLevel={ButtonLevel.PRIMARY}
             buttonMods={["label", "phone-validation", "default"]}
             dataCy={{ pageName: PageName.REGISTRATION, elementName: 'PhoneValidationOK' }}
@@ -234,18 +234,18 @@ export class GbxModalAccountValidation {
             onGbxButtonClick={this.sendCodeButtonClickHandler}
           >
             {this.translations.phoneValidation.buttons.register}
-          </gbx-button>
+          </ds-button>
         </div>
 
-        <div class="gbx-account-validation__button">
-          <gbx-button
-            useSnack={true}
+        <div class="ds-account-validation__button">
+          <ds-button
+            
             buttonMods={['link', 'dotted']}
             buttonLevel={ButtonLevel.LINK}
             onGbxButtonClick={this.redirectToHelpCenterButtonClickHandler}
           >
             {this.translations.phoneValidation.buttons.help}
-          </gbx-button>
+          </ds-button>
         </div>
       </div>
     );

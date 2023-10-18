@@ -1,9 +1,9 @@
-.gbx-button {
-  &.--snack {
+.ds-button {
+  &.--pronto {
     &.--previous {
       font-weight: 500;
       &:before {
-        @include --icon(right-arrow, bottom, snack);
+        @include ds-icon(right-arrow, bottom, pronto);
         transform: rotateZ(180deg);
         padding: 0 0 0 0.5rem;
       }

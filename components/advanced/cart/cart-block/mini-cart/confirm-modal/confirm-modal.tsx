@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, h, Prop } from '@stencil/core';
-import { Greenbox_getDataCy, Greenbox_setTranslations } from '../../../../../../../utils';
+import { DS_getDataCy, DS_setTranslations } from '../../../../../../../utils';
 import { PageName } from '../../../../../../../enums/page-name.enum';
 import { Translations } from '../../../../../../interfaces';
 import { ButtonLevel } from '../../../../../../ui/button/button-level.enum';
@@ -11,7 +11,7 @@ import translations from "./translations";
 })
 export class SNKConfirmModal {
 
-  translations: Translations = Greenbox_setTranslations( translations, 'snkConfirmModal');
+  translations: Translations = DS_setTranslations( translations, 'snkConfirmModal');
 
   @Prop({ reflect: true, mutable: true }) modalTitle: string;
 
@@ -47,13 +47,13 @@ export class SNKConfirmModal {
             <slot name="message" />
           </p>
 
-          <gbx-button
+          <ds-button
             class="snk-confirm-modal__confirm-button"
             useSnack
             buttonLevel={ButtonLevel.PRIMARY}
             buttonMods={[ "cart-block", "checkout", "default", "label" ]}
             onClick={this.confirmButtonClickHandler}
-            data-cy={Greenbox_getDataCy({
+            data-cy={DS_getDataCy({
               pageName: PageName.CART,
               elementName: 'confirm'
             })}
@@ -61,15 +61,15 @@ export class SNKConfirmModal {
             <slot name="labelConfirmButton">
               {this.translations.button.confirm}
             </slot>
-          </gbx-button>
+          </ds-button>
 
-          <gbx-button
+          <ds-button
             class="snk-confirm-modal__cancel-button"
             useSnack
             buttonLevel={ButtonLevel.SECONDARY}
             buttonMods={[ "cart-block", "checkout", "default", "label" ]}
             onClick={this.cancelButtonClickHandler}
-            data-cy={Greenbox_getDataCy({
+            data-cy={DS_getDataCy({
               pageName: PageName.CART,
               elementName: 'cancel'
             })}
@@ -77,7 +77,7 @@ export class SNKConfirmModal {
             <slot name="labelCancelButton">
               {this.translations.button.cancel}
             </slot>
-          </gbx-button>
+          </ds-button>
 
           
         </div>

@@ -1,12 +1,12 @@
 import { Component, Event, EventEmitter, h, Listen, Prop, State } from '@stencil/core';
-import { Greenbox_capitalizeFirstLetter } from '../../../../../utils';
+import { DS_capitalizeFirstLetter } from '../../../../../utils';
 import dayjs from "dayjs";
 
 @Component({
-	tag: 'gbx-input-date',
+	tag: 'ds-input-date',
 	styleUrl: 'input-date.scss'
 })
-export class GreenboxInputDate {
+export class DSInputDate {
   @Prop() isMonthRequired: boolean;
   @Prop() isYearRequired: boolean;
 	@Prop() inputId: string;
@@ -42,8 +42,8 @@ export class GreenboxInputDate {
 
 	componentDidLoad() {
     if (this.isUsedForCreditCard) {
-      const monthElement: HTMLInputElement = document.getElementById("gbx-input-date-month") as HTMLInputElement;
-      const yearElement: HTMLInputElement = document.getElementById("gbx-input-date-year") as HTMLInputElement;
+      const monthElement: HTMLInputElement = document.getElementById("ds-input-date-month") as HTMLInputElement;
+      const yearElement: HTMLInputElement = document.getElementById("ds-input-date-year") as HTMLInputElement;
 
       if (monthElement) {
         monthElement.autocomplete = "cc-exp-month";
@@ -64,7 +64,7 @@ export class GreenboxInputDate {
       return;
     }
 
-		const capitalizedName = Greenbox_capitalizeFirstLetter(name);
+		const capitalizedName = DS_capitalizeFirstLetter(name);
 
     if (name === 'month' && (intValue < 0 || intValue > 12)) {
       this.isMonthInError = true;
@@ -92,16 +92,16 @@ export class GreenboxInputDate {
 	render() {
 		return (
 			<div class={{
-			  "gbx-input-date": true,
+			  "ds-input-date": true,
         "--error": (this.isMonthRequired && this.isMonthInError) || (this.isYearRequired && this.isYearInError),
       }}>
-				<gbx-icon iconMods={['secure-field', 'date']} />
+				<ds-icon iconMods={['secure-field', 'date']} />
 				<input
           class={{
-            "gbx-input-date__month": true,
+            "ds-input-date__month": true,
             "--error": this.isMonthRequired && this.isMonthInError
           }}
-          id="gbx-input-date-month"
+          id="ds-input-date-month"
           onBlur={this.inputChangeHandler}
 					onChange={this.inputChangeHandler}
 					onInput={this.inputChangeHandler}
@@ -115,10 +115,10 @@ export class GreenboxInputDate {
 					/>
 				<input
           class={{
-            "gbx-input-date__year": true,
+            "ds-input-date__year": true,
             "--error": this.isYearRequired && this.isYearInError
           }}
-          id="gbx-input-date-year"
+          id="ds-input-date-year"
 					onBlur={this.inputChangeHandler}
 					onChange={this.inputChangeHandler}
           onInput={this.inputChangeHandler}

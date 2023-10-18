@@ -28,7 +28,7 @@ export const translations = {
       links: {
 				resetPassword: "J'ai oublié mon mot de passe",
 			},
-      title: "Se connecter à Smood",
+      title: "Se connecter à ",
       
     }
   },
@@ -62,7 +62,7 @@ export const translations = {
       links: {
 				resetPassword: "I forgot my password",
 			},
-      title: "Login to Smood",
+      title: "Login to ",
     }
   },
   de: {
@@ -95,7 +95,7 @@ export const translations = {
       links: {
 				resetPassword: "Ich habe mein Passwort vergessen",
 			},
-      title: "Anmelden bei Smood",
+      title: "Anmelden bei ",
     }
   },
   it: {
@@ -128,7 +128,7 @@ export const translations = {
       links: {
 				resetPassword: "Ho dimenticato la password",
 			},
-      title: "Accedere a Smood",
+      title: "Accedere a ",
     }
   }
 };

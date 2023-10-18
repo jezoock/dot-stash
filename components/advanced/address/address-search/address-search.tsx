@@ -1,11 +1,11 @@
 import { Component, h, Prop, Listen, State, Watch } from "@stencil/core";
 import dayjs from 'dayjs';
-import { Greenbox_getAppLocale } from '../../../utils';
+import { DS_getAppLocale } from '../../../utils';
 import "dayjs/locale/fr";
 import "dayjs/locale/en";
 import "dayjs/locale/de";
 import "dayjs/locale/it";
-dayjs.locale(Greenbox_getAppLocale());
+dayjs.locale(DS_getAppLocale());
 import { Store, Action } from "@stencil/redux";
 import { translations } from "./translations";
 import {
@@ -22,10 +22,10 @@ const AddressAccuracy = {
 };
 
 @Component({
-  tag: "gbx-address-search",
+  tag: "ds-address-search",
   styleUrl: "address-search.scss"
 })
-export class GreenboxAddressSearch {
+export class DSAddressSearch {
 
   @Prop() accuracyRequired: string = "streetNumber";
   @Prop() accuracyLevel: number = AddressAccuracy[this.accuracyRequired] || 0;
@@ -148,15 +148,15 @@ export class GreenboxAddressSearch {
     return (
       <div
         class={{
-          "gbx-address-search": true,
+          "ds-address-search": true,
           [`--${this.displayMode}`]: !!this.displayMode,
           [`--${this.mode}`]: true
         }}
       >
 
         {this.mode === "geolocate" && (
-          <div class="gbx-address-search__autocomplete">
-            <gbx-address-autocomplete
+          <div class="ds-address-search__autocomplete">
+            <ds-address-autocomplete
               ref={el => (this.autocompleteElement = el)}
               address={this.address}
               locale={this.settings.locale}
@@ -164,7 +164,7 @@ export class GreenboxAddressSearch {
               pageName={this.pageName}
             />
             {this.notification?.messages?.length > 0 && (
-              <gbx-notification
+              <ds-notification
                 messages={this.notification.messages}
                 animation={this.notification.animation}
                 type={this.notification.type}
@@ -174,8 +174,8 @@ export class GreenboxAddressSearch {
         )}
 
         {this.mode === "list" && (
-          <div class="gbx-address-search__selector">
-            <gbx-address-selector
+          <div class="ds-address-search__selector">
+            <ds-address-selector
               locale={this.settings.locale}
               addresses={this.user.user.addresses}
               defaultAddress={displayedAddress}

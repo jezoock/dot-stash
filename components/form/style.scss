@@ -1,6 +1,6 @@
 @import "input/phone/input-phone";
 
-.gbx-field {
+.ds-field {
   font-family: $font-main;
 
   & > label {
@@ -27,7 +27,7 @@
     }
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     margin: 0 0 0.8rem 0;
     font-size: $text_font-size-1;
 

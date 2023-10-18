@@ -1,4 +1,4 @@
-.gbx-order-messages {
+.ds-order-messages {
   margin-left: 10px;
   &__add-message {
     &-container {
@@ -28,13 +28,13 @@
       @include --color-set(color-2);
       &:before {
         font-size: 1.2rem;
-        @include --icon(plus);
+        @include ds-icon(plus);
       }
     }
   }
 }
 
-.gbx-order-message {
+.ds-order-message {
   position: relative;
   &:after {
     width: 0;
@@ -79,7 +79,7 @@
       left: 40px;
     }
   }
-  &.--smood {
+  &.--pronto {
     padding: 0;
     margin: 0 0 1.2rem 0;
     & > div {

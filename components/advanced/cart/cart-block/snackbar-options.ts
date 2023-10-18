@@ -1,7 +1,7 @@
-import { Greenbox_getAppLocale } from "../../../../../utils";
+import { DS_getAppLocale } from "../../../../../utils";
 import { translations } from "./translations";
 
-const { [Greenbox_getAppLocale()]: { gbx_cartBlock: { snackBar: snackBarTranslations } } } = translations;
+const { [DS_getAppLocale()]: { gbx_cartBlock: { snackBar: snackBarTranslations } } } = translations;
 
 export const SNACKBAR_OPTIONS = {
   "quantity-decreased": {

@@ -1,4 +1,4 @@
-.gbx-button {
+.ds-button {
 
   &.--cart-icon, &.--cart-icon-resto {
     padding: 0;
@@ -32,7 +32,7 @@
       filter: brightness(0) invert(1);
     }
   }
-  &.--snack {
+  &.--pronto {
     &.--cart-modal,
     &.--cart-block {
       &.--close {
@@ -45,7 +45,7 @@
           font-size: 1rem;
           font-weight: bold;
           color: snk-color( primary, base);
-          @include --icon(delete, baseline, snack);
+          @include ds-icon(delete, baseline, pronto);
         }
       }
     }

@@ -1,11 +1,11 @@
 @import "./scss/button.scss";
-.gbx-login {
+.ds-login {
   &-form {
     padding: 1.5rem 0 0 0;
     & > fieldset {
       padding: 0 0 1.5rem 0;
     }
-    .gbx-alert {
+    .ds-alert {
       font-size: 16px;
       padding: 0;
     }
@@ -17,7 +17,7 @@
     }
   }
 
-  .gbx-login-social {
+  .ds-login-social {
     & > span {
       display: block;
       font-family: $font-main;
@@ -26,11 +26,11 @@
       font-size: 1.125rem;
       padding: 1rem 0 0 0;
     }
-    .gbx-login-social-buttons {
+    .ds-login-social-buttons {
       display: flex;
       justify-content: space-between;
       padding: 1.25rem 0;
-      .gbx-button {
+      .ds-button {
         width: 86px;
         height: 51px;
         background-position: center;
@@ -40,7 +40,7 @@
     }
   }
 
-  .gbx-login-app {
+  .ds-login-app {
     display: flex;
     flex-direction: column;
     & > span {
@@ -49,11 +49,11 @@
       font-size: 1.125rem;
     }
 
-    .gbx-login-app-buttons {
+    .ds-login-app-buttons {
       display: flex;
       justify-content: space-between;
       margin: 1.2rem 0 1.2rem 0;
-      .gbx-button {
+      .ds-button {
         width: 145px;
         height: 43px;
         background-position: center;
@@ -64,7 +64,7 @@
     }
   }
 
-  .gbx-login-cgu {
+  .ds-login-cgu {
     color: snk-color(gray, dark);
     padding: 0.5rem 0 0 0;
     text-align: justify;
@@ -73,41 +73,41 @@
 }
 
 @media (min-width: $grid-md-min) and (max-width: $grid-lg-max) {
-  .gbx-login {
+  .ds-login {
     padding: 0;
-    .gbx-login-form {
+    .ds-login-form {
       & > fieldset {
         margin: 0.3rem 0 0.3rem 0;
       }
     }
 
-    .gbx-login-social {
+    .ds-login-social {
       & > span {
         font-family: $font-main;
         font-size: 14px;
       }
-      .gbx-login-social-buttons {
+      .ds-login-social-buttons {
         margin: 0.3rem 0 0.3rem 0;
-        .gbx-button {
+        .ds-button {
           width: 60px;
           height: 40px;
         }
       }
     }
 
-    .gbx-login-app {
+    .ds-login-app {
       & > span {
         font-family: $font-main;
         font-size: 15px;
       }
-      .gbx-login-app-buttons {
+      .ds-login-app-buttons {
         margin: 0.3rem 0 0.3rem 0;
-        .gbx-button {
+        .ds-button {
           width: 125px;
           height: 35px;
         }
       }
-      .gbx-login-cgu {
+      .ds-login-cgu {
         font-size: 15px;
       }
     }

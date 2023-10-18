@@ -1,13 +1,13 @@
 import { Component, EventEmitter, h, Prop, State, Event } from '@stencil/core';
 import { SelectOption } from './select-option.interface';
-import { Greenbox_getDataCy } from "../../../../utils";
+import { DS_getDataCy } from "../../../../utils";
 import { DataCy } from "../../../../utils/data-cy";
 
 /**
  * This component define a select form.
  */
 @Component({
-  tag: 'gbx-select',
+  tag: 'ds-select',
   styleUrl: './select.scss'
 })
 export class GbxSelect {
@@ -61,12 +61,12 @@ export class GbxSelect {
     return (
       <select
         class={{
-          'gbx-select': true,
+          'ds-select': true,
           '--invalid': !this.isValid && this.isTouched,
         }}
         onChange={this.onChangeValue}
         required={this.isRequired}
-        data-cy={Greenbox_getDataCy({
+        data-cy={DS_getDataCy({
           ...this.dataCy,
           elementType: "Select"
         })}

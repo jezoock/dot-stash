@@ -2,13 +2,13 @@
 import { Component, h, State, Event, EventEmitter, Listen } from '@stencil/core';
 import { translations } from './translations';
 import { ErrorCodeList } from '../../../../../interfaces';
-import { Greenbox_setTranslations } from '../../../../../../utils';
+import { DS_setTranslations } from '../../../../../../utils';
 
 @Component({
-	tag: 'gbx-password-change-block',
+	tag: 'ds-password-change-block',
 	styleUrl: 'password-change-block.scss'
 })
-export class GreenboxPasswordChangeBlock {
+export class DSPasswordChangeBlock {
 
 	@State() hasError: boolean = false;
 	@State() messages: any;
@@ -35,7 +35,7 @@ export class GreenboxPasswordChangeBlock {
 	passwordConfirmValue: string;
 
 	constructor() {
-    this.translations = Greenbox_setTranslations(translations, ['gbx_passwordChangeBlock']);
+    this.translations = DS_setTranslations(translations, ['gbx_passwordChangeBlock']);
 
 		this.formSubmitHandler = this.formSubmitHandler.bind(this);
 		this.passwordChangeHandler = this.passwordChangeHandler.bind(this);
@@ -96,22 +96,22 @@ export class GreenboxPasswordChangeBlock {
 
   render() {
     return (
-      <gbx-block
+      <ds-block
         blockTag="section"
         blockMods={['account', 'password-change']}
       >
 
-				<gbx-title
+				<ds-title
 					slot="header"
 					heading={3}
-					titleMods={["block", "main"]}
+					mods={["block", "main"]}
 				>
 					{this.translations.title.passwordChange}
-				</gbx-title>
+				</ds-title>
 
 				<form
 					class={{
-						"gbx-form": true,
+						"ds-form": true,
 						"--default": true
 					}}
 					id="resetPasswordForm"
@@ -119,14 +119,14 @@ export class GreenboxPasswordChangeBlock {
 				>
 
 					{this.messages && (
-						<gbx-message
+						<ds-message
 							messages={this.messages}
 							messageMods={[this.hasError ? "error" : "valid", "form"]}
 							messageTimer={3000}
 						/>
 					)}
 
-					<fieldset class="gbx-form__input">
+					<fieldset class="ds-form__input">
 						<label htmlFor="profileFormPassword">
 							{this.translations.label.newPassword}
 						</label>
@@ -139,7 +139,7 @@ export class GreenboxPasswordChangeBlock {
 						/>
 					</fieldset>
 
-					<fieldset class="gbx-form__input">
+					<fieldset class="ds-form__input">
 						<label htmlFor="profileFormConfirmPassword">
 							{this.translations.label.confirmPassword}
 						</label>
@@ -151,11 +151,11 @@ export class GreenboxPasswordChangeBlock {
 						/>
 					</fieldset>
 
-					<fieldset class="gbx-form__input">
+					<fieldset class="ds-form__input">
 						<button
 							type="submit"
 							class={{
-								"gbx-button": true,
+								"ds-button": true,
 								"--profile": true,
 								"--color-2": true
 							}}>
@@ -166,7 +166,7 @@ export class GreenboxPasswordChangeBlock {
 				
 				</form>
 
-			</gbx-block>
+			</ds-block>
 		);
 	}
 	

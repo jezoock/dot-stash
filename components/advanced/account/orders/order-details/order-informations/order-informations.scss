@@ -1,4 +1,4 @@
-.gbx-order-cart-pickup-address {
+.ds-order-cart-pickup-address {
   font-weight: 700;
 
   &__shop-name {
@@ -14,7 +14,7 @@
     }
 
     &::before {
-      @include --icon(mapmarker);
+      @include ds-icon(mapmarker);
       margin: 0 0.6rem 0 0;
     }
 

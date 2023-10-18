@@ -1,5 +1,5 @@
-/* .gbx-input,
-.gbx-input-password {
+/* .ds-input,
+.ds-input-password {
   font-family: $font-main;
 
   &__input {
@@ -12,14 +12,14 @@
       padding: 0.7rem;
     }
 
-    @media (max-width: $grid-sm-max) {
+    @include break-p(null, sm) {
       font-size: $text_font-size-1;
     }
   }
 
   &.--valid {
-    & .gbx-input,
-    & .gbx-input-password {
+    & .ds-input,
+    & .ds-input-password {
       &__input {
         border: 1px solid snk-color(status, valid);
       }
@@ -27,8 +27,8 @@
   }
   
   &.--error {
-    & .gbx-input,
-    & .gbx-input-password {
+    & .ds-input,
+    & .ds-input-password {
       &__input {
         border: 1px solid snk-color(status, error);
       }
@@ -36,8 +36,8 @@
   }
 
   &.--disabled {
-    & .gbx-input,
-    & .gbx-input-password {
+    & .ds-input,
+    & .ds-input-password {
       &__input {
         background-color: snk-color(gray, light);
       }

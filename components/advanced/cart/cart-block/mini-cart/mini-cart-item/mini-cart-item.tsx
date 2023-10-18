@@ -8,27 +8,27 @@ import {
   Watch,
   State
 } from "@stencil/core";
-import { debounce, Greenbox_formatPrice, Greenbox_setTranslations } from "../../../../../../../utils";
+import { debounce, DS_formatPrice, DS_setTranslations } from "../../../../../../../utils";
 import { translations } from "./translations";
 import { Translations } from "../../../../../../interfaces";
 import { Product } from "../../../../../../../../api-types";
 import { ButtonLevel } from "../../../../../../ui/button/button-level.enum";
 import { TooltipPosition } from "../../../../../../ui/tooltip/tooltip-position.enum";
 
-const componentName = "gbx-mini-cart-item";
+const componentName = "ds-mini-cart-item";
 
 @Component({
-  tag: "gbx-mini-cart-item",
+  tag: "ds-mini-cart-item",
   styleUrl: "mini-cart-item.scss"
 })
-export class GreenboxMiniCartItem {
+export class DSMiniCartItem {
 
   @Prop({ mutable: true }) item: Product | any;
   @Prop({ mutable: true }) readonly: boolean = false;
   @Prop({ mutable: true, reflect: true }) debounceDelay: number = 250;
   @Prop() isCartActive: boolean;
 
-  translations: Translations = Greenbox_setTranslations(translations, ['gbx_miniCartItem']);
+  translations: Translations = DS_setTranslations(translations, ['gbx_miniCartItem']);
 
   @State() displayedPrices: any = { totalPrice: 0, oldTotalPrice: 0, discount: 0 };
 
@@ -137,21 +137,21 @@ export class GreenboxMiniCartItem {
           <div class={`${componentName}__name`}>
             {this.item.name}
             {this.item.locked && (
-              <gbx-tooltip
+              <ds-tooltip
                 class={{
                   [`${componentName}__lock`]: true,
                   "--is-inactive": !this.isCartActive,
                 }}
                 position={TooltipPosition.TOP}
                 icon="lock"
-                containerSelector=".gbx-mini-cart__body"
+                containerSelector=".ds-mini-cart__body"
               >
                 {this.isCartActive && (
                   <div slot="message">
                     {this.translations.frozenProductsAdded}
                   </div>
                 )}
-              </gbx-tooltip>
+              </ds-tooltip>
             )}
           </div>
 
@@ -168,7 +168,7 @@ export class GreenboxMiniCartItem {
           <div class={`${componentName}__pricing`}>
             {!this.item.isOffered && (
               <span class={`${componentName}__current-price`}>
-                {Greenbox_formatPrice({
+                {DS_formatPrice({
                   price: this.displayedPrices.totalPrice,
                   currency: false,
                   cents: true
@@ -178,7 +178,7 @@ export class GreenboxMiniCartItem {
 
             {(hasDiscount || this.item.isOffered) && (
               <strong class={`${componentName}__old-price`}>
-                {Greenbox_formatPrice({
+                {DS_formatPrice({
                   price: this.displayedPrices.oldTotalPrice,
                   currency: false,
                   cents: true
@@ -195,8 +195,8 @@ export class GreenboxMiniCartItem {
 
           {!this.item.locked && this.isCartActive && !this.item.isOffered && (
             <div class={`${componentName}__actions`}>
-              <gbx-button
-                useSnack={true}
+              <ds-button
+                
                 buttonLevel={ButtonLevel.LINK}
                 class={{
                   [`${componentName}__edit-link`]: true,
@@ -206,8 +206,8 @@ export class GreenboxMiniCartItem {
                 onClick={this.modifyButtonClickHandler}
               >
                 {this.translations.edit}
-              </gbx-button>
-              <gbx-mini-cart-quantity-selector
+              </ds-button>
+              <ds-mini-cart-quantity-selector
                 class={`${componentName}__quantity-selector`}
                 defaultQuantity={this.item.quantity}
                 maxQuantity={this.item.stock}

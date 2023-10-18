@@ -1,5 +1,5 @@
 import { Prop, h, Component, EventEmitter, Event, State } from "@stencil/core";
-import { Greenbox_getDataCy } from "../../../../utils";
+import { DS_getDataCy } from "../../../../utils";
 import { DataCy } from "../../../../utils/data-cy";
 import { FormValidator } from "../validator/form-validator";
 import { Validator } from "../validator/validator";
@@ -85,7 +85,7 @@ export class SnkTextarea {
           cols={this.columns}
           maxLength={this.maxLength}
           value={this.content}
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: 'textarea'
           })}

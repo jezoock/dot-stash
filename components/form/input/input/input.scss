@@ -1,4 +1,4 @@
-.gbx-input {
+.ds-input {
   font-family: $font-main;
   font-weight: 600;
   background: snk-color(gray, lighter);
@@ -81,7 +81,7 @@
       width: 100%;
     }
     &:after {
-      @include --icon-font(baseline, snack);
+      @include --icon-font(baseline, pronto);
       font-size: 0.75rem;
       position: absolute;
       top: 50%;
@@ -95,10 +95,10 @@
       border-color: transparent;
     }
     &:after {
-      @include --icon-content(check, snack);
+      @include --icon-content(check, pronto);
       color: snk-color(status, valid);
     }
-    & .gbx-input {
+    & .ds-input {
       &__input {
       }
     }
@@ -109,17 +109,17 @@
       border-color: snk-color(status, error);
     }
     &:after {
-      @include --icon-content(delete, snack);
+      @include --icon-content(delete, pronto);
       color: snk-color(status, error);
     }
-    & .gbx-input {
+    & .ds-input {
       &__input {
       }
     }
   }
 
   &.--disabled {
-    & .gbx-input {
+    & .ds-input {
       &__input {
         background-color: snk-color(gray, light);
       }

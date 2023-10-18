@@ -7,7 +7,7 @@ export const translations = {
 				reorder: "Re-commander"
 			},
 			meta: {
-				title: "Mes commandes | Smood"
+				title: "Mes commandes | "
 			},
 			noOrder: "Aucune commande",
 			status: {
@@ -65,7 +65,7 @@ export const translations = {
 				reorder: "Reorder"
 			},
 			meta: {
-				title: "My orders | Smood"
+				title: "My orders | "
 			},
 			noOrder: "No orders",
 			status: {
@@ -122,7 +122,7 @@ export const translations = {
 				reorder: "Erneut bestellen"
 			},
 			meta: {
-				title: "Meine Bestellungen | Smood"
+				title: "Meine Bestellungen | "
 			},
 			noOrder: "Keine Bestellung",
 			status: {
@@ -180,7 +180,7 @@ export const translations = {
 				reorder: "Riordina"
 			},
 			meta: {
-				title: "I miei ordini | Smood"
+				title: "I miei ordini | "
 			},
 			noOrder: "Nessun ordine",
 			status: {

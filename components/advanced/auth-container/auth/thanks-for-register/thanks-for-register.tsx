@@ -1,6 +1,6 @@
 import { Component, h, Prop, Event, EventEmitter } from "@stencil/core";
 import { Translations } from "../../../../interfaces";
-import { Greenbox_setTranslations } from "../../../../../utils";
+import { DS_setTranslations } from "../../../../../utils";
 import { translations } from "./translations";
 import { ButtonLevel } from "../../../../ui/button/button-level.enum";
 import { TitleType } from "../../../../ui/title/title-type.enum";
@@ -8,7 +8,7 @@ import { PageName } from "../../../../../enums/page-name.enum";
 import { CguType } from "../../../../toolkit/form/checkbox/cgu/cgu-type.enum";
 
 @Component({
-  tag: 'gbx-thanks-for-registering',
+  tag: 'ds-thanks-for-registering',
   styleUrl: 'thanks-for-register.scss',
 })
 export class GbxThanksForRegistering {
@@ -19,7 +19,7 @@ export class GbxThanksForRegistering {
   private translations: Translations;
 
   constructor() {
-    this.translations = Greenbox_setTranslations(translations, 'gbx_thanksForRegistering');
+    this.translations = DS_setTranslations(translations, 'gbx_thanksForRegistering');
     this.buttonClickHandler = this.buttonClickHandler.bind(this);
   }
 
@@ -33,40 +33,40 @@ export class GbxThanksForRegistering {
     const startExploringLabel = this.translations.startExploring.toUpperCase();
 
     return (
-      <div class="gbx-thanks-for-registering__content-wrapper">
-          <gbx-title
+      <div class="ds-thanks-for-registering__content-wrapper">
+          <ds-title
             titleType={TitleType.TITLE2}
-            useSnack={true}
-            titleMods={['auth', 'registered']}
+            
+            mods={['auth', 'registered']}
           >
             {this.translations.niceToMeetYou}
-          </gbx-title>
+          </ds-title>
 
-          <p class="gbx-thanks-for-registering__text-paragraph">
+          <p class="ds-thanks-for-registering__text-paragraph">
             {greetingWithFirstName}
           </p>
 
-          <div class="gbx-thanks-for-registering__happy-bag" />
+          <div class="ds-thanks-for-registering__happy-bag" />
 
-          <p class="gbx-thanks-for-registering__text-paragraph">
+          <p class="ds-thanks-for-registering__text-paragraph">
             {this.translations.introduction}
           </p>
-          <p class="gbx-thanks-for-registering__text-paragraph">
+          <p class="ds-thanks-for-registering__text-paragraph">
             {this.translations.bestDealsPromise}
           </p>
 
-          <gbx-button
-            useSnack={true}
+          <ds-button
+            
             buttonMods={["label", "registered", "default"]}
             dataCy={{ pageName: PageName.REGISTRATION, elementName: 'CloseModal' }}
             buttonLevel={ButtonLevel.PRIMARY}
             onGbxButtonClick={this.buttonClickHandler}
           >
               {startExploringLabel}
-            </gbx-button>
+            </ds-button>
 
-          <div class="gbx-thanks-for-registering__cgu-wrapper">
-            <gbx-cgu
+          <div class="ds-thanks-for-registering__cgu-wrapper">
+            <ds-cgu
               displayedView={CguType.REGISTER}
               displayCheckbox={false}
             />

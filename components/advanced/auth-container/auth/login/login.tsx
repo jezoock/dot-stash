@@ -1,7 +1,7 @@
 import { Component, Event, EventEmitter, h, Listen, Prop, State } from '@stencil/core';
 import { AuthDisplayedView } from "../auth-displayed-view.enum";
 import { ButtonLevel } from "../../../../ui/button/button-level.enum";
-import { Greenbox_setTranslations, Greenbox_triggerTrackingEvent } from "../../../../../utils";
+import { DS_setTranslations, DS_triggerTrackingEvent } from "../../../../../utils";
 import { ValidatorType } from "../../../../ui/form/validator/validator-type.enum";
 import { translations } from "./translations";
 
@@ -12,7 +12,7 @@ import { CguType } from "../../../../toolkit/form/checkbox/cgu/cgu-type.enum";
 import jwt from 'jwt-decode';
 
 @Component({
-  tag: "gbx-login",
+  tag: "ds-login",
   styleUrl: "login.scss",
 })
 export class GbxLogin {
@@ -50,7 +50,7 @@ export class GbxLogin {
   }
 
   constructor() {
-    this.translations = Greenbox_setTranslations(translations, ["gbx_login"]);
+    this.translations = DS_setTranslations(translations, ["gbx_login"]);
 
     this.createAccountButtonClickHandler = this.createAccountButtonClickHandler.bind(this);
     this.loginButtonClickHandler = this.loginButtonClickHandler.bind(this);
@@ -63,7 +63,7 @@ export class GbxLogin {
 
   private createAccountButtonClickHandler() {
     this.request_changeView_event.emit({ view: AuthDisplayedView.REGISTER });
-    Greenbox_triggerTrackingEvent({ eventName: 'REQUEST_SIGNUP', eventDetails: {} });
+    DS_triggerTrackingEvent({ eventName: 'REQUEST_SIGNUP', eventDetails: {} });
   }
 
   private forgotPassButtonClickHandler() {
@@ -197,7 +197,7 @@ export class GbxLogin {
       button.setAttribute("disabled", "disabled");
     }
     window["FB"].getLoginStatus((response) => {
-      // Try authenticate from Smood Api
+      // Try authenticate from  Api
       if (response.status == "connected") {
         this.facebookAuthentManager(response);
         if (button) {
@@ -320,30 +320,30 @@ export class GbxLogin {
 
   render() {
     return (
-      <div class="gbx-login">
-        <gbx-title
+      <div class="ds-login">
+        <ds-title
           titleType={TitleType.TITLE2}
-          titleMods="auth, login"
+          mods="auth, login"
           heading={2}
-          useSnack={true}
+          
           dataCy={{
             pageName: PageName.LOGIN,
             elementName: "loginTitle",
           }}
         >
           {this.translations.title}
-        </gbx-title>
+        </ds-title>
 
-        <div class="gbx-login-form" id="LoginForm">
+        <div class="ds-login-form" id="LoginForm">
           {this.hasLoginFailed && this.isGrocery && (
-            <gbx-alert
+            <ds-alert
               level={AlertLevel.ERROR}
               message={this.translations.common.emailNotMatching}
             />
           )}
           <div class="errors"></div>
           <fieldset>
-            <gbx-input-field
+            <ds-input-field
               id="input-field-email"
               inputName="email"
               onKeyPress={this.inputKeyPressHandler}
@@ -367,7 +367,7 @@ export class GbxLogin {
           </fieldset>
 
           <fieldset>
-            <gbx-input-field
+            <ds-input-field
               id="input-field-password"
               inputName="password"
               inputId="login-password"
@@ -389,7 +389,7 @@ export class GbxLogin {
             />
           </fieldset>
 
-          <gbx-button
+          <ds-button
             buttonType="button"
             buttonMods={["forgotPass"]}
             dataCy={{
@@ -399,14 +399,14 @@ export class GbxLogin {
             onGbxButtonClick={this.forgotPassButtonClickHandler}
           >
             <span>{this.translations.links.resetPassword}</span>
-          </gbx-button>
+          </ds-button>
 
-          <gbx-button
+          <ds-button
             buttonType="submit"
             buttonMods={["label", "login", "default"]}
             buttonId="loginButton"
             isDisabled={!this.isValidForm}
-            useSnack={true}
+            
             dataCy={{
               pageName: PageName.LOGIN,
               elementName: "loginButtonLogin",
@@ -415,13 +415,13 @@ export class GbxLogin {
             onGbxButtonClick={this.loginButtonClickHandler}
           >
             {this.translations.button.login}
-          </gbx-button>
+          </ds-button>
 
-          <gbx-button
+          <ds-button
             buttonType="button"
             buttonMods={["label", "createAccount", "default"]}
             buttonId="createAccountButton"
-            useSnack={true}
+            
             dataCy={{
               pageName: PageName.LOGIN,
               elementName: "loginButtonCreateAccount",
@@ -430,13 +430,13 @@ export class GbxLogin {
             onGbxButtonClick={this.createAccountButtonClickHandler}
           >
             {this.translations.button.createAccount}
-          </gbx-button>
+          </ds-button>
         </div>
 
-        <div class="gbx-login-social">
+        <div class="ds-login-social">
           <span>{this.translations.label.socialLogin}</span>
-          <div class="gbx-login-social-buttons">
-            <gbx-button
+          <div class="ds-login-social-buttons">
+            <ds-button
               buttonType="button"
               buttonMods={["facebook"]}
               buttonId="facebookConnect"
@@ -447,7 +447,7 @@ export class GbxLogin {
               onGbxButtonClick={this.handleFacebookConnect}
             />
 
-            <gbx-button
+            <ds-button
               buttonType="button"
               buttonMods={["apple"]}
               buttonId="appleConnect"
@@ -458,7 +458,7 @@ export class GbxLogin {
               onGbxButtonClick={this.handleAppleConnect}
             />
 
-            <gbx-button
+            <ds-button
               buttonType="button"
               buttonMods={["google"]}
               buttonId="googleConnect"
@@ -471,10 +471,10 @@ export class GbxLogin {
           </div>
         </div>
 
-        <div class="gbx-login-app">
+        <div class="ds-login-app">
           <span>{this.translations.label.app}</span>
-          <div class="gbx-login-app-buttons">
-            <gbx-button
+          <div class="ds-login-app-buttons">
+            <ds-button
               buttonType="button"
               buttonMods={["appstore"]}
               dataCy={{
@@ -490,7 +490,7 @@ export class GbxLogin {
               }}
             />
 
-            <gbx-button
+            <ds-button
               buttonType="button"
               buttonMods={["playstore"]}
               dataCy={{
@@ -499,15 +499,15 @@ export class GbxLogin {
               }}
               onGbxButtonClick={() => {
                 window.open(
-                  "https://play.google.com/store/apps/details?id=com.jamtech.marabel.smood",
+                  "https://play.google.com/store/apps/details?id=com.jamtech.marabel.pronto",
                   "_blank",
                   "noopener"
                 );
               }}
             />
           </div>
-          <div class="gbx-login-cgu">
-            <gbx-cgu displayCheckbox={false} displayedView={CguType.LOGIN} />
+          <div class="ds-login-cgu">
+            <ds-cgu displayCheckbox={false} displayedView={CguType.LOGIN} />
           </div>
         </div>
       </div>

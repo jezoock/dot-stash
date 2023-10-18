@@ -20,7 +20,7 @@ export const translations = {
 				header: {
 					address: "Adresse:",
 					delivery: "Livraison: ",
-					deliveryModeDifferentFromSmood: "Ce restaurant livre avec ses propres livreurs.",
+					deliveryModeDifferentFrom: "Ce restaurant livre avec ses propres livreurs.",
 					order: "Commande: ",
 					redelivery: "Relivraison n°: ",
 					restaurant: "Restaurant: ",
@@ -33,7 +33,7 @@ export const translations = {
 				driverHere: "Je suis là !"
 			},
 			meta: {
-				title: "Détail de ma commande %number% | Smood"
+				title: "Détail de ma commande %number% | "
 			},
 			rating: {
 				driver: "Mon avis sur le livreur",
@@ -62,7 +62,7 @@ export const translations = {
 				header: {
 					address: "Address:",
 					delivery: "Delivery: ",
-					deliveryModeDifferentFromSmood: "This restaurant delivers with its own delivery team.",
+					deliveryModeDifferentFrom: "This restaurant delivers with its own delivery team.",
 					order: "Order number: ",
 					redelivery: "Re-delivery number: ",
 					restaurant: "Restaurant: ",
@@ -75,7 +75,7 @@ export const translations = {
 				driverHere: "I'm here!"
 			},
 			meta: {
-				title: "Details of my order %number% | Smood"
+				title: "Details of my order %number% | "
 			},
 			rating: {
 				driver: "My feedback on the deliveryman",
@@ -104,8 +104,8 @@ export const translations = {
 				header: {
 					address: "Adresse:",
 					delivery: "Livraison: ",
-					deliveryModeDifferentFromSmood: "Ce restaurant livre avec ses propres livreurs.",
-					order: "Commande Smood: ",
+					deliveryModeDifferentFrom: "Ce restaurant livre avec ses propres livreurs.",
+					order: "Commande : ",
 					redelivery: "Relivraison n°: ",
 					restaurant: "Restaurant: ",
 					takeaway: "A récupérer: ",
@@ -117,7 +117,7 @@ export const translations = {
 				driverHere: "Je suis là !"
 			},
 			meta: {
-				title: "Détail de ma commande %number% | Smood"
+				title: "Détail de ma commande %number% | "
 			},
 			rating: {
 				driver: "Mon avis sur le livreur",
@@ -146,8 +146,8 @@ export const translations = {
         header: {
           address: "Adresse: ",
           delivery: "Lieferung: ",
-          deliveryModeDifferentFromSmood: "Dieses Restaurant verwendet sein eigenes Lieferteam.",
-          order: "Smood-Bestellung: ",
+          deliveryModeDifferentFrom: "Dieses Restaurant verwendet sein eigenes Lieferteam.",
+          order: "-Bestellung: ",
           redelivery: "Erneute Lieferung Nr.: ",
 					restaurant: "Restaurant:",
           takeaway: "Zum Abholen: ",
@@ -159,7 +159,7 @@ export const translations = {
         driverHere: "Bin da!"
 			},
       meta: {
-        title: "Details Meiner Bestellung %Nummer% | Smood"
+        title: "Details Meiner Bestellung %Nummer% | "
       },
 			rating: {
         driver: "Mein Feedback zum Lieferdienst",

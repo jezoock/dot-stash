@@ -5,13 +5,13 @@ import { TransAddTranslations } from "../../../../../../_redux/actions/localizat
 import { Store, Action } from "@stencil/redux";
 
 @Component({
-  tag: "gbx-order-step",
+  tag: "ds-order-step",
   styleUrl: "order-step.scss"
 })
-export class GreenboxOrderStep {
+export class DSOrderStep {
   @Prop({ mutable: true }) status: string;
   @Prop() takeaway: any;
-  @State() currentStep: number = 0;
+  @State() currentStep = 0;
   @State() steps: any[];
 
   @Prop({ context: "store" }) store: Store;
@@ -107,11 +107,11 @@ export class GreenboxOrderStep {
   render() {
     return (
       this.steps &&
-      <ul class={"gbx-step-list gbx-step-list--steps-" + this.steps.length}>
+      <ul class={"ds-step-list ds-step-list--steps-" + this.steps.length}>
         {this.steps.length > 0 &&
           this.steps.map(step => {
             return (
-              <li class={"gbx-step" + (step.active ? " gbx-step--active" : "")}>
+              <li class={"ds-step" + (step.active ? " ds-step--active" : "")}>
                 <span>{step.label}</span>
               </li>
             );

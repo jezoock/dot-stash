@@ -9,15 +9,15 @@ import {
   State,
 } from "@stencil/core";
 import { translations } from "./translations";
-import { debounce, Greenbox_formatPrice, Greenbox_getImage } from "../../../utils";
+import { debounce, DS_formatPrice, DS_getImage } from "../../../utils";
 import { TooltipPosition } from "../../ui/tooltip/tooltip-position.enum";
 // import { ShoppingBagUpdateAction } from "../../../_redux/actions/shoppingBag";
 
 @Component({
-  tag: "gbx-cart-item",
+  tag: "ds-cart-item",
   styleUrl: "cart-item.scss"
 })
-export class GreenboxCartItem {
+export class DSCartItem {
 
   /**
    * All product informations
@@ -125,7 +125,7 @@ export class GreenboxCartItem {
       name: this.item.name,
       description: this.item.description,
       ingredients: this.item.ingredients,
-      image: Greenbox_getImage(this.item.image ? this.item.image : "unavailable", 490),
+      image: DS_getImage(this.item.image ? this.item.image : "unavailable", 490),
       tags: this.item.tags,
       categories: this.item.categories,
       comment: this.item.comment,
@@ -139,29 +139,29 @@ export class GreenboxCartItem {
 
   render() {
     const selectionToggleClass = {
-      "gbx-cart-item__toggle": true,
+      "ds-cart-item__toggle": true,
       "--selected": this.isSelected,
     };
 
     return (
       <div
         class={{
-          "gbx-cart-item": true,
+          "ds-cart-item": true,
           "--readonly": this.readonly,
           "--unavailable": !!this.item.unavailable,
           [`--${this.mode}`]: this.mode !== ""
         }}>
-        <div class="gbx-cart-item__firstline">
-          <div class="gbx-cart-item__image">
+        <div class="ds-cart-item__firstline">
+          <div class="ds-cart-item__image">
             <img
               src={this.itemImage}
               alt={this.item.name}
             />
           </div>
 
-          <div class="gbx-cart-item__name">
+          <div class="ds-cart-item__name">
             {!this.readonly && this.displayedPrices.discount > 0 && (
-              <div class="gbx-cart-item__name-promo">
+              <div class="ds-cart-item__name-promo">
                 <span>- {this.displayedPrices.discount} %</span>
               </div>
             )}
@@ -173,40 +173,40 @@ export class GreenboxCartItem {
             </a>
             <small>{this.item.quantityDisplay}</small>
             {this.item.locked && this.item.lockedNote && (
-              <span class="gbx-cart-item__locked">
-                <gbx-tooltip
+              <span class="ds-cart-item__locked">
+                <ds-tooltip
                   icon="locked"
                   position={TooltipPosition.RIGHT}
                 >
                   <div
                     slot="message"
-                    class="gbx-cart-item__locked-note"
+                    class="ds-cart-item__locked-note"
                   >
                     {this.item.lockedNote}
                   </div>
-                </gbx-tooltip>
+                </ds-tooltip>
               </span>
             )}
             {this.item.noteToStore && (
               <p>
-                <small class="gbx-cart-item__note-to-store">
+                <small class="ds-cart-item__note-to-store">
                   {this.item.noteToStore || ""}
                 </small>
               </p>
             )}
             {(this.item.choices || []).length > 0 && (
-              <div class="gbx-cart-item__options">
+              <div class="ds-cart-item__options">
                 {this.item.choices.map(choice => {
-                  return <div class="gbx-cart-item__option">{choice.name}</div>;
+                  return <div class="ds-cart-item__option">{choice.name}</div>;
                 })}
               </div>
             )}
           </div>
         </div>
-        <div class="gbx-cart-item__secondline">
+        <div class="ds-cart-item__secondline">
           {!this.readonly && (
-            <div class="gbx-cart-item__controls">
-              <gbx-product-input-quantity
+            <div class="ds-cart-item__controls">
+              <ds-product-input-quantity
                 unitPrice={
                   (this.item.unitPrice || 0) > 0
                     ? this.item.unitPrice
@@ -223,13 +223,13 @@ export class GreenboxCartItem {
             </div>
           )}
           {this.readonly && (
-            <div class="gbx-cart-item__quantity">
+            <div class="ds-cart-item__quantity">
               {this.item.quantity}
             </div>
           )}
 
           {!this.readonly && (
-            <div class="gbx-cart-item__promo">
+            <div class="ds-cart-item__promo">
               {this.item.promotionEffect && (
                 <span>
                   {this.item.promotionEffect}
@@ -238,13 +238,13 @@ export class GreenboxCartItem {
             </div>
           )}
 
-          <div class="gbx-cart-item__price">
+          <div class="ds-cart-item__price">
             <strong>
-              {Greenbox_formatPrice({ price: this.displayedPrices.totalPrice / 100 })}
+              {DS_formatPrice({ price: this.displayedPrices.totalPrice / 100 })}
             </strong>
             {this.displayedPrices.discount > 0 && (
               <span>
-                {Greenbox_formatPrice({ price: this.displayedPrices.oldTotalPrice / 100 })}
+                {DS_formatPrice({ price: this.displayedPrices.oldTotalPrice / 100 })}
               </span>
             )}
           </div>

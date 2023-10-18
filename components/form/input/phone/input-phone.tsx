@@ -7,7 +7,7 @@ import { AsYouType, CountryCode } from 'libphonenumber-js';
 /**
  * App imports
  */
-import { Greenbox_getDataCy, Greenbox_injectSDK } from '../../../../../utils';
+import { DS_getDataCy, DS_injectSDK } from '../../../../../utils';
 import { DataCy } from "../../../../../utils/data-cy";
 
 declare global {
@@ -17,7 +17,7 @@ declare global {
 }
 
 @Component({
-  tag: 'gbx-input-phone',
+  tag: 'ds-input-phone',
   styleUrl:'input-phone.scss',
 })
 export class GbxInputPhone {
@@ -56,7 +56,7 @@ export class GbxInputPhone {
   async componentWillLoad() {
     if (typeof window.intlTelInputUtils === 'undefined') {
       try {
-        await Greenbox_injectSDK('intlTelInput', false);
+        await DS_injectSDK('intlTelInput', false);
         this.intlUtils = window.intlTelInputUtils;
       } catch (e) {
         console.error(e);
@@ -155,8 +155,8 @@ export class GbxInputPhone {
   render() {
     return (
       <div class={{
-        'gbx-input-phone': true,
-        'gbx-input': true,
+        'ds-input-phone': true,
+        'ds-input': true,
         "--phone": true,
         "--ltr-border": true,
         '--valid': this.value && !this.isInError && this.isValueChanged,
@@ -172,7 +172,7 @@ export class GbxInputPhone {
           onBlur={this.inputBlurHandler}
           onInput={this.inputHandler}
           value={this.value}
-          data-cy={Greenbox_getDataCy({
+          data-cy={DS_getDataCy({
             ...this.dataCy,
             elementType: "Input",
             elementName: "Phone",

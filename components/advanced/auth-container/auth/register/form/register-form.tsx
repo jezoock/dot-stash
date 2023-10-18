@@ -4,7 +4,7 @@ import { Component, Event, EventEmitter, h, Listen, Prop, State } from '@stencil
 
 //#region App imports
 import { ValidatorType } from '../../../../../ui/form/validator/validator-type.enum';
-import { Greenbox_getAppSettings, Greenbox_injectSDK, Greenbox_setTranslations } from '../../../../../../utils';
+import { DS_getAppSettings, DS_injectSDK, DS_setTranslations } from '../../../../../../utils';
 import { translations } from './translations';
 import { Translations } from '../../../../../interfaces';
 import { Validators } from '../../../../../ui/form/validator/validators';
@@ -20,7 +20,7 @@ declare global {
 }
 
 @Component({
-  tag: 'gbx-register-form',
+  tag: 'ds-register-form',
   styleUrl: 'register-form.scss',
 })
 export class GbxRegisterForm {
@@ -61,7 +61,7 @@ export class GbxRegisterForm {
   }
 
   constructor() {
-    this.translations = Greenbox_setTranslations(translations, ['gbx_registerForm']);
+    this.translations = DS_setTranslations(translations, ['gbx_registerForm']);
 
     this.register = this.register.bind(this);
     this.cguClickHandler = this.cguClickHandler.bind(this);
@@ -79,7 +79,7 @@ export class GbxRegisterForm {
 
     if (typeof window.grecaptcha === 'undefined') {
       try {
-        await Greenbox_injectSDK('grecaptcha', false);
+        await DS_injectSDK('grecaptcha', false);
         this.grecaptcha = window.grecaptcha;
       } catch (e) {
         console.error(e);
@@ -88,10 +88,10 @@ export class GbxRegisterForm {
       this.grecaptcha = window.grecaptcha;
     }
 
-    if (Greenbox_getAppSettings()?.google_recaptcha_public) {
-      sitekeys = Greenbox_getAppSettings()?.google_recaptcha_public;
+    if (DS_getAppSettings()?.google_recaptcha_public) {
+      sitekeys = DS_getAppSettings()?.google_recaptcha_public;
     } else {
-      sitekeys = Greenbox_getAppSettings()?.credentials?.google?.recaptcha?.publicKey;
+      sitekeys = DS_getAppSettings()?.credentials?.google?.recaptcha?.publicKey;
     }
 
     this.grecaptcha.render("register", {
@@ -147,11 +147,11 @@ export class GbxRegisterForm {
 
   render() {
     return (
-      <form class="gbx-register-form">
+      <form class="ds-register-form">
         {this.isRegisterProcessing && (
-          <gbx-loader message={this.translations.message.registerInProgress} />
+          <ds-loader message={this.translations.message.registerInProgress} />
         )}
-        <gbx-input-field
+        <ds-input-field
           id="input-field-firstname"
           value={this.registerData.firstname}
           inputName="firstname"
@@ -163,7 +163,7 @@ export class GbxRegisterForm {
           ]}
         />
 
-        <gbx-input-field
+        <ds-input-field
           id="input-field-lastname"
           value={this.registerData.lastname}
           inputName="lastname"
@@ -174,7 +174,7 @@ export class GbxRegisterForm {
             { type: ValidatorType.REQUIRED, errorMessage: this.translations.message.error.lastname.required }
           ]}
         />
-        <gbx-input-field
+        <ds-input-field
           id="input-field-email"
           value={this.registerData.email}
           inputName="email"
@@ -187,7 +187,7 @@ export class GbxRegisterForm {
           ]}
         />
 
-        <gbx-input-field
+        <ds-input-field
           id="input-field-phone"
           value={this.registerData.phone}
           inputName="phone"
@@ -200,7 +200,7 @@ export class GbxRegisterForm {
           ]}
         />
 
-        <gbx-input-field
+        <ds-input-field
           id="input-field-password"
           value={this.registerData.password}
           inputName="password"
@@ -220,7 +220,7 @@ export class GbxRegisterForm {
           ]}
         />
 
-        <gbx-input-field
+        <ds-input-field
           id="input-field-confirm-password"
           value={this.registerData.confirmPassword}
           inputName="confirmPassword"
@@ -245,7 +245,7 @@ export class GbxRegisterForm {
           ]}
         />
 
-        <gbx-input-field
+        <ds-input-field
           id="input-field-company"
           value={this.registerData.company}
           inputName="company"
@@ -254,15 +254,15 @@ export class GbxRegisterForm {
           inputPlaceholder={this.translations.label.company}
         />
 
-        <gbx-cgu
+        <ds-cgu
           checkboxId="register-cgu"
           onGbxCGUClick={this.cguClickHandler}
           hasAcceptedCgu={this.registerData.acceptCGU}
         />
 
-        <div class="gbx-register-form__button">
-          <gbx-button
-            useSnack={true}
+        <div class="ds-register-form__button">
+          <ds-button
+            
             buttonMods={['label', 'register', 'default']}
             buttonLevel={ButtonLevel.PRIMARY}
             onGbxButtonClick={this.registerClickHandler}
@@ -270,7 +270,7 @@ export class GbxRegisterForm {
             buttonId="register"
           >
             {this.translations.button.register}
-          </gbx-button>
+          </ds-button>
         </div>
       </form>
     );

@@ -1,4 +1,4 @@
-# gbx-shopping-bag-name
+# ds-shopping-bag-name
 
 
 
@@ -24,13 +24,13 @@ Component used to display and edit shopping bag name
 
 ### Used by
 
- - [gbx-shopping-bag-details](../shopping-bag-details)
+ - [ds-shopping-bag-details](../shopping-bag-details)
 
 ### Graph
 ```mermaid
 graph TD;
-  gbx-shopping-bag-details --> gbx-shopping-bag-name
-  style gbx-shopping-bag-name fill:#f9f,stroke:#333,stroke-width:4px
+  ds-shopping-bag-details --> ds-shopping-bag-name
+  style ds-shopping-bag-name fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

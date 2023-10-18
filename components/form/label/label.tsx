@@ -1,12 +1,12 @@
 import { Component, Event, EventEmitter, h, Prop } from '@stencil/core';
 import { DataCy } from "../../../../utils/data-cy";
-import { Greenbox_getDataCy } from "../../../../utils";
+import { DS_getDataCy } from "../../../../utils";
 
 /**
  * This component define a form label (for input, select etc..)
  */
 @Component({
-  tag: 'gbx-form-label',
+  tag: 'ds-form-label',
   styleUrl: './label.scss'
 })
 export class GbxFormLabel {
@@ -35,11 +35,11 @@ export class GbxFormLabel {
     return (
       <label
         class={{
-          "gbx-form-label": true,
+          "ds-form-label": true,
           "--error": this.isInError,
           "--required": this.isRequired,
         }}
-        data-cy={Greenbox_getDataCy({
+        data-cy={DS_getDataCy({
           ...this.dataCy,
           elementType: "Label"
         })}

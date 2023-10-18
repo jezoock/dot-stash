@@ -3,7 +3,7 @@
 @import "./prices-block.scss";
 @import "./tooltip.scss";
 
-.gbx-cart-summary {
+.ds-cart-summary {
   position: sticky;
   top: 100px;
 
@@ -41,7 +41,7 @@
     margin: 0 0 0 0.5rem;
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     &__header {
       padding: 2rem 1rem 17px 1rem;
     }
@@ -53,13 +53,13 @@
     }
   }
 
-  @media (min-width: $grid-md-min) and (max-width: $grid-md-max) {
+  @include break-p(md, md) {
     &__header {
       padding: 2rem 0 17px 0;
     }
   }
 
-  @media (min-width: $grid-lg-min) {
+  @include break-p(lg) {
     margin-top: 85px;
 
     &__header {

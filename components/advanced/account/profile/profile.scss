@@ -1,7 +1,7 @@
-.gbx-profile {
+.ds-profile {
   position: relative;
-  & .gbx-form {
-    &.gbx-cards-list__form {
+  & .ds-form {
+    &.ds-cards-list__form {
       margin-bottom: 0;
     }
 
@@ -15,7 +15,7 @@
       }
     }
   }
-  & .gbx-radio-old input {
+  & .ds-radio-old input {
     position: absolute;
   }
   & input[type="email"],
@@ -31,18 +31,18 @@
     }
   }
   & #profileForm {
-    & .gbx-error-message,
-    .gbx-error-message--success {
+    & .ds-error-message,
+    .ds-error-message--success {
       margin-top: 10px;
     }
   }
-  & .gbx-profile__add-phone-button {
+  & .ds-profile__add-phone-button {
     font-size: $title_font-size-1;
     width: inherit;
     margin: 1.25rem 0;
     color: color(color-1, base);
     &:before {
-      @include --icon(plus);
+      @include ds-icon(plus);
     }
   }
 
@@ -57,15 +57,15 @@
   }
 }
 
-.gbx-lightbox {
+.ds-lightbox {
   &.--addressDelete {
     &:before {
       @include --gradient(white-2, radial);
     }
-    & .gbx-lightbox {
+    & .ds-lightbox {
       &__container {
         max-width: 80%;
-        & .gbx-modal {
+        & .ds-modal {
           &__header {
             margin: 1rem 0.75rem 1rem 1rem;
           }

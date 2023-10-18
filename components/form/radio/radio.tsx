@@ -7,16 +7,16 @@ import { RadioItemCheckStyle } from './item/radio-item-check-style.enum';
 import { RadioItemStyle } from './item/radio-item-style.enum';
 import { Validator } from '../validator/validator';
 import { ModifierList } from '../../../interfaces';
-import { Greenbox_computeCSSClassList } from '../../../../utils';
+import { DS_computeCSSClassList } from '../../../../utils';
 import { ValidatorType } from '../validator/validator-type.enum';
 import { isFieldRequired } from '../utils';
 //#endregion
 
 @Component({
-  tag: 'gbx-radio',
+  tag: 'ds-radio',
   styleUrl: 'radio.scss'
 })
-export class GreenboxRadio {
+export class DSRadio {
   @Prop({ attribute: 'mods' }) mods: string[] = [];
 
   @Prop() label: string;
@@ -51,7 +51,7 @@ export class GreenboxRadio {
   }
 
   componentWillLoad() {
-    this.CSSClasses = Greenbox_computeCSSClassList("gbx-radio", this.mods);
+    this.CSSClasses = DS_computeCSSClassList("ds-radio", this.mods);
     this.isRequired = isFieldRequired(this.validators);
     this.onClickLabel = this.onClickLabel.bind(this);
   }
@@ -79,15 +79,15 @@ export class GreenboxRadio {
 
     return (
       <div class={this.CSSClasses}>
-        <gbx-form-label
+        <ds-form-label
           fieldLabel={this.label}
           onClickLabel={this.onClickLabel}
           isInError={isInError}
           isRequired={this.isRequired}
         />
 
-        <div class="gbx-radio__list">
-          <gbx-radio-list
+        <div class="ds-radio__list">
+          <ds-radio-list
             itemList={this.itemList}
             radioItemStyle={this.radioItemStyle}
             radioItemCheckStyle={this.radioItemCheckStyle}
@@ -95,8 +95,8 @@ export class GreenboxRadio {
         </div>
 
         {isInError && (
-          <div class="gbx-radio__feedback">
-            <gbx-field-feedback message={this.fieldErrorMessage} />
+          <div class="ds-radio__feedback">
+            <ds-field-feedback message={this.fieldErrorMessage} />
           </div>
         )}
       </div>

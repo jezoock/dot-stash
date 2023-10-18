@@ -3,12 +3,12 @@
 @import "./scss/auth-content.scss";
 
 
-.gbx-js--modal-open #hubspot-messages-iframe-container,
-.gbx-js--sidebar-open #hubspot-messages-iframe-container {
+.ds-js--modal-open #hubspot-messages-iframe-container,
+.ds-js--sidebar-open #hubspot-messages-iframe-container {
   display: none !important;
 } // NE PAS SUPPRIMER MERCI
 
-.gbx-lightbox {
+.ds-lightbox {
   &.--auth {
     position: fixed;
 
@@ -24,12 +24,12 @@
       background: rgba(0, 0, 0, 0.3);
     }
 
-    & .gbx-lightbox {
+    & .ds-lightbox {
       &__container {
         max-width: none;
         max-height: none;
 
-        & .gbx-modal {
+        & .ds-modal {
           max-height: none;
           border: unset;
 
@@ -41,9 +41,9 @@
     }
 
     &.--restaurant {
-      & .gbx-lightbox {
+      & .ds-lightbox {
         &__container {
-          & .gbx-modal {
+          & .ds-modal {
             top: 50%;
             transform: translateY(-50%);
           }
@@ -54,9 +54,9 @@
 
   @media (min-width: $grid-big-screen) {
     &.--auth {
-      & .gbx-lightbox {
+      & .ds-lightbox {
         &__container {
-          & .gbx-modal {
+          & .ds-modal {
             width: 720px;
             height: 897px;
 
@@ -70,9 +70,9 @@
 
   @media (min-width: $grid-md-min) and (max-width: $grid-macbook-13p-max) {
     &.--auth {
-      & .gbx-lightbox {
+      & .ds-lightbox {
         &__container {
-          & .gbx-modal {
+          & .ds-modal {
             width: 650px;
             height: 750px;
 
@@ -85,13 +85,13 @@
     }
   }
 
-  @media (max-width: $grid-sm-max) {
+  @include break-p(null, sm) {
     &.--auth {
-      & .gbx-lightbox {
+      & .ds-lightbox {
         position: relative;
 
         &__container {
-          & .gbx-modal {
+          & .ds-modal {
             width: 100%;
             height: 100%;
 

@@ -1,7 +1,7 @@
 export const translations = {
 	fr: {
 		gbx_accountWallet: {
-			title: "Mon solde Smood",
+			title: "Mon solde ",
 			description: "Vous pouvez utiliser ce montant lors d'un passage de commande",
 			expiredLimitedCashback: "%remainingAmount% CHF ont expiré de votre cashback",
 			receivedLimitedCashback: "%remainingDays% jour(s) restant(s) pour utiliser votre cashback de %remainingAmount% CHF",
@@ -16,7 +16,7 @@ export const translations = {
 				description: "Description"
 			},
 			commonHistoryDescription: {
-				fromBackoffice: "Venant du support Smood",
+				fromBackoffice: "Venant du support ",
 				orderCanceled: "Venant d'une commande annulée",
 				orderValidate: "Venant d'une commande validée",
 				penaltyCanceled: "Venant d'un geste commercial annulé",
@@ -33,7 +33,7 @@ export const translations = {
 	},
 	en: {
 		gbx_accountWallet: {
-			title: "Smood customer wallet",
+			title: " customer wallet",
 			description: "You can use this amount when placing an order",
 			expiredLimitedCashback: "%remainingAmount% CHF of cashback have expired",
 			receivedLimitedCashback: "%remainingDays% day(s) remaining to use your cashback of %remainingAmount% CHF",
@@ -48,7 +48,7 @@ export const translations = {
 				description: "Description"
 			},
 			commonHistoryDescription: {
-				fromBackoffice: "From the Smood support team",
+				fromBackoffice: "From the  support team",
 				orderCanceled: "Order cancelled",
 				orderValidate: "Order confirmed",
 				penaltyCanceled: "From a cancelled commercial credit",
@@ -65,7 +65,7 @@ export const translations = {
 	},
 	de: {
 		gbx_accountWallet: {
-			title: "Mein Smood-Kontostand",
+			title: "Mein -Kontostand",
 			description: "Sie können diesen Betrag bei einer Bestellung nutzen",
 			expiredLimitedCashback: "%remainingAmount% CHF sind von Ihrem Cashback abgelaufen",
 			receivedLimitedCashback: "%remainingDays% Tag(e) übrig, um Ihr %remainingAmount% CHF Cashback zu verwenden",
@@ -80,7 +80,7 @@ export const translations = {
 				description: "Beschreibung"
 			},
 			commonHistoryDescription: {
-				fromBackoffice: "Vom Smood Support-Team",
+				fromBackoffice: "Vom  Support-Team",
 				orderCanceled: "Bestellung annuliert",
 				orderValidate: "Bestellung bestätigt",
 				penaltyCanceled: "Von einer annulierten kommerziellen Geste",
@@ -97,7 +97,7 @@ export const translations = {
 	},
 	it: {
 		gbx_accountWallet: {
-			title: "Il mio saldo Smood",
+			title: "Il mio saldo ",
 			description: "È possibile utilizzare questo importo quando si effettua un ordine",
 			expiredLimitedCashback: "%remainingAmount% CHF sono scaduti dal tuo cashback",
 			receivedLimitedCashback: "%remainingDays% giorno(i) rimasto(i) per utilizzare il tuo cashback %remainingAmount% CHF",
@@ -112,7 +112,7 @@ export const translations = {
 				description: "Descrizione"
 			},
 			commonHistoryDescription: {
-				fromBackoffice: "Proveniente dal team di supporto Smood",
+				fromBackoffice: "Proveniente dal team di supporto ",
 				orderCanceled: "Proveniente da un ordine annullato",
 				orderValidate: "Proveniente da un ordine confermato",
 				penaltyCanceled: "Proveniente da un gesto commerciale annullato",

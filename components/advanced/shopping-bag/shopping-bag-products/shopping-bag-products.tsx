@@ -1,11 +1,11 @@
 import { Component, h, Listen, Prop } from '@stencil/core';
 
 @Component({
-	tag: 'gbx-shopping-bag-products',
+	tag: 'ds-shopping-bag-products',
 	styleUrl: 'shopping-bag-products.scss'
 })
 
-export class GreenboxShoppingBagProducts {
+export class DSShoppingBagProducts {
 
 	/**
 	 * Array of products to display
@@ -50,9 +50,9 @@ export class GreenboxShoppingBagProducts {
 
 	render() {
 		return (
-			<div class="gbx-shopping-bag-products">
+			<div class="ds-shopping-bag-products">
 				{this.products.map(product => (
-					<gbx-cart-item
+					<ds-cart-item
 						item={product}
 						isSelected={this.selectedProductIds.includes(product.id)}
 						toggleSelect={this.toggleProductSelection}

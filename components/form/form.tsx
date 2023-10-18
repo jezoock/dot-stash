@@ -2,10 +2,10 @@ import { Component, h } from '@stencil/core';
 
 
 @Component({
-	tag: 'gbx-form',
+	tag: 'ds-form',
 	styleUrl: 'form.scss'
 })
-export class GreenboxForm {
+export class DSForm {
 	
 	render() {
 		return (

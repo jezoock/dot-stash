@@ -1,6 +1,6 @@
 .--account {
-  .gbx-button {
-    &.--snack {
+  .ds-button {
+    &.--pronto {
       &.--close {
         position: absolute;
         top: 1rem;
@@ -22,7 +22,7 @@
       padding: 0;
       color: color(color-1, base);
       &:before {
-        @include --icon(arrow-left, middle);
+        @include ds-icon(arrow-left, middle);
         font-size: $text_font-size-3;
         margin: 0 0.5rem 0 0;
       }

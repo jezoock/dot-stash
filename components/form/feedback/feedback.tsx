@@ -11,7 +11,7 @@ import { FeedbackLevel } from './feedback-level';
  * This component display a message with a level for the input forms
  */
 @Component({
-  tag: "gbx-field-feedback",
+  tag: "ds-field-feedback",
   styleUrl: "./feedback.scss",
 })
 export class GbxFieldFeedback {
@@ -28,7 +28,7 @@ export class GbxFieldFeedback {
   render() {
     return (
       <div class={{
-        "gbx-field-feedback": true,
+        "ds-field-feedback": true,
         [`--${this.level}`]: true,
       }}>
         {this.message}

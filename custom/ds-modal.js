@@ -80,7 +80,7 @@ const DSModal = /*@__PURE__*/ proxyCustomElement(class DSModal extends HTMLEleme
     }, 500, true, false);
     this.shown = false;
     this.overlay = false;
-    this.redirectToSmoodOnClose = false;
+    this.redirectToOnClose = false;
     this.isHeaderDisabled = false;
     this.isSubtitleDisabled = false;
     this.isFooterDisabled = false;
@@ -123,7 +123,7 @@ const DSModal = /*@__PURE__*/ proxyCustomElement(class DSModal extends HTMLEleme
    * Request modal hide
    */
   hide() {
-    if (this.redirectToSmoodOnClose) {
+    if (this.redirectToOnClose) {
       window.location.href = window.location.origin;
     }
     if (this.modalClose) {
@@ -174,7 +174,7 @@ const DSModal = /*@__PURE__*/ proxyCustomElement(class DSModal extends HTMLEleme
 }, [4, "ds-modal", {
     "shown": [1540],
     "overlay": [4],
-    "redirectToSmoodOnClose": [4, "redirect-to-smood-on-close"],
+    "redirectToOnClose": [4, "redirect-to-pronto-on-close"],
     "isHeaderDisabled": [4, "is-header-disabled"],
     "isSubtitleDisabled": [4, "is-subtitle-disabled"],
     "isFooterDisabled": [4, "is-footer-disabled"],
@@ -182,7 +182,7 @@ const DSModal = /*@__PURE__*/ proxyCustomElement(class DSModal extends HTMLEleme
     "isClosingDisabled": [1028, "is-closing-disabled"],
     "lightboxClass": [1032, "lightbox-class"],
     "lightboxClassObject": [8, "lightbox-class-object"],
-    "useSnack": [4, "use-snack"],
+    "useSnack": [4, "use-pronto"],
     "darkBackground": [4, "dark-background"],
     "closeButtonMods": [1040],
     "isReady": [32]
