@@ -1,7 +1,31 @@
 import { AnyHTMLElement } from "@stencil/core/internal";
 import { SassStyles } from "./interfaces/sass-styles";
 
+const config = {
+  useContext: true,
+}
+
+export type AnyDsContextComponentElement = HTMLDsBlockElement;
+
+export type DsComponentContextType = "block" | 'article' | "section" | "form";
+
+export const DsComponentContext: DsComponentContextType[] = ["block", 'article', "section", "form"]
+
 const _ds = {
+  app: {
+    getConfig: (keys: string[]): Record<string, unknown> => {
+      const pairs = {};
+      keys.map( key => pairs[key] = config[key] )
+      return pairs;
+    }
+  },
+
+  context: {
+    get: (element: AnyDsContextComponentElement): DsComponentContextType => {
+      return DsComponentContext.find( context => element[context] );
+    },
+  },
+
   env: {
     touchSupport: () => 'touchend' in window,
   },

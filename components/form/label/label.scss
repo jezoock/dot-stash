@@ -1,0 +1,15 @@
+.gbx-form-label {
+  font-family: $font-main;
+  display: block;
+  color: color(gray, base);
+
+  &.--error {
+    color: color(error);
+  }
+
+  &.--required {
+    &:after {
+      content: " *";
+    }
+  }
+}

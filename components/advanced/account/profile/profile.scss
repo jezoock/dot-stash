@@ -1,0 +1,76 @@
+.gbx-profile {
+  position: relative;
+  & .gbx-form {
+    &.gbx-cards-list__form {
+      margin-bottom: 0;
+    }
+
+    &__checkbox {
+      display: flex;
+      margin: 0 0 1rem 0;
+      align-items: center;
+
+      & > label {
+        cursor: pointer;
+      }
+    }
+  }
+  & .gbx-radio-old input {
+    position: absolute;
+  }
+  & input[type="email"],
+  input[type="password"] {
+    padding: 1rem 1.5rem 1rem 1rem;
+  }
+  &__modal-menu {
+    display: flex;
+    justify-content: flex-end;
+    & > button {
+      margin: 0 0 0 0.5rem;
+      font-size: $title_font-size-1;
+    }
+  }
+  & #profileForm {
+    & .gbx-error-message,
+    .gbx-error-message--success {
+      margin-top: 10px;
+    }
+  }
+  & .gbx-profile__add-phone-button {
+    font-size: $title_font-size-1;
+    width: inherit;
+    margin: 1.25rem 0;
+    color: color(color-1, base);
+    &:before {
+      @include --icon(plus);
+    }
+  }
+
+  &__cumulus-info {
+    color: color(gray, dark);
+    font-size: $text_font-size-1;
+    margin-bottom: 2rem;
+    display: block;
+    a {
+      text-decoration: underline;
+    }
+  }
+}
+
+.gbx-lightbox {
+  &.--addressDelete {
+    &:before {
+      @include --gradient(white-2, radial);
+    }
+    & .gbx-lightbox {
+      &__container {
+        max-width: 80%;
+        & .gbx-modal {
+          &__header {
+            margin: 1rem 0.75rem 1rem 1rem;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+.gbx-address-selector {
+  &:before {
+    font-size: $text_font-size-3;
+    color: color(gray, light);
+    width: 2rem;
+    @include --icon(mapmarker, middle);
+  }
+
+  & > input {
+    margin: 0;
+    width: calc(100% - 2.5rem);
+    line-height: 2.5rem;
+    font-size: $text_font-size-1;
+    color: color(gray, darker);
+    border: none;
+    text-overflow: ellipsis;
+
+    &::placeholder {
+      color: color(gray, light);
+    }
+  }
+}

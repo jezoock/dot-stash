@@ -1,0 +1,55 @@
+.snk-click-and-collect-toggle {
+  
+  & .gbx-tooltip {
+    &.--icon {
+      margin: 0;
+      &:before {
+        color: color(color-1, base);
+        font-weight: bolder;
+      }
+    }
+  }
+  
+  &__prompt-container {
+    display: flex;
+    justify-content: space-between;
+    color: color(color-1, base);
+    font-family: "SourceSansPro";
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  &__switch-prompt,
+  &__reducible-amount {
+    font-family: "SourceSansPro";
+    display: block;
+  }
+
+  &__switch-prompt {
+    flex: 5;
+  }
+
+  &__switch-link {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    color: color(color-1, base);
+    font-family: "SourceSansPro";
+    text-decoration: underline;
+    font-weight: 600;
+    font-size: 1rem;
+
+    &:visited {
+      color: color(color-1, base);
+    }
+  }
+
+  &__reducible-amount {
+    flex: 1;
+    text-align: end;
+    font-size: 1rem;
+  }
+
+
+}

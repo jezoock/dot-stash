@@ -1,0 +1,12 @@
+.gbx-button {
+  &.--snack {
+    &.--previous {
+      font-weight: 500;
+      &:before {
+        @include --icon(right-arrow, bottom, snack);
+        transform: rotateZ(180deg);
+        padding: 0 0 0 0.5rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+.gbx-register-form {
+  & .gbx-input-field {
+    margin: 0 0 0.8rem 0;
+  }
+
+  &__button {
+    margin: 1rem 0 0 0;
+  }
+
+  & .grecaptcha-badge {
+    visibility: hidden;
+  }
+  
+  @media (max-width: $grid-sm-max) {
+    &__button {
+      margin: 1rem 0 4rem 0;
+    }
+  }
+}
+

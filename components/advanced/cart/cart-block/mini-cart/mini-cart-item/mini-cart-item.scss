@@ -1,0 +1,98 @@
+.gbx-mini-cart-item {
+  padding: 0.75rem 0 0.5rem 0;
+  margin: 0 0.75rem;
+  border-bottom: 1px solid snk-color(gray, base);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  
+  &__quantity {
+    font-weight: bold;
+    white-space: nowrap;
+    width: 1.75rem;
+    text-align: right;
+    line-height: 1.375rem;
+  }
+  
+  &__infos {
+    position: relative;
+    padding: 0 0 0 0.25rem;
+    flex-grow: 1;
+  }
+  
+  &__name {
+    padding: 0 4.5rem 0.25rem 0;
+    font-family: "SourceSansPro";
+    font-weight: bold;
+    line-height: 1.375rem;
+  }
+
+  &__pricing {
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 1.375rem;
+    & > span {
+      font-family: "SourceSansPro";
+      display: block;
+      text-align: right;
+    }
+  }
+
+  &__edit-link {
+    &.--hidden  {
+      visibility: hidden;
+    }
+  }
+
+  &__lock {
+    color: color(color-1, base);
+
+    &.--is-inactive {
+      color: snk-color(gray, dark);
+    }
+  }
+
+  &__old-price {
+    font-family: "SourceSansPro";
+    color: snk-color(gray, dark);
+    text-decoration: line-through;
+    font-size: 0.875rem;
+  }
+  
+  &__quantity-display {
+    color: snk-color(gray, dark);
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+  }
+
+  &__offered-item {
+    color: #20B07E;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.375rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+  }
+  &__quantity-selector {
+    display: block;
+    margin: -0.5rem -0.75rem -0.5rem 0;
+  }
+
+  &.--has-discount {
+    & .gbx-mini-cart-item {
+      &__name {
+        min-height: 2.5rem;
+      }
+    }
+  }
+
+  &.--unavailable {
+    text-decoration: line-through;
+  }
+}

@@ -1,0 +1,21 @@
+.ds-title {
+  display: block;
+
+  & > strong {
+    display: block;
+  }
+
+  & > h1,
+  & > h2,
+  & > h3,
+  & > h4,
+  & > h5,
+  & > h6,
+  & > strong {
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+    padding: 0;
+    margin: 0;
+  }
+}

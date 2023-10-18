@@ -1,0 +1,329 @@
+import { Component, Event, EventEmitter, h, Listen, Prop, State } from '@stencil/core';
+import {
+  Greenbox_eventDispatch,
+  Greenbox_getDataCy,
+  Greenbox_setTranslations,
+  Greenbox_triggerTrackingEvent,
+} from '../../../../../utils';
+import { translations } from './translations';
+import { EventDetails, SnackbarOptions, Translations } from '../../../../interfaces';
+import { PageName } from '../../../../../enums/page-name.enum';
+import { TitleType } from '../../../../ui/title/title-type.enum';
+import { Universe } from '../../../../../utils/universe';
+import { SNACKBAR_OPTIONS } from './snackbar-options';
+
+@Component({
+  tag: "gbx-cart-block",
+  styleUrls: [
+    "cart-block.scss",
+    "./scss/sidebar.scss",
+    "./scss/title.scss",
+    "./scss/button.scss",
+  ],
+})
+export class GbxCartBlock {
+  //#region PROPS
+
+  @Prop({ mutable: true }) carts: any[] = [];
+  @Prop() activeCartId: string;
+  @Prop({ mutable: true, reflect: true }) isLoggedIn: boolean = false;
+  @Prop() universe: Universe = Universe.GROCERY;
+  @Prop() locale: string;
+
+  @State() showContent: boolean = false;
+  @State() popState: boolean = true;
+  @State() snackBar: SnackbarOptions = {
+    isSnackBarShown: false,
+    message: "",
+    undoLabel: "",
+    type: "",
+    closingDelay: 2000,
+    onUndo: () => {},
+    onClose: () => {}
+  };
+
+  translations: Translations = Greenbox_setTranslations( translations, "gbx_cartBlock" );
+  sidebar: HTMLGbxSidebarElement;
+  timeout: NodeJS.Timeout;
+
+  //#endregion
+
+  //#region EVENTS
+
+  @Event() gbxCartBlockHide: EventEmitter;
+  @Event() gbxCartBlockHidden: EventEmitter;
+  @Event() gbxCartBlockShow: EventEmitter;
+  @Event() gbxCartBlockShown: EventEmitter;
+
+  @Event() request_cartDelete_event: EventEmitter;
+
+  //#region BLOCK DISPLAY LISTENERS
+
+  @Listen("request_cartBlockShow_event")
+  request_cartBlockShow_eventHandler() {
+    this.open();
+  }
+
+  @Listen("request_cartBlockHide_event")
+  request_cartBlockHide_eventHandler() {
+    //this.popState = false;
+    this.close();
+  }
+
+  @Listen("request_cartBlockToggle_event")
+  request_cartBlockToggle_eventHandler({ detail: { mustShow } }: EventDetails) {
+    this.toggle(mustShow);
+  }
+
+  //#endregion
+
+  @Listen("request_cartRemove_event")
+  request_cartDelete_eventHandler( event: CustomEvent ) {
+    event.stopPropagation();
+    const { detail: { id } } = event;
+
+    this.toggleCartDisplay(id, false);
+
+    this.openSnackbar({
+      type: "cart-removed",
+      onUndo: () => this.toggleCartDisplay(id, true),
+      onClose: () => this.request_cartDelete_event.emit({ id })
+    });
+  }
+
+  @Listen("notify_toasterHide_event")
+  notify_toasterHide_eventListener({ detail: { isUndo } }: { detail: { isUndo: boolean } }) {
+    this.closeSnackbar(isUndo);
+  }
+
+  @Listen("request_snackbarOpen_event")
+  request_snackbarOpen_eventHandler({ detail: { type, undoHandler, closeHandler }}) {
+    const snackbarOptions = {
+      type: type,
+      onUndo: undoHandler,
+      onClose: closeHandler
+    };
+    this.openSnackbar(snackbarOptions);
+  }
+
+  //#endregion
+
+  //#region LIFECYCLE
+
+  constructor() {
+    this.cartIconClickHandler = this.cartIconClickHandler.bind(this);
+    this.closeButtonClickHandler = this.closeButtonClickHandler.bind(this);
+  }
+
+  componentDidLoad() {
+    if (history.pushState) {
+      window.onpopstate = (event) => {
+        if (this.showContent) {
+          event.stopPropagation();
+          this.popState = false;
+          this.close();
+        }
+      };
+    }
+
+    const urlParams: URLSearchParams = new URLSearchParams(
+      window.location.search
+    );
+    const myParam: string = "openCart";
+
+    if (urlParams.has(myParam)) {
+      const newUrl = window.location.href.split("?");
+
+      if (newUrl?.length) {
+        window.history.pushState(null, "", newUrl[0]);
+      }
+
+      this.open();
+    }
+  }
+
+  //#endregion
+
+  toggleCartDisplay(cartId: string, mustShow: boolean): void {
+    Greenbox_eventDispatch(
+      [`#cart-${cartId}`],
+      "request_cartContentDisplayToggle_event",
+      { mustShow }
+    )
+  }
+
+  //#region SNACKBAR DISPLAY
+
+  openSnackbar(snackBarOptions: GbxCartBlock['snackBar']) {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    const options = {
+      ...snackBarOptions,
+      ...SNACKBAR_OPTIONS[ snackBarOptions.type ],
+    }
+
+    this.snackBar = {
+      ...options,
+      isSnackBarShown: true
+    };
+
+    this.timeout = setTimeout(() => {
+      this.closeSnackbar();
+    }, options.closingDelay);
+  }
+
+  closeSnackbar(isUndo = false) {
+    clearTimeout(this.timeout);
+    if (this.snackBar.onClose && !isUndo) {
+      this.snackBar.onClose();
+    } else if (this.snackBar.onUndo && isUndo) {
+      this.snackBar.onUndo();
+    }
+
+    this.snackBar = {
+      ...this.snackBar,
+      isSnackBarShown: false
+    };
+  }
+
+  //#endregion
+
+  //#region BLOCK DISPLAY
+
+  open(): void {
+    // current displayed block should be handled in app redux store
+    Greenbox_eventDispatch(
+      ["gbx-account-block"],
+      "cartBlock_request_blockHide_event"
+    );
+    Greenbox_eventDispatch(["gbx-shop-header"], "request_sidebarHide_event");
+    Greenbox_eventDispatch(this.sidebar, `request_sidebarShow_event`);
+
+    if (history.pushState) {
+      history.pushState(null, document.title, location.href);
+    }
+
+    Greenbox_triggerTrackingEvent({ eventName: 'VIEW_BASKET' });
+
+    this.showContent = true;
+  }
+
+  close(): void {
+    Greenbox_eventDispatch(this.sidebar, `request_sidebarHide_event`);
+    this.showContent = false;
+  }
+
+  toggle(mustShow?: boolean): void {
+    let { showContent } = this;
+
+    if (typeof mustShow === "boolean") {
+      showContent = mustShow;
+    } else {
+      showContent = !showContent;
+    }
+
+    this[showContent ? "open" : "close"]();
+  }
+
+  //#endregion
+
+  //#region HANDLERS
+
+  cartIconClickHandler(event: PointerEvent): void {
+    event.preventDefault();
+    this.toggle();
+  }
+
+  closeButtonClickHandler(event: Event): void {
+    event.preventDefault();
+    this.close();
+  }
+
+  //#endregion
+
+  render() {
+    const [activeCart] = this.carts.filter( ({isActive}) => isActive );
+
+    return (
+      <div class="gbx-cart-block">
+        <gbx-button
+          class="gbx-cart-block__icon"
+          onClick={this.cartIconClickHandler}
+          buttonType="button"
+          buttonMods={[`${this.universe === Universe.GROCERY ? 'cart-icon' : 'cart-icon-resto'}`]}
+        >
+          <span class={{
+            "gbx-cart-block__count": this.universe === Universe.GROCERY,
+            "gbx-cart-block__count-resto": this.universe === Universe.RESTAURANT,
+          }}>{activeCart?.productCount || 0}</span>
+        </gbx-button>
+
+        <snk-sidebar
+          ref={(el) => (this.sidebar = el)}
+          class="gbx-cart-block__content"
+          mods="cart"
+        >
+          <gbx-block blockMods="cart-list">
+            <gbx-title
+              slot="header"
+              titleType={TitleType.TITLE2}
+              titleMods={["block", "cart"]}
+              heading={3}
+              useSnack={true}
+              dataCy={{
+                pageName: PageName.LOGIN,
+                elementName: "cartBlockTitle",
+              }}
+            >
+              {this.translations.title.orders}
+            </gbx-title>
+            {this.snackBar.isSnackBarShown && (
+              <snk-snackbar
+                message={this.snackBar.message}
+                type={this.snackBar.type}
+                undoLabel={this.snackBar.undoLabel}
+                onUndo={this.snackBar.onUndo}
+                onClose={this.snackBar.onClose}
+              />
+            )}
+            <gbx-button
+              slot="header"
+              class="gbx-cart-block__menu"
+              buttonType="button"
+              buttonMods={["snack", "cart-block", "close"]}
+              onClick={this.closeButtonClickHandler}
+            />
+
+            <div class="gbx-cart-block__content">
+              {this.carts.length ? (
+                this.carts.map(cart => {
+                  return <gbx-mini-cart
+                    key={`cart-${cart.id}`}
+                    id={`cart-${cart.id}`}
+                    class="gbx-cart-block__cart"
+                    cart={cart}
+                    isActive={this.activeCartId === cart.id}
+                    isLoggedIn={this.isLoggedIn}
+                  />
+                })
+              ) : (
+                <p
+                  class="gbx-cart-block__empty-cart"
+                  data-cy={Greenbox_getDataCy({
+                    pageName: PageName.CART,
+                    elementType: "Label",
+                    elementName: "CartEmpty",
+                  })}
+                >
+                  {this.translations.empty}
+                </p>
+              )}
+            </div>
+          </gbx-block>
+        </snk-sidebar>
+      </div>
+    );
+  }
+}

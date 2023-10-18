@@ -1,0 +1,175 @@
+@import "./scss/modal.scss";
+@import "./scss/block.scss";
+@import "./scss/button.scss";
+
+.gbx-account {
+  position: relative;
+  z-index: 1;
+
+  & > button {
+    line-height: 2rem;
+
+    &:after {
+      font-size: $text_font-size-3;
+      margin: 0 0 0 0.75rem;
+      transition: transform ease 0.6s;
+      transform: rotateZ(0deg);
+      @include --icon(chevron-down, middle);
+    }
+
+    @media (min-width: $grid-lg-min) and (max-width: $grid-lg-max) {
+      line-height: 1.5rem;
+      & > span {
+        display: none;
+      }
+      &:after {
+        display: none;
+      }
+    }
+  }
+
+  &.--dropdown-open {
+    & > button {
+      &:after {
+        transform: rotateZ(-180deg);
+      }
+    }
+  }
+
+  &.--avatar {
+    & > button {
+      &:before {
+        font-size: $text_font-size-3;
+        padding: 0 0.75rem 0 0;
+        @include --icon(profil);
+        @include --rounded(1.5rem);
+        @media (min-width: $grid-lg-min) and (max-width: $grid-lg-max) {
+          padding: 0;
+          line-height: 26px;
+          color: #fff;
+          background-color: color(gray, dark);
+        }
+      }
+    }
+  }
+
+  &-title {
+    display: flex;
+  }
+
+  &-menu {
+    position: absolute;
+    top: 56px;
+    left: 0;
+    z-index: 10000;
+    & > ul {
+      background: #fff;
+      &:before {
+        display: block;
+        width: 50%;
+        background-color: color(color-1, base);
+        height: 2px;
+        content: "";
+      }
+    }
+    &__item {
+      display: block;
+      width: 100%;
+      font-size: $text_font-size-2;
+      line-height: 60px;
+      white-space: nowrap;
+      color: color(gray, dark);
+      border: 1px solid color(gray, lighter);
+      padding: 0 1rem;
+      &:hover {
+        background-color: color(gray, lighter);
+      }
+      &.--logout {
+        text-align: left;
+      }
+    }
+  }
+
+  @media (max-width: $grid-md-max) {
+    &-menu {
+      &__item {
+        &:before {
+          @include --icon-font();
+          font-size: $text_font-size-3;
+          padding: 0 0.75rem 0 0;
+        }
+        &.--orders {
+          &:before {
+            @include --icon-content(my-orders);
+          }
+        }
+        &.--profile {
+          &:before {
+            @include --icon-content(profil);
+          }
+        }
+        &.--payment-methods {
+          &:before {
+            @include --icon-content(credit-card);
+          }
+        }
+        &.--sponsorship {
+          &:before {
+            @include --icon-content(handshake);
+          }
+        }
+        &.--wallet {
+          &:before {
+            @include --icon-content(wallet);
+          }
+        }
+        &.--logout {
+          &:before {
+            @include --icon-content(disconnect);
+          }
+        }
+        &.--recipe {
+          &:before {
+            @include --icon-content(recipe);
+          }
+        }
+        &.--shoppingBag {
+          &:before {
+            @include --icon-content(list);
+          }
+        }
+      }
+    }
+    & > button {
+      width: 100%;
+      font-size: $text_font-size-3;
+      font-weight: 600;
+      padding: 2rem 1rem;
+      text-align: left;
+      &:after {
+        display: none;
+      }
+    }
+    & > nav {
+      position: static;
+      left: auto;
+      top: auto;
+      & > ul {
+        &:first-child {
+          border-bottom: 1px solid color(gray, base);
+        }
+        &:before {
+          display: none;
+        }
+        & > li {
+          & > a,
+          & > button {
+            text-align: left;
+            border: none;
+            line-height: 3rem;
+          }
+        }
+      }
+    }
+  }
+}

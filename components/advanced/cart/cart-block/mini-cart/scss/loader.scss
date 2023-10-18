@@ -1,0 +1,61 @@
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.gbx-loader {
+  &.--empty-cart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 5rem;
+    opacity: 0.5;
+    transform: translate3d(-50%, -50%, 0);
+  }
+  &.--mini-cart-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    background: rgba(255, 255, 255, 0.75);
+    & .gbx-loader {
+      &__icon {
+        top: 50%;
+        left: 50%;
+        position: absolute;
+        transform: translate3d(-50%, -50%, 0);
+        &:before {
+          -webkit-animation: spin 1s linear infinite;
+          -moz-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
+          border-radius: 50%;
+          border-width: 5px;
+          border-style: solid;
+          content: "";
+          display: inline-block;
+          vertical-align: top;
+          width: 2rem;
+          height: 2rem;
+          position: relative;
+          z-index: 5;
+          border-color: color(gray, light);
+          border-left-color: color(color-1, base);
+        }
+      }
+    }
+  }
+}

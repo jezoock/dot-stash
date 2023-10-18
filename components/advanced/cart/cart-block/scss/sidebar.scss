@@ -1,0 +1,32 @@
+.snk-sidebar {
+  &.--cart {
+    z-index: 10;
+    width: min(100%, 360px);
+    display: flex;
+    flex-direction: column;
+
+    & .snk-sidebar {
+      &__content {
+        height: 100%;
+        width: 100%;
+      }
+    }
+
+    &.--grocery {
+      top: 80px;
+    }
+    
+    &.--resto {
+      top: 65px;
+      bottom: auto;
+    }
+
+    @media (max-width: $grid-md-max) {
+      width: min(100%, 360px);
+    }
+
+    @media (min-width: $grid-lg-min) {
+      width: min(100%, 400px);
+    }
+  }
+}

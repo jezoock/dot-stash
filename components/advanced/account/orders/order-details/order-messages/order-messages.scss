@@ -1,0 +1,94 @@
+.gbx-order-messages {
+  margin-left: 10px;
+  &__add-message {
+    &-container {
+      margin-bottom: 1rem;
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    &-input {
+      width: 80%;
+      border-radius: 3px 0px 0px 3px;
+      display: flex;
+      border: 1px solid color(gray, light);
+      position: relative;
+      flex: 1 1 auto;
+      font-size: $title_font-size-1;
+      margin: 0;
+      padding: 5px;
+    }
+    &-button {
+      display: flex;
+      margin: 0;
+      font-size: $title_font-size-1;
+      border-radius: 0 3px 3px 0px;
+      line-height: 2rem;
+      @include --color-set(color-2);
+      &:before {
+        font-size: 1.2rem;
+        @include --icon(plus);
+      }
+    }
+  }
+}
+
+.gbx-order-message {
+  position: relative;
+  &:after {
+    width: 0;
+    margin-bottom: -20px;
+    content: "";
+    bottom: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 20px solid #d1d0d0;
+    position: absolute;
+    display: block;
+  }
+  & > div {
+    border-radius: 20px;
+    padding: 15px 20px;
+  }
+  & > span {
+    font-size: $text_font-size-1;
+    color: #ddd;
+    padding: 0 0 0 20px;
+  }
+  &.--customer {
+    padding: 0;
+    margin: 0 0 1.2rem 0;
+    & > div {
+      background: #d0d0d0;
+      color: #fff;
+    }
+    &:after {
+      right: 40px;
+    }
+  }
+  &.--restaurant {
+    padding: 0;
+    margin: 0 0 1.2rem 0;
+    & > div {
+      background: #807f7f;
+      color: #fff;
+    }
+    &:after {
+      border-top: 20px solid #807f7f;
+      left: 40px;
+    }
+  }
+  &.--smood {
+    padding: 0;
+    margin: 0 0 1.2rem 0;
+    & > div {
+      background: #807f7f;
+      color: #fff;
+    }
+    &:after {
+      border-top: 20px solid #807f7f;
+      left: 40px;
+    }
+  }
+}

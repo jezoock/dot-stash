@@ -1,0 +1,111 @@
+.gbx-lightbox {
+  &.--account {
+
+    &:before {
+      content: "";
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    & > .gbx-lightbox {
+      &__container {
+        & > .gbx-modal {
+          padding: 0;
+          border: none;
+          & > .gbx-modal__content {
+            padding: 1rem;
+          }
+        }
+      }
+    }
+  }
+
+  &.--delete-confirm {
+    &:before {
+      background: rgba(255,255,255,0.75);
+    }
+  }
+
+  @media (max-width: $grid-sm-max) {
+    &.--account {
+      & .gbx-lightbox {
+        &__container {
+          padding: 0;
+          & .gbx-modal {
+            height: 100%;
+          }
+        }
+      }
+    }
+    &.--delete-confirm {
+      & > .gbx-lightbox {
+        &__container {
+          max-width: 95%;
+          max-height: 95%;
+        }
+      }
+    }
+  }
+
+  @media (min-width: $grid-md-min) and (max-width: $grid-md-max) {
+    &.--delete-confirm {
+      & > .gbx-lightbox {
+        &__container {
+          max-width: 750px;
+        }
+      }
+    }
+
+  }
+
+  @media (min-width: $grid-lg-min) {
+
+    &.--account {
+      & > .gbx-lightbox {
+        &__container {
+          max-width: 1024px;
+          max-height: 750px;
+        }
+      }
+    }
+
+    &.--delete-confirm {
+      & > .gbx-lightbox {
+        &__container {
+          max-width: 800px;
+          max-height: 750px;
+        }
+      }
+    }
+
+  }
+  
+  &.--order-details {
+    & .--modal-close {
+      position: absolute;
+      top: 0;
+      right: 1rem;
+      padding: 0;
+      line-height: 3.5rem;
+      width: 100%;
+      text-align: right;
+      z-index: 10;
+      &:before {
+        font-family: "snack";
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        @include --icon(close, middle);
+        color: #E60078;
+        width: 2rem;
+        height: 2rem;
+        font-size: 2rem;
+      }
+    }
+  }
+}

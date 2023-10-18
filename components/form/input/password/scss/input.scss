@@ -1,0 +1,7 @@
+.gbx-input {
+  &.--password {
+    &:after {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.snk-confirm-modal {
+  &__container {} 
+
+  &__message {
+    font-weight: bold;
+    margin: 0;
+    padding: 0 0 1.25rem 0;
+  }
+  
+  &__confirm-button {}
+  
+  &__cancel-button {
+    display: block;
+    padding: 0.75rem 0 0 0;
+  }
+}

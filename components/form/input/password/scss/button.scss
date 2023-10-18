@@ -1,0 +1,11 @@
+.gbx-button {
+	&.--toggle-password {
+		text-align: center;
+    margin: 0px;
+    padding: 0px;
+    font-size: $title_font-size-1;
+    &:before {
+      @include --icon(eye);
+		}
+	}
+}

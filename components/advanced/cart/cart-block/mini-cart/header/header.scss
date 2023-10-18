@@ -1,0 +1,15 @@
+.snk-mini-cart-header {
+  display: flex;
+  align-items: center;
+
+  &__store {
+    display: block;
+    flex-grow: 1;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}

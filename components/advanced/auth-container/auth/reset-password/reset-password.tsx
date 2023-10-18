@@ -1,0 +1,132 @@
+import { Component, Event, EventEmitter, h, Listen, State } from "@stencil/core";
+import { Translations } from "../../../../interfaces";
+import { Greenbox_eventDispatch, Greenbox_isMobile, Greenbox_setTranslations } from "../../../../../utils";
+import { translations } from "./translations";
+import { ValidatorType } from "../../../../ui/form/validator/validator-type.enum";
+import { InputFieldType } from "../../../../ui/form/field/input/input-field-type.enum";
+import { ButtonLevel } from "../../../../ui/button/button-level.enum";
+import { PageName } from "../../../../../enums/page-name.enum";
+import { TitleType } from "../../../../ui/title/title-type.enum";
+import { FormValidator } from "../../../../ui/form/validator/form-validator";
+import { Validator } from "../../../../ui/form/validator/validator";
+import { AuthDisplayedView } from "../auth-displayed-view.enum";
+
+@Component({
+  tag: 'gbx-reset-password',
+  styleUrl: 'reset-password.scss',
+})
+export class GbxResetPassword {
+
+  @State() userEmail: string;
+  @State() isButtonDisabled: boolean;
+
+  // @ts-ignore
+  private translations: Translations;
+  private emailValidator: Validator;
+
+  @Event() notify_resetPassword_event: EventEmitter;
+  @Event() request_changeView_event: EventEmitter;
+
+  @Listen('notify_resetPasswordOutcome_event')
+  notify_resetPassword_outcome_eventHandler({ detail: { success } }: { detail: { success: boolean } }) {
+    const toasterPosition = Greenbox_isMobile() ? "top" : "bottom";
+    const toasterSettings = {
+      innerJSX: <span>{this.translations[success ? 'sentLink' : 'serverError']}</span>,
+      closingDelay: 4000,
+      type: success ? 'valid' : 'warning',
+      position: [toasterPosition, 'right']
+    };
+    Greenbox_eventDispatch('body', 'toaster_show_event', toasterSettings);
+  }
+
+  constructor() {
+    this.translations = Greenbox_setTranslations(translations, 'gbx_resetPassword');
+
+    this.emailValidator = {
+      type: ValidatorType.EMAIL,
+      errorMessage: this.translations.invalidEmail
+    };
+
+    this.isButtonDisabled = this.buttonShouldBeDisabled();
+    // since the email field is empty by default, the button should be disabled
+    this.inputChangeHandler = this.inputChangeHandler.bind(this);
+    this.passwordResetHandler = this.passwordResetHandler.bind(this);
+    this.cancelToLoginViewHandler = this.cancelToLoginViewHandler.bind(this);
+  }
+
+  private buttonShouldBeDisabled() {
+    const validator = FormValidator.validate(this.userEmail, [this.emailValidator]);
+    return Boolean(validator?.errorMessage);
+    // if there's an error message, that means something went wrong
+    // and the button should be disabled
+  }
+
+  //#region HANDLERS
+
+  private inputChangeHandler(e: any) {
+    const value = e.target.value;
+    this.userEmail = value;
+    this.isButtonDisabled = this.buttonShouldBeDisabled();
+  }
+
+  private passwordResetHandler() {
+    this.notify_resetPassword_event.emit({ email: this.userEmail });
+  }
+
+  private cancelToLoginViewHandler() {
+    this.request_changeView_event.emit({ view: AuthDisplayedView.LOGIN });
+  }
+
+  //#endregion
+
+  render() {
+    return (
+      <div class="gbx-forgot-password__container">
+        <gbx-title
+          useSnack={true}
+          titleMods={['auth', 'reset-password']}
+          titleType={TitleType.TITLE2}
+          heading={4}
+        >
+          {this.translations.forgotPassword}
+        </gbx-title>
+
+        <gbx-input-field
+          id="input-field-forgot-password"
+          inputName="forgot-password"
+          value={this.userEmail}
+          inputPlaceholder={this.translations.email}
+          inputId="forgot-password"
+          inputType={InputFieldType.INPUT}
+          onKeyUp={this.inputChangeHandler}
+          validators={[this.emailValidator]}
+          dataCy={{ pageName: PageName.REGISTRATION, elementName: "email-field" }}
+        />
+
+        <gbx-button
+          useSnack={true}
+          class="gbx-forgot-password__request-password-reset"
+          buttonMods={["label", "password-reset", "default"]}
+          buttonLevel={ButtonLevel.PRIMARY}
+          dataCy={{ pageName: PageName.REGISTRATION, elementName: 'send-reset-request-button' }}
+          isDisabled={this.isButtonDisabled}
+          onGbxButtonClick={this.passwordResetHandler}
+        >
+          {this.translations.recoverPassword}
+        </gbx-button>
+
+        <div class="gbx-forgot-password__cancel-button-container">
+          <gbx-button
+            useSnack={true}
+            buttonMods={['link', 'dotted']}
+            buttonLevel={ButtonLevel.LINK}
+            onGbxButtonClick={this.cancelToLoginViewHandler}
+            dataCy={{ pageName: PageName.REGISTRATION, elementName: 'cancel-to-login' }}
+          >
+            {this.translations.cancel}
+          </gbx-button>
+        </div>
+      </div>
+    );
+  }
+}

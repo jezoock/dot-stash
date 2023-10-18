@@ -1,0 +1,21 @@
+.gbx-phone-validation-content, .gbx-phone-validation-alert-message {
+  margin: 0 0 1.5rem 0;
+}
+
+.gbx-phone-validation-content {
+  margin: 0 0 1.5rem 0;
+
+  &__resend-code {
+    margin: 0 0.7rem;
+  }
+
+  &__countdown {
+  }
+}
+
+.gbx-account-validation {
+  &__button {
+    margin: 2rem 0 0 0;
+    text-align: center;
+  }
+}

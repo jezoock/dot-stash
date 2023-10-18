@@ -1,5 +1,6 @@
 import { Config } from '@stencil/core/internal';
 import { sass } from '@stencil/sass';
+import { reactOutputTarget } from '@stencil/react-output-target';
 
 export const config: Config = {
   namespace: 'dot-stash',
@@ -22,14 +23,14 @@ export const config: Config = {
   ],
   outputTargets: [
     {
-      type: 'dist'
+      type: 'dist',
     },
     {
       type: 'www',
       serviceWorker: null, // disable service workers
-      copy: [
+      /* copy: [
         { src: '../www/build', dest: '../../assets/dot-stash' }
-      ]
+      ] */
     },
   ],
 };

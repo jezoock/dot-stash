@@ -1,0 +1,42 @@
+.gbx-input-date {
+	position: relative;
+	color: #161616;
+	font-size: 0.875rem;
+	height: 2.5rem;
+	border: 1px solid color(gray, base);
+	background: none;
+	background-color: transparent;
+	outline: none;
+	text-align: left;
+	border-radius: 5px;
+	padding: 0 0 0 2.5rem;
+	@include --flex();
+	align-items: center;
+
+  &.--error {
+    border: 1px solid color(error);
+  }
+
+  &__month, &__year {
+    &.--error {
+      color: color(error);
+    }
+  }
+
+	& > input {
+		width: calc(50% - 1px);
+		border: none;
+		height: 1.5rem;
+		text-align: center;
+		&[name="month"] {
+			border-right: 1px solid color(gray, base);
+		}
+	}
+
+	& .gbx-icon {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		left: 5px;
+	}
+}
