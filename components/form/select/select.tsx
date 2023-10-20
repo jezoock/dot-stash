@@ -1,7 +1,5 @@
 import { Component, EventEmitter, h, Prop, State, Event } from '@stencil/core';
 import { SelectOption } from './select-option.interface';
-import { DS_getDataCy } from "../../../../utils";
-import { DataCy } from "../../../../utils/data-cy";
 
 /**
  * This component define a select form.
@@ -10,7 +8,7 @@ import { DataCy } from "../../../../utils/data-cy";
   tag: 'ds-select',
   styleUrl: './select.scss'
 })
-export class GbxSelect {
+export class DSSelect {
 
   @Prop() selectName: string;
   @Prop() selectId: string;
@@ -19,10 +17,6 @@ export class GbxSelect {
   @Prop() isRequired: boolean;
   @Prop() isValid: boolean;
   @Prop() selectedValue: string;
-  @Prop({ attribute: 'data-cy', mutable: true }) dataCy: DataCy = {
-    pageName: null,
-    elementName: null,
-  };
 
   @State() isTouched: boolean;
 
@@ -66,10 +60,6 @@ export class GbxSelect {
         }}
         onChange={this.onChangeValue}
         required={this.isRequired}
-        data-cy={DS_getDataCy({
-          ...this.dataCy,
-          elementType: "Select"
-        })}
       >
         {this.firstSelectOptionLabel && (
           <option disabled={!!this.selectedValue}>

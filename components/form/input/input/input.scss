@@ -1,5 +1,4 @@
 .ds-input {
-  font-family: $font-main;
   font-weight: 600;
   background: snk-color(gray, lighter);
   border-radius: 2px 2px 0 0;
@@ -19,7 +18,6 @@
   }
 
   &__input {
-    font-family: $font-main;
     font-weight: 600 !important;
     padding: 0;
     line-height: 1.5rem;
@@ -27,20 +25,17 @@
     width: 100%;
     cursor: text;
     background: transparent;
-    font-size: snk-font(input, default);
     color: #000;
 
     &:-webkit-autofill {
       font-size: 1rem;
       color: #000;
-      font-family: $font-main;
       font-weight: 600;
       -webkit-background-clip: text;
       -webkit-box-shadow: none;
     }
 
     &::placeholder {
-      font-family: $font-main;
       font-weight: 600;
       color: snk-color(gray, dark) !important; /* Forgive me for what i've done */
     }
@@ -81,7 +76,6 @@
       width: 100%;
     }
     &:after {
-      @include --icon-font(baseline, pronto);
       font-size: 0.75rem;
       position: absolute;
       top: 50%;
@@ -95,7 +89,6 @@
       border-color: transparent;
     }
     &:after {
-      @include --icon-content(check, pronto);
       color: snk-color(status, valid);
     }
     & .ds-input {
@@ -109,7 +102,6 @@
       border-color: snk-color(status, error);
     }
     &:after {
-      @include --icon-content(delete, pronto);
       color: snk-color(status, error);
     }
     & .ds-input {

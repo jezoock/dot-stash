@@ -1,8 +1,8 @@
-import { parsePhoneNumberFromString } from "libphonenumber-js";
+/* import { parsePhoneNumberFromString } from "libphonenumber-js";
 import dayjs from 'dayjs';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter' */
 
-dayjs.extend(isSameOrAfter);
+/* dayjs.extend(isSameOrAfter); */
 
 interface ValidatorConfig {
   /**
@@ -43,8 +43,8 @@ export class Validators {
    * @param {ValidatorConfig} config
    * @return {boolean}
    */
-  static phoneNumber(config: ValidatorConfig): boolean {
-    return parsePhoneNumberFromString(config?.value).isValid();
+  static phoneNumber(/* config: ValidatorConfig */): boolean {
+    return false/* parsePhoneNumberFromString(config?.value).isValid() */;
   }
 
   /**
@@ -80,7 +80,7 @@ export class Validators {
    * @return {boolean}
    */
   static date(config: ValidatorConfig): boolean {
-    return config?.value && dayjs(config.value).isValid();
+    return config?.value && false/* dayjs(config.value).isValid() */;
   }
 
   /**
@@ -89,6 +89,6 @@ export class Validators {
    * @return {boolean}
    */
   static isSameOrAfterDate(config: ValidatorConfig): boolean {
-    return config && !dayjs(config.value).isSameOrAfter(config.argument, 'year')
+    return config && false/* !dayjs(config.value).isSameOrAfter(config.argument, 'year') */
   }
 }

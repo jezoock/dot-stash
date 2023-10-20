@@ -5,41 +5,96 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
 import { DSButtonType } from "./ui/button/button";
 import { DSOption } from "./ui/combo/combo";
+import { FeedbackLevel } from "./form/feedback/feedback-level";
 import { DSGridAlignment, DSGridParams, DSGridType } from "./ui/grid/grid";
 import { DSGridItemStyles } from "./ui/grid/grid";
-import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./advanced/map/map.type";
-import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
-import { DSSliderPrams } from "./ui/slider/slider";
-import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./ui/toaster/toaster-positions.enum";
-import { TooltipPosition } from "./ui/tooltip/tooltip-position.enum";
-import { AuthDisplayedView } from "./advanced/auth-container/auth/auth-displayed-view.enum";
-import { FeedbackLevel } from "./form/feedback/feedback-level";
 import { InputFieldType } from "./form/field/input/input-field-type.enum";
 import { Validator } from "./form/validator/validator";
 import { RadioItem } from "./form/radio/item/radio-item.interface";
 import { RadioItemStyle } from "./form/radio/item/radio-item-style.enum";
 import { RadioItemCheckStyle } from "./form/radio/item/radio-item-check-style.enum";
 import { SelectOption } from "./form/select/select-option.interface";
+import { DSSliderPrams } from "./ui/slider/slider";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./ui/toaster/toaster-positions.enum";
+import { TooltipPosition } from "./ui/tooltip/tooltip-position.enum";
+export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
 export { DSButtonType } from "./ui/button/button";
 export { DSOption } from "./ui/combo/combo";
+export { FeedbackLevel } from "./form/feedback/feedback-level";
 export { DSGridAlignment, DSGridParams, DSGridType } from "./ui/grid/grid";
 export { DSGridItemStyles } from "./ui/grid/grid";
-export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./advanced/map/map.type";
-export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
-export { DSSliderPrams } from "./ui/slider/slider";
-export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./ui/toaster/toaster-positions.enum";
-export { TooltipPosition } from "./ui/tooltip/tooltip-position.enum";
-export { AuthDisplayedView } from "./advanced/auth-container/auth/auth-displayed-view.enum";
-export { FeedbackLevel } from "./form/feedback/feedback-level";
 export { InputFieldType } from "./form/field/input/input-field-type.enum";
 export { Validator } from "./form/validator/validator";
 export { RadioItem } from "./form/radio/item/radio-item.interface";
 export { RadioItemStyle } from "./form/radio/item/radio-item-style.enum";
 export { RadioItemCheckStyle } from "./form/radio/item/radio-item-check-style.enum";
 export { SelectOption } from "./form/select/select-option.interface";
+export { DSSliderPrams } from "./ui/slider/slider";
+export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./ui/toaster/toaster-positions.enum";
+export { TooltipPosition } from "./ui/tooltip/tooltip-position.enum";
 export namespace Components {
+    interface DsApp {
+        "breakpointsFromProp": Record<string, number>;
+        "debounceDelay": number;
+        /**
+          * Get the current breakpoint
+          * @param rawBreakpoints JSON Object containings all breakpoints
+          * @returns current breakpoint ( label & limits )
+         */
+        "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
+        "getBreakpoints": () => Promise<Breakpoints>;
+        "getCurrentBreakpoint": () => Promise<Breakpoint>;
+        "getData": () => Promise<{ breakpoints: Breakpoints; }>;
+        "getParamsForBreakpoint": <T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T; }) => Promise<T>;
+        "getStylesJSON": () => Promise<SassStyles>;
+        "getSubscribers": () => Promise<Element[]>;
+        "loadScript": (scriptUrl: string, scriptId: string) => Promise<unknown>;
+        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
+        /**
+          * Generate an css class ready object
+          * @param mainClass one or many classes to add to the object
+          * @param mods one or many string which will be converted to modifier classes to add to the object
+          * @returns Record<string, boolean>
+         */
+        "propGetClassList": (mainClass: string | string[], mods?: string | string[]) => Promise<Record<string, boolean>>;
+        /**
+          * Convert an HTML property to a boolean
+          * @param prop
+          * @returns boolean
+         */
+        "propToBool": (prop: string | boolean) => Promise<boolean>;
+        /**
+          * Convert an HTML property to a float
+          * @param prop
+          * @returns number
+         */
+        "propToFloat": (prop: string | number) => Promise<number>;
+        /**
+          * Convert an HTML property to JSON
+          * @param prop
+          * @returns string[]
+         */
+        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        /**
+          * Convert an HTML property to a number
+          * @param prop
+          * @returns number
+         */
+        "propToNumber": (prop: string | number) => Promise<number>;
+        /**
+          * Convert an HTML property ( coma separated string ) to an array
+          * @param prop
+          * @returns string[]
+         */
+        "propToStringArray": <T = string>(prop: string | T[]) => Promise<T[]>;
+        "propertyName": string;
+        "removeQuotes": (quotedString: string) => Promise<string>;
+        "subscribe": (target: Element) => Promise<number>;
+        "subscriberSelector": string;
+    }
     interface DsBlock {
         "article": boolean;
         "block": boolean;
@@ -67,6 +122,14 @@ export namespace Components {
         "type": DSButtonType;
         "url": string;
     }
+    interface DsCheckbox {
+        "inputId": string;
+        "inputName": string;
+        "inputValue": string;
+        "isChecked": boolean;
+        "isDisabled": boolean;
+        "type": string | string[];
+    }
     interface DsCombo {
         "close": () => Promise<void>;
         "customLabel": string;
@@ -85,6 +148,23 @@ export namespace Components {
         "action": string;
         "target": string;
         "type": string;
+    }
+    /**
+     * This component display a message with a level for the input forms
+     */
+    interface DsFieldFeedback {
+        "level": FeedbackLevel;
+        "message": string;
+    }
+    interface DsForm {
+    }
+    /**
+     * This component define a form label (for input, select etc..)
+     */
+    interface DsFormLabel {
+        "fieldLabel": string;
+        "isInError": boolean;
+        "isRequired": boolean;
     }
     interface DsGrid {
         "align": string | DSGridAlignment;
@@ -107,70 +187,65 @@ export namespace Components {
         "ctx": boolean;
         "mods": string | string[];
     }
-    interface DsInfoWindow {
+    interface DsInput {
+        "autocomplete": string;
+        "inputId": string;
+        "inputName": string;
+        "isDisabled": boolean;
+        "isInError": boolean;
+        "max": number;
+        "min": number;
+        "mods": string | string[];
+        "placeholder": string;
+        "type": string;
+        "value": any;
+    }
+    interface DsInputDate {
+        "inputId": string;
+        "inputType": string;
+        "isMonthRequired": boolean;
+        "isUsedForCreditCard": boolean;
+        "isYearRequired": boolean;
+    }
+    interface DsInputField {
+        "errorMessage": string;
+        "icon": string;
+        "inputId": string;
+        "inputName": string;
+        "inputPlaceholder": string;
+        "inputType": InputFieldType;
+        "isDisabled": boolean;
+        "isInError": boolean;
+        "label": string;
+        "max": number;
+        "min": number;
         /**
-          * AriaLabel to assign to the InfoWindow.
+          * Send data with an event
+          * @type {boolean}
          */
-        "ariaLabel": string;
+        "sendValue": boolean;
+        "type": string;
         /**
-          * Disable panning the map to make the InfoWindow fully visible when it opens.
+          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
+          * @type {ValidatorType[]}
          */
-        "disableAutoPan": boolean;
-        "getParams": () => Promise<google.maps.InfoWindowOptions>;
-        /**
-          * Maximum width of the InfoWindow, regardless of content&#39;s width. This
-         */
-        "maxWidth": number;
-        /**
-          * Minimum width of the InfoWindow, regardless of the content&#39;s width.
-         */
-        "minWidth": number;
-        /**
-          * The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
-         */
-        "pixelOffset": google.maps.Size;
-        /**
-          * The LatLng at which to display this InfoWindow.
-         */
-        "position": google.maps.LatLng|google.maps.LatLngLiteral;
-        /**
-          * All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-         */
-        "zIndex": number;
+        "validators": Validator[];
+        "value": string;
+    }
+    interface DsInputPassword {
+        "autocomplete": string;
+        "inputId": string;
+        "inputName": string;
+        "isDisabled": boolean;
+        "isInError": boolean;
+        "max": number;
+        "min": number;
+        "placeholder": string;
+        "type": string;
+        "value": any;
     }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
-    }
-    interface DsMap {
-        "addInfoWindow": (infoWindowComponent: HTMLDsInfoWindowElement, marker: google.maps.Marker) => Promise<void>;
-        "addMapStyle": (name: string, styles: google.maps.MapTypeStyle[]) => Promise<void>;
-        "addMarkers": (markers: MapMarkerOptions[]) => Promise<any[]>;
-        "apiKey": string;
-        "clusturize": () => Promise<void>;
-        "fitMarkers": () => Promise<void>;
-        "getTilt": () => Promise<number>;
-        "getZoom": () => Promise<number>;
-        "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
-        "locations": Location[];
-        "params": GMapsParams;
-        "setMapStyles": (name: string) => Promise<void>;
-        "setTilt": (tilt?: number) => Promise<void>;
-        "setZoom": (zoomLevel: number) => Promise<void>;
-        "zoomIn": (scale?: number) => Promise<void>;
-        "zoomOut": (scale?: number) => Promise<void>;
-    }
-    interface DsMapLocation {
-        "lat": number;
-        "lng": number;
-        "name": string;
-    }
-    interface DsMapMarker {
-        "icon": string | google.maps.Icon | google.maps.Symbol;
-        "label": string | google.maps.MarkerLabel;
-        "lat": number;
-        "lng": number;
-        "name": string;
-        "params": string | MarkerOptionsFromProps;
     }
     interface DsModal {
         "closeButtonMods": string[];
@@ -187,20 +262,41 @@ export namespace Components {
         "shown": boolean;
         "useSnack": boolean;
     }
-    interface DsNavMenu {
-        "currentActiveItemId": string;
-        "mods": string|string[];
-    }
-    interface DsNavMenuItem {
-        "depth": number;
-        "dsItemId": string;
-        "hasChildren": boolean;
-        "isActive": boolean;
-        "isAnimated": boolean;
-        "type": string;
-    }
     interface DsPlaceholder {
         "dsMods": string|string[];
+    }
+    interface DsRadio {
+        "itemList": RadioItem[];
+        "label": string;
+        "mods": string[];
+        "radioId": string;
+        "radioItemCheckStyle": RadioItemCheckStyle;
+        "radioItemStyle": RadioItemStyle;
+        /**
+          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
+          * @type {ValidatorType[]}
+         */
+        "validators": Validator[];
+    }
+    /**
+     * This component define a radio item.
+     */
+    interface DsRadioItem {
+        "isChecked": boolean;
+        "label": string;
+        "name": string;
+        "radioId": string;
+        "radioItemCheckStyle": RadioItemCheckStyle;
+        "radioItemStyle": RadioItemStyle;
+        "value": string;
+    }
+    /**
+     * This component define a list of radio items.
+     */
+    interface DsRadioList {
+        "itemList": RadioItem[];
+        "radioItemCheckStyle": RadioItemCheckStyle;
+        "radioItemStyle": RadioItemStyle;
     }
     interface DsRsp {
         "breakpointsFromProp": Record<string, number>;
@@ -220,6 +316,18 @@ export namespace Components {
         "propertyName": string;
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
+    }
+    /**
+     * This component define a select form.
+     */
+    interface DsSelect {
+        "firstSelectOptionLabel": string;
+        "isRequired": boolean;
+        "isValid": boolean;
+        "optionList": SelectOption[];
+        "selectId": string;
+        "selectName": string;
+        "selectedValue": string;
     }
     interface DsSidebar {
         "ctx": boolean;
@@ -332,519 +440,9 @@ export namespace Components {
         "disabled": string | boolean;
         "target": string;
     }
-    interface GbxAccount {
-        "avatarDisplay": boolean;
-        "pageName": string;
-    }
-    interface GbxAccountValidation {
-        "isResendValidationCodeInError": boolean;
-        "isResendValidationCodeProcessing": boolean;
-        "isResendValidationCodeSend": boolean;
-        "isValidationInError": boolean;
-        "isValidationProcessing": boolean;
-        "universe": Universe;
-    }
-    interface GbxAddress {
-        "address": any;
-        "index": any;
-        "isDefault": any;
-        "mode": string;
-        "store": Store;
-    }
-    interface GbxAddressAutocomplete {
-        "address": any;
-        "inputDelay": number;
-        "locale": string;
-        "minChar": number;
-        "pageName": string;
-        "peliasUri": string;
-    }
-    interface GbxAddressBlock {
-        "addresses": UserAddress[];
-        "defaultAddress": UserAddress;
-        "isModalShown": boolean;
-    }
-    interface GbxAddressDropdown {
-        "addresses": any[];
-        "locale": string;
-        "pageName": string;
-    }
-    interface GbxAddressList {
-        "addresses": any[];
-        "defaultAddress": any;
-    }
-    interface GbxAddressSearch {
-        "accuracyLevel": number;
-        "accuracyRequired": string;
-        "displayMode": string;
-        "mode": string;
-        "pageName": string;
-        "store": Store;
-    }
-    interface GbxAddressSelector {
-        "addresses": any[];
-        "defaultAddress": string;
-        "locale": string;
-        "pageName": string;
-    }
-    interface GbxAuth {
-        "displayedView": AuthDisplayedView;
-        "hasLoginFailed": boolean;
-        "hasRegistrationFailed": boolean;
-        "isGrocery": Boolean;
-        "isModalHelpShown": boolean;
-        "isModalShown": boolean;
-        "isRegisterProcessing": boolean;
-        "isResendValidationCodeInError": boolean;
-        "isResendValidationCodeProcessing": boolean;
-        "isResendValidationCodeSend": boolean;
-        "isValidationInError": boolean;
-        "isValidationProcessing": boolean;
-        "registerData": any;
-        "settings": any;
-        "showPhoneValidation": boolean;
-        "universe": Universe;
-    }
-    interface GbxAuthContainer {
-        "cartId": string;
-        "notRegistered": any;
-        "redirectToCheckout": boolean;
-        "store": Store;
-    }
-    interface GbxB2bFailure {
-        "tryAgainClickHandler": () => void;
-    }
-    interface GbxB2bSuccess {
-    }
-    interface GbxCartBlock {
-        "activeCartId": string;
-        "carts": any[];
-        "isLoggedIn": boolean;
-        "locale": string;
-        "universe": Universe;
-    }
-    interface GbxCartItem {
-        "debounceDelay": number;
-        "isSelected": boolean;
-        /**
-          * All product informations
-         */
-        "item": any;
-        "itemImage": string;
-        "locale": string;
-        "mode": string;
-        "readonly": boolean;
-        "toggleSelect": (productId: string) => void;
-    }
-    interface GbxCartSummary {
-        /**
-          * @type {any} Cart informations
-         */
-        "cart": any;
-        "extraAuthorization": number;
-        "isDatatransEnabled": boolean;
-        /**
-          * @type {any} Request edit cart method
-         */
-        "requestEditCart": any;
-    }
-    interface GbxCheckbox {
-        "dataCy": DataCy;
-        "inputId": string;
-        "inputName": string;
-        "inputValue": string;
-        "isChecked": boolean;
-        "isDisabled": boolean;
-        "type": string | string[];
-    }
-    interface GbxCreditCard {
-        "card": CreditCard;
-    }
-    interface GbxCreditCardBlock {
-        "creditCards": any;
-    }
-    interface GbxCreditCardList {
-        "creditCards": any[]|string;
-        "mods": string[]|string;
-    }
-    /**
-     * This component display a message with a level for the input forms
-     */
-    interface GbxFieldFeedback {
-        "level": FeedbackLevel;
-        "message": string;
-    }
-    interface GbxForm {
-    }
-    /**
-     * This component define a form label (for input, select etc..)
-     */
-    interface GbxFormLabel {
-        "dataCy": DataCy;
-        "fieldLabel": string;
-        "isInError": boolean;
-        "isRequired": boolean;
-    }
-    interface GbxInput {
-        "autocomplete": string;
-        "dataCy": DataCy;
-        "inputId": string;
-        "inputName": string;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "max": number;
-        "min": number;
-        "mods": string | string[];
-        "placeholder": string;
-        "type": string;
-        "value": any;
-    }
-    interface GbxInputDate {
-        "inputId": string;
-        "inputType": string;
-        "isMonthRequired": boolean;
-        "isUsedForCreditCard": boolean;
-        "isYearRequired": boolean;
-    }
-    interface GbxInputField {
-        "dataCy": DataCy;
-        "errorMessage": string;
-        "icon": string;
-        "inputId": string;
-        "inputName": string;
-        "inputPlaceholder": string;
-        "inputType": InputFieldType;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "label": string;
-        "max": number;
-        "min": number;
-        /**
-          * Send data with an event
-          * @type {boolean}
-         */
-        "sendValue": boolean;
-        "type": string;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators": Validator[];
-        "value": string;
-    }
-    interface GbxInputPassword {
-        "autocomplete": string;
-        "dataCy": DataCy;
-        "inputId": string;
-        "inputName": string;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "max": number;
-        "min": number;
-        "placeholder": string;
-        "type": string;
-        "value": any;
-    }
-    interface GbxInputPhone {
-        "dataCy": DataCy;
-        "inputId": string;
-        "inputName": string;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "preferredCountries": string[];
-        "value": string;
-    }
-    interface GbxLogin {
-        "hasLoginFailed": boolean;
-        "isGrocery": Boolean;
-    }
-    interface GbxMiniCart {
-        "cart": any;
-        "isActive": boolean;
-        "isLoggedIn": boolean;
-        "isUserLoggedIn": boolean;
-        "locale": string;
-        "maxDisplayedProductCount": number;
-    }
-    interface GbxMiniCartItem {
-        "debounceDelay": number;
-        "isCartActive": boolean;
-        "item": Product | any;
-        "readonly": boolean;
-    }
-    interface GbxMiniCartQuantitySelector {
-        "defaultQuantity": number;
-        "itemId": string;
-        "maxQuantity": number;
-        "minQuantity": number;
-    }
-    interface GbxOrderCart {
-        "order": any;
-        "store": Store;
-    }
-    interface GbxOrderCartProduct {
-        "product": any;
-        "store": Store;
-    }
-    interface GbxOrderCartProductSubstitution {
-        "store": Store;
-        "substitutedProduct": any;
-    }
-    interface GbxOrderDetails {
-        "datalayerPushed": boolean;
-        "fromCheckout": boolean;
-        "orderId": string;
-        "store": Store;
-    }
-    interface GbxOrderInformations {
-        "order": any;
-        "store": Store;
-    }
-    interface GbxOrderMessages {
-        "messages": any[];
-        "orderId": any;
-        "status": any;
-        "store": Store;
-    }
-    interface GbxOrderStep {
-        "status": string;
-        "store": Store;
-        "takeaway": any;
-    }
-    interface GbxOrders {
-        "fromCheckout": boolean;
-        "orderId": string;
-    }
-    interface GbxPasswordChangeBlock {
-    }
-    interface GbxProfile {
-        "isValidationProcessCanceled": boolean;
-        "store": Store;
-    }
-    interface GbxRadio {
-        "itemList": RadioItem[];
-        "label": string;
-        "mods": string[];
-        "radioId": string;
-        "radioItemCheckStyle": RadioItemCheckStyle;
-        "radioItemStyle": RadioItemStyle;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators": Validator[];
-    }
-    /**
-     * This component define a radio item.
-     */
-    interface GbxRadioItem {
-        "isChecked": boolean;
-        "label": string;
-        "name": string;
-        "radioId": string;
-        "radioItemCheckStyle": RadioItemCheckStyle;
-        "radioItemStyle": RadioItemStyle;
-        "value": string;
-    }
-    /**
-     * This component define a list of radio items.
-     */
-    interface GbxRadioList {
-        "itemList": RadioItem[];
-        "radioItemCheckStyle": RadioItemCheckStyle;
-        "radioItemStyle": RadioItemStyle;
-    }
-    interface GbxRegister {
-        "hasRegistrationFailed": boolean;
-        "isRegisterProcessing": boolean;
-        "registerData": any;
-    }
-    interface GbxRegisterForm {
-        "isRegisterProcessing": boolean;
-        "registerData": {
-    firstname: string;
-    lastname: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    company?: string;
-    phone: string;
-    acceptCGU: boolean;
-  };
-    }
-    interface GbxResetPassword {
-    }
-    /**
-     * This component define a select form.
-     */
-    interface GbxSelect {
-        "dataCy": DataCy;
-        "firstSelectOptionLabel": string;
-        "isRequired": boolean;
-        "isValid": boolean;
-        "optionList": SelectOption[];
-        "selectId": string;
-        "selectName": string;
-        "selectedValue": string;
-    }
-    interface GbxShoppingBag {
-        "isAgeLegal": boolean;
-        "mode": string;
-        "pageName": string;
-    }
-    /**
-     * Simple button component displaying the shopping list modal
-     */
-    interface GbxShoppingBagButton {
-        /**
-          * Displayed button label
-         */
-        "label": string;
-    }
-    /**
-     * Create shopping bag form
-     */
-    interface GbxShoppingBagCreateForm {
-        /**
-          * Locale used for translations
-         */
-        "locale": string;
-        /**
-          * Parent component method called when form is submitted
-         */
-        "requestCreateShoppingBag": any;
-        /**
-          * Parent component method called to hide creation form
-         */
-        "requestHideCreateForm": any;
-    }
-    /**
-     * Display shopping bag details & products
-     */
-    interface GbxShoppingBagDetails {
-        /**
-          * Variable to know if the user already answer to confirm-age's modal
-         */
-        "isAgeLegal": boolean;
-        /**
-          * Locale used for translations
-         */
-        "locale": string;
-        /**
-          * Method called to delete current shopping bag
-         */
-        "requestDeleteShoppingBagProducts": any;
-        /**
-          * Method called to navigate to shopping bag root page
-         */
-        "requestNavigationBack": any;
-        /**
-          * Method called to update shopping bag informations
-         */
-        "requestUpdateShoppingBag": any;
-        /**
-          * Shopping bag to show details of
-         */
-        "shoppingBag": any;
-    }
-    /**
-     * Display a shopping bag list
-     */
-    interface GbxShoppingBagList {
-        /**
-          * Locale used for translations
-         */
-        "locale": string;
-        /**
-          * Method called to display shopping bag creation form
-         */
-        "requestDisplayCreateForm": any;
-        /**
-          * Method called to display shopping bag
-         */
-        "requestDisplayShoppingBag": any;
-        /**
-          * An array containing all shopping bags to display
-         */
-        "shoppingBags": any[];
-    }
-    /**
-     * Component used to display and edit shopping bag name
-     */
-    interface GbxShoppingBagName {
-        /**
-          * Wether shopping bag name is editable or not
-         */
-        "isDisabled": boolean;
-        /**
-          * Locale used for transaltions
-         */
-        "locale": string;
-        /**
-          * Shopping bag name to display/edit
-         */
-        "name": string;
-        /**
-          * Parent component method called to update shopping bag name
-         */
-        "requestUpdateShoppingBag": any;
-        "toggleDeleteMessage": () => void;
-    }
-    interface GbxShoppingBagProducts {
-        "ShoppingBagUpdateProductsAction": any;
-        /**
-          * Array of products to display
-         */
-        "products": any[];
-        "selectedProductIds": string[];
-        /**
-          * Shopping bag id associated to products
-         */
-        "shoppingBagId": string;
-        "toggleProductSelection": (productId: string) => void;
-    }
-    interface GbxThanksForRegistering {
-        "userFirstName": string;
-    }
-    interface GbxVouchers {
-    }
-    interface GbxWallet {
-        "store": Store;
-    }
-    interface SnkClickAndCollectToggle {
-        "cartId": string;
-        "isTakeawayAvailable": boolean;
-        "reducibleAmount": string;
-        "reduciblePercentage": number;
-    }
-    interface SnkConfirmModal {
-        "modalTitle": string;
-    }
-    interface SnkMiniCartHeader {
-        "store": any;
-    }
-    interface SnkMiniCartItemCombinations {
-        "combinations": any[];
-    }
-    interface SnkMiniCartModal {
-        "isClosingDisabled": boolean;
-        "isHeaderDisabled": boolean;
-        "modalTitle": string;
-    }
-    interface SnkMiniCartStore {
-        "store": any;
-    }
-    interface SnkStoreNote {
-        "isCartActive": boolean;
-        "note": string;
-    }
-    interface SnkStoreNoteModal {
-        "note": string;
-    }
     interface SnkTextarea {
         "columns": number;
         "content": string;
-        "dataCy": DataCy;
         "disabled": boolean;
         "lines": number;
         "maxLength": number;
@@ -853,28 +451,66 @@ export namespace Components {
         "validators": Validator[];
         "withCharacterCount": boolean;
     }
-    interface SnkTwoColumns {
-    }
+}
+export interface DsAppCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAppElement;
 }
 export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
 }
+export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsCheckboxElement;
+}
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
+}
+export interface DsFormLabelCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsFormLabelElement;
+}
+export interface DsInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputElement;
+}
+export interface DsInputDateCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputDateElement;
+}
+export interface DsInputFieldCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputFieldElement;
+}
+export interface DsInputPasswordCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsInputPasswordElement;
 }
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
 }
-export interface DsNavMenuItemCustomEvent<T> extends CustomEvent<T> {
+export interface DsRadioCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsNavMenuItemElement;
+    target: HTMLDsRadioElement;
+}
+export interface DsRadioItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsRadioItemElement;
+}
+export interface DsRadioListCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsRadioListElement;
 }
 export interface DsRspCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRspElement;
+}
+export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSelectElement;
 }
 export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -896,175 +532,17 @@ export interface DsTogglerItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsTogglerItemElement;
 }
-export interface GbxAccountValidationCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAccountValidationElement;
-}
-export interface GbxAddressCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAddressElement;
-}
-export interface GbxAddressAutocompleteCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAddressAutocompleteElement;
-}
-export interface GbxAddressBlockCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAddressBlockElement;
-}
-export interface GbxAddressDropdownCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAddressDropdownElement;
-}
-export interface GbxAddressListCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAddressListElement;
-}
-export interface GbxAddressSelectorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAddressSelectorElement;
-}
-export interface GbxAuthCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAuthElement;
-}
-export interface GbxAuthContainerCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxAuthContainerElement;
-}
-export interface GbxB2bFailureCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxB2bFailureElement;
-}
-export interface GbxB2bSuccessCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxB2bSuccessElement;
-}
-export interface GbxCartBlockCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxCartBlockElement;
-}
-export interface GbxCartItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxCartItemElement;
-}
-export interface GbxCartSummaryCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxCartSummaryElement;
-}
-export interface GbxCheckboxCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxCheckboxElement;
-}
-export interface GbxCreditCardBlockCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxCreditCardBlockElement;
-}
-export interface GbxCreditCardListCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxCreditCardListElement;
-}
-export interface GbxFormLabelCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxFormLabelElement;
-}
-export interface GbxInputCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxInputElement;
-}
-export interface GbxInputDateCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxInputDateElement;
-}
-export interface GbxInputFieldCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxInputFieldElement;
-}
-export interface GbxInputPasswordCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxInputPasswordElement;
-}
-export interface GbxInputPhoneCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxInputPhoneElement;
-}
-export interface GbxLoginCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxLoginElement;
-}
-export interface GbxMiniCartCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxMiniCartElement;
-}
-export interface GbxMiniCartItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxMiniCartItemElement;
-}
-export interface GbxMiniCartQuantitySelectorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxMiniCartQuantitySelectorElement;
-}
-export interface GbxOrderDetailsCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxOrderDetailsElement;
-}
-export interface GbxPasswordChangeBlockCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxPasswordChangeBlockElement;
-}
-export interface GbxRadioCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxRadioElement;
-}
-export interface GbxRadioItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxRadioItemElement;
-}
-export interface GbxRadioListCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxRadioListElement;
-}
-export interface GbxRegisterCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxRegisterElement;
-}
-export interface GbxRegisterFormCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxRegisterFormElement;
-}
-export interface GbxResetPasswordCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxResetPasswordElement;
-}
-export interface GbxSelectCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxSelectElement;
-}
-export interface GbxThanksForRegisteringCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLGbxThanksForRegisteringElement;
-}
-export interface SnkClickAndCollectToggleCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLSnkClickAndCollectToggleElement;
-}
-export interface SnkConfirmModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLSnkConfirmModalElement;
-}
-export interface SnkStoreNoteCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLSnkStoreNoteElement;
-}
-export interface SnkStoreNoteModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLSnkStoreNoteModalElement;
-}
 export interface SnkTextareaCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLSnkTextareaElement;
 }
 declare global {
+    interface HTMLDsAppElement extends Components.DsApp, HTMLStencilElement {
+    }
+    var HTMLDsAppElement: {
+        prototype: HTMLDsAppElement;
+        new (): HTMLDsAppElement;
+    };
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
     var HTMLDsBlockElement: {
@@ -1077,6 +555,12 @@ declare global {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
     };
+    interface HTMLDsCheckboxElement extends Components.DsCheckbox, HTMLStencilElement {
+    }
+    var HTMLDsCheckboxElement: {
+        prototype: HTMLDsCheckboxElement;
+        new (): HTMLDsCheckboxElement;
+    };
     interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
     }
     var HTMLDsComboElement: {
@@ -1088,6 +572,30 @@ declare global {
     var HTMLDsControlElement: {
         prototype: HTMLDsControlElement;
         new (): HTMLDsControlElement;
+    };
+    /**
+     * This component display a message with a level for the input forms
+     */
+    interface HTMLDsFieldFeedbackElement extends Components.DsFieldFeedback, HTMLStencilElement {
+    }
+    var HTMLDsFieldFeedbackElement: {
+        prototype: HTMLDsFieldFeedbackElement;
+        new (): HTMLDsFieldFeedbackElement;
+    };
+    interface HTMLDsFormElement extends Components.DsForm, HTMLStencilElement {
+    }
+    var HTMLDsFormElement: {
+        prototype: HTMLDsFormElement;
+        new (): HTMLDsFormElement;
+    };
+    /**
+     * This component define a form label (for input, select etc..)
+     */
+    interface HTMLDsFormLabelElement extends Components.DsFormLabel, HTMLStencilElement {
+    }
+    var HTMLDsFormLabelElement: {
+        prototype: HTMLDsFormLabelElement;
+        new (): HTMLDsFormLabelElement;
     };
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
@@ -1107,11 +615,29 @@ declare global {
         prototype: HTMLDsHeaderElement;
         new (): HTMLDsHeaderElement;
     };
-    interface HTMLDsInfoWindowElement extends Components.DsInfoWindow, HTMLStencilElement {
+    interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
     }
-    var HTMLDsInfoWindowElement: {
-        prototype: HTMLDsInfoWindowElement;
-        new (): HTMLDsInfoWindowElement;
+    var HTMLDsInputElement: {
+        prototype: HTMLDsInputElement;
+        new (): HTMLDsInputElement;
+    };
+    interface HTMLDsInputDateElement extends Components.DsInputDate, HTMLStencilElement {
+    }
+    var HTMLDsInputDateElement: {
+        prototype: HTMLDsInputDateElement;
+        new (): HTMLDsInputDateElement;
+    };
+    interface HTMLDsInputFieldElement extends Components.DsInputField, HTMLStencilElement {
+    }
+    var HTMLDsInputFieldElement: {
+        prototype: HTMLDsInputFieldElement;
+        new (): HTMLDsInputFieldElement;
+    };
+    interface HTMLDsInputPasswordElement extends Components.DsInputPassword, HTMLStencilElement {
+    }
+    var HTMLDsInputPasswordElement: {
+        prototype: HTMLDsInputPasswordElement;
+        new (): HTMLDsInputPasswordElement;
     };
     interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
     }
@@ -1119,41 +645,11 @@ declare global {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
     };
-    interface HTMLDsMapElement extends Components.DsMap, HTMLStencilElement {
-    }
-    var HTMLDsMapElement: {
-        prototype: HTMLDsMapElement;
-        new (): HTMLDsMapElement;
-    };
-    interface HTMLDsMapLocationElement extends Components.DsMapLocation, HTMLStencilElement {
-    }
-    var HTMLDsMapLocationElement: {
-        prototype: HTMLDsMapLocationElement;
-        new (): HTMLDsMapLocationElement;
-    };
-    interface HTMLDsMapMarkerElement extends Components.DsMapMarker, HTMLStencilElement {
-    }
-    var HTMLDsMapMarkerElement: {
-        prototype: HTMLDsMapMarkerElement;
-        new (): HTMLDsMapMarkerElement;
-    };
     interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
     }
     var HTMLDsModalElement: {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
-    };
-    interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
-    }
-    var HTMLDsNavMenuElement: {
-        prototype: HTMLDsNavMenuElement;
-        new (): HTMLDsNavMenuElement;
-    };
-    interface HTMLDsNavMenuItemElement extends Components.DsNavMenuItem, HTMLStencilElement {
-    }
-    var HTMLDsNavMenuItemElement: {
-        prototype: HTMLDsNavMenuItemElement;
-        new (): HTMLDsNavMenuItemElement;
     };
     interface HTMLDsPlaceholderElement extends Components.DsPlaceholder, HTMLStencilElement {
     }
@@ -1161,11 +657,44 @@ declare global {
         prototype: HTMLDsPlaceholderElement;
         new (): HTMLDsPlaceholderElement;
     };
+    interface HTMLDsRadioElement extends Components.DsRadio, HTMLStencilElement {
+    }
+    var HTMLDsRadioElement: {
+        prototype: HTMLDsRadioElement;
+        new (): HTMLDsRadioElement;
+    };
+    /**
+     * This component define a radio item.
+     */
+    interface HTMLDsRadioItemElement extends Components.DsRadioItem, HTMLStencilElement {
+    }
+    var HTMLDsRadioItemElement: {
+        prototype: HTMLDsRadioItemElement;
+        new (): HTMLDsRadioItemElement;
+    };
+    /**
+     * This component define a list of radio items.
+     */
+    interface HTMLDsRadioListElement extends Components.DsRadioList, HTMLStencilElement {
+    }
+    var HTMLDsRadioListElement: {
+        prototype: HTMLDsRadioListElement;
+        new (): HTMLDsRadioListElement;
+    };
     interface HTMLDsRspElement extends Components.DsRsp, HTMLStencilElement {
     }
     var HTMLDsRspElement: {
         prototype: HTMLDsRspElement;
         new (): HTMLDsRspElement;
+    };
+    /**
+     * This component define a select form.
+     */
+    interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
+    }
+    var HTMLDsSelectElement: {
+        prototype: HTMLDsSelectElement;
+        new (): HTMLDsSelectElement;
     };
     interface HTMLDsSidebarElement extends Components.DsSidebar, HTMLStencilElement {
     }
@@ -1248,468 +777,37 @@ declare global {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
     };
-    interface HTMLGbxAccountElement extends Components.GbxAccount, HTMLStencilElement {
-    }
-    var HTMLGbxAccountElement: {
-        prototype: HTMLGbxAccountElement;
-        new (): HTMLGbxAccountElement;
-    };
-    interface HTMLGbxAccountValidationElement extends Components.GbxAccountValidation, HTMLStencilElement {
-    }
-    var HTMLGbxAccountValidationElement: {
-        prototype: HTMLGbxAccountValidationElement;
-        new (): HTMLGbxAccountValidationElement;
-    };
-    interface HTMLGbxAddressElement extends Components.GbxAddress, HTMLStencilElement {
-    }
-    var HTMLGbxAddressElement: {
-        prototype: HTMLGbxAddressElement;
-        new (): HTMLGbxAddressElement;
-    };
-    interface HTMLGbxAddressAutocompleteElement extends Components.GbxAddressAutocomplete, HTMLStencilElement {
-    }
-    var HTMLGbxAddressAutocompleteElement: {
-        prototype: HTMLGbxAddressAutocompleteElement;
-        new (): HTMLGbxAddressAutocompleteElement;
-    };
-    interface HTMLGbxAddressBlockElement extends Components.GbxAddressBlock, HTMLStencilElement {
-    }
-    var HTMLGbxAddressBlockElement: {
-        prototype: HTMLGbxAddressBlockElement;
-        new (): HTMLGbxAddressBlockElement;
-    };
-    interface HTMLGbxAddressDropdownElement extends Components.GbxAddressDropdown, HTMLStencilElement {
-    }
-    var HTMLGbxAddressDropdownElement: {
-        prototype: HTMLGbxAddressDropdownElement;
-        new (): HTMLGbxAddressDropdownElement;
-    };
-    interface HTMLGbxAddressListElement extends Components.GbxAddressList, HTMLStencilElement {
-    }
-    var HTMLGbxAddressListElement: {
-        prototype: HTMLGbxAddressListElement;
-        new (): HTMLGbxAddressListElement;
-    };
-    interface HTMLGbxAddressSearchElement extends Components.GbxAddressSearch, HTMLStencilElement {
-    }
-    var HTMLGbxAddressSearchElement: {
-        prototype: HTMLGbxAddressSearchElement;
-        new (): HTMLGbxAddressSearchElement;
-    };
-    interface HTMLGbxAddressSelectorElement extends Components.GbxAddressSelector, HTMLStencilElement {
-    }
-    var HTMLGbxAddressSelectorElement: {
-        prototype: HTMLGbxAddressSelectorElement;
-        new (): HTMLGbxAddressSelectorElement;
-    };
-    interface HTMLGbxAuthElement extends Components.GbxAuth, HTMLStencilElement {
-    }
-    var HTMLGbxAuthElement: {
-        prototype: HTMLGbxAuthElement;
-        new (): HTMLGbxAuthElement;
-    };
-    interface HTMLGbxAuthContainerElement extends Components.GbxAuthContainer, HTMLStencilElement {
-    }
-    var HTMLGbxAuthContainerElement: {
-        prototype: HTMLGbxAuthContainerElement;
-        new (): HTMLGbxAuthContainerElement;
-    };
-    interface HTMLGbxB2bFailureElement extends Components.GbxB2bFailure, HTMLStencilElement {
-    }
-    var HTMLGbxB2bFailureElement: {
-        prototype: HTMLGbxB2bFailureElement;
-        new (): HTMLGbxB2bFailureElement;
-    };
-    interface HTMLGbxB2bSuccessElement extends Components.GbxB2bSuccess, HTMLStencilElement {
-    }
-    var HTMLGbxB2bSuccessElement: {
-        prototype: HTMLGbxB2bSuccessElement;
-        new (): HTMLGbxB2bSuccessElement;
-    };
-    interface HTMLGbxCartBlockElement extends Components.GbxCartBlock, HTMLStencilElement {
-    }
-    var HTMLGbxCartBlockElement: {
-        prototype: HTMLGbxCartBlockElement;
-        new (): HTMLGbxCartBlockElement;
-    };
-    interface HTMLGbxCartItemElement extends Components.GbxCartItem, HTMLStencilElement {
-    }
-    var HTMLGbxCartItemElement: {
-        prototype: HTMLGbxCartItemElement;
-        new (): HTMLGbxCartItemElement;
-    };
-    interface HTMLGbxCartSummaryElement extends Components.GbxCartSummary, HTMLStencilElement {
-    }
-    var HTMLGbxCartSummaryElement: {
-        prototype: HTMLGbxCartSummaryElement;
-        new (): HTMLGbxCartSummaryElement;
-    };
-    interface HTMLGbxCheckboxElement extends Components.GbxCheckbox, HTMLStencilElement {
-    }
-    var HTMLGbxCheckboxElement: {
-        prototype: HTMLGbxCheckboxElement;
-        new (): HTMLGbxCheckboxElement;
-    };
-    interface HTMLGbxCreditCardElement extends Components.GbxCreditCard, HTMLStencilElement {
-    }
-    var HTMLGbxCreditCardElement: {
-        prototype: HTMLGbxCreditCardElement;
-        new (): HTMLGbxCreditCardElement;
-    };
-    interface HTMLGbxCreditCardBlockElement extends Components.GbxCreditCardBlock, HTMLStencilElement {
-    }
-    var HTMLGbxCreditCardBlockElement: {
-        prototype: HTMLGbxCreditCardBlockElement;
-        new (): HTMLGbxCreditCardBlockElement;
-    };
-    interface HTMLGbxCreditCardListElement extends Components.GbxCreditCardList, HTMLStencilElement {
-    }
-    var HTMLGbxCreditCardListElement: {
-        prototype: HTMLGbxCreditCardListElement;
-        new (): HTMLGbxCreditCardListElement;
-    };
-    /**
-     * This component display a message with a level for the input forms
-     */
-    interface HTMLGbxFieldFeedbackElement extends Components.GbxFieldFeedback, HTMLStencilElement {
-    }
-    var HTMLGbxFieldFeedbackElement: {
-        prototype: HTMLGbxFieldFeedbackElement;
-        new (): HTMLGbxFieldFeedbackElement;
-    };
-    interface HTMLGbxFormElement extends Components.GbxForm, HTMLStencilElement {
-    }
-    var HTMLGbxFormElement: {
-        prototype: HTMLGbxFormElement;
-        new (): HTMLGbxFormElement;
-    };
-    /**
-     * This component define a form label (for input, select etc..)
-     */
-    interface HTMLGbxFormLabelElement extends Components.GbxFormLabel, HTMLStencilElement {
-    }
-    var HTMLGbxFormLabelElement: {
-        prototype: HTMLGbxFormLabelElement;
-        new (): HTMLGbxFormLabelElement;
-    };
-    interface HTMLGbxInputElement extends Components.GbxInput, HTMLStencilElement {
-    }
-    var HTMLGbxInputElement: {
-        prototype: HTMLGbxInputElement;
-        new (): HTMLGbxInputElement;
-    };
-    interface HTMLGbxInputDateElement extends Components.GbxInputDate, HTMLStencilElement {
-    }
-    var HTMLGbxInputDateElement: {
-        prototype: HTMLGbxInputDateElement;
-        new (): HTMLGbxInputDateElement;
-    };
-    interface HTMLGbxInputFieldElement extends Components.GbxInputField, HTMLStencilElement {
-    }
-    var HTMLGbxInputFieldElement: {
-        prototype: HTMLGbxInputFieldElement;
-        new (): HTMLGbxInputFieldElement;
-    };
-    interface HTMLGbxInputPasswordElement extends Components.GbxInputPassword, HTMLStencilElement {
-    }
-    var HTMLGbxInputPasswordElement: {
-        prototype: HTMLGbxInputPasswordElement;
-        new (): HTMLGbxInputPasswordElement;
-    };
-    interface HTMLGbxInputPhoneElement extends Components.GbxInputPhone, HTMLStencilElement {
-    }
-    var HTMLGbxInputPhoneElement: {
-        prototype: HTMLGbxInputPhoneElement;
-        new (): HTMLGbxInputPhoneElement;
-    };
-    interface HTMLGbxLoginElement extends Components.GbxLogin, HTMLStencilElement {
-    }
-    var HTMLGbxLoginElement: {
-        prototype: HTMLGbxLoginElement;
-        new (): HTMLGbxLoginElement;
-    };
-    interface HTMLGbxMiniCartElement extends Components.GbxMiniCart, HTMLStencilElement {
-    }
-    var HTMLGbxMiniCartElement: {
-        prototype: HTMLGbxMiniCartElement;
-        new (): HTMLGbxMiniCartElement;
-    };
-    interface HTMLGbxMiniCartItemElement extends Components.GbxMiniCartItem, HTMLStencilElement {
-    }
-    var HTMLGbxMiniCartItemElement: {
-        prototype: HTMLGbxMiniCartItemElement;
-        new (): HTMLGbxMiniCartItemElement;
-    };
-    interface HTMLGbxMiniCartQuantitySelectorElement extends Components.GbxMiniCartQuantitySelector, HTMLStencilElement {
-    }
-    var HTMLGbxMiniCartQuantitySelectorElement: {
-        prototype: HTMLGbxMiniCartQuantitySelectorElement;
-        new (): HTMLGbxMiniCartQuantitySelectorElement;
-    };
-    interface HTMLGbxOrderCartElement extends Components.GbxOrderCart, HTMLStencilElement {
-    }
-    var HTMLGbxOrderCartElement: {
-        prototype: HTMLGbxOrderCartElement;
-        new (): HTMLGbxOrderCartElement;
-    };
-    interface HTMLGbxOrderCartProductElement extends Components.GbxOrderCartProduct, HTMLStencilElement {
-    }
-    var HTMLGbxOrderCartProductElement: {
-        prototype: HTMLGbxOrderCartProductElement;
-        new (): HTMLGbxOrderCartProductElement;
-    };
-    interface HTMLGbxOrderCartProductSubstitutionElement extends Components.GbxOrderCartProductSubstitution, HTMLStencilElement {
-    }
-    var HTMLGbxOrderCartProductSubstitutionElement: {
-        prototype: HTMLGbxOrderCartProductSubstitutionElement;
-        new (): HTMLGbxOrderCartProductSubstitutionElement;
-    };
-    interface HTMLGbxOrderDetailsElement extends Components.GbxOrderDetails, HTMLStencilElement {
-    }
-    var HTMLGbxOrderDetailsElement: {
-        prototype: HTMLGbxOrderDetailsElement;
-        new (): HTMLGbxOrderDetailsElement;
-    };
-    interface HTMLGbxOrderInformationsElement extends Components.GbxOrderInformations, HTMLStencilElement {
-    }
-    var HTMLGbxOrderInformationsElement: {
-        prototype: HTMLGbxOrderInformationsElement;
-        new (): HTMLGbxOrderInformationsElement;
-    };
-    interface HTMLGbxOrderMessagesElement extends Components.GbxOrderMessages, HTMLStencilElement {
-    }
-    var HTMLGbxOrderMessagesElement: {
-        prototype: HTMLGbxOrderMessagesElement;
-        new (): HTMLGbxOrderMessagesElement;
-    };
-    interface HTMLGbxOrderStepElement extends Components.GbxOrderStep, HTMLStencilElement {
-    }
-    var HTMLGbxOrderStepElement: {
-        prototype: HTMLGbxOrderStepElement;
-        new (): HTMLGbxOrderStepElement;
-    };
-    interface HTMLGbxOrdersElement extends Components.GbxOrders, HTMLStencilElement {
-    }
-    var HTMLGbxOrdersElement: {
-        prototype: HTMLGbxOrdersElement;
-        new (): HTMLGbxOrdersElement;
-    };
-    interface HTMLGbxPasswordChangeBlockElement extends Components.GbxPasswordChangeBlock, HTMLStencilElement {
-    }
-    var HTMLGbxPasswordChangeBlockElement: {
-        prototype: HTMLGbxPasswordChangeBlockElement;
-        new (): HTMLGbxPasswordChangeBlockElement;
-    };
-    interface HTMLGbxProfileElement extends Components.GbxProfile, HTMLStencilElement {
-    }
-    var HTMLGbxProfileElement: {
-        prototype: HTMLGbxProfileElement;
-        new (): HTMLGbxProfileElement;
-    };
-    interface HTMLGbxRadioElement extends Components.GbxRadio, HTMLStencilElement {
-    }
-    var HTMLGbxRadioElement: {
-        prototype: HTMLGbxRadioElement;
-        new (): HTMLGbxRadioElement;
-    };
-    /**
-     * This component define a radio item.
-     */
-    interface HTMLGbxRadioItemElement extends Components.GbxRadioItem, HTMLStencilElement {
-    }
-    var HTMLGbxRadioItemElement: {
-        prototype: HTMLGbxRadioItemElement;
-        new (): HTMLGbxRadioItemElement;
-    };
-    /**
-     * This component define a list of radio items.
-     */
-    interface HTMLGbxRadioListElement extends Components.GbxRadioList, HTMLStencilElement {
-    }
-    var HTMLGbxRadioListElement: {
-        prototype: HTMLGbxRadioListElement;
-        new (): HTMLGbxRadioListElement;
-    };
-    interface HTMLGbxRegisterElement extends Components.GbxRegister, HTMLStencilElement {
-    }
-    var HTMLGbxRegisterElement: {
-        prototype: HTMLGbxRegisterElement;
-        new (): HTMLGbxRegisterElement;
-    };
-    interface HTMLGbxRegisterFormElement extends Components.GbxRegisterForm, HTMLStencilElement {
-    }
-    var HTMLGbxRegisterFormElement: {
-        prototype: HTMLGbxRegisterFormElement;
-        new (): HTMLGbxRegisterFormElement;
-    };
-    interface HTMLGbxResetPasswordElement extends Components.GbxResetPassword, HTMLStencilElement {
-    }
-    var HTMLGbxResetPasswordElement: {
-        prototype: HTMLGbxResetPasswordElement;
-        new (): HTMLGbxResetPasswordElement;
-    };
-    /**
-     * This component define a select form.
-     */
-    interface HTMLGbxSelectElement extends Components.GbxSelect, HTMLStencilElement {
-    }
-    var HTMLGbxSelectElement: {
-        prototype: HTMLGbxSelectElement;
-        new (): HTMLGbxSelectElement;
-    };
-    interface HTMLGbxShoppingBagElement extends Components.GbxShoppingBag, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagElement: {
-        prototype: HTMLGbxShoppingBagElement;
-        new (): HTMLGbxShoppingBagElement;
-    };
-    /**
-     * Simple button component displaying the shopping list modal
-     */
-    interface HTMLGbxShoppingBagButtonElement extends Components.GbxShoppingBagButton, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagButtonElement: {
-        prototype: HTMLGbxShoppingBagButtonElement;
-        new (): HTMLGbxShoppingBagButtonElement;
-    };
-    /**
-     * Create shopping bag form
-     */
-    interface HTMLGbxShoppingBagCreateFormElement extends Components.GbxShoppingBagCreateForm, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagCreateFormElement: {
-        prototype: HTMLGbxShoppingBagCreateFormElement;
-        new (): HTMLGbxShoppingBagCreateFormElement;
-    };
-    /**
-     * Display shopping bag details & products
-     */
-    interface HTMLGbxShoppingBagDetailsElement extends Components.GbxShoppingBagDetails, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagDetailsElement: {
-        prototype: HTMLGbxShoppingBagDetailsElement;
-        new (): HTMLGbxShoppingBagDetailsElement;
-    };
-    /**
-     * Display a shopping bag list
-     */
-    interface HTMLGbxShoppingBagListElement extends Components.GbxShoppingBagList, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagListElement: {
-        prototype: HTMLGbxShoppingBagListElement;
-        new (): HTMLGbxShoppingBagListElement;
-    };
-    /**
-     * Component used to display and edit shopping bag name
-     */
-    interface HTMLGbxShoppingBagNameElement extends Components.GbxShoppingBagName, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagNameElement: {
-        prototype: HTMLGbxShoppingBagNameElement;
-        new (): HTMLGbxShoppingBagNameElement;
-    };
-    interface HTMLGbxShoppingBagProductsElement extends Components.GbxShoppingBagProducts, HTMLStencilElement {
-    }
-    var HTMLGbxShoppingBagProductsElement: {
-        prototype: HTMLGbxShoppingBagProductsElement;
-        new (): HTMLGbxShoppingBagProductsElement;
-    };
-    interface HTMLGbxThanksForRegisteringElement extends Components.GbxThanksForRegistering, HTMLStencilElement {
-    }
-    var HTMLGbxThanksForRegisteringElement: {
-        prototype: HTMLGbxThanksForRegisteringElement;
-        new (): HTMLGbxThanksForRegisteringElement;
-    };
-    interface HTMLGbxVouchersElement extends Components.GbxVouchers, HTMLStencilElement {
-    }
-    var HTMLGbxVouchersElement: {
-        prototype: HTMLGbxVouchersElement;
-        new (): HTMLGbxVouchersElement;
-    };
-    interface HTMLGbxWalletElement extends Components.GbxWallet, HTMLStencilElement {
-    }
-    var HTMLGbxWalletElement: {
-        prototype: HTMLGbxWalletElement;
-        new (): HTMLGbxWalletElement;
-    };
-    interface HTMLSnkClickAndCollectToggleElement extends Components.SnkClickAndCollectToggle, HTMLStencilElement {
-    }
-    var HTMLSnkClickAndCollectToggleElement: {
-        prototype: HTMLSnkClickAndCollectToggleElement;
-        new (): HTMLSnkClickAndCollectToggleElement;
-    };
-    interface HTMLSnkConfirmModalElement extends Components.SnkConfirmModal, HTMLStencilElement {
-    }
-    var HTMLSnkConfirmModalElement: {
-        prototype: HTMLSnkConfirmModalElement;
-        new (): HTMLSnkConfirmModalElement;
-    };
-    interface HTMLSnkMiniCartHeaderElement extends Components.SnkMiniCartHeader, HTMLStencilElement {
-    }
-    var HTMLSnkMiniCartHeaderElement: {
-        prototype: HTMLSnkMiniCartHeaderElement;
-        new (): HTMLSnkMiniCartHeaderElement;
-    };
-    interface HTMLSnkMiniCartItemCombinationsElement extends Components.SnkMiniCartItemCombinations, HTMLStencilElement {
-    }
-    var HTMLSnkMiniCartItemCombinationsElement: {
-        prototype: HTMLSnkMiniCartItemCombinationsElement;
-        new (): HTMLSnkMiniCartItemCombinationsElement;
-    };
-    interface HTMLSnkMiniCartModalElement extends Components.SnkMiniCartModal, HTMLStencilElement {
-    }
-    var HTMLSnkMiniCartModalElement: {
-        prototype: HTMLSnkMiniCartModalElement;
-        new (): HTMLSnkMiniCartModalElement;
-    };
-    interface HTMLSnkMiniCartStoreElement extends Components.SnkMiniCartStore, HTMLStencilElement {
-    }
-    var HTMLSnkMiniCartStoreElement: {
-        prototype: HTMLSnkMiniCartStoreElement;
-        new (): HTMLSnkMiniCartStoreElement;
-    };
-    interface HTMLSnkStoreNoteElement extends Components.SnkStoreNote, HTMLStencilElement {
-    }
-    var HTMLSnkStoreNoteElement: {
-        prototype: HTMLSnkStoreNoteElement;
-        new (): HTMLSnkStoreNoteElement;
-    };
-    interface HTMLSnkStoreNoteModalElement extends Components.SnkStoreNoteModal, HTMLStencilElement {
-    }
-    var HTMLSnkStoreNoteModalElement: {
-        prototype: HTMLSnkStoreNoteModalElement;
-        new (): HTMLSnkStoreNoteModalElement;
-    };
     interface HTMLSnkTextareaElement extends Components.SnkTextarea, HTMLStencilElement {
     }
     var HTMLSnkTextareaElement: {
         prototype: HTMLSnkTextareaElement;
         new (): HTMLSnkTextareaElement;
     };
-    interface HTMLSnkTwoColumnsElement extends Components.SnkTwoColumns, HTMLStencilElement {
-    }
-    var HTMLSnkTwoColumnsElement: {
-        prototype: HTMLSnkTwoColumnsElement;
-        new (): HTMLSnkTwoColumnsElement;
-    };
     interface HTMLElementTagNameMap {
+        "ds-app": HTMLDsAppElement;
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
+        "ds-checkbox": HTMLDsCheckboxElement;
         "ds-combo": HTMLDsComboElement;
         "ds-control": HTMLDsControlElement;
+        "ds-field-feedback": HTMLDsFieldFeedbackElement;
+        "ds-form": HTMLDsFormElement;
+        "ds-form-label": HTMLDsFormLabelElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-header": HTMLDsHeaderElement;
-        "ds-info-window": HTMLDsInfoWindowElement;
+        "ds-input": HTMLDsInputElement;
+        "ds-input-date": HTMLDsInputDateElement;
+        "ds-input-field": HTMLDsInputFieldElement;
+        "ds-input-password": HTMLDsInputPasswordElement;
         "ds-main": HTMLDsMainElement;
-        "ds-map": HTMLDsMapElement;
-        "ds-map-location": HTMLDsMapLocationElement;
-        "ds-map-marker": HTMLDsMapMarkerElement;
         "ds-modal": HTMLDsModalElement;
-        "ds-nav-menu": HTMLDsNavMenuElement;
-        "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
+        "ds-radio": HTMLDsRadioElement;
+        "ds-radio-item": HTMLDsRadioItemElement;
+        "ds-radio-list": HTMLDsRadioListElement;
         "ds-rsp": HTMLDsRspElement;
+        "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
@@ -1723,78 +821,17 @@ declare global {
         "ds-trigger": HTMLDsTriggerElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
-        "ds-account": HTMLGbxAccountElement;
-        "ds-account-validation": HTMLGbxAccountValidationElement;
-        "ds-address": HTMLGbxAddressElement;
-        "ds-address-autocomplete": HTMLGbxAddressAutocompleteElement;
-        "ds-address-block": HTMLGbxAddressBlockElement;
-        "ds-address-dropdown": HTMLGbxAddressDropdownElement;
-        "ds-address-list": HTMLGbxAddressListElement;
-        "ds-address-search": HTMLGbxAddressSearchElement;
-        "ds-address-selector": HTMLGbxAddressSelectorElement;
-        "ds-auth": HTMLGbxAuthElement;
-        "ds-auth-container": HTMLGbxAuthContainerElement;
-        "ds-b2b-failure": HTMLGbxB2bFailureElement;
-        "ds-b2b-success": HTMLGbxB2bSuccessElement;
-        "ds-cart-block": HTMLGbxCartBlockElement;
-        "ds-cart-item": HTMLGbxCartItemElement;
-        "ds-cart-summary": HTMLGbxCartSummaryElement;
-        "ds-checkbox": HTMLGbxCheckboxElement;
-        "ds-credit-card": HTMLGbxCreditCardElement;
-        "ds-credit-card-block": HTMLGbxCreditCardBlockElement;
-        "ds-credit-card-list": HTMLGbxCreditCardListElement;
-        "ds-field-feedback": HTMLGbxFieldFeedbackElement;
-        "ds-form": HTMLGbxFormElement;
-        "ds-form-label": HTMLGbxFormLabelElement;
-        "ds-input": HTMLGbxInputElement;
-        "ds-input-date": HTMLGbxInputDateElement;
-        "ds-input-field": HTMLGbxInputFieldElement;
-        "ds-input-password": HTMLGbxInputPasswordElement;
-        "ds-input-phone": HTMLGbxInputPhoneElement;
-        "ds-login": HTMLGbxLoginElement;
-        "ds-mini-cart": HTMLGbxMiniCartElement;
-        "ds-mini-cart-item": HTMLGbxMiniCartItemElement;
-        "ds-mini-cart-quantity-selector": HTMLGbxMiniCartQuantitySelectorElement;
-        "ds-order-cart": HTMLGbxOrderCartElement;
-        "ds-order-cart-product": HTMLGbxOrderCartProductElement;
-        "ds-order-cart-product-substitution": HTMLGbxOrderCartProductSubstitutionElement;
-        "ds-order-details": HTMLGbxOrderDetailsElement;
-        "ds-order-informations": HTMLGbxOrderInformationsElement;
-        "ds-order-messages": HTMLGbxOrderMessagesElement;
-        "ds-order-step": HTMLGbxOrderStepElement;
-        "ds-orders": HTMLGbxOrdersElement;
-        "ds-password-change-block": HTMLGbxPasswordChangeBlockElement;
-        "ds-profile": HTMLGbxProfileElement;
-        "ds-radio": HTMLGbxRadioElement;
-        "ds-radio-item": HTMLGbxRadioItemElement;
-        "ds-radio-list": HTMLGbxRadioListElement;
-        "ds-register": HTMLGbxRegisterElement;
-        "ds-register-form": HTMLGbxRegisterFormElement;
-        "ds-reset-password": HTMLGbxResetPasswordElement;
-        "ds-select": HTMLGbxSelectElement;
-        "ds-shopping-bag": HTMLGbxShoppingBagElement;
-        "ds-shopping-bag-button": HTMLGbxShoppingBagButtonElement;
-        "ds-shopping-bag-create-form": HTMLGbxShoppingBagCreateFormElement;
-        "ds-shopping-bag-details": HTMLGbxShoppingBagDetailsElement;
-        "ds-shopping-bag-list": HTMLGbxShoppingBagListElement;
-        "ds-shopping-bag-name": HTMLGbxShoppingBagNameElement;
-        "ds-shopping-bag-products": HTMLGbxShoppingBagProductsElement;
-        "ds-thanks-for-registering": HTMLGbxThanksForRegisteringElement;
-        "ds-vouchers": HTMLGbxVouchersElement;
-        "ds-wallet": HTMLGbxWalletElement;
-        "snk-click-and-collect-toggle": HTMLSnkClickAndCollectToggleElement;
-        "snk-confirm-modal": HTMLSnkConfirmModalElement;
-        "snk-mini-cart-header": HTMLSnkMiniCartHeaderElement;
-        "snk-mini-cart-item-combinations": HTMLSnkMiniCartItemCombinationsElement;
-        "snk-mini-cart-modal": HTMLSnkMiniCartModalElement;
-        "snk-mini-cart-store": HTMLSnkMiniCartStoreElement;
-        "snk-store-note": HTMLSnkStoreNoteElement;
-        "snk-store-note-modal": HTMLSnkStoreNoteModalElement;
         "snk-textarea": HTMLSnkTextareaElement;
-        "snk-two-columns": HTMLSnkTwoColumnsElement;
     }
 }
 declare namespace LocalJSX {
+    interface DsApp {
+        "breakpointsFromProp"?: Record<string, number>;
+        "debounceDelay"?: number;
+        "onBreakpointChange"?: (event: DsAppCustomEvent<any>) => void;
+        "propertyName"?: string;
+        "subscriberSelector"?: string;
+    }
     interface DsBlock {
         "article"?: boolean;
         "block"?: boolean;
@@ -1822,6 +859,15 @@ declare namespace LocalJSX {
         "type"?: DSButtonType;
         "url"?: string;
     }
+    interface DsCheckbox {
+        "inputId"?: string;
+        "inputName"?: string;
+        "inputValue"?: string;
+        "isChecked"?: boolean;
+        "isDisabled"?: boolean;
+        "onDSCheckboxClick"?: (event: DsCheckboxCustomEvent<any>) => void;
+        "type"?: string | string[];
+    }
     interface DsCombo {
         "customLabel"?: string;
         "mode"?: string;
@@ -1838,6 +884,24 @@ declare namespace LocalJSX {
         "action"?: string;
         "target"?: string;
         "type"?: string;
+    }
+    /**
+     * This component display a message with a level for the input forms
+     */
+    interface DsFieldFeedback {
+        "level"?: FeedbackLevel;
+        "message"?: string;
+    }
+    interface DsForm {
+    }
+    /**
+     * This component define a form label (for input, select etc..)
+     */
+    interface DsFormLabel {
+        "fieldLabel"?: string;
+        "isInError"?: boolean;
+        "isRequired"?: boolean;
+        "onClickLabel"?: (event: DsFormLabelCustomEvent<any>) => void;
     }
     interface DsGrid {
         "align"?: string | DSGridAlignment;
@@ -1858,55 +922,72 @@ declare namespace LocalJSX {
         "ctx"?: boolean;
         "mods"?: string | string[];
     }
-    interface DsInfoWindow {
+    interface DsInput {
+        "autocomplete"?: string;
+        "inputId"?: string;
+        "inputName"?: string;
+        "isDisabled"?: boolean;
+        "isInError"?: boolean;
+        "max"?: number;
+        "min"?: number;
+        "mods"?: string | string[];
+        "onDSInput"?: (event: DsInputCustomEvent<any>) => void;
+        "onDSInputBlur"?: (event: DsInputCustomEvent<any>) => void;
+        "onDSKeyDown"?: (event: DsInputCustomEvent<any>) => void;
+        "onDSKeyUp"?: (event: DsInputCustomEvent<any>) => void;
+        "placeholder"?: string;
+        "type"?: string;
+        "value"?: any;
+    }
+    interface DsInputDate {
+        "inputId"?: string;
+        "inputType"?: string;
+        "isMonthRequired"?: boolean;
+        "isUsedForCreditCard"?: boolean;
+        "isYearRequired"?: boolean;
+        "onDSDateInputChange"?: (event: DsInputDateCustomEvent<any>) => void;
+    }
+    interface DsInputField {
+        "errorMessage"?: string;
+        "icon"?: string;
+        "inputId"?: string;
+        "inputName"?: string;
+        "inputPlaceholder"?: string;
+        "inputType"?: InputFieldType;
+        "isDisabled"?: boolean;
+        "isInError"?: boolean;
+        "label"?: string;
+        "max"?: number;
+        "min"?: number;
+        "onClickButtonHandler"?: (event: DsInputFieldCustomEvent<any>) => void;
+        "onNotify_fieldChanged_event"?: (event: DsInputFieldCustomEvent<{ value: string, name: string }>) => void;
         /**
-          * AriaLabel to assign to the InfoWindow.
+          * Send data with an event
+          * @type {boolean}
          */
-        "ariaLabel"?: string;
+        "sendValue"?: boolean;
+        "type"?: string;
         /**
-          * Disable panning the map to make the InfoWindow fully visible when it opens.
+          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
+          * @type {ValidatorType[]}
          */
-        "disableAutoPan"?: boolean;
-        /**
-          * Maximum width of the InfoWindow, regardless of content&#39;s width. This
-         */
-        "maxWidth"?: number;
-        /**
-          * Minimum width of the InfoWindow, regardless of the content&#39;s width.
-         */
-        "minWidth"?: number;
-        /**
-          * The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
-         */
-        "pixelOffset"?: google.maps.Size;
-        /**
-          * The LatLng at which to display this InfoWindow.
-         */
-        "position"?: google.maps.LatLng|google.maps.LatLngLiteral;
-        /**
-          * All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-         */
-        "zIndex"?: number;
+        "validators"?: Validator[];
+        "value"?: string;
+    }
+    interface DsInputPassword {
+        "autocomplete"?: string;
+        "inputId"?: string;
+        "inputName"?: string;
+        "isDisabled"?: boolean;
+        "isInError"?: boolean;
+        "max"?: number;
+        "min"?: number;
+        "onDSInputBlur"?: (event: DsInputPasswordCustomEvent<any>) => void;
+        "placeholder"?: string;
+        "type"?: string;
+        "value"?: any;
     }
     interface DsMain {
-    }
-    interface DsMap {
-        "apiKey"?: string;
-        "locations"?: Location[];
-        "params"?: GMapsParams;
-    }
-    interface DsMapLocation {
-        "lat"?: number;
-        "lng"?: number;
-        "name"?: string;
-    }
-    interface DsMapMarker {
-        "icon"?: string | google.maps.Icon | google.maps.Symbol;
-        "label"?: string | google.maps.MarkerLabel;
-        "lat"?: number;
-        "lng"?: number;
-        "name"?: string;
-        "params"?: string | MarkerOptionsFromProps;
     }
     interface DsModal {
         "closeButtonMods"?: string[];
@@ -1925,21 +1006,44 @@ declare namespace LocalJSX {
         "shown"?: boolean;
         "useSnack"?: boolean;
     }
-    interface DsNavMenu {
-        "currentActiveItemId"?: string;
-        "mods"?: string|string[];
-    }
-    interface DsNavMenuItem {
-        "depth"?: number;
-        "dsItemId"?: string;
-        "hasChildren"?: boolean;
-        "isActive"?: boolean;
-        "isAnimated"?: boolean;
-        "onDsMenuItemClick"?: (event: DsNavMenuItemCustomEvent<any>) => void;
-        "type"?: string;
-    }
     interface DsPlaceholder {
         "dsMods"?: string|string[];
+    }
+    interface DsRadio {
+        "itemList"?: RadioItem[];
+        "label"?: string;
+        "mods"?: string[];
+        "onNotify_radioValueSelected_event"?: (event: DsRadioCustomEvent<any>) => void;
+        "radioId"?: string;
+        "radioItemCheckStyle"?: RadioItemCheckStyle;
+        "radioItemStyle"?: RadioItemStyle;
+        /**
+          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
+          * @type {ValidatorType[]}
+         */
+        "validators"?: Validator[];
+    }
+    /**
+     * This component define a radio item.
+     */
+    interface DsRadioItem {
+        "isChecked"?: boolean;
+        "label"?: string;
+        "name"?: string;
+        "onNotify_radioItemChecked_event"?: (event: DsRadioItemCustomEvent<any>) => void;
+        "radioId"?: string;
+        "radioItemCheckStyle"?: RadioItemCheckStyle;
+        "radioItemStyle"?: RadioItemStyle;
+        "value"?: string;
+    }
+    /**
+     * This component define a list of radio items.
+     */
+    interface DsRadioList {
+        "itemList"?: RadioItem[];
+        "onNotify_radioItemSelected_event"?: (event: DsRadioListCustomEvent<any>) => void;
+        "radioItemCheckStyle"?: RadioItemCheckStyle;
+        "radioItemStyle"?: RadioItemStyle;
     }
     interface DsRsp {
         "breakpointsFromProp"?: Record<string, number>;
@@ -1947,6 +1051,20 @@ declare namespace LocalJSX {
         "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
         "propertyName"?: string;
         "subscriberSelector"?: string;
+    }
+    /**
+     * This component define a select form.
+     */
+    interface DsSelect {
+        "firstSelectOptionLabel"?: string;
+        "isRequired"?: boolean;
+        "isValid"?: boolean;
+        "onNotify_selectInError_event"?: (event: DsSelectCustomEvent<any>) => void;
+        "onNotify_selectValueChanged_event"?: (event: DsSelectCustomEvent<any>) => void;
+        "optionList"?: SelectOption[];
+        "selectId"?: string;
+        "selectName"?: string;
+        "selectedValue"?: string;
     }
     interface DsSidebar {
         "ctx"?: boolean;
@@ -2059,598 +1177,9 @@ declare namespace LocalJSX {
         "disabled"?: string | boolean;
         "target"?: string;
     }
-    interface GbxAccount {
-        "avatarDisplay"?: boolean;
-        "pageName"?: string;
-    }
-    interface GbxAccountValidation {
-        "isResendValidationCodeInError"?: boolean;
-        "isResendValidationCodeProcessing"?: boolean;
-        "isResendValidationCodeSend"?: boolean;
-        "isValidationInError"?: boolean;
-        "isValidationProcessing"?: boolean;
-        "onNotify_sendCodeValidation_event"?: (event: GbxAccountValidationCustomEvent<any>) => void;
-        "onRequest_closePhoneValidationModal_event"?: (event: GbxAccountValidationCustomEvent<any>) => void;
-        "onRequest_resendValidationCode_event"?: (event: GbxAccountValidationCustomEvent<any>) => void;
-        "universe"?: Universe;
-    }
-    interface GbxAddress {
-        "address"?: any;
-        "index"?: any;
-        "isDefault"?: any;
-        "mode"?: string;
-        "onAddress_request_addressDelete_event"?: (event: GbxAddressCustomEvent<any>) => void;
-        "onAddress_request_addressSetAsDefault_event"?: (event: GbxAddressCustomEvent<any>) => void;
-        "store"?: Store;
-    }
-    interface GbxAddressAutocomplete {
-        "address"?: any;
-        "inputDelay"?: number;
-        "locale"?: string;
-        "minChar"?: number;
-        "onNotify_addressSet_event"?: (event: GbxAddressAutocompleteCustomEvent<any>) => void;
-        "onRequest_messageReset_event"?: (event: GbxAddressAutocompleteCustomEvent<any>) => void;
-        "pageName"?: string;
-        "peliasUri"?: string;
-    }
-    interface GbxAddressBlock {
-        "addresses"?: UserAddress[];
-        "defaultAddress"?: UserAddress;
-        "isModalShown"?: boolean;
-        "onRequest_addressDelete_event"?: (event: GbxAddressBlockCustomEvent<any>) => void;
-    }
-    interface GbxAddressDropdown {
-        "addresses"?: any[];
-        "locale"?: string;
-        "onGbxNewAddressClick"?: (event: GbxAddressDropdownCustomEvent<any>) => void;
-        "onGbxSelectAddressClick"?: (event: GbxAddressDropdownCustomEvent<any>) => void;
-        "pageName"?: string;
-    }
-    interface GbxAddressList {
-        "addresses"?: any[];
-        "defaultAddress"?: any;
-        "onRequest_addressDelete_event"?: (event: GbxAddressListCustomEvent<any>) => void;
-        "onRequest_addressSetAsDefault_event"?: (event: GbxAddressListCustomEvent<any>) => void;
-    }
-    interface GbxAddressSearch {
-        "accuracyLevel"?: number;
-        "accuracyRequired"?: string;
-        "displayMode"?: string;
-        "mode"?: string;
-        "pageName"?: string;
-        "store"?: Store;
-    }
-    interface GbxAddressSelector {
-        "addresses"?: any[];
-        "defaultAddress"?: string;
-        "locale"?: string;
-        "onNotify_addressSet_event"?: (event: GbxAddressSelectorCustomEvent<any>) => void;
-        "onRequest_newAddress_event"?: (event: GbxAddressSelectorCustomEvent<any>) => void;
-        "pageName"?: string;
-    }
-    interface GbxAuth {
-        "displayedView"?: AuthDisplayedView;
-        "hasLoginFailed"?: boolean;
-        "hasRegistrationFailed"?: boolean;
-        "isGrocery"?: Boolean;
-        "isModalHelpShown"?: boolean;
-        "isModalShown"?: boolean;
-        "isRegisterProcessing"?: boolean;
-        "isResendValidationCodeInError"?: boolean;
-        "isResendValidationCodeProcessing"?: boolean;
-        "isResendValidationCodeSend"?: boolean;
-        "isValidationInError"?: boolean;
-        "isValidationProcessing"?: boolean;
-        "onRequest_closeAuthModal_event"?: (event: GbxAuthCustomEvent<any>) => void;
-        "onRequest_registerProcess_event"?: (event: GbxAuthCustomEvent<any>) => void;
-        "onRequest_resetPassword_event"?: (event: GbxAuthCustomEvent<any>) => void;
-        "registerData"?: any;
-        "settings"?: any;
-        "showPhoneValidation"?: boolean;
-        "universe"?: Universe;
-    }
-    interface GbxAuthContainer {
-        "cartId"?: string;
-        "notRegistered"?: any;
-        "onNotify_resetPasswordOutcome_event"?: (event: GbxAuthContainerCustomEvent<any>) => void;
-        "onRequest_authFormDisplay_event"?: (event: GbxAuthContainerCustomEvent<any>) => void;
-        "onRequest_errorLogin_event"?: (event: GbxAuthContainerCustomEvent<any>) => void;
-        "redirectToCheckout"?: boolean;
-        "store"?: Store;
-    }
-    interface GbxB2bFailure {
-        "onRequest_closeModal_event"?: (event: GbxB2bFailureCustomEvent<any>) => void;
-        "tryAgainClickHandler"?: () => void;
-    }
-    interface GbxB2bSuccess {
-        "onRequest_closeModal_event"?: (event: GbxB2bSuccessCustomEvent<any>) => void;
-    }
-    interface GbxCartBlock {
-        "activeCartId"?: string;
-        "carts"?: any[];
-        "isLoggedIn"?: boolean;
-        "locale"?: string;
-        "onGbxCartBlockHidden"?: (event: GbxCartBlockCustomEvent<any>) => void;
-        "onGbxCartBlockHide"?: (event: GbxCartBlockCustomEvent<any>) => void;
-        "onGbxCartBlockShow"?: (event: GbxCartBlockCustomEvent<any>) => void;
-        "onGbxCartBlockShown"?: (event: GbxCartBlockCustomEvent<any>) => void;
-        "onRequest_cartDelete_event"?: (event: GbxCartBlockCustomEvent<any>) => void;
-        "universe"?: Universe;
-    }
-    interface GbxCartItem {
-        "debounceDelay"?: number;
-        "isSelected"?: boolean;
-        /**
-          * All product informations
-         */
-        "item"?: any;
-        "itemImage"?: string;
-        "locale"?: string;
-        "mode"?: string;
-        "onProduct_modalDisplay_event"?: (event: GbxCartItemCustomEvent<any>) => void;
-        "onRequest_quantityUpdate_event"?: (event: GbxCartItemCustomEvent<any>) => void;
-        "onRequest_shoppingBagProductUpdate_event"?: (event: GbxCartItemCustomEvent<{ id: string; quantity: number }>) => void;
-        "readonly"?: boolean;
-        "toggleSelect"?: (productId: string) => void;
-    }
-    interface GbxCartSummary {
-        /**
-          * @type {any} Cart informations
-         */
-        "cart"?: any;
-        "extraAuthorization"?: number;
-        "isDatatransEnabled"?: boolean;
-        "onRequest_voucherRemove_event"?: (event: GbxCartSummaryCustomEvent<any>) => void;
-        "onRequest_walletRemove_event"?: (event: GbxCartSummaryCustomEvent<any>) => void;
-        /**
-          * @type {any} Request edit cart method
-         */
-        "requestEditCart"?: any;
-    }
-    interface GbxCheckbox {
-        "dataCy"?: DataCy;
-        "inputId"?: string;
-        "inputName"?: string;
-        "inputValue"?: string;
-        "isChecked"?: boolean;
-        "isDisabled"?: boolean;
-        "onGbxCheckboxClick"?: (event: GbxCheckboxCustomEvent<any>) => void;
-        "type"?: string | string[];
-    }
-    interface GbxCreditCard {
-        "card"?: CreditCard;
-    }
-    interface GbxCreditCardBlock {
-        "creditCards"?: any;
-        "onRequest_creditCardDelete_event"?: (event: GbxCreditCardBlockCustomEvent<any>) => void;
-    }
-    interface GbxCreditCardList {
-        "creditCards"?: any[]|string;
-        "mods"?: string[]|string;
-        "onRequest_creditCardDelete_event"?: (event: GbxCreditCardListCustomEvent<any>) => void;
-        "onRequest_creditCardSetAsDefault_event"?: (event: GbxCreditCardListCustomEvent<any>) => void;
-    }
-    /**
-     * This component display a message with a level for the input forms
-     */
-    interface GbxFieldFeedback {
-        "level"?: FeedbackLevel;
-        "message"?: string;
-    }
-    interface GbxForm {
-    }
-    /**
-     * This component define a form label (for input, select etc..)
-     */
-    interface GbxFormLabel {
-        "dataCy"?: DataCy;
-        "fieldLabel"?: string;
-        "isInError"?: boolean;
-        "isRequired"?: boolean;
-        "onClickLabel"?: (event: GbxFormLabelCustomEvent<any>) => void;
-    }
-    interface GbxInput {
-        "autocomplete"?: string;
-        "dataCy"?: DataCy;
-        "inputId"?: string;
-        "inputName"?: string;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "max"?: number;
-        "min"?: number;
-        "mods"?: string | string[];
-        "onGbxInput"?: (event: GbxInputCustomEvent<any>) => void;
-        "onGbxInputBlur"?: (event: GbxInputCustomEvent<any>) => void;
-        "onGbxKeyDown"?: (event: GbxInputCustomEvent<any>) => void;
-        "onGbxKeyUp"?: (event: GbxInputCustomEvent<any>) => void;
-        "placeholder"?: string;
-        "type"?: string;
-        "value"?: any;
-    }
-    interface GbxInputDate {
-        "inputId"?: string;
-        "inputType"?: string;
-        "isMonthRequired"?: boolean;
-        "isUsedForCreditCard"?: boolean;
-        "isYearRequired"?: boolean;
-        "onGbxDateInputChange"?: (event: GbxInputDateCustomEvent<any>) => void;
-    }
-    interface GbxInputField {
-        "dataCy"?: DataCy;
-        "errorMessage"?: string;
-        "icon"?: string;
-        "inputId"?: string;
-        "inputName"?: string;
-        "inputPlaceholder"?: string;
-        "inputType"?: InputFieldType;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "label"?: string;
-        "max"?: number;
-        "min"?: number;
-        "onClickButtonHandler"?: (event: GbxInputFieldCustomEvent<any>) => void;
-        "onNotify_fieldChanged_event"?: (event: GbxInputFieldCustomEvent<{ value: string, name: string }>) => void;
-        /**
-          * Send data with an event
-          * @type {boolean}
-         */
-        "sendValue"?: boolean;
-        "type"?: string;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators"?: Validator[];
-        "value"?: string;
-    }
-    interface GbxInputPassword {
-        "autocomplete"?: string;
-        "dataCy"?: DataCy;
-        "inputId"?: string;
-        "inputName"?: string;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "max"?: number;
-        "min"?: number;
-        "onGbxInputBlur"?: (event: GbxInputPasswordCustomEvent<any>) => void;
-        "placeholder"?: string;
-        "type"?: string;
-        "value"?: any;
-    }
-    interface GbxInputPhone {
-        "dataCy"?: DataCy;
-        "inputId"?: string;
-        "inputName"?: string;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "onGbxInputBlur"?: (event: GbxInputPhoneCustomEvent<any>) => void;
-        "preferredCountries"?: string[];
-        "value"?: string;
-    }
-    interface GbxLogin {
-        "hasLoginFailed"?: boolean;
-        "isGrocery"?: Boolean;
-        "onRequest_appleAuthButton_event"?: (event: GbxLoginCustomEvent<any>) => void;
-        "onRequest_changeView_event"?: (event: GbxLoginCustomEvent<any>) => void;
-        "onRequest_facebookAuthButton_event"?: (event: GbxLoginCustomEvent<any>) => void;
-        "onRequest_googleAuthButton_event"?: (event: GbxLoginCustomEvent<any>) => void;
-        "onRequest_loginAuthButton_event"?: (event: GbxLoginCustomEvent<any>) => void;
-    }
-    interface GbxMiniCart {
-        "cart"?: any;
-        "isActive"?: boolean;
-        "isLoggedIn"?: boolean;
-        "isUserLoggedIn"?: boolean;
-        "locale"?: string;
-        "maxDisplayedProductCount"?: number;
-        "onRequest_authModalOpen_event"?: (event: GbxMiniCartCustomEvent<any>) => void;
-        "onRequest_cartItemQuantityUpdate_event"?: (event: GbxMiniCartCustomEvent<any>) => void;
-        "onRequest_cartProductEditModalDisplay_event"?: (event: GbxMiniCartCustomEvent<any>) => void;
-        "onRequest_cartRemove_event"?: (event: GbxMiniCartCustomEvent<any>) => void;
-        "onRequest_cartUpdate_event"?: (event: GbxMiniCartCustomEvent<CartUpdateProperty<'noteToStore' | 'id' | 'deliveryMode'>>) => void;
-        "onRequest_snackbarOpen_event"?: (event: GbxMiniCartCustomEvent<any>) => void;
-    }
-    interface GbxMiniCartItem {
-        "debounceDelay"?: number;
-        "isCartActive"?: boolean;
-        "item"?: Product | any;
-        "onRequest_productEditModalDisplay_event"?: (event: GbxMiniCartItemCustomEvent<any>) => void;
-        "onRequest_quantityUpdate_event"?: (event: GbxMiniCartItemCustomEvent<any>) => void;
-        "readonly"?: boolean;
-    }
-    interface GbxMiniCartQuantitySelector {
-        "defaultQuantity"?: number;
-        "itemId"?: string;
-        "maxQuantity"?: number;
-        "minQuantity"?: number;
-        "onNotify_productQuantityInputChange_event"?: (event: GbxMiniCartQuantitySelectorCustomEvent<any>) => void;
-    }
-    interface GbxOrderCart {
-        "order"?: any;
-        "store"?: Store;
-    }
-    interface GbxOrderCartProduct {
-        "product"?: any;
-        "store"?: Store;
-    }
-    interface GbxOrderCartProductSubstitution {
-        "store"?: Store;
-        "substitutedProduct"?: any;
-    }
-    interface GbxOrderDetails {
-        "datalayerPushed"?: boolean;
-        "fromCheckout"?: boolean;
-        "onOrderDetails_notice_componentInitialized_event"?: (event: GbxOrderDetailsCustomEvent<any>) => void;
-        "onOrderDetails_request_dismissDetails_event"?: (event: GbxOrderDetailsCustomEvent<any>) => void;
-        "orderId"?: string;
-        "store"?: Store;
-    }
-    interface GbxOrderInformations {
-        "order"?: any;
-        "store"?: Store;
-    }
-    interface GbxOrderMessages {
-        "messages"?: any[];
-        "orderId"?: any;
-        "status"?: any;
-        "store"?: Store;
-    }
-    interface GbxOrderStep {
-        "status"?: string;
-        "store"?: Store;
-        "takeaway"?: any;
-    }
-    interface GbxOrders {
-        "fromCheckout"?: boolean;
-        "orderId"?: string;
-    }
-    interface GbxPasswordChangeBlock {
-        "onNotify_passwordChange_event"?: (event: GbxPasswordChangeBlockCustomEvent<any>) => void;
-    }
-    interface GbxProfile {
-        "isValidationProcessCanceled"?: boolean;
-        "store"?: Store;
-    }
-    interface GbxRadio {
-        "itemList"?: RadioItem[];
-        "label"?: string;
-        "mods"?: string[];
-        "onNotify_radioValueSelected_event"?: (event: GbxRadioCustomEvent<any>) => void;
-        "radioId"?: string;
-        "radioItemCheckStyle"?: RadioItemCheckStyle;
-        "radioItemStyle"?: RadioItemStyle;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators"?: Validator[];
-    }
-    /**
-     * This component define a radio item.
-     */
-    interface GbxRadioItem {
-        "isChecked"?: boolean;
-        "label"?: string;
-        "name"?: string;
-        "onNotify_radioItemChecked_event"?: (event: GbxRadioItemCustomEvent<any>) => void;
-        "radioId"?: string;
-        "radioItemCheckStyle"?: RadioItemCheckStyle;
-        "radioItemStyle"?: RadioItemStyle;
-        "value"?: string;
-    }
-    /**
-     * This component define a list of radio items.
-     */
-    interface GbxRadioList {
-        "itemList"?: RadioItem[];
-        "onNotify_radioItemSelected_event"?: (event: GbxRadioListCustomEvent<any>) => void;
-        "radioItemCheckStyle"?: RadioItemCheckStyle;
-        "radioItemStyle"?: RadioItemStyle;
-    }
-    interface GbxRegister {
-        "hasRegistrationFailed"?: boolean;
-        "isRegisterProcessing"?: boolean;
-        "onNotify_startRegisterProcess_event"?: (event: GbxRegisterCustomEvent<any>) => void;
-        "registerData"?: any;
-    }
-    interface GbxRegisterForm {
-        "isRegisterProcessing"?: boolean;
-        "onNotify_registerFormSend_event"?: (event: GbxRegisterFormCustomEvent<any>) => void;
-        "registerData"?: {
-    firstname: string;
-    lastname: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    company?: string;
-    phone: string;
-    acceptCGU: boolean;
-  };
-    }
-    interface GbxResetPassword {
-        "onNotify_resetPassword_event"?: (event: GbxResetPasswordCustomEvent<any>) => void;
-        "onRequest_changeView_event"?: (event: GbxResetPasswordCustomEvent<any>) => void;
-    }
-    /**
-     * This component define a select form.
-     */
-    interface GbxSelect {
-        "dataCy"?: DataCy;
-        "firstSelectOptionLabel"?: string;
-        "isRequired"?: boolean;
-        "isValid"?: boolean;
-        "onNotify_selectInError_event"?: (event: GbxSelectCustomEvent<any>) => void;
-        "onNotify_selectValueChanged_event"?: (event: GbxSelectCustomEvent<any>) => void;
-        "optionList"?: SelectOption[];
-        "selectId"?: string;
-        "selectName"?: string;
-        "selectedValue"?: string;
-    }
-    interface GbxShoppingBag {
-        "isAgeLegal"?: boolean;
-        "mode"?: string;
-        "pageName"?: string;
-    }
-    /**
-     * Simple button component displaying the shopping list modal
-     */
-    interface GbxShoppingBagButton {
-        /**
-          * Displayed button label
-         */
-        "label"?: string;
-    }
-    /**
-     * Create shopping bag form
-     */
-    interface GbxShoppingBagCreateForm {
-        /**
-          * Locale used for translations
-         */
-        "locale"?: string;
-        /**
-          * Parent component method called when form is submitted
-         */
-        "requestCreateShoppingBag"?: any;
-        /**
-          * Parent component method called to hide creation form
-         */
-        "requestHideCreateForm"?: any;
-    }
-    /**
-     * Display shopping bag details & products
-     */
-    interface GbxShoppingBagDetails {
-        /**
-          * Variable to know if the user already answer to confirm-age's modal
-         */
-        "isAgeLegal"?: boolean;
-        /**
-          * Locale used for translations
-         */
-        "locale"?: string;
-        /**
-          * Method called to delete current shopping bag
-         */
-        "requestDeleteShoppingBagProducts"?: any;
-        /**
-          * Method called to navigate to shopping bag root page
-         */
-        "requestNavigationBack"?: any;
-        /**
-          * Method called to update shopping bag informations
-         */
-        "requestUpdateShoppingBag"?: any;
-        /**
-          * Shopping bag to show details of
-         */
-        "shoppingBag"?: any;
-    }
-    /**
-     * Display a shopping bag list
-     */
-    interface GbxShoppingBagList {
-        /**
-          * Locale used for translations
-         */
-        "locale"?: string;
-        /**
-          * Method called to display shopping bag creation form
-         */
-        "requestDisplayCreateForm"?: any;
-        /**
-          * Method called to display shopping bag
-         */
-        "requestDisplayShoppingBag"?: any;
-        /**
-          * An array containing all shopping bags to display
-         */
-        "shoppingBags"?: any[];
-    }
-    /**
-     * Component used to display and edit shopping bag name
-     */
-    interface GbxShoppingBagName {
-        /**
-          * Wether shopping bag name is editable or not
-         */
-        "isDisabled"?: boolean;
-        /**
-          * Locale used for transaltions
-         */
-        "locale"?: string;
-        /**
-          * Shopping bag name to display/edit
-         */
-        "name"?: string;
-        /**
-          * Parent component method called to update shopping bag name
-         */
-        "requestUpdateShoppingBag"?: any;
-        "toggleDeleteMessage"?: () => void;
-    }
-    interface GbxShoppingBagProducts {
-        "ShoppingBagUpdateProductsAction"?: any;
-        /**
-          * Array of products to display
-         */
-        "products"?: any[];
-        "selectedProductIds"?: string[];
-        /**
-          * Shopping bag id associated to products
-         */
-        "shoppingBagId"?: string;
-        "toggleProductSelection"?: (productId: string) => void;
-    }
-    interface GbxThanksForRegistering {
-        "onNotify_thanksForRegisterClosed_event"?: (event: GbxThanksForRegisteringCustomEvent<any>) => void;
-        "onRequest_closeModal_event"?: (event: GbxThanksForRegisteringCustomEvent<any>) => void;
-        "userFirstName"?: string;
-    }
-    interface GbxVouchers {
-    }
-    interface GbxWallet {
-        "store"?: Store;
-    }
-    interface SnkClickAndCollectToggle {
-        "cartId"?: string;
-        "isTakeawayAvailable"?: boolean;
-        "onRequest_switchToClickAndCollect_event"?: (event: SnkClickAndCollectToggleCustomEvent<any>) => void;
-        "reducibleAmount"?: string;
-        "reduciblePercentage"?: number;
-    }
-    interface SnkConfirmModal {
-        "modalTitle"?: string;
-        "onSnkCancel"?: (event: SnkConfirmModalCustomEvent<any>) => void;
-        "onSnkConfirm"?: (event: SnkConfirmModalCustomEvent<any>) => void;
-    }
-    interface SnkMiniCartHeader {
-        "store"?: any;
-    }
-    interface SnkMiniCartItemCombinations {
-        "combinations"?: any[];
-    }
-    interface SnkMiniCartModal {
-        "isClosingDisabled"?: boolean;
-        "isHeaderDisabled"?: boolean;
-        "modalTitle"?: string;
-    }
-    interface SnkMiniCartStore {
-        "store"?: any;
-    }
-    interface SnkStoreNote {
-        "isCartActive"?: boolean;
-        "note"?: string;
-        "onRequest_noteUpdate_event"?: (event: SnkStoreNoteCustomEvent<any>) => void;
-    }
-    interface SnkStoreNoteModal {
-        "note"?: string;
-        "onNotify_noteUpdate_event"?: (event: SnkStoreNoteModalCustomEvent<Pick<Cart, 'noteToStore'>>) => void;
-    }
     interface SnkTextarea {
         "columns"?: number;
         "content": string;
-        "dataCy": DataCy;
         "disabled"?: boolean;
         "lines"?: number;
         "maxLength"?: number;
@@ -2660,26 +1189,31 @@ declare namespace LocalJSX {
         "validators"?: Validator[];
         "withCharacterCount"?: boolean;
     }
-    interface SnkTwoColumns {
-    }
     interface IntrinsicElements {
+        "ds-app": DsApp;
         "ds-block": DsBlock;
         "ds-button": DsButton;
+        "ds-checkbox": DsCheckbox;
         "ds-combo": DsCombo;
         "ds-control": DsControl;
+        "ds-field-feedback": DsFieldFeedback;
+        "ds-form": DsForm;
+        "ds-form-label": DsFormLabel;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-header": DsHeader;
-        "ds-info-window": DsInfoWindow;
+        "ds-input": DsInput;
+        "ds-input-date": DsInputDate;
+        "ds-input-field": DsInputField;
+        "ds-input-password": DsInputPassword;
         "ds-main": DsMain;
-        "ds-map": DsMap;
-        "ds-map-location": DsMapLocation;
-        "ds-map-marker": DsMapMarker;
         "ds-modal": DsModal;
-        "ds-nav-menu": DsNavMenu;
-        "ds-nav-menu-item": DsNavMenuItem;
         "ds-placeholder": DsPlaceholder;
+        "ds-radio": DsRadio;
+        "ds-radio-item": DsRadioItem;
+        "ds-radio-list": DsRadioList;
         "ds-rsp": DsRsp;
+        "ds-select": DsSelect;
         "ds-sidebar": DsSidebar;
         "ds-slider": DsSlider;
         "ds-slider-item": DsSliderItem;
@@ -2693,98 +1227,52 @@ declare namespace LocalJSX {
         "ds-trigger": DsTrigger;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
-        "ds-account": GbxAccount;
-        "ds-account-validation": GbxAccountValidation;
-        "ds-address": GbxAddress;
-        "ds-address-autocomplete": GbxAddressAutocomplete;
-        "ds-address-block": GbxAddressBlock;
-        "ds-address-dropdown": GbxAddressDropdown;
-        "ds-address-list": GbxAddressList;
-        "ds-address-search": GbxAddressSearch;
-        "ds-address-selector": GbxAddressSelector;
-        "ds-auth": GbxAuth;
-        "ds-auth-container": GbxAuthContainer;
-        "ds-b2b-failure": GbxB2bFailure;
-        "ds-b2b-success": GbxB2bSuccess;
-        "ds-cart-block": GbxCartBlock;
-        "ds-cart-item": GbxCartItem;
-        "ds-cart-summary": GbxCartSummary;
-        "ds-checkbox": GbxCheckbox;
-        "ds-credit-card": GbxCreditCard;
-        "ds-credit-card-block": GbxCreditCardBlock;
-        "ds-credit-card-list": GbxCreditCardList;
-        "ds-field-feedback": GbxFieldFeedback;
-        "ds-form": GbxForm;
-        "ds-form-label": GbxFormLabel;
-        "ds-input": GbxInput;
-        "ds-input-date": GbxInputDate;
-        "ds-input-field": GbxInputField;
-        "ds-input-password": GbxInputPassword;
-        "ds-input-phone": GbxInputPhone;
-        "ds-login": GbxLogin;
-        "ds-mini-cart": GbxMiniCart;
-        "ds-mini-cart-item": GbxMiniCartItem;
-        "ds-mini-cart-quantity-selector": GbxMiniCartQuantitySelector;
-        "ds-order-cart": GbxOrderCart;
-        "ds-order-cart-product": GbxOrderCartProduct;
-        "ds-order-cart-product-substitution": GbxOrderCartProductSubstitution;
-        "ds-order-details": GbxOrderDetails;
-        "ds-order-informations": GbxOrderInformations;
-        "ds-order-messages": GbxOrderMessages;
-        "ds-order-step": GbxOrderStep;
-        "ds-orders": GbxOrders;
-        "ds-password-change-block": GbxPasswordChangeBlock;
-        "ds-profile": GbxProfile;
-        "ds-radio": GbxRadio;
-        "ds-radio-item": GbxRadioItem;
-        "ds-radio-list": GbxRadioList;
-        "ds-register": GbxRegister;
-        "ds-register-form": GbxRegisterForm;
-        "ds-reset-password": GbxResetPassword;
-        "ds-select": GbxSelect;
-        "ds-shopping-bag": GbxShoppingBag;
-        "ds-shopping-bag-button": GbxShoppingBagButton;
-        "ds-shopping-bag-create-form": GbxShoppingBagCreateForm;
-        "ds-shopping-bag-details": GbxShoppingBagDetails;
-        "ds-shopping-bag-list": GbxShoppingBagList;
-        "ds-shopping-bag-name": GbxShoppingBagName;
-        "ds-shopping-bag-products": GbxShoppingBagProducts;
-        "ds-thanks-for-registering": GbxThanksForRegistering;
-        "ds-vouchers": GbxVouchers;
-        "ds-wallet": GbxWallet;
-        "snk-click-and-collect-toggle": SnkClickAndCollectToggle;
-        "snk-confirm-modal": SnkConfirmModal;
-        "snk-mini-cart-header": SnkMiniCartHeader;
-        "snk-mini-cart-item-combinations": SnkMiniCartItemCombinations;
-        "snk-mini-cart-modal": SnkMiniCartModal;
-        "snk-mini-cart-store": SnkMiniCartStore;
-        "snk-store-note": SnkStoreNote;
-        "snk-store-note-modal": SnkStoreNoteModal;
         "snk-textarea": SnkTextarea;
-        "snk-two-columns": SnkTwoColumns;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
+            "ds-checkbox": LocalJSX.DsCheckbox & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
             "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
             "ds-control": LocalJSX.DsControl & JSXBase.HTMLAttributes<HTMLDsControlElement>;
+            /**
+             * This component display a message with a level for the input forms
+             */
+            "ds-field-feedback": LocalJSX.DsFieldFeedback & JSXBase.HTMLAttributes<HTMLDsFieldFeedbackElement>;
+            "ds-form": LocalJSX.DsForm & JSXBase.HTMLAttributes<HTMLDsFormElement>;
+            /**
+             * This component define a form label (for input, select etc..)
+             */
+            "ds-form-label": LocalJSX.DsFormLabel & JSXBase.HTMLAttributes<HTMLDsFormLabelElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-header": LocalJSX.DsHeader & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
-            "ds-info-window": LocalJSX.DsInfoWindow & JSXBase.HTMLAttributes<HTMLDsInfoWindowElement>;
+            "ds-input": LocalJSX.DsInput & JSXBase.HTMLAttributes<HTMLDsInputElement>;
+            "ds-input-date": LocalJSX.DsInputDate & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
+            "ds-input-field": LocalJSX.DsInputField & JSXBase.HTMLAttributes<HTMLDsInputFieldElement>;
+            "ds-input-password": LocalJSX.DsInputPassword & JSXBase.HTMLAttributes<HTMLDsInputPasswordElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
-            "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
-            "ds-map-location": LocalJSX.DsMapLocation & JSXBase.HTMLAttributes<HTMLDsMapLocationElement>;
-            "ds-map-marker": LocalJSX.DsMapMarker & JSXBase.HTMLAttributes<HTMLDsMapMarkerElement>;
             "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
-            "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
-            "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
+            "ds-radio": LocalJSX.DsRadio & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
+            /**
+             * This component define a radio item.
+             */
+            "ds-radio-item": LocalJSX.DsRadioItem & JSXBase.HTMLAttributes<HTMLDsRadioItemElement>;
+            /**
+             * This component define a list of radio items.
+             */
+            "ds-radio-list": LocalJSX.DsRadioList & JSXBase.HTMLAttributes<HTMLDsRadioListElement>;
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
+            /**
+             * This component define a select form.
+             */
+            "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
@@ -2801,105 +1289,7 @@ declare module "@stencil/core" {
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
-            "ds-account": LocalJSX.GbxAccount & JSXBase.HTMLAttributes<HTMLGbxAccountElement>;
-            "ds-account-validation": LocalJSX.GbxAccountValidation & JSXBase.HTMLAttributes<HTMLGbxAccountValidationElement>;
-            "ds-address": LocalJSX.GbxAddress & JSXBase.HTMLAttributes<HTMLGbxAddressElement>;
-            "ds-address-autocomplete": LocalJSX.GbxAddressAutocomplete & JSXBase.HTMLAttributes<HTMLGbxAddressAutocompleteElement>;
-            "ds-address-block": LocalJSX.GbxAddressBlock & JSXBase.HTMLAttributes<HTMLGbxAddressBlockElement>;
-            "ds-address-dropdown": LocalJSX.GbxAddressDropdown & JSXBase.HTMLAttributes<HTMLGbxAddressDropdownElement>;
-            "ds-address-list": LocalJSX.GbxAddressList & JSXBase.HTMLAttributes<HTMLGbxAddressListElement>;
-            "ds-address-search": LocalJSX.GbxAddressSearch & JSXBase.HTMLAttributes<HTMLGbxAddressSearchElement>;
-            "ds-address-selector": LocalJSX.GbxAddressSelector & JSXBase.HTMLAttributes<HTMLGbxAddressSelectorElement>;
-            "ds-auth": LocalJSX.GbxAuth & JSXBase.HTMLAttributes<HTMLGbxAuthElement>;
-            "ds-auth-container": LocalJSX.GbxAuthContainer & JSXBase.HTMLAttributes<HTMLGbxAuthContainerElement>;
-            "ds-b2b-failure": LocalJSX.GbxB2bFailure & JSXBase.HTMLAttributes<HTMLGbxB2bFailureElement>;
-            "ds-b2b-success": LocalJSX.GbxB2bSuccess & JSXBase.HTMLAttributes<HTMLGbxB2bSuccessElement>;
-            "ds-cart-block": LocalJSX.GbxCartBlock & JSXBase.HTMLAttributes<HTMLGbxCartBlockElement>;
-            "ds-cart-item": LocalJSX.GbxCartItem & JSXBase.HTMLAttributes<HTMLGbxCartItemElement>;
-            "ds-cart-summary": LocalJSX.GbxCartSummary & JSXBase.HTMLAttributes<HTMLGbxCartSummaryElement>;
-            "ds-checkbox": LocalJSX.GbxCheckbox & JSXBase.HTMLAttributes<HTMLGbxCheckboxElement>;
-            "ds-credit-card": LocalJSX.GbxCreditCard & JSXBase.HTMLAttributes<HTMLGbxCreditCardElement>;
-            "ds-credit-card-block": LocalJSX.GbxCreditCardBlock & JSXBase.HTMLAttributes<HTMLGbxCreditCardBlockElement>;
-            "ds-credit-card-list": LocalJSX.GbxCreditCardList & JSXBase.HTMLAttributes<HTMLGbxCreditCardListElement>;
-            /**
-             * This component display a message with a level for the input forms
-             */
-            "ds-field-feedback": LocalJSX.GbxFieldFeedback & JSXBase.HTMLAttributes<HTMLGbxFieldFeedbackElement>;
-            "ds-form": LocalJSX.GbxForm & JSXBase.HTMLAttributes<HTMLGbxFormElement>;
-            /**
-             * This component define a form label (for input, select etc..)
-             */
-            "ds-form-label": LocalJSX.GbxFormLabel & JSXBase.HTMLAttributes<HTMLGbxFormLabelElement>;
-            "ds-input": LocalJSX.GbxInput & JSXBase.HTMLAttributes<HTMLGbxInputElement>;
-            "ds-input-date": LocalJSX.GbxInputDate & JSXBase.HTMLAttributes<HTMLGbxInputDateElement>;
-            "ds-input-field": LocalJSX.GbxInputField & JSXBase.HTMLAttributes<HTMLGbxInputFieldElement>;
-            "ds-input-password": LocalJSX.GbxInputPassword & JSXBase.HTMLAttributes<HTMLGbxInputPasswordElement>;
-            "ds-input-phone": LocalJSX.GbxInputPhone & JSXBase.HTMLAttributes<HTMLGbxInputPhoneElement>;
-            "ds-login": LocalJSX.GbxLogin & JSXBase.HTMLAttributes<HTMLGbxLoginElement>;
-            "ds-mini-cart": LocalJSX.GbxMiniCart & JSXBase.HTMLAttributes<HTMLGbxMiniCartElement>;
-            "ds-mini-cart-item": LocalJSX.GbxMiniCartItem & JSXBase.HTMLAttributes<HTMLGbxMiniCartItemElement>;
-            "ds-mini-cart-quantity-selector": LocalJSX.GbxMiniCartQuantitySelector & JSXBase.HTMLAttributes<HTMLGbxMiniCartQuantitySelectorElement>;
-            "ds-order-cart": LocalJSX.GbxOrderCart & JSXBase.HTMLAttributes<HTMLGbxOrderCartElement>;
-            "ds-order-cart-product": LocalJSX.GbxOrderCartProduct & JSXBase.HTMLAttributes<HTMLGbxOrderCartProductElement>;
-            "ds-order-cart-product-substitution": LocalJSX.GbxOrderCartProductSubstitution & JSXBase.HTMLAttributes<HTMLGbxOrderCartProductSubstitutionElement>;
-            "ds-order-details": LocalJSX.GbxOrderDetails & JSXBase.HTMLAttributes<HTMLGbxOrderDetailsElement>;
-            "ds-order-informations": LocalJSX.GbxOrderInformations & JSXBase.HTMLAttributes<HTMLGbxOrderInformationsElement>;
-            "ds-order-messages": LocalJSX.GbxOrderMessages & JSXBase.HTMLAttributes<HTMLGbxOrderMessagesElement>;
-            "ds-order-step": LocalJSX.GbxOrderStep & JSXBase.HTMLAttributes<HTMLGbxOrderStepElement>;
-            "ds-orders": LocalJSX.GbxOrders & JSXBase.HTMLAttributes<HTMLGbxOrdersElement>;
-            "ds-password-change-block": LocalJSX.GbxPasswordChangeBlock & JSXBase.HTMLAttributes<HTMLGbxPasswordChangeBlockElement>;
-            "ds-profile": LocalJSX.GbxProfile & JSXBase.HTMLAttributes<HTMLGbxProfileElement>;
-            "ds-radio": LocalJSX.GbxRadio & JSXBase.HTMLAttributes<HTMLGbxRadioElement>;
-            /**
-             * This component define a radio item.
-             */
-            "ds-radio-item": LocalJSX.GbxRadioItem & JSXBase.HTMLAttributes<HTMLGbxRadioItemElement>;
-            /**
-             * This component define a list of radio items.
-             */
-            "ds-radio-list": LocalJSX.GbxRadioList & JSXBase.HTMLAttributes<HTMLGbxRadioListElement>;
-            "ds-register": LocalJSX.GbxRegister & JSXBase.HTMLAttributes<HTMLGbxRegisterElement>;
-            "ds-register-form": LocalJSX.GbxRegisterForm & JSXBase.HTMLAttributes<HTMLGbxRegisterFormElement>;
-            "ds-reset-password": LocalJSX.GbxResetPassword & JSXBase.HTMLAttributes<HTMLGbxResetPasswordElement>;
-            /**
-             * This component define a select form.
-             */
-            "ds-select": LocalJSX.GbxSelect & JSXBase.HTMLAttributes<HTMLGbxSelectElement>;
-            "ds-shopping-bag": LocalJSX.GbxShoppingBag & JSXBase.HTMLAttributes<HTMLGbxShoppingBagElement>;
-            /**
-             * Simple button component displaying the shopping list modal
-             */
-            "ds-shopping-bag-button": LocalJSX.GbxShoppingBagButton & JSXBase.HTMLAttributes<HTMLGbxShoppingBagButtonElement>;
-            /**
-             * Create shopping bag form
-             */
-            "ds-shopping-bag-create-form": LocalJSX.GbxShoppingBagCreateForm & JSXBase.HTMLAttributes<HTMLGbxShoppingBagCreateFormElement>;
-            /**
-             * Display shopping bag details & products
-             */
-            "ds-shopping-bag-details": LocalJSX.GbxShoppingBagDetails & JSXBase.HTMLAttributes<HTMLGbxShoppingBagDetailsElement>;
-            /**
-             * Display a shopping bag list
-             */
-            "ds-shopping-bag-list": LocalJSX.GbxShoppingBagList & JSXBase.HTMLAttributes<HTMLGbxShoppingBagListElement>;
-            /**
-             * Component used to display and edit shopping bag name
-             */
-            "ds-shopping-bag-name": LocalJSX.GbxShoppingBagName & JSXBase.HTMLAttributes<HTMLGbxShoppingBagNameElement>;
-            "ds-shopping-bag-products": LocalJSX.GbxShoppingBagProducts & JSXBase.HTMLAttributes<HTMLGbxShoppingBagProductsElement>;
-            "ds-thanks-for-registering": LocalJSX.GbxThanksForRegistering & JSXBase.HTMLAttributes<HTMLGbxThanksForRegisteringElement>;
-            "ds-vouchers": LocalJSX.GbxVouchers & JSXBase.HTMLAttributes<HTMLGbxVouchersElement>;
-            "ds-wallet": LocalJSX.GbxWallet & JSXBase.HTMLAttributes<HTMLGbxWalletElement>;
-            "snk-click-and-collect-toggle": LocalJSX.SnkClickAndCollectToggle & JSXBase.HTMLAttributes<HTMLSnkClickAndCollectToggleElement>;
-            "snk-confirm-modal": LocalJSX.SnkConfirmModal & JSXBase.HTMLAttributes<HTMLSnkConfirmModalElement>;
-            "snk-mini-cart-header": LocalJSX.SnkMiniCartHeader & JSXBase.HTMLAttributes<HTMLSnkMiniCartHeaderElement>;
-            "snk-mini-cart-item-combinations": LocalJSX.SnkMiniCartItemCombinations & JSXBase.HTMLAttributes<HTMLSnkMiniCartItemCombinationsElement>;
-            "snk-mini-cart-modal": LocalJSX.SnkMiniCartModal & JSXBase.HTMLAttributes<HTMLSnkMiniCartModalElement>;
-            "snk-mini-cart-store": LocalJSX.SnkMiniCartStore & JSXBase.HTMLAttributes<HTMLSnkMiniCartStoreElement>;
-            "snk-store-note": LocalJSX.SnkStoreNote & JSXBase.HTMLAttributes<HTMLSnkStoreNoteElement>;
-            "snk-store-note-modal": LocalJSX.SnkStoreNoteModal & JSXBase.HTMLAttributes<HTMLSnkStoreNoteModalElement>;
             "snk-textarea": LocalJSX.SnkTextarea & JSXBase.HTMLAttributes<HTMLSnkTextareaElement>;
-            "snk-two-columns": LocalJSX.SnkTwoColumns & JSXBase.HTMLAttributes<HTMLSnkTwoColumnsElement>;
         }
     }
 }

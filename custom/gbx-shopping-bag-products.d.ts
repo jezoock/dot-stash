@@ -1,9 +1,9 @@
 import type { Components, JSX } from "../dist/types/components";
 
-interface GbxShoppingBagProducts extends Components.GbxShoppingBagProducts, HTMLElement {}
-export const GbxShoppingBagProducts: {
-  prototype: GbxShoppingBagProducts;
-  new (): GbxShoppingBagProducts;
+interface DSShoppingBagProducts extends Components.DSShoppingBagProducts, HTMLElement {}
+export const DSShoppingBagProducts: {
+  prototype: DSShoppingBagProducts;
+  new (): DSShoppingBagProducts;
 };
 /**
  * Used to define this component and all nested components recursively.

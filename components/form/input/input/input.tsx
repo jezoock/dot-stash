@@ -1,6 +1,5 @@
 import { Component, h, Event, EventEmitter, Prop, State, Watch } from '@stencil/core';
-import { DataCy } from "../../../../../utils/data-cy";
-import { DS_computeCSSClassList, DS_getDataCy } from "../../../../../utils";
+import _ds from '../../../../typescript/dot-stash';
 
 @Component({
   tag: 'ds-input',
@@ -8,7 +7,7 @@ import { DS_computeCSSClassList, DS_getDataCy } from "../../../../../utils";
 })
 
 export class DSInput {
-  @Prop() type: string = 'text';
+  @Prop() type = 'text';
   @Prop() inputId: string;
   @Prop() inputName: string;
   @Prop() min: number;
@@ -17,30 +16,26 @@ export class DSInput {
   @Prop() value: any;
   @Prop() isInError: boolean;
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = '';
-  @Prop({ mutable: true, reflect: true }) autocomplete: string = 'on';
-  @Prop({ mutable: true, reflect: true }) placeholder: string = '';
-  @Prop({ attribute: 'data-cy', mutable: true }) dataCy: DataCy = {
-    pageName: null,
-    elementName: null,
-  };
+  @Prop({ mutable: true, reflect: true }) autocomplete = 'on';
+  @Prop({ mutable: true, reflect: true }) placeholder = '';
 
-  @State() isHovered: boolean = false;
+  @State() isHovered = false;
 
-  inputValue: string = '';
+  inputValue = '';
   CSSClassList: any;
 
   @Watch('mods')
   modsWatcher(newMods) {
-    this.CSSClassList = DS_computeCSSClassList('ds-input', newMods);
+    this.CSSClassList = _ds.props.toClassList('ds-input', newMods);
   }
   
-  @Event() gbxKeyDown: EventEmitter;
-  @Event() gbxKeyUp: EventEmitter;
-  @Event() gbxInput: EventEmitter;
-  @Event() gbxInputBlur: EventEmitter;
+  @Event() dsKeyDown: EventEmitter;
+  @Event() dsKeyUp: EventEmitter;
+  @Event() dsInput: EventEmitter;
+  @Event() dsInputBlur: EventEmitter;
   
   constructor() {
-    this.CSSClassList = DS_computeCSSClassList('ds-input', this.mods);
+    this.CSSClassList = _ds.props.toClassList('ds-input', this.mods);
 
     this.inputHandler = this.inputHandler.bind(this);
     this.inputBlurHandler = this.inputBlurHandler.bind(this);
@@ -51,13 +46,13 @@ export class DSInput {
   inputHandler(event: any): void {
     const { value } = event.target;
     this.inputValue = value;
-    this.gbxInput.emit({ name: this.inputName, value });
+    this.dsInput.emit({ name: this.inputName, value });
   }
   
   inputBlurHandler(event: any): void {
     const { value } = event.target;
     this.inputValue = value;
-    this.gbxInputBlur.emit({ name: this.inputName, value });
+    this.dsInputBlur.emit({ name: this.inputName, value });
   }
 
   inputMouseOverHandler(): void {
@@ -96,10 +91,6 @@ export class DSInput {
           onBlur={this.inputBlurHandler}
           autocomplete={this.autocomplete}
           value={this.value}
-          data-cy={DS_getDataCy({
-            ...this.dataCy,
-            elementType: "Input"
-          })}
         />
       </div>
     );

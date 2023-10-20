@@ -3,9 +3,7 @@
 		text-align: center;
     margin: 0px;
     padding: 0px;
-    font-size: $title_font-size-1;
     &:before {
-      @include ds-icon(eye);
 		}
 	}
 }

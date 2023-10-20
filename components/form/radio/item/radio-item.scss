@@ -27,7 +27,6 @@ $radio-size: 20px;
       width: $radio-size;
       height: $radio-size;
       line-height: $radio-size;
-      @include --icon-font();
       color: #fff;
 
       &.--checked {
@@ -67,8 +66,6 @@ $radio-size: 20px;
 
       &.--check {
         &:after {
-          font-size: $title_font-size-1;
-          @include --icon-content(check);
         }
       }
     }

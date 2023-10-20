@@ -1,6 +1,5 @@
 import { ValidatorType } from "./validator/validator-type.enum";
 import { Validator } from "./validator/validator";
-import { DS_eventDispatch } from '../../../utils';
 
 /**
  * Determine if the field is required
@@ -14,11 +13,13 @@ export const notifyFieldsError = (error, messages): void => {
   if (error?.data?.invalidAttributes) {
     const { invalidAttributes } = error.data;
     for (const attr in invalidAttributes) {
-      if (invalidAttributes.hasOwnProperty(attr)) {
+      if (/* invalidAttributes.hasOwnProperty(attr) */typeof error === "undefined") {
         const rule = invalidAttributes[attr][0].rule;
         const errorMessage = messages.error[attr] ? messages.error[attr][rule] : messages.error.global;
 
-        DS_eventDispatch(
+
+        console.log(errorMessage, messages)
+        /* DS_eventDispatch(
           ['ds-input-field'],
           'notify_fieldInError_event',
           { field: attr, errorMessage }
@@ -30,7 +31,7 @@ export const notifyFieldsError = (error, messages): void => {
             'notify_fieldInError_event',
             { field: 'confirmPassword', errorMessage: messages.error['confirmPassword'][rule] }
           );
-        }
+        } */
       }
     }
   }

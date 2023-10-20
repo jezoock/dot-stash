@@ -1,6 +1,4 @@
 import { Component, Event, EventEmitter, h, Prop } from '@stencil/core';
-import { DataCy } from "../../../../utils/data-cy";
-import { DS_getDataCy } from "../../../../utils";
 
 /**
  * This component define a form label (for input, select etc..)
@@ -9,15 +7,11 @@ import { DS_getDataCy } from "../../../../utils";
   tag: 'ds-form-label',
   styleUrl: './label.scss'
 })
-export class GbxFormLabel {
+export class DSFormLabel {
 
   @Prop() fieldLabel: string;
   @Prop() isInError: boolean;
   @Prop() isRequired: boolean;
-  @Prop({ attribute: 'data-cy', mutable: true }) dataCy: DataCy = {
-    pageName: null,
-    elementName: null,
-  };
 
   @Event() private clickLabel: EventEmitter;
 
@@ -39,10 +33,6 @@ export class GbxFormLabel {
           "--error": this.isInError,
           "--required": this.isRequired,
         }}
-        data-cy={DS_getDataCy({
-          ...this.dataCy,
-          elementType: "Label"
-        })}
         onClick={this.clickLabelHandler}
       >
         {this.fieldLabel}

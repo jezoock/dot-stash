@@ -14,7 +14,7 @@ import { FeedbackLevel } from './feedback-level';
   tag: "ds-field-feedback",
   styleUrl: "./feedback.scss",
 })
-export class GbxFieldFeedback {
+export class DSFieldFeedback {
   @Prop() message: string;
   @Prop() level: FeedbackLevel = FeedbackLevel.ERROR;
 

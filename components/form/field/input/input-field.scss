@@ -1,9 +1,7 @@
 .ds-input-field {
   width: 100%;
   &__error-message {
-    font-family: $font-main;
     font-weight: 600;
-    color: snk-color(status, error);
     padding: 0 0 0 0.75rem;
   }
 }

@@ -1,6 +1,4 @@
 import { Component, h, Event, EventEmitter, Prop } from '@stencil/core';
-import { DataCy } from "../../../../../utils/data-cy";
-import { DS_getDataCy } from "../../../../../utils";
 
 @Component({
   tag: 'ds-input-password',
@@ -10,7 +8,7 @@ import { DS_getDataCy } from "../../../../../utils";
   ]
 })
 export class DSInput {
-  @Prop() type: string = 'text';
+  @Prop() type = 'text';
   @Prop() inputId: string;
   @Prop() inputName: string;
   @Prop() min: number;
@@ -18,14 +16,10 @@ export class DSInput {
   @Prop() isDisabled: boolean;
   @Prop() value: any;
   @Prop() isInError: boolean;
-  @Prop({ mutable: true, reflect: true }) placeholder: string = '';
-  @Prop({ mutable: true, reflect: true }) autocomplete: string = 'on';
-  @Prop({ attribute: 'data-cy', mutable: true }) dataCy: DataCy = {
-    pageName: null,
-    elementName: "Password"
-  };
+  @Prop({ mutable: true, reflect: true }) placeholder = '';
+  @Prop({ mutable: true, reflect: true }) autocomplete = 'on';
 
-  @Event() gbxInputBlur: EventEmitter;
+  @Event() dsInputBlur: EventEmitter;
 
   constructor() {
     this.inputBlurHandler = this.inputBlurHandler.bind(this);
@@ -34,7 +28,7 @@ export class DSInput {
 
   inputBlurHandler(event: any): void {
     const { value } = event.target;
-    this.gbxInputBlur.emit({ name: this.inputName, value });
+    this.dsInputBlur.emit({ name: this.inputName, value });
   }
 
   clickButtonHandler() {
@@ -67,22 +61,12 @@ export class DSInput {
           autocomplete={this.autocomplete}
           value={this.value}
           isInError={this.isInError}
-          data-cy={DS_getDataCy({
-            ...this.dataCy,
-            elementType: "Input",
-            elementName: "Password",
-          })}
         />
 
         <ds-button
           class="ds-input-password__button"
-          buttonMods={['auth', 'toggle-password']}
-          buttonType="button"
-          data-cy={DS_getDataCy({
-            ...this.dataCy,
-            elementType: "InputButton",
-            elementName: "Password",
-          })}
+          mods={['auth', 'toggle-password']}
+          type="button"
           onClick={this.clickButtonHandler}
         />
       </div>

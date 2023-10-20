@@ -30,7 +30,7 @@
       font-weight: 700;
       margin: 0 1rem 0 0;
       content: "";
-      @include --icon-font();
+      
     }
     & .ds-checkbox {
       &__label {
@@ -43,7 +43,6 @@
       &:before {
         color: color(color-1, base);
         border-color: color(color-1, base);
-        @include --icon-content(check);
       }
     }
     &.--disabled {
@@ -67,16 +66,13 @@
       width: 2rem;
       border-radius: 4px;
       border: 1px solid color(gray, light);
-      font-size: $title_font-size-3;
       line-height: 30px;
       text-align: center;
-      @include --icon-font();
     }
     &.--checked {
       &:before {
         color: color(color-1, base);
         border-color: color(color-1, base);
-        @include --icon-content(check);
       }
     }
   }
@@ -89,9 +85,7 @@
     }
   }
 
-  @include break-p(null, sm) {
-    font-size: $text_font-size-1;
-  }
+  
 
   .--resto & {
     &.--list-default {

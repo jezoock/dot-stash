@@ -9,7 +9,7 @@ export class DSForm {
 	
 	render() {
 		return (
-			<p>This is greenbox form ! Ho yeah !</p>
+			<p>This is dotstash form ! Ho yeah !</p>
 		);
 	}
 }

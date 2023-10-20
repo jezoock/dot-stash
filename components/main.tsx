@@ -1,5 +1,5 @@
 import { Component, h, Method } from '@stencil/core/internal';
-import { mapStyles } from './map-styles';
+/* import { mapStyles } from './map-styles'; */
 
 @Component({
   tag: 'ds-main',

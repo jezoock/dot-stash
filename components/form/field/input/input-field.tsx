@@ -4,12 +4,8 @@ import { Component, Event, EventEmitter, h, Listen, Prop } from '@stencil/core';
 //#region App imports
 import { isFieldRequired } from '../../utils';
 import { FormValidator } from '../../validator/form-validator';
-import { Translations } from '../../../../interfaces';
-import { DS_getDataCy, DS_setTranslations } from '../../../../../utils';
-import { translations } from '../../translations';
 import { Validator } from '../../validator/validator';
 import { InputFieldType } from './input-field-type.enum';
-import { DataCy } from "../../../../../utils/data-cy";
 
 //#endregion
 
@@ -20,7 +16,7 @@ import { DataCy } from "../../../../../utils/data-cy";
     './scss/button.scss',
   ],
 })
-export class GbxInput {
+export class DSInput {
 
   @Prop() inputType: InputFieldType = InputFieldType.INPUT;
   @Prop() inputName: string;
@@ -31,9 +27,9 @@ export class GbxInput {
    * Send data with an event
    * @type {boolean}
    */
-  @Prop() sendValue: boolean = true;
+  @Prop() sendValue = true;
   @Prop() label: string;
-  @Prop() type: string = 'text';
+  @Prop() type = 'text';
   @Prop() min: number;
   @Prop() max: number;
   @Prop() isDisabled: boolean;
@@ -48,15 +44,10 @@ export class GbxInput {
   @Prop() icon: string;
   @Prop({ mutable: true, reflect: true }) isInError: boolean;
   @Prop({ mutable: true, reflect: true }) errorMessage: string;
-  @Prop({ attribute: 'data-cy', mutable: true }) dataCy: DataCy = {
-    pageName: null,
-    elementName: null,
-  };
 
   @Event() notify_fieldChanged_event: EventEmitter<{ value: string, name: string }>;
   @Event() clickButtonHandler: EventEmitter;
 
-  private translations: Translations;
   private readonly isRequired: boolean;
 
   @Listen('notify_fieldInError_event')
@@ -68,7 +59,6 @@ export class GbxInput {
   }
 
   constructor() {
-    this.translations = DS_setTranslations(translations, ['gbx_form']);
     this.inputHandler = this.inputHandler.bind(this);
     this.isRequired = isFieldRequired(this.validators);
   }
@@ -79,7 +69,7 @@ export class GbxInput {
       this.errorMessage = errorMessage;
       this.isInError = isInError;
     } else {
-      this.errorMessage = this.translations.error[errorType];
+      this.errorMessage = "this.translations.error[errorType]";
       this.isInError = true;
     }
 
@@ -99,7 +89,7 @@ export class GbxInput {
     if (this.validators?.length) {
       const validator: Validator = FormValidator.validate(value, this.validators);
       const errorMessage: string = FormValidator.getErrorMessage(
-        { validatorType: validator?.type, validators: this.validators, defaultErrors: this.translations.error }
+        { validatorType: validator?.type, validators: this.validators, defaultErrors: "this.translations.error" }
       );
 
       if (errorMessage) {
@@ -124,17 +114,12 @@ export class GbxInput {
     return (
       <div
         class="ds-input-field"
-        data-cy={DS_getDataCy({
-          ...this.dataCy,
-          elementType: "InputField",
-        })}
       >
         {this.label && (
           <ds-form-label
             fieldLabel={this.label}
             isInError={this.isInError}
             isRequired={this.isRequired}
-            data-cy={this.dataCy}
           />
         )}
 
@@ -149,9 +134,8 @@ export class GbxInput {
             isDisabled={this.isDisabled}
             value={this.value}
             isInError={this.isInError}
-            onGbxInputBlur={this.inputHandler}
-            onGbxInput={this.inputHandler}
-            data-cy={this.dataCy}
+            onDSInputBlur={this.inputHandler}
+            onDSInput={this.inputHandler}
             />
             )}
 
@@ -166,8 +150,7 @@ export class GbxInput {
             isDisabled={this.isDisabled}
             value={this.value}
             isInError={this.isInError}
-            onGbxInputBlur={this.inputHandler}
-            data-cy={this.dataCy}
+            onDSInputBlur={this.inputHandler}
           />
         )}
 
@@ -178,8 +161,7 @@ export class GbxInput {
             inputId={this.inputId}
             isDisabled={this.isDisabled}
             isInError={this.isInError}
-            onGbxInputBlur={this.inputHandler}
-            data-cy={this.dataCy}
+            onDSInputBlur={this.inputHandler}
           />
         )}
 

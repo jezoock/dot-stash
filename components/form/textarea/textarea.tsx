@@ -1,6 +1,4 @@
 import { Prop, h, Component, EventEmitter, Event, State } from "@stencil/core";
-import { DS_getDataCy } from "../../../../utils";
-import { DataCy } from "../../../../utils/data-cy";
 import { FormValidator } from "../validator/form-validator";
 import { Validator } from "../validator/validator";
 
@@ -12,12 +10,11 @@ const componentName = "snk-textarea";
 })
 export class SnkTextarea {
   @Prop() content!: string;
-  @Prop() dataCy!: DataCy;
   @Prop() columns: number;
-  @Prop() lines: number = 1;
+  @Prop() lines = 1;
   @Prop() disabled: boolean;
   @Prop() resizable: boolean;
-  @Prop() placeholder: string = '';
+  @Prop() placeholder = '';
   @Prop() validators: Validator[];
   @Prop() withCharacterCount: boolean;
   @Prop() maxLength: number;
@@ -85,10 +82,6 @@ export class SnkTextarea {
           cols={this.columns}
           maxLength={this.maxLength}
           value={this.content}
-          data-cy={DS_getDataCy({
-            ...this.dataCy,
-            elementType: 'textarea'
-          })}
           rows={this.lines}
           onKeyPress={this.textAreaKeyPressHandler}
           onInput={this.textAreaUpdateHandler}
@@ -98,7 +91,7 @@ export class SnkTextarea {
         )}
         {this.errorMessage && (
           <div
-            id={`input-error-message-${this.dataCy.elementName}`}
+            id={`input-error-message`}
             class={`${componentName}__error-message`}
           >
             {this.errorMessage}
@@ -107,4 +100,4 @@ export class SnkTextarea {
       </div>
     );
   }
-};
+}

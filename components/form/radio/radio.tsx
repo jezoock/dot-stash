@@ -6,10 +6,9 @@ import { RadioItem } from './item/radio-item.interface';
 import { RadioItemCheckStyle } from './item/radio-item-check-style.enum';
 import { RadioItemStyle } from './item/radio-item-style.enum';
 import { Validator } from '../validator/validator';
-import { ModifierList } from '../../../interfaces';
-import { DS_computeCSSClassList } from '../../../../utils';
 import { ValidatorType } from '../validator/validator-type.enum';
 import { isFieldRequired } from '../utils';
+import _ds from '../../../typescript/dot-stash';
 //#endregion
 
 @Component({
@@ -39,7 +38,7 @@ export class DSRadio {
 
   @Event() notify_radioValueSelected_event: EventEmitter;
 
-  private CSSClasses: ModifierList;
+  private CSSClasses: any;
 
   @Listen("notify_radioItemSelected_event")
   notify_radioItemSelected_eventHandler({ detail: { selectedRadioValue } }) {
@@ -51,7 +50,7 @@ export class DSRadio {
   }
 
   componentWillLoad() {
-    this.CSSClasses = DS_computeCSSClassList("ds-radio", this.mods);
+    this.CSSClasses = _ds.props.toClassList("ds-radio", this.mods);
     this.isRequired = isFieldRequired(this.validators);
     this.onClickLabel = this.onClickLabel.bind(this);
   }

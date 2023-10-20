@@ -1,6 +1,6 @@
 export const translations = {
   fr: {
-    gbx_form: {
+    ds_form: {
       error: {
         required: "Ce champ est obligatoire.",
         default: "Erreur",
@@ -9,7 +9,7 @@ export const translations = {
     }
   },
   en: {
-    gbx_form: {
+    ds_form: {
       error: {
         required: "This field is required.",
         default: "Error",
@@ -18,7 +18,7 @@ export const translations = {
     }
   },
   de: {
-    gbx_form: {
+    ds_form: {
       error: {
         required: "Dieses Feld ist ein Pflichtfeld.",
         default: "Error",
@@ -27,7 +27,7 @@ export const translations = {
     }
   },
   it: {
-    gbx_form: {
+    ds_form: {
       error: {
         required: "Questo campo é richiesto.",
         default: "Error",
