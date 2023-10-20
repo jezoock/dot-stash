@@ -73,7 +73,7 @@ Type: `Promise<void>`
 
 ### Depends on
 
-- [ds-button](../../core/button)
+- [ds-button](../button)
 
 ### Graph
 ```mermaid

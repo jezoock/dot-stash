@@ -9,6 +9,7 @@
 
 | Property   | Attribute  | Description | Type                 | Default                  |
 | ---------- | ---------- | ----------- | -------------------- | ------------------------ |
+| `ctx`      | `ctx`      |             | `boolean`            | `true`                   |
 | `isShown`  | `is-shown` |             | `boolean`            | `false`                  |
 | `mods`     | `mods`     |             | `string \| string[]` | `""`                     |
 | `position` | `position` |             | `string`             | `SIDEBAR_POSITION.RIGHT` |

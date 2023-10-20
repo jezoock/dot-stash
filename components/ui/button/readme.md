@@ -28,18 +28,18 @@
 
 ### Used by
 
+ - [ds-input-password](../../form/input/password)
  - [ds-main](../..)
- - [ds-modal](../../ui/modal)
- - [ds-nav-menu-item](../../advanced/nav-menu/nav-menu-item)
- - [ds-slider](../../ui/slider)
- - [ds-video](../../ui/video)
+ - [ds-modal](../modal)
+ - [ds-slider](../slider)
+ - [ds-video](../video)
 
 ### Graph
 ```mermaid
 graph TD;
+  ds-input-password --> ds-button
   ds-main --> ds-button
   ds-modal --> ds-button
-  ds-nav-menu-item --> ds-button
   ds-slider --> ds-button
   ds-video --> ds-button
   style ds-button fill:#f9f,stroke:#333,stroke-width:4px

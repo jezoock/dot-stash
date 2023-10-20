@@ -865,7 +865,7 @@ declare namespace LocalJSX {
         "inputValue"?: string;
         "isChecked"?: boolean;
         "isDisabled"?: boolean;
-        "onDSCheckboxClick"?: (event: DsCheckboxCustomEvent<any>) => void;
+        "onDsCheckboxClick"?: (event: DsCheckboxCustomEvent<any>) => void;
         "type"?: string | string[];
     }
     interface DsCombo {
@@ -931,10 +931,10 @@ declare namespace LocalJSX {
         "max"?: number;
         "min"?: number;
         "mods"?: string | string[];
-        "onDSInput"?: (event: DsInputCustomEvent<any>) => void;
-        "onDSInputBlur"?: (event: DsInputCustomEvent<any>) => void;
-        "onDSKeyDown"?: (event: DsInputCustomEvent<any>) => void;
-        "onDSKeyUp"?: (event: DsInputCustomEvent<any>) => void;
+        "onDsInput"?: (event: DsInputCustomEvent<any>) => void;
+        "onDsInputBlur"?: (event: DsInputCustomEvent<any>) => void;
+        "onDsKeyDown"?: (event: DsInputCustomEvent<any>) => void;
+        "onDsKeyUp"?: (event: DsInputCustomEvent<any>) => void;
         "placeholder"?: string;
         "type"?: string;
         "value"?: any;
@@ -945,7 +945,7 @@ declare namespace LocalJSX {
         "isMonthRequired"?: boolean;
         "isUsedForCreditCard"?: boolean;
         "isYearRequired"?: boolean;
-        "onDSDateInputChange"?: (event: DsInputDateCustomEvent<any>) => void;
+        "onDsDateInputChange"?: (event: DsInputDateCustomEvent<any>) => void;
     }
     interface DsInputField {
         "errorMessage"?: string;
@@ -982,7 +982,7 @@ declare namespace LocalJSX {
         "isInError"?: boolean;
         "max"?: number;
         "min"?: number;
-        "onDSInputBlur"?: (event: DsInputPasswordCustomEvent<any>) => void;
+        "onDsInputBlur"?: (event: DsInputPasswordCustomEvent<any>) => void;
         "placeholder"?: string;
         "type"?: string;
         "value"?: any;
