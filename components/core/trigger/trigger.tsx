@@ -19,11 +19,12 @@ export class DSTrigger {
     if(!this.targetComponent) {
       console.log(`[ERROR] DSControl: can't find target component, selector: ${this.target}, type: ${this.type}`);
     }
-
+    console.log(this.targetComponent)
     this.hostContainer.addEventListener( this.event, this.hostClickHandler )
   }
 
   hostClickHandler = () => {
+   
     if(this.targetComponent) {
       const [ action, args ] = this.action.split(/:(.*)/s);
       this.targetComponent[action](..._ds.props.fromJSON(args||[]));
@@ -32,7 +33,7 @@ export class DSTrigger {
 
   render() {
     return (
-      <Host>
+      <Host onClick={this.hostClickHandler}>
         <slot />
       </Host>
     );

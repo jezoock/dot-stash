@@ -95,7 +95,7 @@ $breakpoints-group: (
 
 */
 
-$grid-xxs: 320px;
+$grid-xxs: 360px;
 $grid-xs: 576px;
 $grid-sm: 768px;
 $grid-md: 992px;
@@ -104,7 +104,6 @@ $grid-xl: 1400px;
 $grid-xxl: 1600px;
 
 $breakpoints: (
-  min: $grid-xxs - 1,
   xxs: $grid-xxs,
   xs: $grid-xs,
   sm: $grid-sm,

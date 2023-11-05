@@ -29,10 +29,10 @@ export class DSInput {
     this.CSSClassList = _ds.props.toClassList('ds-input', newMods);
   }
   
-  @Event() dsKeyDown: EventEmitter;
-  @Event() dsKeyUp: EventEmitter;
-  @Event() dsInput: EventEmitter;
-  @Event() dsInputBlur: EventEmitter;
+  @Event() dSKeyDown: EventEmitter;
+  @Event() dSKeyUp: EventEmitter;
+  @Event() dSInput: EventEmitter;
+  @Event() dSInputBlur: EventEmitter;
   
   constructor() {
     this.CSSClassList = _ds.props.toClassList('ds-input', this.mods);
@@ -46,13 +46,13 @@ export class DSInput {
   inputHandler(event: any): void {
     const { value } = event.target;
     this.inputValue = value;
-    this.dsInput.emit({ name: this.inputName, value });
+    this.dSInput.emit({ name: this.inputName, value });
   }
   
   inputBlurHandler(event: any): void {
     const { value } = event.target;
     this.inputValue = value;
-    this.dsInputBlur.emit({ name: this.inputName, value });
+    this.dSInputBlur.emit({ name: this.inputName, value });
   }
 
   inputMouseOverHandler(): void {

@@ -19,7 +19,7 @@ export class DSInput {
   @Prop({ mutable: true, reflect: true }) placeholder = '';
   @Prop({ mutable: true, reflect: true }) autocomplete = 'on';
 
-  @Event() dsInputBlur: EventEmitter;
+  @Event() dSInputBlur: EventEmitter;
 
   constructor() {
     this.inputBlurHandler = this.inputBlurHandler.bind(this);
@@ -28,7 +28,7 @@ export class DSInput {
 
   inputBlurHandler(event: any): void {
     const { value } = event.target;
-    this.dsInputBlur.emit({ name: this.inputName, value });
+    this.dSInputBlur.emit({ name: this.inputName, value });
   }
 
   clickButtonHandler() {

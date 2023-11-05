@@ -1,4 +1,4 @@
-import { Component, Element, Prop, Watch, h } from '@stencil/core/internal';
+import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core/internal';
 import _ds from '../../../typescript/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
@@ -33,7 +33,7 @@ export class DSGrid {
   
   @Element() container: HTMLDivElement;
   
-  @Prop() params: string | DSGridParams;
+  @Prop({ reflect: true }) dataUseRsp = true;
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) type: string | DSGridType = 'fixed';
   @Prop({ mutable: true, reflect: true }) cols: string | number  = 1;
@@ -43,6 +43,10 @@ export class DSGrid {
   @Prop({ mutable: true, reflect: true }) vAlign: string | DSGridAlignment = "start";
   @Prop({ mutable: true, reflect: true }) cellRatio: string | number;
 
+  @Listen("breakpointChange")
+  onBreakpointChange() {
+    this.processChildren();
+  }
 
   @Watch('mods')
   modsChangeHandler(newMods: string | string[]) {
@@ -111,14 +115,55 @@ export class DSGrid {
   }
 
   async processChildren(): Promise<void> {
-    const children = this.container.querySelectorAll('ds-grid-item');
+    const children = Array.from(this.container.querySelectorAll('ds-grid-item'));
     const rowCount = Math.ceil(children.length/this.options.cols);
-    children.forEach( async (child, index) => {
-      const styles = await this.processStyles(rowCount, index, child);
+    let offset = 0;
+    for (let i=0; i<children.length; i++) {
+      const child = children[i];
+      const styles = await this.processCols(offset, child);
+      offset = offset + child.width;
       await child.setStyles( styles );
-    });
+    }
+/*     children.map( async (child) => {
+    }); */
   }
 
+  async processCols(index: number, gridItem: HTMLDsGridItemElement): Promise<DSGridItemStyles> {
+    const { type, hGap, cols } = this.options;
+    const styles: DSGridItemStyles = {};
+    const colWidth = gridItem.width;
+
+    if (type === 'fixed') {
+      // styles.width = `calc( ${(100 * colWidth / cols).toFixed(4)}% + (${hGap} * (${colWidth} - 1)) )`;
+      styles.width = `${(100 * colWidth / cols).toFixed(4)}%`;
+
+      if (hGap) {
+        styles.paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
+        styles.paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - (((index+colWidth-1) % cols)+1)})`;
+      }
+
+    } else if (type === 'fluid') {
+      let gapWidth = '0';
+
+      if (hGap) {
+        const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
+        rowContainer.style.columnGap = `${hGap}`;
+
+        gapWidth = `calc((${cols - 1} * ${hGap}) / ${cols})`;
+      }
+
+      styles.width = `calc(100% / ${cols / gridItem.width} - ${gapWidth}`;
+
+      /* if (cellRatio) {
+        paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
+      } */
+    } /* else if ( type === 'system') {
+
+    } */
+    
+    return styles;
+  }
+  
   async processStyles(rowCount: number, index: number, gridItem: HTMLDsGridItemElement): Promise<DSGridItemStyles> {
     const { type, hGap, vGap, cols } = this.options;
     const styles: DSGridItemStyles = {};
@@ -158,7 +203,9 @@ export class DSGrid {
       /* if (cellRatio) {
         paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
       } */
-    }
+    }/*  else if ( type === 'system') {
+
+    } */
     
     return styles;
   }

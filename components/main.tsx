@@ -40,6 +40,7 @@ export class DSMainTest {
   render() {
     return (
       <div class="ds-components-demo">
+        <ds-app></ds-app>
          {/* <ds-title section sub>test</ds-title>
         <ds-map
           api-key="***REMOVED***"
@@ -75,11 +76,8 @@ export class DSMainTest {
           <div>sdkfljsdklfkl</div>
           <ds-trigger event="click" action='toggle'>fermer</ds-trigger>
         </ds-sidebar>
-        <ds-control target="ds-sidebar" action='toggle'>sidebar</ds-control>
         
-""
-<ds-trigger target="ds-sidebar" event="dsSliderEvent" action='toggle'>
-        <ds-slider style={{"height":"4rem"}}>
+        <ds-slider style={{"height":"4rem"}} id="bob">
           <ds-slider-item class="ds-slider__item"><ds-header><span slot="before">sdfkdfjskdfjkkjsdf</span></ds-header></ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
@@ -88,8 +86,7 @@ export class DSMainTest {
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
         </ds-slider>
-        </ds-trigger>
-        <ds-control target="ds-slider" action='next'>sidebar</ds-control>
+        <ds-trigger target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger>
 
           {/* <ds-header slot="block-header">
             <ds-button slot="before">
@@ -179,7 +176,8 @@ export class DSMainTest {
             </ds-grid>
           </ds-block> */}
 
-        {/* <ds-rsp>
+<ds-rsp>
+        <ds-block>
           <ds-grid
             data-use-rsp
             class="ds-button-list"
@@ -187,25 +185,24 @@ export class DSMainTest {
             hGap="10px"
             vGap="1rem"
             type="fixed"
-            data-rsp={JSON.stringify({
-              'sm': {
-                "cols": 1, "hGap": "10px", "vGap": "1rem"
-              },
-              'md': {
-                "cols": 3, "hGap": "30px", "vGap": "3rem"
-              },
-              'lg': {
-                "cols": 5, "hGap": "50px", "vGap": "5rem"
-              }
-            })}
           >
             <ds-grid-item class="ds-buttton-list__item">
-              <ds-button id="button" mods={["solid", "primary", "xs"]} onDsButtonClick={() => (document.querySelector('#button') as any).mods = ["solid", "primary", "xl"] }>Click me !</ds-button>
+              <ds-button id="button" mods={["solid", "primary", "xs"]}>Click me !</ds-button>
             </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item" width={4}>
+            <ds-grid-item
+              class="ds-buttton-list__item"
+              width={1}
+              data-use-rsp
+              data-rsp={{
+                "xs": {"width": 2},
+                "sm": {"width": 3},
+                "md": {"width": 4},
+                "lg": {"width": 5}
+              }}
+            >
               <ds-button mods={["solid", "primary", "sm"]}>Click me !</ds-button>
             </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item" width={2}>
+            <ds-grid-item class="ds-buttton-list__item">
               <ds-button mods={["solid", "primary", "md"]} disabled>
                 <div slot="before">Before sdkjfh sjkdf</div>
                 <div>Click me !</div>
@@ -250,8 +247,8 @@ export class DSMainTest {
               <ds-button mods={["outlined", "primary", "xl"]}>Click me !</ds-button>
             </ds-grid-item>
           </ds-grid>
-          </ds-rsp>
-        </ds-block> */}
+        </ds-block>
+        </ds-rsp>
       </div>
     );
   }

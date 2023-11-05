@@ -312,18 +312,18 @@ export class DSSlider {
         newElem.innerHTML = this.items[i].innerHTML;
         /* const slottedElements = Array.from(this.items[i].querySelectorAll("[slot]"));
         slottedElements.map( element => element.removeAttribute("slot")); */
-        /* const slots = Array.from( this.items[i].querySelectorAll("[slot]") );
-        console.log(this.items[i].innerHTML)
+        const slots = Array.from( this.items[i].querySelectorAll("[slot]") );
         slots.map( slot => slot.addEventListener("slotchange", () => console.log("slot")))
-        this.items[i].addEventListener("slotchange", () => console.log("slot")) */
-        /* this.list.appendChild( this.items[i].cloneNode(true) ); */
-        /* this.list.insertAdjacentHTML( "beforeend", this.items[i].innerHTML ); */
+        this.items[i].addEventListener("slotchange", () => console.log("slot"))
+        console.log(slots);
+        this.list.insertAdjacentHTML( "beforeend", this.items[i].innerHTML );
         //this.getList().appendChild( this.items[i].cloneNode(true) );
-        this.getList().append(newElem);
+        //this.list.appendChild( this.items[i].cloneNode(true) );
+        /* this.getList().append(newElem); */
       }
       
       this.getList().classList.add("--sliding");
-      this.getList().addEventListener( 'transitionend', this.slideNextTransitionEndHandler );
+      //this.getList().addEventListener( 'transitionend', this.slideNextTransitionEndHandler );
       setTimeout( () => _ds.css.set( to, [this.list]), 0 );
 
     }	

@@ -12,7 +12,7 @@ export class DSGridItem {
 
   @Element() container: HTMLDivElement;
   @Prop({ reflect: true, attribute: "ratio"}) ratioFromProps: number | string;
-  @Prop() width = 1;
+  @Prop({ reflect: true, mutable: true }) width = 1;
 
   @Watch('ratioFromProps')
   ratioPropsWatcher(ratio: number) {

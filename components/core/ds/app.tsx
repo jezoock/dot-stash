@@ -174,6 +174,42 @@ export class DSApp {
    * Ajax
    */
 
+  @Method()
+  async buildQuery(queryParams: Record<string, unknown>) {
+    return Object.entries(queryParams).map(pair => pair.map(encodeURIComponent).join('=')).join('&');
+  }
+
+  @Method()
+  async get( url: string, queryParams?: Record<string, unknown> ): Promise<unknown> {
+    return fetch(`${url}${queryParams ? `?${this.buildQuery(queryParams)}` : ''}`)
+      .then((response: any) => new Promise((resolve, reject) => {
+        response
+          .json()
+          .then(response.ok ? resolve : reject)
+          .catch(reject)
+        })
+      );
+  }
+
+  @Method()
+  async post(url: string, payload: string | Record<string, string> | string[][] | URLSearchParams = {}): Promise<any> {
+    return fetch(url, {
+      headers: new Headers({
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Access-Control-Origin": "*"
+      }),
+      method: "POST",
+      body: new URLSearchParams(payload)
+    }).then((response: any) => new Promise((resolve, reject) => {
+      response
+        .json()
+        .then(response.ok ? resolve : reject)
+        .catch(reject)
+      })
+    );
+  }
+
   /**
    * Props processing
    */
