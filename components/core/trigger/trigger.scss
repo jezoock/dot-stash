@@ -1,0 +1,25 @@
+ds-trigger {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: middle;
+  
+  & > a,
+  & > button,
+  & > span,
+  & > strong,
+  & > div {
+    display: inline-block;
+    vertical-align: middle;
+    color: inherit;
+    line-height: inherit;
+    text-decoration: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: inherit;
+    margin: inherit;
+    border-color: inherit;
+    background-color: inherit;
+  }
+}

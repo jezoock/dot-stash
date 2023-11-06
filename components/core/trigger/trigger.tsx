@@ -1,39 +1,82 @@
-import { Element, Prop, Component, Host, h } from '@stencil/core/internal';
+import { Element, Prop, Component, Host, h, Watch } from '@stencil/core/internal';
 import _ds from '../../../typescript/dot-stash';
+import CssClassList from '../../types/css-class-list.interface';
 
 @Component({
   tag: 'ds-trigger',
+  styleUrl: 'trigger.scss',
 })
 export class DSTrigger {
+  targetComponent: HTMLElement;
+  CSSClassList: CssClassList;
+
   @Element() hostContainer: HTMLElement;
 
-  @Prop() action: string;
-  @Prop() event: string;
+  @Prop({ reflect: true }) disabled = false;
+  @Prop({ reflect: true }) action: string;
+  @Prop({ reflect: true }) on: string;
   @Prop() target: string;
-  @Prop() type: 'button' | 'submit' | 'control' | 'link' = 'control';
-
-  targetComponent: HTMLElement;
-
-  componentDidLoad() {
-    this.targetComponent = this.target ? document.querySelector(this.target) : this.hostContainer.closest("[ctx]");
-    if(!this.targetComponent) {
-      console.log(`[ERROR] DSControl: can't find target component, selector: ${this.target}, type: ${this.type}`);
-    }
-    console.log(this.targetComponent)
-    this.hostContainer.addEventListener( this.event, this.hostClickHandler )
+  @Prop() type: 'button' | 'control' | 'link' = 'control';
+  @Prop({ reflect: true }) mods: string | string[] = [];
+  
+	@Watch('mods')
+  modsChangeHandler( mods: string | string[] ) {
+    this.CSSClassList = _ds.props.toClassList(
+      `ds-${this.type}`,
+      _ds.props.toArray(mods)
+    );
   }
 
-  hostClickHandler = () => {
-   
+  //#region LYFECYCLE CALLBACKS
+
+  constructor() {
+    this.eventHandler = this.eventHandler.bind(this);
+  }
+
+	componentWillLoad() {
+		this.CSSClassList = _ds.props.toClassList(
+      `ds-${this.type}`,
+      _ds.props.toArray(this.mods)
+    );
+	}
+
+  connectedCallback() {
+    if (this.target) {
+      this.targetComponent = document.querySelector(this.target);
+      if(this.targetComponent) {
+        this.hostContainer.addEventListener( this.on, this.eventHandler );
+      } else {
+        console.log(
+          `[ERROR] DSControl: can't find target component, selector: ${this.target}, type: ${this.type}`
+        );
+      } 
+    }
+  }
+
+  disconnectedCallback() {
+    if (this.target && this.targetComponent) {
+      this.hostContainer.removeEventListener( this.on, this.eventHandler );
+    }
+  }
+
+  //#endregion
+
+  //#region HANDLERS
+
+  eventHandler() {
     if(this.targetComponent) {
       const [ action, args ] = this.action.split(/:(.*)/s);
       this.targetComponent[action](..._ds.props.fromJSON(args||[]));
     }
   }
 
+  //#endregion
+
   render() {
     return (
-      <Host onClick={this.hostClickHandler}>
+      <Host
+        class={this.CSSClassList}
+      >
         <slot />
       </Host>
     );
