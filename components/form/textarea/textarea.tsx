@@ -2,13 +2,13 @@ import { Prop, h, Component, EventEmitter, Event, State } from "@stencil/core";
 import { FormValidator } from "../validator/form-validator";
 import { Validator } from "../validator/validator";
 
-const componentName = "snk-textarea";
+const componentName = "ds-textarea";
 
 @Component({
-  tag: "snk-textarea",
+  tag: "ds-textarea",
   styleUrl: './textarea.scss'
 })
-export class SnkTextarea {
+export class DSTextarea {
   @Prop() content!: string;
   @Prop() columns: number;
   @Prop() lines = 1;

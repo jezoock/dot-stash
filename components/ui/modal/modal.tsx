@@ -1,5 +1,4 @@
 import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State, Watch } from "@stencil/core";
-import Fragment from "stencil-fragment";
 import throttle from "../../../typescript/throttle";
 
 @Component({
@@ -14,17 +13,8 @@ export class DSModal {
 
   @Prop({ mutable: true, reflect: true }) shown = false;
   @Prop() overlay = false;
-  @Prop() redirectToOnClose = false;
-  @Prop() isHeaderDisabled = false;
-  @Prop() isSubtitleDisabled = false;
-  @Prop() isFooterDisabled = false;
-  @Prop() isLayoutDisabled = false;
-  @Prop({ mutable: true }) isClosingDisabled = false;
   @Prop({ mutable: true }) lightboxClass: any = { "--dialog": true };
   @Prop() lightboxClassObject: any;
-  @Prop() useSnack = false;
-  @Prop() darkBackground = false;
-  @Prop({mutable: true, reflect: true}) closeButtonMods: string[] = ["modal-close"];
 
   @State() isReady = false;
 
@@ -69,7 +59,6 @@ export class DSModal {
   constructor() {
     this.refreshCSSClasses();
 
-    this.closeButtonClickHandler = this.closeButtonClickHandler.bind(this);
     this.modalMouseDownHandler = this.modalMouseDownHandler.bind(this);
     this.modalMouseUpHandler = this.modalMouseUpHandler.bind(this);
   }
@@ -104,10 +93,6 @@ export class DSModal {
    * Request modal hide
    */
   hide(): void {
-    if (this.redirectToOnClose) {
-      window.location.href = window.location.origin;
-    }
-
     if (this.modalClose) {
       this.modalClose.emit();
     } else {
@@ -120,12 +105,10 @@ export class DSModal {
    */
   modalInit(): void {
     if (!this.isReady) {
-      if (!this.isClosingDisabled) {
         document.addEventListener(
           "keyup",
           this.documentKeyDownHandler
         );
-      }
       this.isReady = true;
     }
   }
@@ -164,7 +147,6 @@ export class DSModal {
 
   modalMouseDownHandler(event: MouseEvent): void {
     if (
-      !this.isClosingDisabled &&
       !(event.target as HTMLDivElement).closest(".ds-modal")
     ) {
       this.hide();
@@ -175,68 +157,23 @@ export class DSModal {
     event.preventDefault();
   }
 
-  closeButtonClickHandler(): void {
-    this.hide();
-  }
-
   render() {
     return (
-      <Host>
-        {this.shown && (
-          <div
-            class={{
-              "ds-lightbox": true,
-              "--no-layout": this.isLayoutDisabled,
-              "--overlay": this.overlay,
-              "--dark-overlay": !this.overlay && this.darkBackground,
-              ...this.lightboxClassObject
-            }}
-            onMouseDown={this.modalMouseDownHandler}
-            onMouseUp={this.modalMouseUpHandler}
-          >
-            <div class="ds-lightbox__container">
-              <div class="ds-modal">
-                {this.isLayoutDisabled ? (
-                  <div class="ds-modal__content">
-                    <slot name="content" />
-                  </div>
-                ) : (
-                  <Fragment>
-                    {!this.isHeaderDisabled && (
-                      <header class="ds-modal__header">
-                        <div class="ds-modal__title">
-                          <slot name="title" />
-                        </div>
-
-                        {!this.isSubtitleDisabled && (
-                          <div class="ds-modal__sub-title">
-                            <slot name="subTitle" />
-                          </div>
-                        )}
-
-                        {!this.isClosingDisabled && (
-                          <ds-button
-                            mods={this.closeButtonMods}
-                            onClick={this.closeButtonClickHandler}
-                          />
-                        )}
-                      </header>
-                    )}
-                    <div class="ds-modal__content">
-                      <slot />
-                      <slot name="content" />
-                    </div>
-                    {!this.isFooterDisabled && (
-                      <footer class="ds-modal__footer">
-                        <slot name="footer" />
-                      </footer>
-                    )}
-                  </Fragment>
-                )}
-              </div>
+      <Host class={{
+          "ds-lightbox": true,
+          "--overlay": this.overlay,
+          ...this.lightboxClassObject
+        }}
+        onMouseDown={this.modalMouseDownHandler}
+        onMouseUp={this.modalMouseUpHandler}
+      >
+        <div class="ds-lightbox__container">
+          <div class="ds-modal">
+            <div class="ds-modal__content">
+              <slot />
             </div>
           </div>
-        )}
+        </div>
       </Host>
     );
   }

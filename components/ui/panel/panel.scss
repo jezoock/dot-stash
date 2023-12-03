@@ -1,0 +1,23 @@
+.ds-panel {
+  &__title { }
+
+  &__content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease;
+  }
+
+  &__content-wrapper {
+    overflow: hidden;
+  }
+}
+
+ds-panel {
+  &[expanded] {
+    & .ds-panel {
+      &__content {
+        grid-template-rows: 1fr;
+      }
+    }
+  }
+}

@@ -2,8 +2,8 @@ ds-trigger {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  display: inline-block;
-  vertical-align: middle;
+  /* display: inline-block;
+  vertical-align: middle; */
   
   & > a,
   & > button,
@@ -21,5 +21,191 @@ ds-trigger {
     margin: inherit;
     border-color: inherit;
     background-color: inherit;
+  }
+
+  &.ds-button {
+    background-color: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    position: relative;
+    transition: all ease 0.1s;
+    border: 1px solid #e5e5e5;
+    border-right: 1px solid #dedede;
+    border-bottom: 2px solid #dcdcdc;
+    text-align: center;
+    
+    &:before,
+    &:after {
+      display: block;
+      content: '';
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+      transition: all ease 0.1s;
+    }
+  
+    &:before {
+      top: -0.5rem;
+      left: -0.5rem;
+    }
+  
+    &:after {
+      
+    }
+  
+    &:hover {
+      box-shadow: 0 1px 10px rgba(0,0,0,0.2);
+      &:before,
+      &:after {
+        opacity: 1;
+      }
+    }
+  
+    &.--rounded {
+      border-radius: 50%;
+    }
+  
+    &.--sm {
+      height: 1.5rem;
+      line-height: 1.5rem;
+      font-size: 0.75rem;
+      &:before,
+      &:after {
+        border-radius: 2px;
+      }
+      &:before {
+        border-top: .5rem solid #f92d10;
+        border-right: .5rem solid transparent;
+      }
+      &:after {
+        border-bottom: .5rem solid #f92d10;
+        border-left: .5rem solid transparent;
+      }
+      &:hover {
+        &:before {
+          top: -2px;
+          left: -2px;
+        }
+        &:after {
+          bottom: -2px;
+          right: -2px;
+        }
+      }
+  
+      &.--default {
+        border-radius: 5px;
+        min-width: 100px;
+      }
+      &.--icon {
+        border-radius: 5px;
+        width: 1.5rem;
+      }
+      &.--rounded {
+        width: 2rem;
+        height: 2rem;
+        line-height: 2rem;
+      }
+    }
+  
+    &.--md {
+      height: 2.75rem;
+      line-height: 2.75rem;
+      font-size: 1.125rem;
+      &:before,
+      &:after {
+        border-radius: 3px;
+      }
+      &:before {
+        border-top: 0.875rem solid #f92d10;
+        border-right: 0.875rem solid transparent;
+      }
+      &:after {
+        border-bottom: 0.875rem solid #f92d10;
+        border-left: 0.875rem solid transparent;
+      }
+      &:hover {
+        &:before {
+          top: -3px;
+          left: -3px;
+        }
+        &:after {
+          bottom: -3px;
+          right: -3px;
+        }
+      }
+      &.--default {
+        border-radius: 8px;
+        min-width: 200px;
+      }
+      &.--icon {
+        border-radius: 8px;
+        width: 2.75rem;
+      }
+      &.--rounded {
+        width: 4rem;
+        height: 4rem;
+        line-height: 4rem;
+      }
+    }
+    
+    &.--lg {
+      height: 4rem;
+      line-height: 4rem;
+      font-size: 1.5rem;
+      padding: 1rem 2rem ;
+      &:before,
+      &:after {
+        border-radius: 5px;
+      }
+      &:before {
+        border-top: 1.25rem solid #f92d10;
+        border-right: 1.25rem solid transparent;
+      }
+      &:after {
+        border: 1px solid transparent;
+        border-bottom: 1px solid #f92d10;
+        bottom: 2px;
+        right: 0;
+        left: 0;
+        top: 1px;
+        border-radius: 4px;
+        opacity: 1;
+        width: auto;
+        height: auto;
+      }
+      &:hover {
+        &:before {
+          top: -4px;
+          left: -4px;
+        }
+        &:after {
+          bottom: -4px;
+          right: -4px;
+        }
+      }
+      &.--default {
+        border-radius: 10px;
+        min-width: 300px;
+      }
+      &.--icon {
+        border-radius: 10px;
+        width: 4rem;
+      }
+      &.--rounded {
+        width: 7.5rem;
+        height: 7.5rem;
+        line-height: 7.5rem;
+      }
+    }
+    
+    
+  }
+
+  &.ds-control {
+
+  }
+
+  &.ds-link {
+
   }
 }

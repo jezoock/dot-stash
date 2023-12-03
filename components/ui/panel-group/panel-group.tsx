@@ -1,17 +1,17 @@
-import { Component, Element, h, Prop } from "@stencil/core";
+import { Component, Element, h, Host, Prop } from "@stencil/core";
 import { AnyHTMLElement } from "@stencil/core/internal";
 
 @Component({
-  tag: "ds-toggler",
-  styleUrl: "toggler.scss"
+  tag: "ds-panel-group",
+  styleUrl: "panel-group.scss"
 })
-export class DSToggler {
+export class DSPanelGroup {
 
   @Element() container: AnyHTMLElement;
 
-  @Prop({ mutable: true }) items: any[] = [];
+  items: any[] = [];
   @Prop({ attribute: 'active', reflect: true }) isActive = true;
-  @Prop({ attribute: 'toggler-mods', reflect: true }) togglerMods = "";
+  @Prop({ reflect: true }) mods = "";
 
   componentDidLoad() {
     if (!this.isActive) {
@@ -30,23 +30,14 @@ export class DSToggler {
 
   render() {
     return (
-      <div
+      <Host
         class={{
-          "ds-toggler": true,
-          [`--${this.togglerMods}`]: this.togglerMods && this.togglerMods !== ''
+          "ds-panel-group": true,
+          [`--${this.mods}`]: this.mods && this.mods !== ''
         }}
       >
-        {this.items?.length > 0 && (
-          this.items.map(item => {
-            return (
-              <ds-toggler-item titleContent={item.title}>
-                {item.content}
-              </ds-toggler-item>
-            );
-          })
-        )}
         <slot/>
-      </div>
+      </Host>
     );
   }
 }

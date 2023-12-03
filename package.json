@@ -27,7 +27,7 @@
     "generate": "stencil generate"
   },
   "dependencies": {
-    "@stencil/core": "^4.7.0",
+    "@stencil/core": "^4.8.0",
     "@stencil/sass": "^2.0.3",
     "browser-sync": "^2.27.11",
     "gulp-autoprefixer": "^8.0.0",

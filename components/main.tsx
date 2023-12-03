@@ -71,22 +71,26 @@ export class DSMainTest {
           </div>
         </ds-map>  */}
 
-        <ds-sidebar position='right'>
+        {/* <ds-sidebar position='right'>
           sdfhlsdfklsdfk
           <div>sdkfljsdklfkl</div>
-          <ds-trigger event="click" action='toggle'>fermer</ds-trigger>
+          <ds-trigger on="click" action='toggle'>fermer</ds-trigger>
         </ds-sidebar>
         
         <ds-slider style={{"height":"4rem"}} id="bob">
-          <ds-slider-item class="ds-slider__item"><ds-header><span slot="before">sdfkdfjskdfjkkjsdf</span></ds-header></ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
+          <ds-slider-item class="ds-slider__item">
+            <ds-header><span slot="before">sdfkdfjskdfjkkjsdf 0000</span></ds-header>
+          </ds-slider-item>
+          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 1</ds-slider-item>
+          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 2</ds-slider-item>
+          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 3</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
         </ds-slider>
-        <ds-trigger target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger>
+        <ds-trigger type="button" mods="lg" target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger>
+        <ds-trigger type="control" target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger>
+        <ds-trigger type="link" target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger> */}
 
           {/* <ds-header slot="block-header">
             <ds-button slot="before">
@@ -119,7 +123,7 @@ export class DSMainTest {
 
           </ds-block> */}
 
-          <section class="ds-homepage__history">
+          {/* <section class="ds-homepage__history">
             <ds-block section ext="homepage-history">
               <header slot="block-header">
                 <ds-header>
@@ -129,10 +133,10 @@ export class DSMainTest {
                   </ds-button>
                   <h2 slot="title">Titre de block</h2>
                   <p slot="sub-title">Sous-titre de block de test</p>
-                  <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
-                  <ds-block section>
+                  <ds-block block>
                     <div slot="block-header">sfhsdhfg</div>
                   </ds-block>
+                  <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
                   <ds-button slot="after">
                     <ds-icon type="close" slot="after" />
                     Fermer
@@ -142,6 +146,27 @@ export class DSMainTest {
                 
 
             </ds-block>
+          </section> */}
+
+          <section class="ds-homepage__history">
+            {/* <ds-block section ext="homepage-history">
+              <ds-button slot="before">
+                Retour
+                <ds-icon type="back" slot="before" />
+              </ds-button>
+              <h2 slot="title">Titre de block</h2>
+              <p slot="sub-title">Sous-titre de block de test</p>
+            </ds-block> */}
+            <ds-panel-group>
+              <ds-panel min-height="1.25rem">
+                <h1 slot="title">Title</h1>
+                <div>Contenu<br />Contenu<br />Contenu<br />Contenu<br />Contenu<br /></div>
+              </ds-panel>
+              <ds-panel>
+                <h1 slot="title">Title 2</h1>
+                <div>Contenu<br />Contenu<br />Contenu<br />Contenu<br />Contenu<br /></div>
+              </ds-panel>
+            </ds-panel-group>
           </section>
 
         {/* 

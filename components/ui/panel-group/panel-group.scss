@@ -1,0 +1,23 @@
+.ds-panel-group {
+  display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	ds-panel {
+		display: contents;
+	}
+
+	& .ds-panel {
+		display: contents;
+
+		&__title {
+			order: 1;
+		}
+
+		&__content {
+			order: 2;
+			width: 100%;
+		}
+	}
+
+}

@@ -306,24 +306,24 @@ export class DSSlider {
       _ds.css.set( from, [this.list] );
 
       for( let i=0; i < step; i++ ) {
-        const newElem = document.createElement('div');
+        /* const newElem = document.createElement('div');
         newElem.classList.add(...this.items[i].classList.value.split(' '));
         newElem.style.cssText = this.items[i].style.cssText;
-        newElem.innerHTML = this.items[i].innerHTML;
+        newElem.innerHTML = this.items[i].innerHTML; */
         /* const slottedElements = Array.from(this.items[i].querySelectorAll("[slot]"));
         slottedElements.map( element => element.removeAttribute("slot")); */
-        const slots = Array.from( this.items[i].querySelectorAll("[slot]") );
+        /* const slots = Array.from( this.items[i].querySelectorAll("[slot]") );
         slots.map( slot => slot.addEventListener("slotchange", () => console.log("slot")))
         this.items[i].addEventListener("slotchange", () => console.log("slot"))
-        console.log(slots);
-        this.list.insertAdjacentHTML( "beforeend", this.items[i].innerHTML );
+        console.log(slots); */
+        /* this.list.insertAdjacentHTML( "beforeend", this.items[i].innerHTML ); */
         //this.getList().appendChild( this.items[i].cloneNode(true) );
-        //this.list.appendChild( this.items[i].cloneNode(true) );
+        /* this.list.appendChild( this.items[i].cloneNode(true) ); */
         /* this.getList().append(newElem); */
       }
       
       this.getList().classList.add("--sliding");
-      //this.getList().addEventListener( 'transitionend', this.slideNextTransitionEndHandler );
+      this.getList().addEventListener( 'transitionend', this.slideNextTransitionEndHandler );
       setTimeout( () => _ds.css.set( to, [this.list]), 0 );
 
     }	
@@ -404,11 +404,11 @@ export class DSSlider {
     this.items = this.getListItems();
 
     for( let i=0; i < step; i++ ) {
-      while(this.items[i+this.listLen].firstChild) {
+      /* while(this.items[i+this.listLen].firstChild) {
         this.items[i+this.listLen].removeChild(this.items[i+this.listLen].firstChild)
-      }
+      } */
       this.getList().appendChild(this.items[i]);
-      this.items[i+this.listLen].remove();
+      /* this.items[i+this.listLen].remove(); */
     }
 
     this.list = this.getList();

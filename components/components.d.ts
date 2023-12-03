@@ -254,19 +254,22 @@ export namespace Components {
         "getData": (key: string) => Promise<Record<string, any>>;
     }
     interface DsModal {
-        "closeButtonMods": string[];
-        "darkBackground": boolean;
-        "isClosingDisabled": boolean;
-        "isFooterDisabled": boolean;
-        "isHeaderDisabled": boolean;
-        "isLayoutDisabled": boolean;
-        "isSubtitleDisabled": boolean;
         "lightboxClass": any;
         "lightboxClassObject": any;
         "overlay": boolean;
-        "redirectToOnClose": boolean;
         "shown": boolean;
-        "useSnack": boolean;
+    }
+    interface DsPanel {
+        "expanded": boolean;
+        "hide": () => Promise<void>;
+        "minHeight": string;
+        "show": () => Promise<void>;
+        "toggle": (mustShow?: boolean) => Promise<void>;
+        "type": string;
+    }
+    interface DsPanelGroup {
+        "isActive": boolean;
+        "mods": string;
     }
     interface DsPlaceholder {
         "dsMods": string|string[];
@@ -366,6 +369,17 @@ export namespace Components {
         "size": string | number;
         "type": string;
     }
+    interface DsTextarea {
+        "columns": number;
+        "content": string;
+        "disabled": boolean;
+        "lines": number;
+        "maxLength": number;
+        "placeholder": string;
+        "resizable": boolean;
+        "validators": Validator[];
+        "withCharacterCount": boolean;
+    }
     interface DsTitle {
         "article": boolean;
         "block": boolean;
@@ -386,18 +400,6 @@ export namespace Components {
         "mods": string | string[];
         "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
-    }
-    interface DsToggler {
-        "isActive": boolean;
-        "items": any[];
-        "togglerMods": string;
-    }
-    interface DsTogglerItem {
-        "expanded": boolean;
-        "hasContent": boolean;
-        "replaceExtendFunction": any;
-        "titleContent": string;
-        "titleLevel": string;
     }
     /**
      * Simple icon tooltip component
@@ -426,9 +428,11 @@ export namespace Components {
     }
     interface DsTrigger {
         "action": string;
-        "event": string;
+        "disabled": boolean;
+        "mods": string | string[];
+        "on": string;
         "target": string;
-        "type": 'button' | 'submit' | 'control' | 'link';
+        "type": 'button' | 'control' | 'link';
     }
     interface DsVideo {
         "autoplay": boolean;
@@ -445,17 +449,6 @@ export namespace Components {
     interface DsVideoPlay {
         "disabled": string | boolean;
         "target": string;
-    }
-    interface SnkTextarea {
-        "columns": number;
-        "content": string;
-        "disabled": boolean;
-        "lines": number;
-        "maxLength": number;
-        "placeholder": string;
-        "resizable": boolean;
-        "validators": Validator[];
-        "withCharacterCount": boolean;
     }
 }
 export interface DsAppCustomEvent<T> extends CustomEvent<T> {
@@ -498,6 +491,10 @@ export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
 }
+export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelElement;
+}
 export interface DsRadioCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRadioElement;
@@ -530,17 +527,13 @@ export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
 }
+export interface DsTextareaCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsTextareaElement;
+}
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToasterElement;
-}
-export interface DsTogglerItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTogglerItemElement;
-}
-export interface SnkTextareaCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLSnkTextareaElement;
 }
 declare global {
     interface HTMLDsAppElementEventMap {
@@ -772,6 +765,30 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    interface HTMLDsPanelElementEventMap {
+        "notify_togglerCollapsed_event": any;
+        "notify_togglerExpanded_event": any;
+    }
+    interface HTMLDsPanelElement extends Components.DsPanel, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPanelElementEventMap>(type: K, listener: (this: HTMLDsPanelElement, ev: DsPanelCustomEvent<HTMLDsPanelElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPanelElementEventMap>(type: K, listener: (this: HTMLDsPanelElement, ev: DsPanelCustomEvent<HTMLDsPanelElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPanelElement: {
+        prototype: HTMLDsPanelElement;
+        new (): HTMLDsPanelElement;
+    };
+    interface HTMLDsPanelGroupElement extends Components.DsPanelGroup, HTMLStencilElement {
+    }
+    var HTMLDsPanelGroupElement: {
+        prototype: HTMLDsPanelGroupElement;
+        new (): HTMLDsPanelGroupElement;
+    };
     interface HTMLDsPlaceholderElement extends Components.DsPlaceholder, HTMLStencilElement {
     }
     var HTMLDsPlaceholderElement: {
@@ -939,6 +956,23 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    interface HTMLDsTextareaElementEventMap {
+        "textAreaUpdate": { [k: string]: string };
+    }
+    interface HTMLDsTextareaElement extends Components.DsTextarea, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsTextareaElement: {
+        prototype: HTMLDsTextareaElement;
+        new (): HTMLDsTextareaElement;
+    };
     interface HTMLDsTitleElement extends Components.DsTitle, HTMLStencilElement {
     }
     var HTMLDsTitleElement: {
@@ -964,30 +998,6 @@ declare global {
     var HTMLDsToasterElement: {
         prototype: HTMLDsToasterElement;
         new (): HTMLDsToasterElement;
-    };
-    interface HTMLDsTogglerElement extends Components.DsToggler, HTMLStencilElement {
-    }
-    var HTMLDsTogglerElement: {
-        prototype: HTMLDsTogglerElement;
-        new (): HTMLDsTogglerElement;
-    };
-    interface HTMLDsTogglerItemElementEventMap {
-        "notify_togglerCollapsed_event": any;
-        "notify_togglerExpanded_event": any;
-    }
-    interface HTMLDsTogglerItemElement extends Components.DsTogglerItem, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTogglerItemElementEventMap>(type: K, listener: (this: HTMLDsTogglerItemElement, ev: DsTogglerItemCustomEvent<HTMLDsTogglerItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTogglerItemElementEventMap>(type: K, listener: (this: HTMLDsTogglerItemElement, ev: DsTogglerItemCustomEvent<HTMLDsTogglerItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTogglerItemElement: {
-        prototype: HTMLDsTogglerItemElement;
-        new (): HTMLDsTogglerItemElement;
     };
     /**
      * Simple icon tooltip component
@@ -1016,23 +1026,6 @@ declare global {
         prototype: HTMLDsVideoPlayElement;
         new (): HTMLDsVideoPlayElement;
     };
-    interface HTMLSnkTextareaElementEventMap {
-        "textAreaUpdate": { [k: string]: string };
-    }
-    interface HTMLSnkTextareaElement extends Components.SnkTextarea, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLSnkTextareaElementEventMap>(type: K, listener: (this: HTMLSnkTextareaElement, ev: SnkTextareaCustomEvent<HTMLSnkTextareaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLSnkTextareaElementEventMap>(type: K, listener: (this: HTMLSnkTextareaElement, ev: SnkTextareaCustomEvent<HTMLSnkTextareaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLSnkTextareaElement: {
-        prototype: HTMLSnkTextareaElement;
-        new (): HTMLSnkTextareaElement;
-    };
     interface HTMLElementTagNameMap {
         "ds-app": HTMLDsAppElement;
         "ds-block": HTMLDsBlockElement;
@@ -1052,6 +1045,8 @@ declare global {
         "ds-input-password": HTMLDsInputPasswordElement;
         "ds-main": HTMLDsMainElement;
         "ds-modal": HTMLDsModalElement;
+        "ds-panel": HTMLDsPanelElement;
+        "ds-panel-group": HTMLDsPanelGroupElement;
         "ds-placeholder": HTMLDsPlaceholderElement;
         "ds-radio": HTMLDsRadioElement;
         "ds-radio-item": HTMLDsRadioItemElement;
@@ -1063,15 +1058,13 @@ declare global {
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-text": HTMLDsTextElement;
+        "ds-textarea": HTMLDsTextareaElement;
         "ds-title": HTMLDsTitleElement;
         "ds-toaster": HTMLDsToasterElement;
-        "ds-toggler": HTMLDsTogglerElement;
-        "ds-toggler-item": HTMLDsTogglerItemElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-trigger": HTMLDsTriggerElement;
         "ds-video": HTMLDsVideoElement;
         "ds-video-play": HTMLDsVideoPlayElement;
-        "snk-textarea": HTMLSnkTextareaElement;
     }
 }
 declare namespace LocalJSX {
@@ -1240,21 +1233,23 @@ declare namespace LocalJSX {
     interface DsMain {
     }
     interface DsModal {
-        "closeButtonMods"?: string[];
-        "darkBackground"?: boolean;
-        "isClosingDisabled"?: boolean;
-        "isFooterDisabled"?: boolean;
-        "isHeaderDisabled"?: boolean;
-        "isLayoutDisabled"?: boolean;
-        "isSubtitleDisabled"?: boolean;
         "lightboxClass"?: any;
         "lightboxClassObject"?: any;
         "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
         "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
         "overlay"?: boolean;
-        "redirectToOnClose"?: boolean;
         "shown"?: boolean;
-        "useSnack"?: boolean;
+    }
+    interface DsPanel {
+        "expanded"?: boolean;
+        "minHeight"?: string;
+        "onNotify_togglerCollapsed_event"?: (event: DsPanelCustomEvent<any>) => void;
+        "onNotify_togglerExpanded_event"?: (event: DsPanelCustomEvent<any>) => void;
+        "type"?: string;
+    }
+    interface DsPanelGroup {
+        "isActive"?: boolean;
+        "mods"?: string;
     }
     interface DsPlaceholder {
         "dsMods"?: string|string[];
@@ -1349,6 +1344,18 @@ declare namespace LocalJSX {
         "size"?: string | number;
         "type"?: string;
     }
+    interface DsTextarea {
+        "columns"?: number;
+        "content": string;
+        "disabled"?: boolean;
+        "lines"?: number;
+        "maxLength"?: number;
+        "onTextAreaUpdate"?: (event: DsTextareaCustomEvent<{ [k: string]: string }>) => void;
+        "placeholder"?: string;
+        "resizable"?: boolean;
+        "validators"?: Validator[];
+        "withCharacterCount"?: boolean;
+    }
     interface DsTitle {
         "article"?: boolean;
         "block"?: boolean;
@@ -1370,20 +1377,6 @@ declare namespace LocalJSX {
         "onToasterShow"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
         "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
-    }
-    interface DsToggler {
-        "isActive"?: boolean;
-        "items"?: any[];
-        "togglerMods"?: string;
-    }
-    interface DsTogglerItem {
-        "expanded"?: boolean;
-        "hasContent"?: boolean;
-        "onNotify_togglerCollapsed_event"?: (event: DsTogglerItemCustomEvent<any>) => void;
-        "onNotify_togglerExpanded_event"?: (event: DsTogglerItemCustomEvent<any>) => void;
-        "replaceExtendFunction"?: any;
-        "titleContent"?: string;
-        "titleLevel"?: string;
     }
     /**
      * Simple icon tooltip component
@@ -1412,9 +1405,11 @@ declare namespace LocalJSX {
     }
     interface DsTrigger {
         "action"?: string;
-        "event"?: string;
+        "disabled"?: boolean;
+        "mods"?: string | string[];
+        "on"?: string;
         "target"?: string;
-        "type"?: 'button' | 'submit' | 'control' | 'link';
+        "type"?: 'button' | 'control' | 'link';
     }
     interface DsVideo {
         "autoplay"?: boolean;
@@ -1426,18 +1421,6 @@ declare namespace LocalJSX {
     interface DsVideoPlay {
         "disabled"?: string | boolean;
         "target"?: string;
-    }
-    interface SnkTextarea {
-        "columns"?: number;
-        "content": string;
-        "disabled"?: boolean;
-        "lines"?: number;
-        "maxLength"?: number;
-        "onTextAreaUpdate"?: (event: SnkTextareaCustomEvent<{ [k: string]: string }>) => void;
-        "placeholder"?: string;
-        "resizable"?: boolean;
-        "validators"?: Validator[];
-        "withCharacterCount"?: boolean;
     }
     interface IntrinsicElements {
         "ds-app": DsApp;
@@ -1458,6 +1441,8 @@ declare namespace LocalJSX {
         "ds-input-password": DsInputPassword;
         "ds-main": DsMain;
         "ds-modal": DsModal;
+        "ds-panel": DsPanel;
+        "ds-panel-group": DsPanelGroup;
         "ds-placeholder": DsPlaceholder;
         "ds-radio": DsRadio;
         "ds-radio-item": DsRadioItem;
@@ -1469,15 +1454,13 @@ declare namespace LocalJSX {
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": DsSliderMenu;
         "ds-text": DsText;
+        "ds-textarea": DsTextarea;
         "ds-title": DsTitle;
         "ds-toaster": DsToaster;
-        "ds-toggler": DsToggler;
-        "ds-toggler-item": DsTogglerItem;
         "ds-tooltip": DsTooltip;
         "ds-trigger": DsTrigger;
         "ds-video": DsVideo;
         "ds-video-play": DsVideoPlay;
-        "snk-textarea": SnkTextarea;
     }
 }
 export { LocalJSX as JSX };
@@ -1508,6 +1491,8 @@ declare module "@stencil/core" {
             "ds-input-password": LocalJSX.DsInputPassword & JSXBase.HTMLAttributes<HTMLDsInputPasswordElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
+            "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
             "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
             "ds-radio": LocalJSX.DsRadio & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
             /**
@@ -1528,10 +1513,9 @@ declare module "@stencil/core" {
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-textarea": LocalJSX.DsTextarea & JSXBase.HTMLAttributes<HTMLDsTextareaElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
-            "ds-toggler": LocalJSX.DsToggler & JSXBase.HTMLAttributes<HTMLDsTogglerElement>;
-            "ds-toggler-item": LocalJSX.DsTogglerItem & JSXBase.HTMLAttributes<HTMLDsTogglerItemElement>;
             /**
              * Simple icon tooltip component
              */
@@ -1539,7 +1523,6 @@ declare module "@stencil/core" {
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
             "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
-            "snk-textarea": LocalJSX.SnkTextarea & JSXBase.HTMLAttributes<HTMLSnkTextareaElement>;
         }
     }
 }

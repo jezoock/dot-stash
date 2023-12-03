@@ -14,17 +14,14 @@ export class DSTrigger {
 
   @Prop({ reflect: true }) disabled = false;
   @Prop({ reflect: true }) action: string;
-  @Prop({ reflect: true }) on: string;
+  @Prop({ reflect: true }) on = 'click';
   @Prop() target: string;
   @Prop() type: 'button' | 'control' | 'link' = 'control';
   @Prop({ reflect: true }) mods: string | string[] = [];
   
 	@Watch('mods')
   modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList(
-      `ds-${this.type}`,
-      _ds.props.toArray(mods)
-    );
+    this.processClassList(mods);
   }
 
   //#region LYFECYCLE CALLBACKS
@@ -34,10 +31,7 @@ export class DSTrigger {
   }
 
 	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList(
-      `ds-${this.type}`,
-      _ds.props.toArray(this.mods)
-    );
+		this.processClassList(this.mods);
 	}
 
   connectedCallback() {
@@ -57,6 +51,17 @@ export class DSTrigger {
     if (this.target && this.targetComponent) {
       this.hostContainer.removeEventListener( this.on, this.eventHandler );
     }
+  }
+
+  //#endregion
+
+  //#region TOOLS
+
+  processClassList( modifiers: string | string[] ) {
+    this.CSSClassList = _ds.props.toClassList(
+      `ds-${this.type}`,
+      _ds.props.toArray(modifiers)
+    );
   }
 
   //#endregion

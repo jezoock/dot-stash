@@ -63,6 +63,11 @@ export class DSBlock {
 		this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);
 		this.context = blockContext;
 /* 		this.hostContainer.querySelector("[slot='block-header']").classList.add(`${this.blockName}__header`); */
+/* <ds-header class={`${this.blockName}__header`}>
+					<slot name="block-header" />
+					<slot name="title" />
+					<slot name="sub-title" />
+				</ds-header> */
 	}
 
 	render() {
