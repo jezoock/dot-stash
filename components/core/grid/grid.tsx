@@ -115,8 +115,8 @@ export class DSGrid {
   }
 
   async processChildren(): Promise<void> {
-    const children = Array.from(this.container.querySelectorAll('ds-grid-item'));
-    const rowCount = Math.ceil(children.length/this.options.cols);
+    const children: HTMLDsGridItemElement[] = Array.from(this.container.querySelectorAll('ds-grid-item'));
+    /* const rowCount = Math.ceil(children.length/this.options.cols); */
     let offset = 0;
     for (let i=0; i<children.length; i++) {
       const child = children[i];

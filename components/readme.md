@@ -22,30 +22,26 @@ Type: `Promise<Record<string, any>>`
 
 ### Depends on
 
-- [ds-sidebar](./ui/sidebar)
-- [ds-trigger](./core/trigger)
-- [ds-control](./old/control)
-- [ds-slider](./ui/slider)
-- [ds-slider-item](./ui/slider/slider-item)
-- [ds-header](./core/header)
+- [ds-app](./core/ds)
+- [ds-panel-group](./ui/panel-group)
+- [ds-panel](./ui/panel)
+- [ds-rsp](./core/ds/responsive)
 - [ds-block](./core/block)
+- [ds-grid](./core/grid)
+- [ds-grid-item](./core/grid/grid-item)
 - [ds-button](./ui/button)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-sidebar
-  ds-main --> ds-trigger
-  ds-main --> ds-control
-  ds-main --> ds-slider
-  ds-main --> ds-slider-item
-  ds-main --> ds-header
+  ds-main --> ds-app
+  ds-main --> ds-panel-group
+  ds-main --> ds-panel
+  ds-main --> ds-rsp
   ds-main --> ds-block
+  ds-main --> ds-grid
+  ds-main --> ds-grid-item
   ds-main --> ds-button
-  ds-slider --> ds-button
-  ds-slider --> ds-slider-menu
-  ds-header --> ds-title
-  ds-header --> ds-text
   style ds-main fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

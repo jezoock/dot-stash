@@ -7,34 +7,79 @@
 
 ## Properties
 
-| Property                | Attribute                 | Description | Type      | Default     |
-| ----------------------- | ------------------------- | ----------- | --------- | ----------- |
-| `expanded`              | `expanded`                |             | `boolean` | `false`     |
-| `hasContent`            | `has-content`             |             | `boolean` | `true`      |
-| `replaceExtendFunction` | `replace-extend-function` |             | `any`     | `undefined` |
-| `titleContent`          | `title-content`           |             | `string`  | `""`        |
-| `titleLevel`            | `title-level`             |             | `string`  | `"4"`       |
+| Property    | Attribute    | Description | Type                 | Default     |
+| ----------- | ------------ | ----------- | -------------------- | ----------- |
+| `expanded`  | `expanded`   |             | `boolean`            | `false`     |
+| `index`     | `index`      |             | `number`             | `undefined` |
+| `minHeight` | `min-height` |             | `string`             | `"0"`       |
+| `mods`      | `mods`       |             | `string \| string[]` | `[]`        |
+| `type`      | `type`       |             | `string`             | `"tab"`     |
 
 
 ## Events
 
-| Event                           | Description | Type               |
-| ------------------------------- | ----------- | ------------------ |
-| `notify_togglerCollapsed_event` |             | `CustomEvent<any>` |
-| `notify_togglerExpanded_event`  |             | `CustomEvent<any>` |
+| Event         | Description | Type               |
+| ------------- | ----------- | ------------------ |
+| `panelHidden` |             | `CustomEvent<any>` |
+| `panelHide`   |             | `CustomEvent<any>` |
+| `panelShow`   |             | `CustomEvent<any>` |
+| `panelShown`  |             | `CustomEvent<any>` |
+
+
+## Methods
+
+### `hide() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `setIndex(index: number) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `show() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `toggle(mustShow?: boolean) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ## Dependencies
 
 ### Used by
 
- - [ds-toggler](..)
+ - [ds-main](../..)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-toggler --> ds-toggler-item
-  style ds-toggler-item fill:#f9f,stroke:#333,stroke-width:4px
+  ds-main --> ds-panel
+  style ds-panel fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

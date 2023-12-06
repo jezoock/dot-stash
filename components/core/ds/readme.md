@@ -24,6 +24,26 @@
 
 ## Methods
 
+### `buildQuery(queryParams: Record<string, unknown>) => Promise<string>`
+
+Ajax
+
+#### Returns
+
+Type: `Promise<string>`
+
+
+
+### `get(url: string, queryParams?: Record<string, unknown>) => Promise<unknown>`
+
+
+
+#### Returns
+
+Type: `Promise<unknown>`
+
+
+
 ### `getBreakpoint(rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>`
 
 Get the current breakpoint
@@ -104,6 +124,16 @@ Type: `Promise<unknown>`
 
 
 
+### `post(url: string, payload?: string | Record<string, string> | string[][] | URLSearchParams) => Promise<any>`
+
+
+
+#### Returns
+
+Type: `Promise<any>`
+
+
+
 ### `processBreakpoints(breakpoints: RawBreakpoint) => Promise<Breakpoints>`
 
 
@@ -144,7 +174,7 @@ Type: `Promise<number>`
 
 number
 
-### `propToJSON<T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>`
+### `propToJSON<T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>`
 
 Convert an HTML property to JSON
 
@@ -194,6 +224,19 @@ Type: `Promise<number>`
 
 
 
+
+## Dependencies
+
+### Used by
+
+ - [ds-main](../..)
+
+### Graph
+```mermaid
+graph TD;
+  ds-main --> ds-app
+  style ds-app fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 

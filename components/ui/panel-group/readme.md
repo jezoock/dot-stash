@@ -7,24 +7,23 @@
 
 ## Properties
 
-| Property      | Attribute      | Description | Type      | Default |
-| ------------- | -------------- | ----------- | --------- | ------- |
-| `isActive`    | `active`       |             | `boolean` | `true`  |
-| `items`       | --             |             | `any[]`   | `[]`    |
-| `togglerMods` | `toggler-mods` |             | `string`  | `""`    |
+| Property   | Attribute | Description | Type                 | Default |
+| ---------- | --------- | ----------- | -------------------- | ------- |
+| `isActive` | `active`  |             | `boolean`            | `true`  |
+| `mods`     | `mods`    |             | `string \| string[]` | `[]`    |
 
 
 ## Dependencies
 
-### Depends on
+### Used by
 
-- [ds-toggler-item](toggler-item)
+ - [ds-main](../..)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-toggler --> ds-toggler-item
-  style ds-toggler fill:#f9f,stroke:#333,stroke-width:4px
+  ds-main --> ds-panel-group
+  style ds-panel-group fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

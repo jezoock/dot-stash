@@ -1,5 +1,6 @@
-import { Component, Element, h, Host, Prop } from "@stencil/core";
-import { AnyHTMLElement } from "@stencil/core/internal";
+import { Component, Element, h, Host, Listen, Prop, Watch } from "@stencil/core";
+import CssClassList from "../../types/css-class-list.interface";
+import _ds from "../../../typescript/dot-stash";
 
 @Component({
   tag: "ds-panel-group",
@@ -7,34 +8,48 @@ import { AnyHTMLElement } from "@stencil/core/internal";
 })
 export class DSPanelGroup {
 
-  @Element() container: AnyHTMLElement;
+  CSSClassList: CssClassList;
+  activeItem = 0;
 
-  items: any[] = [];
+	@Element() container: HTMLElement;
+
+	@Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ attribute: 'active', reflect: true }) isActive = true;
-  @Prop({ reflect: true }) mods = "";
+
+  @Watch('mods')
+  modsChangeHandler( mods: string | string[] ) {
+    this.CSSClassList = _ds.props.toClassList("ds-panel-group", _ds.props.toArray(mods));
+  }
+
+  @Listen('panelShow')
+  panelShowHandler({ detail: { index } }) {
+    const { activeItem } = this;
+    this.activeItem = index;
+    Array.from( this.container.querySelectorAll("ds-panel") )[activeItem].hide();
+  }
+
+  @Listen('panelHide')
+  panelHideHandler() {
+    console.log("hide");
+  }
+
+  componentWillLoad() {
+		this.CSSClassList = _ds.props.toClassList("ds-panel-group", _ds.props.toArray(this.mods));
+	}
 
   componentDidLoad() {
-    if (!this.isActive) {
-      const items = this.container.querySelectorAll("ds-toggler-item");
-      const contents = this.container.querySelectorAll(".ds-toggler-item__content") as NodeListOf<HTMLDivElement>;
-      if (items?.length > 0) {
-        items.forEach((item: any, index: number) => {
-          item.expanded = true;
-          if (contents[index]) {
-            contents[index].style.height = "auto";
-          }
-        });
-      }
-    }
+    const items: HTMLDsPanelElement[] = Array.from(this.container.querySelectorAll("ds-panel"));
+    items.forEach((item, index: number) => 
+      this.isActive
+        ? item.setIndex(index)
+        : item.show()
+    );
   }
 
   render() {
     return (
       <Host
-        class={{
-          "ds-panel-group": true,
-          [`--${this.mods}`]: this.mods && this.mods !== ''
-        }}
+        class={this.CSSClassList}
       >
         <slot/>
       </Host>

@@ -25,7 +25,7 @@
 
 | Event         | Description | Type               |
 | ------------- | ----------- | ------------------ |
-| `dsInputBlur` |             | `CustomEvent<any>` |
+| `dSInputBlur` |             | `CustomEvent<any>` |
 
 
 ## Dependencies

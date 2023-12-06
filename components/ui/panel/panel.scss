@@ -1,22 +1,48 @@
 .ds-panel {
-  &__title { }
+  &[expanded] {
+    &.--toggler {
+      & .ds-panel {
+        &__content {
+          grid-template-rows: 1fr;
+        }
+      }
+    }
 
+    &.--tab {
+      & .ds-panel {
+        &__content {
+          opacity: 1;
+          grid-template-rows: 1fr;
+        }
+      }
+    }
+  }
+
+  &__title { }
+  
   &__content {
     display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.4s ease;
+    transition: grid-template-rows 0.4s ease, opacity 0.4s ease;
   }
 
   &__content-wrapper {
     overflow: hidden;
   }
-}
 
-ds-panel {
-  &[expanded] {
+  &.--toggler {
     & .ds-panel {
       &__content {
-        grid-template-rows: 1fr;
+        grid-template-rows: 0fr;
+      }
+    }
+  }
+  
+  &.--tab {
+    & .ds-panel {
+      &__content {
+        opacity: 0;
+        grid-template-rows: 0fr;
+        /* display: none; */
       }
     }
   }

@@ -37,10 +37,6 @@ Type: `Promise<void>`
 
 ## Dependencies
 
-### Used by
-
- - [ds-main](../..)
-
 ### Depends on
 
 - [ds-button](../button)
@@ -51,7 +47,6 @@ Type: `Promise<void>`
 graph TD;
   ds-slider --> ds-button
   ds-slider --> ds-slider-menu
-  ds-main --> ds-slider
   style ds-slider fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -83,7 +83,7 @@ export namespace Components {
           * @param prop
           * @returns string[]
          */
-        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        "propToJSON": <T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
         /**
           * Convert an HTML property to a number
           * @param prop
@@ -262,14 +262,17 @@ export namespace Components {
     interface DsPanel {
         "expanded": boolean;
         "hide": () => Promise<void>;
+        "index": number;
         "minHeight": string;
+        "mods": string | string[];
+        "setIndex": (index: number) => Promise<void>;
         "show": () => Promise<void>;
         "toggle": (mustShow?: boolean) => Promise<void>;
         "type": string;
     }
     interface DsPanelGroup {
         "isActive": boolean;
-        "mods": string;
+        "mods": string | string[];
     }
     interface DsPlaceholder {
         "dsMods": string|string[];
@@ -766,8 +769,10 @@ declare global {
         new (): HTMLDsModalElement;
     };
     interface HTMLDsPanelElementEventMap {
-        "notify_togglerCollapsed_event": any;
-        "notify_togglerExpanded_event": any;
+        "panelShow": any;
+        "panelShown": any;
+        "panelHide": any;
+        "panelHidden": any;
     }
     interface HTMLDsPanelElement extends Components.DsPanel, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelElementEventMap>(type: K, listener: (this: HTMLDsPanelElement, ev: DsPanelCustomEvent<HTMLDsPanelElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1242,14 +1247,18 @@ declare namespace LocalJSX {
     }
     interface DsPanel {
         "expanded"?: boolean;
+        "index"?: number;
         "minHeight"?: string;
-        "onNotify_togglerCollapsed_event"?: (event: DsPanelCustomEvent<any>) => void;
-        "onNotify_togglerExpanded_event"?: (event: DsPanelCustomEvent<any>) => void;
+        "mods"?: string | string[];
+        "onPanelHidden"?: (event: DsPanelCustomEvent<any>) => void;
+        "onPanelHide"?: (event: DsPanelCustomEvent<any>) => void;
+        "onPanelShow"?: (event: DsPanelCustomEvent<any>) => void;
+        "onPanelShown"?: (event: DsPanelCustomEvent<any>) => void;
         "type"?: string;
     }
     interface DsPanelGroup {
         "isActive"?: boolean;
-        "mods"?: string;
+        "mods"?: string | string[];
     }
     interface DsPlaceholder {
         "dsMods"?: string|string[];

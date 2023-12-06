@@ -30,7 +30,6 @@
 
  - [ds-input-password](../../form/input/password)
  - [ds-main](../..)
- - [ds-modal](../modal)
  - [ds-slider](../slider)
  - [ds-video](../video)
 
@@ -39,7 +38,6 @@
 graph TD;
   ds-input-password --> ds-button
   ds-main --> ds-button
-  ds-modal --> ds-button
   ds-slider --> ds-button
   ds-video --> ds-button
   style ds-button fill:#f9f,stroke:#333,stroke-width:4px

@@ -26,10 +26,10 @@
 
 | Event         | Description | Type               |
 | ------------- | ----------- | ------------------ |
-| `dsInput`     |             | `CustomEvent<any>` |
-| `dsInputBlur` |             | `CustomEvent<any>` |
-| `dsKeyDown`   |             | `CustomEvent<any>` |
-| `dsKeyUp`     |             | `CustomEvent<any>` |
+| `dSInput`     |             | `CustomEvent<any>` |
+| `dSInputBlur` |             | `CustomEvent<any>` |
+| `dSKeyDown`   |             | `CustomEvent<any>` |
+| `dSKeyUp`     |             | `CustomEvent<any>` |
 
 
 ## Dependencies

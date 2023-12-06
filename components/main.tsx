@@ -158,13 +158,17 @@ export class DSMainTest {
               <p slot="sub-title">Sous-titre de block de test</p>
             </ds-block> */}
             <ds-panel-group>
-              <ds-panel min-height="1.25rem">
+              <ds-panel type="tab" index={0}>
                 <h1 slot="title">Title</h1>
                 <div>Contenu<br />Contenu<br />Contenu<br />Contenu<br />Contenu<br /></div>
               </ds-panel>
-              <ds-panel>
+              <ds-panel type="tab" index={1}>
                 <h1 slot="title">Title 2</h1>
-                <div>Contenu<br />Contenu<br />Contenu<br />Contenu<br />Contenu<br /></div>
+                <div>Contenusdfsdf<br />Csdfontenu<br />Contenusdfsdf<br />Csdfontenu<br />Contsdfenu<br />Contesdfsdfnu<br />Cosdfsfdntenu<br /></div>
+              </ds-panel>
+              <ds-panel type="tab" index={2}>
+                <h1 slot="title">Title 3</h1>
+                <div>Contenusdfsdf<br />Csdfontenu<br />Contenusdfsdf<br />Csdfontenu<br />Contsdfenu<br />Contesdfsdfnu<br />Cosdfsfdntenu<br /></div>
               </ds-panel>
             </ds-panel-group>
           </section>

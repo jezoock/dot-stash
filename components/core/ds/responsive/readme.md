@@ -64,13 +64,13 @@ Type: `Promise<{ breakpoints: Breakpoints; }>`
 
 
 
-### `getParamsForBreakpoint<T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T; }) => Promise<T>`
+### `getParamsForBreakpoint(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>`
 
 
 
 #### Returns
 
-Type: `Promise<T>`
+Type: `Promise<Record<string, unknown>>`
 
 
 
@@ -104,6 +104,19 @@ Type: `Promise<number>`
 
 
 
+
+## Dependencies
+
+### Used by
+
+ - [ds-main](../../..)
+
+### Graph
+```mermaid
+graph TD;
+  ds-main --> ds-rsp
+  style ds-rsp fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 
