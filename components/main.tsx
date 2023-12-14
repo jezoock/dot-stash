@@ -76,21 +76,21 @@ export class DSMainTest {
           <div>sdkfljsdklfkl</div>
           <ds-trigger on="click" action='toggle'>fermer</ds-trigger>
         </ds-sidebar>
-        
+         */}
         <ds-slider style={{"height":"4rem"}} id="bob">
-          <ds-slider-item class="ds-slider__item">
-            <ds-header><span slot="before">sdfkdfjskdfjkkjsdf 0000</span></ds-header>
-          </ds-slider-item>
+          
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 1</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 2</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 3</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
+          <ds-slider-item class="ds-slider__item">
+            <ds-button><strong>test </strong><span slot="before">sdfkdfjskdfjkkjsdf 0000</span></ds-button>
+          </ds-slider-item>
         </ds-slider>
-        <ds-trigger type="button" mods="lg" target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger>
-        <ds-trigger type="control" target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger>
-        <ds-trigger type="link" target="#bob" action='next'>siddsdfsdfsdfebar</ds-trigger> */}
+        <ds-trigger type="button" mods="lg" target="#bob" action='prev'>prev</ds-trigger>
+        <ds-trigger type="button" mods="lg" target="#bob" action='next'>next</ds-trigger>
 
           {/* <ds-header slot="block-header">
             <ds-button slot="before">
@@ -122,8 +122,7 @@ export class DSMainTest {
             </ds-header>
 
           </ds-block> */}
-
-          {/* <section class="ds-homepage__history">
+<section class="ds-homepage__history">
             <ds-block section ext="homepage-history">
               <header slot="block-header">
                 <ds-header>
@@ -146,7 +145,7 @@ export class DSMainTest {
                 
 
             </ds-block>
-          </section> */}
+          </section>
 
           <section class="ds-homepage__history">
             {/* <ds-block section ext="homepage-history">

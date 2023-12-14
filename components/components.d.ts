@@ -6,35 +6,21 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
-import { DSButtonType } from "./ui/button/button";
-import { DSOption } from "./ui/combo/combo";
-import { FeedbackLevel } from "./form/feedback/feedback-level";
+import { DSButtonType } from "./core/button/button";
 import { DSGridAlignment, DSGridType } from "./core/grid/grid";
 import { DSGridItemStyles } from "./core/grid/grid";
-import { InputFieldType } from "./form/field/input/input-field-type.enum";
-import { Validator } from "./form/validator/validator";
-import { RadioItem } from "./form/radio/item/radio-item.interface";
-import { RadioItemStyle } from "./form/radio/item/radio-item-style.enum";
-import { RadioItemCheckStyle } from "./form/radio/item/radio-item-check-style.enum";
-import { SelectOption } from "./form/select/select-option.interface";
-import { DSSliderPrams } from "./ui/slider/slider";
-import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./ui/toaster/toaster-positions.enum";
-import { TooltipPosition } from "./ui/tooltip/tooltip-position.enum";
+import { Breakpoint as Breakpoint1, Breakpoints as Breakpoints1, RawBreakpoint as RawBreakpoint1 } from "./components";
+import { DSSliderPrams } from "./core/slider/slider";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
+import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
-export { DSButtonType } from "./ui/button/button";
-export { DSOption } from "./ui/combo/combo";
-export { FeedbackLevel } from "./form/feedback/feedback-level";
+export { DSButtonType } from "./core/button/button";
 export { DSGridAlignment, DSGridType } from "./core/grid/grid";
 export { DSGridItemStyles } from "./core/grid/grid";
-export { InputFieldType } from "./form/field/input/input-field-type.enum";
-export { Validator } from "./form/validator/validator";
-export { RadioItem } from "./form/radio/item/radio-item.interface";
-export { RadioItemStyle } from "./form/radio/item/radio-item-style.enum";
-export { RadioItemCheckStyle } from "./form/radio/item/radio-item-check-style.enum";
-export { SelectOption } from "./form/select/select-option.interface";
-export { DSSliderPrams } from "./ui/slider/slider";
-export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./ui/toaster/toaster-positions.enum";
-export { TooltipPosition } from "./ui/tooltip/tooltip-position.enum";
+export { Breakpoint as Breakpoint1, Breakpoints as Breakpoints1, RawBreakpoint as RawBreakpoint1 } from "./components";
+export { DSSliderPrams } from "./core/slider/slider";
+export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
+export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
     interface DsApp {
         "breakpointsFromProp": Record<string, number>;
@@ -83,7 +69,7 @@ export namespace Components {
           * @param prop
           * @returns string[]
          */
-        "propToJSON": <T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
         /**
           * Convert an HTML property to a number
           * @param prop
@@ -128,49 +114,9 @@ export namespace Components {
         "type": DSButtonType;
         "url": string;
     }
-    interface DsCheckbox {
-        "inputId": string;
-        "inputName": string;
-        "inputValue": string;
-        "isChecked": boolean;
-        "isDisabled": boolean;
-        "type": string | string[];
-    }
-    interface DsCombo {
-        "close": () => Promise<void>;
-        "customLabel": string;
-        "mode": string;
-        "multiple": boolean;
+    interface DsFormContext {
         "name": string;
-        "open": () => Promise<void>;
-        "options": any;
-        "overlay": boolean;
-        "position": string;
-        "selected": DSOption;
-        "selectedOption": DSOption[];
-        "toggle": (forceDisplay?: boolean) => Promise<void>;
-    }
-    interface DsControl {
-        "action": string;
-        "target": string;
-        "type": string;
-    }
-    /**
-     * This component display a message with a level for the input forms
-     */
-    interface DsFieldFeedback {
-        "level": FeedbackLevel;
-        "message": string;
-    }
-    interface DsForm {
-    }
-    /**
-     * This component define a form label (for input, select etc..)
-     */
-    interface DsFormLabel {
-        "fieldLabel": string;
-        "isInError": boolean;
-        "isRequired": boolean;
+        "values": any;
     }
     interface DsGrid {
         "align": string | DSGridAlignment;
@@ -194,70 +140,12 @@ export namespace Components {
         "mods": string | string[];
     }
     interface DsInput {
-        "autocomplete": string;
-        "inputId": string;
-        "inputName": string;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "max": number;
-        "min": number;
-        "mods": string | string[];
-        "placeholder": string;
-        "type": string;
-        "value": any;
-    }
-    interface DsInputDate {
-        "inputId": string;
-        "inputType": string;
-        "isMonthRequired": boolean;
-        "isUsedForCreditCard": boolean;
-        "isYearRequired": boolean;
-    }
-    interface DsInputField {
-        "errorMessage": string;
-        "icon": string;
-        "inputId": string;
-        "inputName": string;
-        "inputPlaceholder": string;
-        "inputType": InputFieldType;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "label": string;
-        "max": number;
-        "min": number;
-        /**
-          * Send data with an event
-          * @type {boolean}
-         */
-        "sendValue": boolean;
-        "type": string;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators": Validator[];
-        "value": string;
-    }
-    interface DsInputPassword {
-        "autocomplete": string;
-        "inputId": string;
-        "inputName": string;
-        "isDisabled": boolean;
-        "isInError": boolean;
-        "max": number;
-        "min": number;
-        "placeholder": string;
-        "type": string;
-        "value": any;
+        "name": string;
+        "renderMethod": any;
+        "useForm": string;
     }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
-    }
-    interface DsModal {
-        "lightboxClass": any;
-        "lightboxClassObject": any;
-        "overlay": boolean;
-        "shown": boolean;
     }
     interface DsPanel {
         "expanded": boolean;
@@ -274,42 +162,6 @@ export namespace Components {
         "isActive": boolean;
         "mods": string | string[];
     }
-    interface DsPlaceholder {
-        "dsMods": string|string[];
-    }
-    interface DsRadio {
-        "itemList": RadioItem[];
-        "label": string;
-        "mods": string[];
-        "radioId": string;
-        "radioItemCheckStyle": RadioItemCheckStyle;
-        "radioItemStyle": RadioItemStyle;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators": Validator[];
-    }
-    /**
-     * This component define a radio item.
-     */
-    interface DsRadioItem {
-        "isChecked": boolean;
-        "label": string;
-        "name": string;
-        "radioId": string;
-        "radioItemCheckStyle": RadioItemCheckStyle;
-        "radioItemStyle": RadioItemStyle;
-        "value": string;
-    }
-    /**
-     * This component define a list of radio items.
-     */
-    interface DsRadioList {
-        "itemList": RadioItem[];
-        "radioItemCheckStyle": RadioItemCheckStyle;
-        "radioItemStyle": RadioItemStyle;
-    }
     interface DsRsp {
         "breakpointsFromProp": Record<string, number>;
         "debounceDelay": number;
@@ -318,28 +170,16 @@ export namespace Components {
           * @param rawBreakpoints JSON Object containings all breakpoints
           * @returns current breakpoint ( label & limits )
          */
-        "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
-        "getBreakpoints": () => Promise<Breakpoints>;
-        "getCurrentBreakpoint": () => Promise<Breakpoint>;
-        "getData": () => Promise<{ breakpoints: Breakpoints; }>;
-        "getParamsForBreakpoint": (currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>;
+        "getBreakpoint": (rawBreakpoints1: { [label: string]: number[]; }) => Promise<Breakpoint1>;
+        "getBreakpoints": () => Promise<Breakpoints1>;
+        "getCurrentBreakpoint": () => Promise<Breakpoint1>;
+        "getData": () => Promise<{ breakpoints: Breakpoints1; }>;
+        "getParamsForBreakpoint": (currentBreakpoint1: Breakpoint1, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>;
         "getSubscribers": () => Promise<Element[]>;
-        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
+        "processBreakpoints": (breakpoints: RawBreakpoint1) => Promise<Breakpoints1>;
         "propertyName": string;
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
-    }
-    /**
-     * This component define a select form.
-     */
-    interface DsSelect {
-        "firstSelectOptionLabel": string;
-        "isRequired": boolean;
-        "isValid": boolean;
-        "optionList": SelectOption[];
-        "selectId": string;
-        "selectName": string;
-        "selectedValue": string;
     }
     interface DsSidebar {
         "ctx": boolean;
@@ -354,6 +194,7 @@ export namespace Components {
         "dsParams": DSSliderPrams | string;
         "mods": string | string[];
         "next": (step?: number) => Promise<void>;
+        "prev": (step?: number) => Promise<void>;
         "sliderId": string;
         "type": string;
     }
@@ -371,17 +212,6 @@ export namespace Components {
         "mods": string | string[];
         "size": string | number;
         "type": string;
-    }
-    interface DsTextarea {
-        "columns": number;
-        "content": string;
-        "disabled": boolean;
-        "lines": number;
-        "maxLength": number;
-        "placeholder": string;
-        "resizable": boolean;
-        "validators": Validator[];
-        "withCharacterCount": boolean;
     }
     interface DsTitle {
         "article": boolean;
@@ -403,6 +233,21 @@ export namespace Components {
         "mods": string | string[];
         "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
+    }
+    interface DsToggle {
+        "bindToGroup": (groupContext: any) => Promise<void>;
+        "checked": boolean;
+        "disabled": boolean;
+        "group": any;
+        "mods": string | string[];
+        "name": string;
+        "type": string;
+        "value": any;
+    }
+    interface DsToggleGroup {
+        "count": number[] | string;
+        "disabled": boolean;
+        "name": string;
     }
     /**
      * Simple icon tooltip component
@@ -437,22 +282,6 @@ export namespace Components {
         "target": string;
         "type": 'button' | 'control' | 'link';
     }
-    interface DsVideo {
-        "autoplay": boolean;
-        "controls": boolean;
-        "mods": string[];
-        "mute": () => Promise<void>;
-        "pause": () => Promise<void>;
-        "play": () => Promise<void>;
-        "poster": string;
-        "sources": string[];
-        "stop": () => Promise<void>;
-        "unmute": () => Promise<void>;
-    }
-    interface DsVideoPlay {
-        "disabled": string | boolean;
-        "target": string;
-    }
 }
 export interface DsAppCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -462,61 +291,13 @@ export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
 }
-export interface DsCheckboxCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCheckboxElement;
-}
-export interface DsComboCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsComboElement;
-}
-export interface DsFormLabelCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFormLabelElement;
-}
-export interface DsInputCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputElement;
-}
-export interface DsInputDateCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputDateElement;
-}
-export interface DsInputFieldCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputFieldElement;
-}
-export interface DsInputPasswordCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputPasswordElement;
-}
-export interface DsModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsModalElement;
-}
 export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelElement;
 }
-export interface DsRadioCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsRadioElement;
-}
-export interface DsRadioItemCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsRadioItemElement;
-}
-export interface DsRadioListCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsRadioListElement;
-}
 export interface DsRspCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsRspElement;
-}
-export interface DsSelectCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsSelectElement;
 }
 export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -530,13 +311,13 @@ export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
 }
-export interface DsTextareaCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTextareaElement;
-}
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToasterElement;
+}
+export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsToggleElement;
 }
 declare global {
     interface HTMLDsAppElementEventMap {
@@ -579,80 +360,11 @@ declare global {
         prototype: HTMLDsButtonElement;
         new (): HTMLDsButtonElement;
     };
-    interface HTMLDsCheckboxElementEventMap {
-        "dsCheckboxClick": any;
+    interface HTMLDsFormContextElement extends Components.DsFormContext, HTMLStencilElement {
     }
-    interface HTMLDsCheckboxElement extends Components.DsCheckbox, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCheckboxElementEventMap>(type: K, listener: (this: HTMLDsCheckboxElement, ev: DsCheckboxCustomEvent<HTMLDsCheckboxElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCheckboxElementEventMap>(type: K, listener: (this: HTMLDsCheckboxElement, ev: DsCheckboxCustomEvent<HTMLDsCheckboxElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCheckboxElement: {
-        prototype: HTMLDsCheckboxElement;
-        new (): HTMLDsCheckboxElement;
-    };
-    interface HTMLDsComboElementEventMap {
-        "optionSelected": any;
-    }
-    interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsComboElementEventMap>(type: K, listener: (this: HTMLDsComboElement, ev: DsComboCustomEvent<HTMLDsComboElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsComboElementEventMap>(type: K, listener: (this: HTMLDsComboElement, ev: DsComboCustomEvent<HTMLDsComboElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsComboElement: {
-        prototype: HTMLDsComboElement;
-        new (): HTMLDsComboElement;
-    };
-    interface HTMLDsControlElement extends Components.DsControl, HTMLStencilElement {
-    }
-    var HTMLDsControlElement: {
-        prototype: HTMLDsControlElement;
-        new (): HTMLDsControlElement;
-    };
-    /**
-     * This component display a message with a level for the input forms
-     */
-    interface HTMLDsFieldFeedbackElement extends Components.DsFieldFeedback, HTMLStencilElement {
-    }
-    var HTMLDsFieldFeedbackElement: {
-        prototype: HTMLDsFieldFeedbackElement;
-        new (): HTMLDsFieldFeedbackElement;
-    };
-    interface HTMLDsFormElement extends Components.DsForm, HTMLStencilElement {
-    }
-    var HTMLDsFormElement: {
-        prototype: HTMLDsFormElement;
-        new (): HTMLDsFormElement;
-    };
-    interface HTMLDsFormLabelElementEventMap {
-        "clickLabel": any;
-    }
-    /**
-     * This component define a form label (for input, select etc..)
-     */
-    interface HTMLDsFormLabelElement extends Components.DsFormLabel, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFormLabelElementEventMap>(type: K, listener: (this: HTMLDsFormLabelElement, ev: DsFormLabelCustomEvent<HTMLDsFormLabelElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFormLabelElementEventMap>(type: K, listener: (this: HTMLDsFormLabelElement, ev: DsFormLabelCustomEvent<HTMLDsFormLabelElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFormLabelElement: {
-        prototype: HTMLDsFormLabelElement;
-        new (): HTMLDsFormLabelElement;
+    var HTMLDsFormContextElement: {
+        prototype: HTMLDsFormContextElement;
+        new (): HTMLDsFormContextElement;
     };
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
@@ -672,101 +384,17 @@ declare global {
         prototype: HTMLDsHeaderElement;
         new (): HTMLDsHeaderElement;
     };
-    interface HTMLDsInputElementEventMap {
-        "dSKeyDown": any;
-        "dSKeyUp": any;
-        "dSInput": any;
-        "dSInputBlur": any;
-    }
     interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputElementEventMap>(type: K, listener: (this: HTMLDsInputElement, ev: DsInputCustomEvent<HTMLDsInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputElementEventMap>(type: K, listener: (this: HTMLDsInputElement, ev: DsInputCustomEvent<HTMLDsInputElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsInputElement: {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
-    };
-    interface HTMLDsInputDateElementEventMap {
-        "dsDateInputChange": any;
-    }
-    interface HTMLDsInputDateElement extends Components.DsInputDate, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputDateElement: {
-        prototype: HTMLDsInputDateElement;
-        new (): HTMLDsInputDateElement;
-    };
-    interface HTMLDsInputFieldElementEventMap {
-        "notify_fieldChanged_event": { value: string, name: string };
-        "clickButtonHandler": any;
-    }
-    interface HTMLDsInputFieldElement extends Components.DsInputField, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputFieldElementEventMap>(type: K, listener: (this: HTMLDsInputFieldElement, ev: DsInputFieldCustomEvent<HTMLDsInputFieldElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputFieldElementEventMap>(type: K, listener: (this: HTMLDsInputFieldElement, ev: DsInputFieldCustomEvent<HTMLDsInputFieldElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputFieldElement: {
-        prototype: HTMLDsInputFieldElement;
-        new (): HTMLDsInputFieldElement;
-    };
-    interface HTMLDsInputPasswordElementEventMap {
-        "dSInputBlur": any;
-    }
-    interface HTMLDsInputPasswordElement extends Components.DsInputPassword, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputPasswordElementEventMap>(type: K, listener: (this: HTMLDsInputPasswordElement, ev: DsInputPasswordCustomEvent<HTMLDsInputPasswordElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputPasswordElementEventMap>(type: K, listener: (this: HTMLDsInputPasswordElement, ev: DsInputPasswordCustomEvent<HTMLDsInputPasswordElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputPasswordElement: {
-        prototype: HTMLDsInputPasswordElement;
-        new (): HTMLDsInputPasswordElement;
     };
     interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
     }
     var HTMLDsMainElement: {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
-    };
-    interface HTMLDsModalElementEventMap {
-        "modalClose": any;
-        "modalOpen": any;
-    }
-    interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsModalElement: {
-        prototype: HTMLDsModalElement;
-        new (): HTMLDsModalElement;
     };
     interface HTMLDsPanelElementEventMap {
         "panelShow": any;
@@ -794,69 +422,6 @@ declare global {
         prototype: HTMLDsPanelGroupElement;
         new (): HTMLDsPanelGroupElement;
     };
-    interface HTMLDsPlaceholderElement extends Components.DsPlaceholder, HTMLStencilElement {
-    }
-    var HTMLDsPlaceholderElement: {
-        prototype: HTMLDsPlaceholderElement;
-        new (): HTMLDsPlaceholderElement;
-    };
-    interface HTMLDsRadioElementEventMap {
-        "notify_radioValueSelected_event": any;
-    }
-    interface HTMLDsRadioElement extends Components.DsRadio, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsRadioElementEventMap>(type: K, listener: (this: HTMLDsRadioElement, ev: DsRadioCustomEvent<HTMLDsRadioElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsRadioElementEventMap>(type: K, listener: (this: HTMLDsRadioElement, ev: DsRadioCustomEvent<HTMLDsRadioElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsRadioElement: {
-        prototype: HTMLDsRadioElement;
-        new (): HTMLDsRadioElement;
-    };
-    interface HTMLDsRadioItemElementEventMap {
-        "notify_radioItemChecked_event": any;
-    }
-    /**
-     * This component define a radio item.
-     */
-    interface HTMLDsRadioItemElement extends Components.DsRadioItem, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsRadioItemElementEventMap>(type: K, listener: (this: HTMLDsRadioItemElement, ev: DsRadioItemCustomEvent<HTMLDsRadioItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsRadioItemElementEventMap>(type: K, listener: (this: HTMLDsRadioItemElement, ev: DsRadioItemCustomEvent<HTMLDsRadioItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsRadioItemElement: {
-        prototype: HTMLDsRadioItemElement;
-        new (): HTMLDsRadioItemElement;
-    };
-    interface HTMLDsRadioListElementEventMap {
-        "notify_radioItemSelected_event": any;
-    }
-    /**
-     * This component define a list of radio items.
-     */
-    interface HTMLDsRadioListElement extends Components.DsRadioList, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsRadioListElementEventMap>(type: K, listener: (this: HTMLDsRadioListElement, ev: DsRadioListCustomEvent<HTMLDsRadioListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsRadioListElementEventMap>(type: K, listener: (this: HTMLDsRadioListElement, ev: DsRadioListCustomEvent<HTMLDsRadioListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsRadioListElement: {
-        prototype: HTMLDsRadioListElement;
-        new (): HTMLDsRadioListElement;
-    };
     interface HTMLDsRspElementEventMap {
         "breakpointChange": any;
     }
@@ -873,27 +438,6 @@ declare global {
     var HTMLDsRspElement: {
         prototype: HTMLDsRspElement;
         new (): HTMLDsRspElement;
-    };
-    interface HTMLDsSelectElementEventMap {
-        "notify_selectInError_event": any;
-        "notify_selectValueChanged_event": any;
-    }
-    /**
-     * This component define a select form.
-     */
-    interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsSelectElement: {
-        prototype: HTMLDsSelectElement;
-        new (): HTMLDsSelectElement;
     };
     interface HTMLDsSidebarElementEventMap {
         "sidebarHide": any;
@@ -961,23 +505,6 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
-    interface HTMLDsTextareaElementEventMap {
-        "textAreaUpdate": { [k: string]: string };
-    }
-    interface HTMLDsTextareaElement extends Components.DsTextarea, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTextareaElementEventMap>(type: K, listener: (this: HTMLDsTextareaElement, ev: DsTextareaCustomEvent<HTMLDsTextareaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTextareaElement: {
-        prototype: HTMLDsTextareaElement;
-        new (): HTMLDsTextareaElement;
-    };
     interface HTMLDsTitleElement extends Components.DsTitle, HTMLStencilElement {
     }
     var HTMLDsTitleElement: {
@@ -1004,6 +531,29 @@ declare global {
         prototype: HTMLDsToasterElement;
         new (): HTMLDsToasterElement;
     };
+    interface HTMLDsToggleElementEventMap {
+        "toggle": any;
+    }
+    interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsToggleElement: {
+        prototype: HTMLDsToggleElement;
+        new (): HTMLDsToggleElement;
+    };
+    interface HTMLDsToggleGroupElement extends Components.DsToggleGroup, HTMLStencilElement {
+    }
+    var HTMLDsToggleGroupElement: {
+        prototype: HTMLDsToggleGroupElement;
+        new (): HTMLDsToggleGroupElement;
+    };
     /**
      * Simple icon tooltip component
      */
@@ -1019,57 +569,30 @@ declare global {
         prototype: HTMLDsTriggerElement;
         new (): HTMLDsTriggerElement;
     };
-    interface HTMLDsVideoElement extends Components.DsVideo, HTMLStencilElement {
-    }
-    var HTMLDsVideoElement: {
-        prototype: HTMLDsVideoElement;
-        new (): HTMLDsVideoElement;
-    };
-    interface HTMLDsVideoPlayElement extends Components.DsVideoPlay, HTMLStencilElement {
-    }
-    var HTMLDsVideoPlayElement: {
-        prototype: HTMLDsVideoPlayElement;
-        new (): HTMLDsVideoPlayElement;
-    };
     interface HTMLElementTagNameMap {
         "ds-app": HTMLDsAppElement;
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
-        "ds-checkbox": HTMLDsCheckboxElement;
-        "ds-combo": HTMLDsComboElement;
-        "ds-control": HTMLDsControlElement;
-        "ds-field-feedback": HTMLDsFieldFeedbackElement;
-        "ds-form": HTMLDsFormElement;
-        "ds-form-label": HTMLDsFormLabelElement;
+        "ds-form-context": HTMLDsFormContextElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-header": HTMLDsHeaderElement;
         "ds-input": HTMLDsInputElement;
-        "ds-input-date": HTMLDsInputDateElement;
-        "ds-input-field": HTMLDsInputFieldElement;
-        "ds-input-password": HTMLDsInputPasswordElement;
         "ds-main": HTMLDsMainElement;
-        "ds-modal": HTMLDsModalElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
-        "ds-placeholder": HTMLDsPlaceholderElement;
-        "ds-radio": HTMLDsRadioElement;
-        "ds-radio-item": HTMLDsRadioItemElement;
-        "ds-radio-list": HTMLDsRadioListElement;
         "ds-rsp": HTMLDsRspElement;
-        "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-text": HTMLDsTextElement;
-        "ds-textarea": HTMLDsTextareaElement;
         "ds-title": HTMLDsTitleElement;
         "ds-toaster": HTMLDsToasterElement;
+        "ds-toggle": HTMLDsToggleElement;
+        "ds-toggle-group": HTMLDsToggleGroupElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-trigger": HTMLDsTriggerElement;
-        "ds-video": HTMLDsVideoElement;
-        "ds-video-play": HTMLDsVideoPlayElement;
     }
 }
 declare namespace LocalJSX {
@@ -1107,49 +630,9 @@ declare namespace LocalJSX {
         "type"?: DSButtonType;
         "url"?: string;
     }
-    interface DsCheckbox {
-        "inputId"?: string;
-        "inputName"?: string;
-        "inputValue"?: string;
-        "isChecked"?: boolean;
-        "isDisabled"?: boolean;
-        "onDsCheckboxClick"?: (event: DsCheckboxCustomEvent<any>) => void;
-        "type"?: string | string[];
-    }
-    interface DsCombo {
-        "customLabel"?: string;
-        "mode"?: string;
-        "multiple"?: boolean;
+    interface DsFormContext {
         "name"?: string;
-        "onOptionSelected"?: (event: DsComboCustomEvent<any>) => void;
-        "options"?: any;
-        "overlay"?: boolean;
-        "position"?: string;
-        "selected"?: DSOption;
-        "selectedOption"?: DSOption[];
-    }
-    interface DsControl {
-        "action"?: string;
-        "target"?: string;
-        "type"?: string;
-    }
-    /**
-     * This component display a message with a level for the input forms
-     */
-    interface DsFieldFeedback {
-        "level"?: FeedbackLevel;
-        "message"?: string;
-    }
-    interface DsForm {
-    }
-    /**
-     * This component define a form label (for input, select etc..)
-     */
-    interface DsFormLabel {
-        "fieldLabel"?: string;
-        "isInError"?: boolean;
-        "isRequired"?: boolean;
-        "onClickLabel"?: (event: DsFormLabelCustomEvent<any>) => void;
+        "values"?: any;
     }
     interface DsGrid {
         "align"?: string | DSGridAlignment;
@@ -1171,79 +654,11 @@ declare namespace LocalJSX {
         "mods"?: string | string[];
     }
     interface DsInput {
-        "autocomplete"?: string;
-        "inputId"?: string;
-        "inputName"?: string;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "max"?: number;
-        "min"?: number;
-        "mods"?: string | string[];
-        "onDSInput"?: (event: DsInputCustomEvent<any>) => void;
-        "onDSInputBlur"?: (event: DsInputCustomEvent<any>) => void;
-        "onDSKeyDown"?: (event: DsInputCustomEvent<any>) => void;
-        "onDSKeyUp"?: (event: DsInputCustomEvent<any>) => void;
-        "placeholder"?: string;
-        "type"?: string;
-        "value"?: any;
-    }
-    interface DsInputDate {
-        "inputId"?: string;
-        "inputType"?: string;
-        "isMonthRequired"?: boolean;
-        "isUsedForCreditCard"?: boolean;
-        "isYearRequired"?: boolean;
-        "onDsDateInputChange"?: (event: DsInputDateCustomEvent<any>) => void;
-    }
-    interface DsInputField {
-        "errorMessage"?: string;
-        "icon"?: string;
-        "inputId"?: string;
-        "inputName"?: string;
-        "inputPlaceholder"?: string;
-        "inputType"?: InputFieldType;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "label"?: string;
-        "max"?: number;
-        "min"?: number;
-        "onClickButtonHandler"?: (event: DsInputFieldCustomEvent<any>) => void;
-        "onNotify_fieldChanged_event"?: (event: DsInputFieldCustomEvent<{ value: string, name: string }>) => void;
-        /**
-          * Send data with an event
-          * @type {boolean}
-         */
-        "sendValue"?: boolean;
-        "type"?: string;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators"?: Validator[];
-        "value"?: string;
-    }
-    interface DsInputPassword {
-        "autocomplete"?: string;
-        "inputId"?: string;
-        "inputName"?: string;
-        "isDisabled"?: boolean;
-        "isInError"?: boolean;
-        "max"?: number;
-        "min"?: number;
-        "onDSInputBlur"?: (event: DsInputPasswordCustomEvent<any>) => void;
-        "placeholder"?: string;
-        "type"?: string;
-        "value"?: any;
+        "name"?: string;
+        "renderMethod"?: any;
+        "useForm"?: string;
     }
     interface DsMain {
-    }
-    interface DsModal {
-        "lightboxClass"?: any;
-        "lightboxClassObject"?: any;
-        "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
-        "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
-        "overlay"?: boolean;
-        "shown"?: boolean;
     }
     interface DsPanel {
         "expanded"?: boolean;
@@ -1260,65 +675,12 @@ declare namespace LocalJSX {
         "isActive"?: boolean;
         "mods"?: string | string[];
     }
-    interface DsPlaceholder {
-        "dsMods"?: string|string[];
-    }
-    interface DsRadio {
-        "itemList"?: RadioItem[];
-        "label"?: string;
-        "mods"?: string[];
-        "onNotify_radioValueSelected_event"?: (event: DsRadioCustomEvent<any>) => void;
-        "radioId"?: string;
-        "radioItemCheckStyle"?: RadioItemCheckStyle;
-        "radioItemStyle"?: RadioItemStyle;
-        /**
-          * A table of validators to validate the form field and theirs error messages. The error messages from the component implementing the form field. If no error messages are passed, default values will be used from the translations Can be empty
-          * @type {ValidatorType[]}
-         */
-        "validators"?: Validator[];
-    }
-    /**
-     * This component define a radio item.
-     */
-    interface DsRadioItem {
-        "isChecked"?: boolean;
-        "label"?: string;
-        "name"?: string;
-        "onNotify_radioItemChecked_event"?: (event: DsRadioItemCustomEvent<any>) => void;
-        "radioId"?: string;
-        "radioItemCheckStyle"?: RadioItemCheckStyle;
-        "radioItemStyle"?: RadioItemStyle;
-        "value"?: string;
-    }
-    /**
-     * This component define a list of radio items.
-     */
-    interface DsRadioList {
-        "itemList"?: RadioItem[];
-        "onNotify_radioItemSelected_event"?: (event: DsRadioListCustomEvent<any>) => void;
-        "radioItemCheckStyle"?: RadioItemCheckStyle;
-        "radioItemStyle"?: RadioItemStyle;
-    }
     interface DsRsp {
         "breakpointsFromProp"?: Record<string, number>;
         "debounceDelay"?: number;
         "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
         "propertyName"?: string;
         "subscriberSelector"?: string;
-    }
-    /**
-     * This component define a select form.
-     */
-    interface DsSelect {
-        "firstSelectOptionLabel"?: string;
-        "isRequired"?: boolean;
-        "isValid"?: boolean;
-        "onNotify_selectInError_event"?: (event: DsSelectCustomEvent<any>) => void;
-        "onNotify_selectValueChanged_event"?: (event: DsSelectCustomEvent<any>) => void;
-        "optionList"?: SelectOption[];
-        "selectId"?: string;
-        "selectName"?: string;
-        "selectedValue"?: string;
     }
     interface DsSidebar {
         "ctx"?: boolean;
@@ -1353,18 +715,6 @@ declare namespace LocalJSX {
         "size"?: string | number;
         "type"?: string;
     }
-    interface DsTextarea {
-        "columns"?: number;
-        "content": string;
-        "disabled"?: boolean;
-        "lines"?: number;
-        "maxLength"?: number;
-        "onTextAreaUpdate"?: (event: DsTextareaCustomEvent<{ [k: string]: string }>) => void;
-        "placeholder"?: string;
-        "resizable"?: boolean;
-        "validators"?: Validator[];
-        "withCharacterCount"?: boolean;
-    }
     interface DsTitle {
         "article"?: boolean;
         "block"?: boolean;
@@ -1386,6 +736,21 @@ declare namespace LocalJSX {
         "onToasterShow"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
         "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
+    }
+    interface DsToggle {
+        "checked"?: boolean;
+        "disabled"?: boolean;
+        "group"?: any;
+        "mods"?: string | string[];
+        "name"?: string;
+        "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
+        "type"?: string;
+        "value"?: any;
+    }
+    interface DsToggleGroup {
+        "count"?: number[] | string;
+        "disabled"?: boolean;
+        "name"?: string;
     }
     /**
      * Simple icon tooltip component
@@ -1420,56 +785,30 @@ declare namespace LocalJSX {
         "target"?: string;
         "type"?: 'button' | 'control' | 'link';
     }
-    interface DsVideo {
-        "autoplay"?: boolean;
-        "controls"?: boolean;
-        "mods"?: string[];
-        "poster"?: string;
-        "sources"?: string[];
-    }
-    interface DsVideoPlay {
-        "disabled"?: string | boolean;
-        "target"?: string;
-    }
     interface IntrinsicElements {
         "ds-app": DsApp;
         "ds-block": DsBlock;
         "ds-button": DsButton;
-        "ds-checkbox": DsCheckbox;
-        "ds-combo": DsCombo;
-        "ds-control": DsControl;
-        "ds-field-feedback": DsFieldFeedback;
-        "ds-form": DsForm;
-        "ds-form-label": DsFormLabel;
+        "ds-form-context": DsFormContext;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-header": DsHeader;
         "ds-input": DsInput;
-        "ds-input-date": DsInputDate;
-        "ds-input-field": DsInputField;
-        "ds-input-password": DsInputPassword;
         "ds-main": DsMain;
-        "ds-modal": DsModal;
         "ds-panel": DsPanel;
         "ds-panel-group": DsPanelGroup;
-        "ds-placeholder": DsPlaceholder;
-        "ds-radio": DsRadio;
-        "ds-radio-item": DsRadioItem;
-        "ds-radio-list": DsRadioList;
         "ds-rsp": DsRsp;
-        "ds-select": DsSelect;
         "ds-sidebar": DsSidebar;
         "ds-slider": DsSlider;
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": DsSliderMenu;
         "ds-text": DsText;
-        "ds-textarea": DsTextarea;
         "ds-title": DsTitle;
         "ds-toaster": DsToaster;
+        "ds-toggle": DsToggle;
+        "ds-toggle-group": DsToggleGroup;
         "ds-tooltip": DsTooltip;
         "ds-trigger": DsTrigger;
-        "ds-video": DsVideo;
-        "ds-video-play": DsVideoPlay;
     }
 }
 export { LocalJSX as JSX };
@@ -1479,59 +818,29 @@ declare module "@stencil/core" {
             "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
-            "ds-checkbox": LocalJSX.DsCheckbox & JSXBase.HTMLAttributes<HTMLDsCheckboxElement>;
-            "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
-            "ds-control": LocalJSX.DsControl & JSXBase.HTMLAttributes<HTMLDsControlElement>;
-            /**
-             * This component display a message with a level for the input forms
-             */
-            "ds-field-feedback": LocalJSX.DsFieldFeedback & JSXBase.HTMLAttributes<HTMLDsFieldFeedbackElement>;
-            "ds-form": LocalJSX.DsForm & JSXBase.HTMLAttributes<HTMLDsFormElement>;
-            /**
-             * This component define a form label (for input, select etc..)
-             */
-            "ds-form-label": LocalJSX.DsFormLabel & JSXBase.HTMLAttributes<HTMLDsFormLabelElement>;
+            "ds-form-context": LocalJSX.DsFormContext & JSXBase.HTMLAttributes<HTMLDsFormContextElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-header": LocalJSX.DsHeader & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-input": LocalJSX.DsInput & JSXBase.HTMLAttributes<HTMLDsInputElement>;
-            "ds-input-date": LocalJSX.DsInputDate & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
-            "ds-input-field": LocalJSX.DsInputField & JSXBase.HTMLAttributes<HTMLDsInputFieldElement>;
-            "ds-input-password": LocalJSX.DsInputPassword & JSXBase.HTMLAttributes<HTMLDsInputPasswordElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
-            "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
-            "ds-placeholder": LocalJSX.DsPlaceholder & JSXBase.HTMLAttributes<HTMLDsPlaceholderElement>;
-            "ds-radio": LocalJSX.DsRadio & JSXBase.HTMLAttributes<HTMLDsRadioElement>;
-            /**
-             * This component define a radio item.
-             */
-            "ds-radio-item": LocalJSX.DsRadioItem & JSXBase.HTMLAttributes<HTMLDsRadioItemElement>;
-            /**
-             * This component define a list of radio items.
-             */
-            "ds-radio-list": LocalJSX.DsRadioList & JSXBase.HTMLAttributes<HTMLDsRadioListElement>;
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
-            /**
-             * This component define a select form.
-             */
-            "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
-            "ds-textarea": LocalJSX.DsTextarea & JSXBase.HTMLAttributes<HTMLDsTextareaElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
+            "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
              * Simple icon tooltip component
              */
             "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
-            "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
-            "ds-video-play": LocalJSX.DsVideoPlay & JSXBase.HTMLAttributes<HTMLDsVideoPlayElement>;
         }
     }
 }

@@ -45,7 +45,7 @@ export class DSTitle {
 			if (contextContainer) {
 				const context = await contextContainer.getContext();
 				if (typeof this[context] === "undefined") {
-					this[context] = context;
+					this[context] = true;
 				}
 			}
 		}

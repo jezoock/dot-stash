@@ -1,11 +1,13 @@
-import { Config } from '@stencil/core/internal';
+import { StencilConfig } from '@stencil/core/internal';
 import { sass } from '@stencil/sass';
-import { reactOutputTarget } from '@stencil/react-output-target';
 
-export const config: Config = {
+export const config: StencilConfig = {
   namespace: 'dot-stash',
   srcDir: 'components',
   minifyJs: true,
+  extras: {
+    cloneNodeFix: true,
+  },
   plugins: [
     sass({
       includePaths: ['components/**/*.scss'],
