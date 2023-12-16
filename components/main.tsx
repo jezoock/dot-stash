@@ -79,13 +79,13 @@ export class DSMainTest {
          */}
         <ds-slider style={{"height":"4rem"}} id="bob">
           
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 1</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 2</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf 3</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">sdfkdfjskdfjkkjsdf</ds-slider-item>
-          <ds-slider-item class="ds-slider__item">
+          <ds-slider-item>sdfkdfjskdfjkkjsdf 1</ds-slider-item>
+          <ds-slider-item>sdfkdfjskdfjkkjsdf 2</ds-slider-item>
+          <ds-slider-item>sdfkdfjskdfjkkjsdf 3</ds-slider-item>
+          <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
+          <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
+          <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
+          <ds-slider-item>
             <ds-button><strong>test </strong><span slot="before">sdfkdfjskdfjkkjsdf 0000</span></ds-button>
           </ds-slider-item>
         </ds-slider>

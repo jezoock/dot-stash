@@ -1,4 +1,4 @@
-import { Component, h } from '@stencil/core/internal';
+import { Component, h, Host } from '@stencil/core/internal';
 
 
 @Component({
@@ -9,9 +9,9 @@ export class DSSliderItem {
   
   render() {
     return (
-      <div class="ds-slider-item">
+      <Host class="ds-slider-item">
         <slot />
-      </div>
+      </Host>
     );
   }
 }

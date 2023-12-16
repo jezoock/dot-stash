@@ -10,7 +10,7 @@ import { DSButtonType } from "./core/button/button";
 import { DSGridAlignment, DSGridType } from "./core/grid/grid";
 import { DSGridItemStyles } from "./core/grid/grid";
 import { Breakpoint as Breakpoint1, Breakpoints as Breakpoints1, RawBreakpoint as RawBreakpoint1 } from "./components";
-import { DSSliderPrams } from "./core/slider/slider";
+import { DSSliderParams } from "./core/slider/slider";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
@@ -18,7 +18,7 @@ export { DSButtonType } from "./core/button/button";
 export { DSGridAlignment, DSGridType } from "./core/grid/grid";
 export { DSGridItemStyles } from "./core/grid/grid";
 export { Breakpoint as Breakpoint1, Breakpoints as Breakpoints1, RawBreakpoint as RawBreakpoint1 } from "./components";
-export { DSSliderPrams } from "./core/slider/slider";
+export { DSSliderParams } from "./core/slider/slider";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
@@ -191,18 +191,16 @@ export namespace Components {
         "toggle": (mustShow: boolean) => Promise<void>;
     }
     interface DsSlider {
-        "dsParams": DSSliderPrams | string;
         "mods": string | string[];
         "next": (step?: number) => Promise<void>;
+        "params": DSSliderParams | string;
+        "play": () => Promise<void>;
         "prev": (step?: number) => Promise<void>;
-        "sliderId": string;
+        "refresh": (reset: boolean) => Promise<void>;
+        "stop": () => Promise<void>;
         "type": string;
     }
     interface DsSliderItem {
-    }
-    interface DsSliderMenu {
-        "dsCurrentItemIndex": number;
-        "dsItemCount": number;
     }
     interface DsText {
         "bold": boolean;
@@ -306,10 +304,6 @@ export interface DsSidebarCustomEvent<T> extends CustomEvent<T> {
 export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderElement;
-}
-export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsSliderMenuElement;
 }
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -460,7 +454,7 @@ declare global {
         new (): HTMLDsSidebarElement;
     };
     interface HTMLDsSliderElementEventMap {
-        "dsSliderEvent": any;
+        "sliderEvent": {slide: string; direction: number; currentIndex?: number;};
     }
     interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -481,23 +475,6 @@ declare global {
     var HTMLDsSliderItemElement: {
         prototype: HTMLDsSliderItemElement;
         new (): HTMLDsSliderItemElement;
-    };
-    interface HTMLDsSliderMenuElementEventMap {
-        "request_displaySliderItem_event": any;
-    }
-    interface HTMLDsSliderMenuElement extends Components.DsSliderMenu, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsSliderMenuElementEventMap>(type: K, listener: (this: HTMLDsSliderMenuElement, ev: DsSliderMenuCustomEvent<HTMLDsSliderMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsSliderMenuElementEventMap>(type: K, listener: (this: HTMLDsSliderMenuElement, ev: DsSliderMenuCustomEvent<HTMLDsSliderMenuElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsSliderMenuElement: {
-        prototype: HTMLDsSliderMenuElement;
-        new (): HTMLDsSliderMenuElement;
     };
     interface HTMLDsTextElement extends Components.DsText, HTMLStencilElement {
     }
@@ -585,7 +562,6 @@ declare global {
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
-        "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
         "ds-toaster": HTMLDsToasterElement;
@@ -693,18 +669,12 @@ declare namespace LocalJSX {
         "position"?: string | 'left' | 'right' | 'top' | 'bottom';
     }
     interface DsSlider {
-        "dsParams"?: DSSliderPrams | string;
         "mods"?: string | string[];
-        "onDsSliderEvent"?: (event: DsSliderCustomEvent<any>) => void;
-        "sliderId"?: string;
+        "onSliderEvent"?: (event: DsSliderCustomEvent<{slide: string; direction: number; currentIndex?: number;}>) => void;
+        "params"?: DSSliderParams | string;
         "type"?: string;
     }
     interface DsSliderItem {
-    }
-    interface DsSliderMenu {
-        "dsCurrentItemIndex"?: number;
-        "dsItemCount"?: number;
-        "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
     interface DsText {
         "bold"?: boolean;
@@ -801,7 +771,6 @@ declare namespace LocalJSX {
         "ds-sidebar": DsSidebar;
         "ds-slider": DsSlider;
         "ds-slider-item": DsSliderItem;
-        "ds-slider-menu": DsSliderMenu;
         "ds-text": DsText;
         "ds-title": DsTitle;
         "ds-toaster": DsToaster;
@@ -830,7 +799,6 @@ declare module "@stencil/core" {
             "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
-            "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
