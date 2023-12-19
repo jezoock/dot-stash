@@ -1,4 +1,4 @@
-import { Component, h, Prop, Method, Event, EventEmitter, Watch } from "@stencil/core";
+import { Component, Element, h, Host, Prop, Method, Event, EventEmitter, Watch } from "@stencil/core";
 import CssClassList from "../../types/css-class-list.interface";
 import _ds from "../../../typescript/dot-stash";
 import SIDEBAR_POSITION from "../../types/sidebar-position.enum";
@@ -13,17 +13,22 @@ export class DSSidebar {
 
   //#region PROPS
 
-  @Prop({reflect: true}) ctx = true;
-  @Prop({ mutable: true, reflect: true }) isShown = false;
-  @Prop({ mutable: true, reflect: true }) position: string | 'left' | 'right' | 'top' | 'bottom' = SIDEBAR_POSITION.RIGHT;
-  @Prop({ mutable: true, reflect: true }) mods: string | string[] = "";
-
-  container: HTMLDivElement;
   CSSClassList: CssClassList;
 
+  @Element() container: HTMLDsSidebarElement;
+
+  @Prop({ reflect: true }) ctx = true;
+  @Prop({ mutable: true, reflect: true }) isShown = false;
+  @Prop({ reflect: true }) mods: string | string[] = "";
+  @Prop({ reflect: true }) position: string | 'left' | 'right' | 'top' | 'bottom' = SIDEBAR_POSITION.RIGHT;
+
+  //#endregion
+
+  //#region WATCHERS
+
   @Watch("mods")
-  modsChangeHandler() {
-    this.computeCSSClasslist();
+  modsChangeHandler(newMods: string | string[]) {
+    this.computeCSSClasslist(newMods);
   }
 
   //#endregion
@@ -37,19 +42,21 @@ export class DSSidebar {
 
   //#endregion
 
-  @Method()
-  async toggle( mustShow: boolean ) {
-    let { isShown } = this;
-    
-    if (typeof mustShow === "boolean") {
-      isShown = mustShow;
-    } else {
-      isShown = !isShown;
-    }
+  //#region METHODS
 
-    this[ isShown ? 'show' : 'hide' ]();
+  /**
+   * Toggle the sidebar display
+   * @param mustShow Used to specify wether the sidebar must be shown or hidden
+   */
+  @Method()
+  async toggle( mustShow?: boolean ) {
+    const methodName = (typeof mustShow === "boolean" && mustShow || !this.isShown) ? 'show' : 'hide'
+    this[ methodName ]();
   }
   
+  /**
+   * Show the sidebar
+   */
   @Method()
   async show() {
     this.containerRefresh();
@@ -59,17 +66,22 @@ export class DSSidebar {
     
   }
   
+  /**
+   * Hide the sidebar
+   */
   @Method()
   async hide() {
     this.sidebarHide.emit();
     this.container.addEventListener( "transitionend", this.animationEndHandler);
     this.isShown = false;
   }
+
+  //#endregion
   
   //#region TOOLS
   
-  computeCSSClasslist() {
-    this.CSSClassList = _ds.props.toClassList("ds-sidebar", this.mods);
+  computeCSSClasslist(modifiers: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList("ds-sidebar", modifiers);
   }
 
   containerRefresh() {
@@ -78,6 +90,10 @@ export class DSSidebar {
     const newHeight = windowHeight - containerOffset;
 
     this.container.style.height = `${newHeight}px`;
+  }
+
+  preventScroll(event: Event) {
+    event.preventDefault();
   }
   
   //#endregion
@@ -88,15 +104,22 @@ export class DSSidebar {
     this.animationEndHandler = this.animationEndHandler.bind(this);
   }
 
-  componentWillLoad() {
-    this.computeCSSClasslist();
-  }
-
-  componentDidLoad() {
+  connectedCallback() {
     this.container.addEventListener(
       "touchmove",
-      evt => evt.stopPropagation(),
+      this.preventScroll,
       { passive: true }
+    );
+  }
+
+  componentWillLoad() {
+    this.computeCSSClasslist(this.mods);
+  }
+
+  disconnectedCallback() {
+    this.container.removeEventListener(
+      "touchmove",
+      this.preventScroll
     );
   }
 
@@ -106,26 +129,27 @@ export class DSSidebar {
 
   animationEndHandler() {
     this.container.removeEventListener("transitionend", this.animationEndHandler);
-    this[ `sidebar${this.isShown ? 'Shown' : 'Hidden'}` ].emit();
+    const eventName = `sidebar${this.isShown ? 'Shown' : 'Hidden'}`;
+    this[ eventName ].emit();
   }  
 
   //#endregion
 
   render() {
     return (
-      <div
+      <Host
         class={{
           ...this.CSSClassList,
           "--shown": this.isShown,
           "--hidden": !this.isShown,
           [`--${this.position}`]: true
         }}
-        ref={el => this.container = el}
+        
       >
         <div class="ds-sidebar__content">
           <slot />
         </div>
-      </div>
+      </Host>
     );
   }
 }
