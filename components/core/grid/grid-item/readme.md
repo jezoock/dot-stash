@@ -29,6 +29,12 @@ Type: `Promise<number>`
 
 
 
+#### Parameters
+
+| Name     | Type               | Description |
+| -------- | ------------------ | ----------- |
+| `styles` | `DSGridItemStyles` |             |
+
 #### Returns
 
 Type: `Promise<void>`

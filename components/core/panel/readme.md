@@ -42,6 +42,12 @@ Type: `Promise<void>`
 
 
 
+#### Parameters
+
+| Name    | Type     | Description |
+| ------- | -------- | ----------- |
+| `index` | `number` |             |
+
 #### Returns
 
 Type: `Promise<void>`
@@ -61,6 +67,12 @@ Type: `Promise<void>`
 ### `toggle(mustShow?: boolean) => Promise<void>`
 
 
+
+#### Parameters
+
+| Name       | Type      | Description |
+| ---------- | --------- | ----------- |
+| `mustShow` | `boolean` |             |
 
 #### Returns
 

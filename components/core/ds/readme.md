@@ -28,6 +28,12 @@
 
 Ajax
 
+#### Parameters
+
+| Name          | Type                        | Description |
+| ------------- | --------------------------- | ----------- |
+| `queryParams` | `{ [x: string]: unknown; }` |             |
+
 #### Returns
 
 Type: `Promise<string>`
@@ -38,6 +44,13 @@ Type: `Promise<string>`
 
 
 
+#### Parameters
+
+| Name          | Type                        | Description |
+| ------------- | --------------------------- | ----------- |
+| `url`         | `string`                    |             |
+| `queryParams` | `{ [x: string]: unknown; }` |             |
+
 #### Returns
 
 Type: `Promise<unknown>`
@@ -47,6 +60,12 @@ Type: `Promise<unknown>`
 ### `getBreakpoint(rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>`
 
 Get the current breakpoint
+
+#### Parameters
+
+| Name             | Type                             | Description                             |
+| ---------------- | -------------------------------- | --------------------------------------- |
+| `rawBreakpoints` | `{ [label: string]: number[]; }` | JSON Object containings all breakpoints |
 
 #### Returns
 
@@ -88,6 +107,13 @@ Type: `Promise<{ breakpoints: Breakpoints; }>`
 
 
 
+#### Parameters
+
+| Name                | Type                                | Description |
+| ------------------- | ----------------------------------- | ----------- |
+| `currentBreakpoint` | `Breakpoint`                        |             |
+| `params`            | `{ [breakpointLabel: string]: T; }` |             |
+
 #### Returns
 
 Type: `Promise<T>`
@@ -118,6 +144,13 @@ Type: `Promise<Element[]>`
 
 
 
+#### Parameters
+
+| Name        | Type     | Description |
+| ----------- | -------- | ----------- |
+| `scriptUrl` | `string` |             |
+| `scriptId`  | `string` |             |
+
 #### Returns
 
 Type: `Promise<unknown>`
@@ -127,6 +160,13 @@ Type: `Promise<unknown>`
 ### `post(url: string, payload?: string | Record<string, string> | string[][] | URLSearchParams) => Promise<any>`
 
 
+
+#### Parameters
+
+| Name      | Type                                                                | Description |
+| --------- | ------------------------------------------------------------------- | ----------- |
+| `url`     | `string`                                                            |             |
+| `payload` | `string \| string[][] \| URLSearchParams \| Record<string, string>` |             |
 
 #### Returns
 
@@ -138,6 +178,12 @@ Type: `Promise<any>`
 
 
 
+#### Parameters
+
+| Name          | Type            | Description |
+| ------------- | --------------- | ----------- |
+| `breakpoints` | `RawBreakpoint` |             |
+
 #### Returns
 
 Type: `Promise<Breakpoints>`
@@ -147,6 +193,13 @@ Type: `Promise<Breakpoints>`
 ### `propGetClassList(mainClass: string | string[], mods?: string | string[]) => Promise<Record<string, boolean>>`
 
 Generate an css class ready object
+
+#### Parameters
+
+| Name        | Type                 | Description                                                                         |
+| ----------- | -------------------- | ----------------------------------------------------------------------------------- |
+| `mainClass` | `string \| string[]` | one or many classes to add to the object                                            |
+| `mods`      | `string \| string[]` | one or many string which will be converted to modifier classes to add to the object |
 
 #### Returns
 
@@ -158,6 +211,12 @@ Record<string, boolean>
 
 Convert an HTML property to a boolean
 
+#### Parameters
+
+| Name   | Type                | Description |
+| ------ | ------------------- | ----------- |
+| `prop` | `string \| boolean` |             |
+
 #### Returns
 
 Type: `Promise<boolean>`
@@ -167,6 +226,12 @@ boolean
 ### `propToFloat(prop: string | number) => Promise<number>`
 
 Convert an HTML property to a float
+
+#### Parameters
+
+| Name   | Type               | Description |
+| ------ | ------------------ | ----------- |
+| `prop` | `string \| number` |             |
 
 #### Returns
 
@@ -178,6 +243,13 @@ number
 
 Convert an HTML property to JSON
 
+#### Parameters
+
+| Name      | Type     | Description |
+| --------- | -------- | ----------- |
+| `prop`    | `T`      |             |
+| `rootKey` | `string` |             |
+
 #### Returns
 
 Type: `Promise<Record<string, unknown>>`
@@ -187,6 +259,12 @@ string[]
 ### `propToNumber(prop: string | number) => Promise<number>`
 
 Convert an HTML property to a number
+
+#### Parameters
+
+| Name   | Type               | Description |
+| ------ | ------------------ | ----------- |
+| `prop` | `string \| number` |             |
 
 #### Returns
 
@@ -198,6 +276,12 @@ number
 
 Convert an HTML property ( coma separated string ) to an array
 
+#### Parameters
+
+| Name   | Type            | Description |
+| ------ | --------------- | ----------- |
+| `prop` | `string \| T[]` |             |
+
 #### Returns
 
 Type: `Promise<T[]>`
@@ -208,6 +292,12 @@ string[]
 
 
 
+#### Parameters
+
+| Name           | Type     | Description |
+| -------------- | -------- | ----------- |
+| `quotedString` | `string` |             |
+
 #### Returns
 
 Type: `Promise<string>`
@@ -217,6 +307,12 @@ Type: `Promise<string>`
 ### `subscribe(target: Element) => Promise<number>`
 
 
+
+#### Parameters
+
+| Name     | Type      | Description |
+| -------- | --------- | ----------- |
+| `target` | `Element` |             |
 
 #### Returns
 

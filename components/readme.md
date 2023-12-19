@@ -11,6 +11,12 @@
 
 
 
+#### Parameters
+
+| Name  | Type     | Description |
+| ----- | -------- | ----------- |
+| `key` | `string` |             |
+
 #### Returns
 
 Type: `Promise<Record<string, any>>`
@@ -23,25 +29,35 @@ Type: `Promise<Record<string, any>>`
 ### Depends on
 
 - [ds-app](./core/ds)
-- [ds-panel-group](./ui/panel-group)
-- [ds-panel](./ui/panel)
-- [ds-rsp](./core/ds/responsive)
+- [ds-slider](./core/slider)
+- [ds-slider-item](./core/slider/slider-item)
+- [ds-button](./core/button)
+- [ds-trigger](./core/trigger)
 - [ds-block](./core/block)
+- [ds-header](./core/header)
+- [ds-panel-group](./core/panel-group)
+- [ds-panel](./core/panel)
+- [ds-rsp](./core/responsive)
 - [ds-grid](./core/grid)
 - [ds-grid-item](./core/grid/grid-item)
-- [ds-button](./ui/button)
 
 ### Graph
 ```mermaid
 graph TD;
   ds-main --> ds-app
+  ds-main --> ds-slider
+  ds-main --> ds-slider-item
+  ds-main --> ds-button
+  ds-main --> ds-trigger
+  ds-main --> ds-block
+  ds-main --> ds-header
   ds-main --> ds-panel-group
   ds-main --> ds-panel
   ds-main --> ds-rsp
-  ds-main --> ds-block
   ds-main --> ds-grid
   ds-main --> ds-grid-item
-  ds-main --> ds-button
+  ds-header --> ds-title
+  ds-header --> ds-text
   style ds-main fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -69,7 +69,7 @@ export namespace Components {
           * @param prop
           * @returns string[]
          */
-        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        "propToJSON": <T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
         /**
           * Convert an HTML property to a number
           * @param prop
@@ -183,12 +183,22 @@ export namespace Components {
     }
     interface DsSidebar {
         "ctx": boolean;
+        /**
+          * Hide the sidebar
+         */
         "hide": () => Promise<void>;
         "isShown": boolean;
         "mods": string | string[];
         "position": string | 'left' | 'right' | 'top' | 'bottom';
+        /**
+          * Show the sidebar
+         */
         "show": () => Promise<void>;
-        "toggle": (mustShow: boolean) => Promise<void>;
+        /**
+          * Toggle the sidebar display
+          * @param mustShow Used to specify wether the sidebar must be shown or hidden
+         */
+        "toggle": (mustShow?: boolean) => Promise<void>;
     }
     interface DsSlider {
         "mods": string | string[];

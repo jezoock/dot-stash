@@ -28,6 +28,12 @@
 
 Get the current breakpoint
 
+#### Parameters
+
+| Name             | Type                             | Description                             |
+| ---------------- | -------------------------------- | --------------------------------------- |
+| `rawBreakpoints` | `{ [label: string]: number[]; }` | JSON Object containings all breakpoints |
+
 #### Returns
 
 Type: `Promise<Breakpoint>`
@@ -68,6 +74,13 @@ Type: `Promise<{ breakpoints: Breakpoints; }>`
 
 
 
+#### Parameters
+
+| Name                | Type                                                      | Description |
+| ------------------- | --------------------------------------------------------- | ----------- |
+| `currentBreakpoint` | `Breakpoint`                                              |             |
+| `params`            | `{ [breakpointLabel: string]: Record<string, unknown>; }` |             |
+
 #### Returns
 
 Type: `Promise<Record<string, unknown>>`
@@ -88,6 +101,12 @@ Type: `Promise<Element[]>`
 
 
 
+#### Parameters
+
+| Name          | Type            | Description |
+| ------------- | --------------- | ----------- |
+| `breakpoints` | `RawBreakpoint` |             |
+
 #### Returns
 
 Type: `Promise<Breakpoints>`
@@ -97,6 +116,12 @@ Type: `Promise<Breakpoints>`
 ### `subscribe(target: Element) => Promise<number>`
 
 
+
+#### Parameters
+
+| Name     | Type      | Description |
+| -------- | --------- | ----------- |
+| `target` | `Element` |             |
 
 #### Returns
 
@@ -109,7 +134,7 @@ Type: `Promise<number>`
 
 ### Used by
 
- - [ds-main](../../..)
+ - [ds-main](../..)
 
 ### Graph
 ```mermaid
