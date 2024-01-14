@@ -42,6 +42,7 @@ export class DSSlider {
 	@Prop({ mutable: true, reflect: true }) params: DSSliderParams | string = {};
 	@Prop({ mutable: true, reflect: true }) type = "sld";
 
+  @State() isTransitionStarted = false;
 	@State() currentItem: { obj: HTMLDsSliderItemElement; index: number; dTime?: number | null; } = {
 		obj: null,
 		index: 0,
@@ -63,7 +64,6 @@ export class DSSlider {
   
 	isScrollable = false;
 	isDraggable = false;
-	@State() isTransitionStarted = false;
 	isPlaying = true;
 	isReady = false;
   CSSClassList: CssClassList;
@@ -169,18 +169,26 @@ export class DSSlider {
       let listHeight = 0;
 
       this.items.forEach( item => {
+        const { offsetWidth: itemWidth, offsetHeight: itemHeight } = item;
+
         if( !this.options.autoWidth ) {
-          listWidth += item.offsetWidth;
-          listHeight += item.offsetHeight;
-          _ds.css.set({ width: `${item.offsetWidth}px`, maxWidth: `${item.offsetWidth}px`, height: `${item.offsetHeight}px`}, [item]);
+          listWidth += itemWidth;
+          listHeight += itemHeight;
+          _ds.css.set({ 
+            width: `${itemWidth}px`, 
+            maxWidth: `${itemWidth}px`, 
+            height: `${itemHeight}px`
+          }, [
+            item
+          ]);
         }
         
-        if(item.offsetWidth > this.itemWidth) {
-          this.itemWidth = item.offsetWidth;
+        if(itemWidth > this.itemWidth) {
+          this.itemWidth = itemWidth;
         }
 
-        if(item.offsetHeight > this.itemHeight) {
-          this.itemHeight = item.offsetHeight;
+        if(itemHeight > this.itemHeight) {
+          this.itemHeight = itemHeight;
         }
       });
       
@@ -197,7 +205,12 @@ export class DSSlider {
           : this.itemHeight 
 
       if( this.options.autoWidth ) {
-        _ds.css.set({ height: `${itemHeight}px`, width: `${this.itemWidth}px`}, this.items);
+        _ds.css.set({ 
+            height: `${itemHeight}px`, 
+            width: `${this.itemWidth}px`
+          },
+          this.items
+        );
         this.listDim = this.listLen*this[ this.options.orientation === "vtc" ? "itemHeight" : "itemWidth" ];
       } else {
         this.listDim = this.options.orientation === "vtc" ? listHeight : listWidth;
@@ -344,9 +357,11 @@ export class DSSlider {
 
       _ds.css.set( from, [this.list] );
 
+      const newItems: Node[] = [];
       for( let i=this.listLen-1; i > this.listLen-1-step; i-- ) {
-        this.getList().prepend( this.items[i].cloneNode(true) );
+        newItems.push(this.items[i].cloneNode(true));
       }
+      newItems.forEach( item => this.getList().prepend( item ) );
       
       this.isTransitionStarted = true;
       this.getList().addEventListener( 'transitionend', this.slidePrevTransitionEndHandler );
@@ -420,8 +435,8 @@ export class DSSlider {
       while(this.items[i].firstChild) {
         this.items[i].removeChild(this.items[i].firstChild)
       }
-      this.getList().prepend(this.items[this.items.length-1]);
       this.items[i].remove();
+      this.getList().prepend(this.items[this.items.length-1]);
       this.items = this.getListItems();
     }
     
