@@ -3,12 +3,14 @@ import _ds from '../../../typescript/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 @Component({
-  tag: 'ds-header',
+  tag: 'ds-bar',
   styleUrl: 'header.scss',
 })
 export class DSHeader {
   contextName = "header";
   CSSClassList: CssClassList;
+  hasContentBefore: boolean;
+  hasContentAfter: boolean;
   titleProps: {
     block?: boolean;
     page?: boolean;
@@ -26,6 +28,11 @@ export class DSHeader {
     this.CSSClassList = _ds.props.toClassList("ds-header", _ds.props.toArray(mods));
   }
 
+  connectedCallback() {
+    this.hasContentBefore = this.container.querySelector("[slot='before']") !== null;
+    this.hasContentAfter = this.container.querySelector("[slot='after']") !== null;
+  }
+
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList("ds-header", _ds.props.toArray(this.mods));
   }
@@ -37,31 +44,15 @@ export class DSHeader {
           ...this.CSSClassList,
         }}
       >
-        {this.container.querySelector("[slot='before']") !== null && (
+        {this.hasContentBefore && (
           <div class="ds-header__before">
             <slot name="before" />
           </div>
         )}
         <div class="ds-header__content">
-          {(this.container.querySelector("[slot='title']") !== null || this.container.querySelector("[slot='sub-title']") !== null) && (
-            <hlgroup class="ds-header__title-wrapper">
-              {this.container.querySelector("[slot='title']") !== null && (
-                <ds-title class="ds-header__main-title">
-                  <slot name="title" />
-                </ds-title>
-              )}
-              {this.container.querySelector("[slot='sub-title']") !== null && (
-                <ds-title sub class="ds-header__sub-title">
-                  <slot name="sub-title" />
-                </ds-title>
-              )}
-            </hlgroup>
-          )}
-          <ds-text class="ds-header__text">
-            <slot />
-          </ds-text>
+          <slot />
         </div>
-        {this.container.querySelector("[slot='before']") !== null && (
+        {this.hasContentAfter && (
           <div class="ds-header__after">
             <slot name="after" />
           </div>

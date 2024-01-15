@@ -1,4 +1,4 @@
-import { Component, Event, EventEmitter, h, Method, Prop, Watch } from '@stencil/core';
+import { Component, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
 import _ds from '../../../typescript/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
@@ -40,12 +40,12 @@ export class DSToggle {
   }
 
   componentWillRender() {
-    console.log(this.group?.getValue());
+    console.log(!this.disabled);
   }
 
   toggleClickHandler = () => {
     if (!this.disabled) {
-      this.group.toggleHandler(!this.checked);
+      this.group?.toggleHandler(!this.checked);
       this.checked = !this.checked;
       this.toggle.emit({ value: this.value, checked: this.checked });
     }
@@ -57,14 +57,14 @@ export class DSToggle {
 
   render() {
     return (
-      <div
+      <Host
         class={{
           ...this.CSSClassList,
         }}
         onClick={this.toggleClickHandler}
       >
         <slot />
-      </div>
+      </Host>
     );
   }
 }

@@ -3,88 +3,91 @@ import _ds from '../../../typescript/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 enum DsBlockTypeToTag {
-	PAGE = "Host",
-	SECTION = "section",
-	BLOCK = "div",
-	CONTENT = "div"
+  PAGE = "Host",
+  SECTION = "section",
+  BLOCK = "div",
+  CONTENT = "div"
 }
 
 @Component({
-	tag: 'ds-block',
-	styleUrl: './block.scss'
+  tag: 'ds-block',
+  styleUrl: './block.scss'
 })
 export class DSBlock {
 
-	blockName = "ds-block";
-	blockTag: DsBlockTypeToTag = DsBlockTypeToTag.BLOCK;
-	context = 'block';
-	CSSClassList: CssClassList;
+  blockName = "ds-block";
+  blockTag: DsBlockTypeToTag = DsBlockTypeToTag.BLOCK;
+  context = 'block';
+  CSSClassList: CssClassList;
+  hasHeader: boolean;
+  hasFooter: boolean;
 
-	@Element() hostContainer: HTMLElement;
+  @Element() hostContainer: HTMLElement;
 
-	@Prop({ reflect: true }) article: boolean;
-	@Prop({ reflect: true }) block: boolean;
-	@Prop({ reflect: true }) section: boolean;
-	@Prop({ reflect: true }) form: boolean;
-	
-	/**
-	 * Block type classname ( also used to build block classname )
-	 */
-	@Prop() type: string;
+  @Prop({ reflect: true }) article: boolean;
+  @Prop({ reflect: true }) block: boolean;
+  @Prop({ reflect: true }) section: boolean;
+  @Prop({ reflect: true }) form: boolean;
+  
+  /**
+   * Block type classname ( also used to build block classname )
+   */
+  @Prop() type: string;
 
-	/**
-	 * Use to derivate the main class name
-	 */
-	@Prop({ reflect: true}) ext: string;
+  /**
+   * Use to derivate the main class name
+   */
+  @Prop({ reflect: true}) ext: string;
 
-	/**
-	 * List of modifiers
-	 */
-	@Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
+  /**
+   * List of modifiers
+   */
+  @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
 
-	@Watch('mods')
-	modsChangeHandler(mods: string | string[]) {
-		this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
-	}
+  @Watch('mods')
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
+  }
 
-	@Method()
-	async getContext() {
-		return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form";
-	}
-	
-	async connectedCallback() {
-		let blockName = 'ds';
-		const blockContext = await this.getContext();
-		const blockType = this.type || blockContext;
-		if (this.ext) {
-			blockName = `${blockName}-${this.ext}`;
-		}
-		this.blockName = `${blockName}-${blockType}`;
-		this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);
-		this.context = blockContext;
-/* 		this.hostContainer.querySelector("[slot='block-header']").classList.add(`${this.blockName}__header`); */
-/* <ds-header class={`${this.blockName}__header`}>
-					<slot name="block-header" />
-					<slot name="title" />
-					<slot name="sub-title" />
-				</ds-header> */
-	}
+  @Method()
+  async getContext() {
+    return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form";
+  }
+  
+  async connectedCallback() {
+    let blockName = 'ds';
+    const blockContext = await this.getContext();
+    const blockType = this.type || blockContext;
+    if (this.ext) {
+      blockName = `${blockName}-${this.ext}`;
+    }
+    this.blockName = `${blockName}-${blockType}`;
+    this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);
+    this.context = blockContext;
 
-	render() {
-		return (
-			<Host
-				class={this.CSSClassList}
-			>
-				<div class={`${this.blockName}__header`}>
-					<slot name="block-header" />
-				</div>
-				<div class={`${this.blockName}__body`}>
-					<slot />
-				</div>
-				<div class={`${this.blockName}__footer`}>
-					<slot name="block-footer" />
-				</div>
-			</Host>
-		);
-	}
+    this.hasHeader = this.hostContainer.querySelector("[slot='header']") !== null;
+    this.hasFooter = this.hostContainer.querySelector("[slot='footer']") !== null;
+  }
+
+  render() {
+    return (
+      <Host
+        class={this.CSSClassList}
+      >
+        {this.hasHeader && (
+          <div class={`${this.blockName}__header`}>
+            <slot name="header" />
+          </div>
+        )}
+        <div class={`${this.blockName}__body`}>
+          <slot />
+        </div>
+        {this.hasFooter && (
+          <div class={`${this.blockName}__footer`}>
+            <slot name="footer" />
+          </div>
+        )}
+      </Host>
+    );
+  }
 }

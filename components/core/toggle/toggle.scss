@@ -1,10 +1,12 @@
-.ds-toggle {
+ds-toggle {
   border: none;
   background: transparent;
   outline: none;
   position: relative;
   transition: all ease 0.4s;
   cursor: pointer;
+  display: inline-block;
+
   &:focus {
     outline: none;
   }
@@ -31,36 +33,48 @@
       border-radius: 50%;
       transform: translate3d(-50%, -50%, 0);
     }
+  }
 
-    :not([checked]) > & {
+  &:not([checked]) {
+    &.--radio {
       &:after {
         opacity: 0;
       }
     }
+  }
 
-    [checked] > & {
+  &[checked] {
+    &.--radio {
       &:after {
         opacity: 1;
       }
     }
+  }
 
-    :not([disabled][checked]) > & {
+  &:not([disabled]):not([checked]) {
+    &.--radio {
       border-color: #000;
+
       &:after {
         background-color: #000;
       }
     }
+  }
 
-    [checked]:not([disabled]) > & {
+  &[checked]:not([disabled]) {
+    &.--radio {
       border-color: #f00;
+
       &:after {
         background-color: #f00;
       }
     }
+  }
 
-    [disabled]:not([checked]) > &,
-    [disabled][checked] > & {
+  &[disabled] {
+    &.--radio {
       border-color: gray;
+
       &:after {
         background-color: gray;
       }
@@ -81,36 +95,48 @@
       transform: translate3d(-50%, -50%, 0);
       border-radius: 2px;
     }
+  }
 
-    :not([checked]) > & {
+  &:not([checked]) {
+    &.--checkbox {
       &:after {
         opacity: 0;
       }
     }
+  }
 
-    [checked] > & {
+  &[checked] {
+    &.--checkbox {
       &:after {
         opacity: 1;
       }
     }
+  }
 
-    :not([disabled][checked]) > & {
+  &:not([disabled]):not([checked]) {
+    &.--checkbox {
       border-color: #000;
+
       &:after {
         background-color: #000;
       }
     }
+  }
 
-    [checked]:not([disabled]) > & {
+  &[checked]:not([disabled]) {
+    &.--checkbox {
       border-color: #f00;
+
       &:after {
         background-color: #f00;
       }
     }
+  }
 
-    [disabled]:not([checked]) > &,
-    [disabled][checked] > & {
+  &[disabled] {
+    &.--checkbox {
       border-color: gray;
+
       &:after {
         background-color: gray;
       }
@@ -128,38 +154,50 @@
       height: 1.5rem;
       transform: translateY(-50%);
     }
+  }
 
-    :not([checked]) > & {
+  &:not([checked]) {
+    &.--switch {
       &:after {
         left: 0.25rem;
       }
     }
+  }
 
-    [checked] > & {
+  &[checked] {
+    &.--switch {
       &:after {
         left: calc(100% - 1.75rem);
       }
     }
+  }
 
-    :not([disabled]) > & {
+  &:not([disabled]) {
+    &.--switch {
       background: gray;
     }
+  }
 
-    :not([checked][disabled]) > & {
+  &:not([disabled]):not([checked]) {
+    &.--switch {
       &:after {
         background-color: #000;
       }
     }
+  }
 
-    [checked]:not([disabled]) > & {
+  &[checked]:not([disabled]) {
+    &.--switch {
       &:after {
         background-color: #ddd;
       }
     }
+  }
 
-    [disabled]:not([checked]) > &,
-    [disabled][checked] > & {
+  &[disabled] {
+    &.--switch {
       background: #eee;
+
       &:after {
         background-color: #ddd;
       }

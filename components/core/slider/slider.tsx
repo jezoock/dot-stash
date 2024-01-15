@@ -385,6 +385,7 @@ export class DSSlider {
     this.list.classList.remove("--sliding");
     this.isTransitionStarted = false;
     this.list.removeEventListener( 'transitionend', this.slideNextTransitionEndHandler );
+    this.list.removeEventListener( 'transitionend', this.slidePrevTransitionEndHandler );
     _ds.css.set( {
       "transform": 'translate3d(0,0,0)',
       "width": `${this.listDim}px`

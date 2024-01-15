@@ -41,6 +41,12 @@ export class DSMainTest {
     return (
       <div class="ds-components-demo">
         <ds-app></ds-app>
+
+        <ds-block>
+          <ds-toggle type="radio"></ds-toggle>
+          <ds-toggle type="checkbox"></ds-toggle>
+          <ds-toggle type="switch"></ds-toggle>
+        </ds-block>
          {/* <ds-title section sub>test</ds-title>
         <ds-map
           api-key="***REMOVED***"
@@ -92,6 +98,24 @@ export class DSMainTest {
         <ds-trigger type="button" mods="lg" target="#bob" action='prev'>prev</ds-trigger>
         <ds-trigger type="button" mods="lg" target="#bob" action='next'>next</ds-trigger>
 
+        <ds-block>
+          <ds-header slot="block-header">
+            <ds-title>
+              <h1>Ttitre</h1>
+              <h2 slot="sub-title">Sous-titre</h2>
+              <p slot="description">Texte d'introduction</p>
+            </ds-title>
+          </ds-header>
+
+          <div>
+            Contenu
+          </div>
+
+          <footer>
+            Footer
+          </footer>
+        </ds-block>
+
           {/* <ds-header slot="block-header">
             <ds-button slot="before">
               Retour
@@ -122,7 +146,8 @@ export class DSMainTest {
             </ds-header>
 
           </ds-block> */}
-<section class="ds-homepage__history">
+
+          <section class="ds-homepage__history">
             <ds-block section ext="homepage-history">
               <header slot="block-header">
                 <ds-header>
@@ -130,20 +155,26 @@ export class DSMainTest {
                     Retour
                     <ds-icon type="back" slot="before" />
                   </ds-button>
-                  <h2 slot="title">Titre de block</h2>
-                  <p slot="sub-title">Sous-titre de block de test</p>
-                  <ds-block block>
-                    <div slot="block-header">sfhsdhfg</div>
-                  </ds-block>
-                  <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
+                  <ds-intro>
+                    <h2>Titre de block</h2>
+                    <h3 slot="sub-title">Sous-titre de block</h3>
+                    <p slot="description">Description de block de test</p>
+                  </ds-intro>
                   <ds-button slot="after">
                     <ds-icon type="close" slot="after" />
                     Fermer
                   </ds-button>
                 </ds-header>
               </header>
-                
 
+              <ds-block block>
+                <div>sfhsdhfg</div>
+              </ds-block>
+              <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
+
+              <footer slot="block-footer">
+                Footer
+              </footer>
             </ds-block>
           </section>
 

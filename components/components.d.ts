@@ -69,7 +69,7 @@ export namespace Components {
           * @param prop
           * @returns string[]
          */
-        "propToJSON": <T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
         /**
           * Convert an HTML property to a number
           * @param prop
@@ -86,6 +86,10 @@ export namespace Components {
         "removeQuotes": (quotedString: string) => Promise<string>;
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
+    }
+    interface DsBar {
+        "ctx": boolean;
+        "mods": string | string[];
     }
     interface DsBlock {
         "article": boolean;
@@ -135,14 +139,13 @@ export namespace Components {
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
         "width": number;
     }
-    interface DsHeader {
-        "ctx": boolean;
-        "mods": string | string[];
-    }
     interface DsInput {
         "name": string;
         "renderMethod": any;
         "useForm": string;
+    }
+    interface DsIntro {
+        "mods": string | string[];
     }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
@@ -217,8 +220,11 @@ export namespace Components {
         "color": string;
         "highlight": boolean;
         "italic": boolean;
+        "main": boolean;
         "mods": string | string[];
         "size": string | number;
+        "sub": boolean;
+        "text": boolean;
         "type": string;
     }
     interface DsTitle {
@@ -341,6 +347,12 @@ declare global {
         prototype: HTMLDsAppElement;
         new (): HTMLDsAppElement;
     };
+    interface HTMLDsBarElement extends Components.DsBar, HTMLStencilElement {
+    }
+    var HTMLDsBarElement: {
+        prototype: HTMLDsBarElement;
+        new (): HTMLDsBarElement;
+    };
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
     var HTMLDsBlockElement: {
@@ -382,17 +394,17 @@ declare global {
         prototype: HTMLDsGridItemElement;
         new (): HTMLDsGridItemElement;
     };
-    interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
-    }
-    var HTMLDsHeaderElement: {
-        prototype: HTMLDsHeaderElement;
-        new (): HTMLDsHeaderElement;
-    };
     interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
     }
     var HTMLDsInputElement: {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
+    };
+    interface HTMLDsIntroElement extends Components.DsIntro, HTMLStencilElement {
+    }
+    var HTMLDsIntroElement: {
+        prototype: HTMLDsIntroElement;
+        new (): HTMLDsIntroElement;
     };
     interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
     }
@@ -558,13 +570,14 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ds-app": HTMLDsAppElement;
+        "ds-bar": HTMLDsBarElement;
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
         "ds-form-context": HTMLDsFormContextElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
-        "ds-header": HTMLDsHeaderElement;
         "ds-input": HTMLDsInputElement;
+        "ds-intro": HTMLDsIntroElement;
         "ds-main": HTMLDsMainElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
@@ -588,6 +601,10 @@ declare namespace LocalJSX {
         "onBreakpointChange"?: (event: DsAppCustomEvent<any>) => void;
         "propertyName"?: string;
         "subscriberSelector"?: string;
+    }
+    interface DsBar {
+        "ctx"?: boolean;
+        "mods"?: string | string[];
     }
     interface DsBlock {
         "article"?: boolean;
@@ -635,14 +652,13 @@ declare namespace LocalJSX {
         "ratioFromProps"?: number | string;
         "width"?: number;
     }
-    interface DsHeader {
-        "ctx"?: boolean;
-        "mods"?: string | string[];
-    }
     interface DsInput {
         "name"?: string;
         "renderMethod"?: any;
         "useForm"?: string;
+    }
+    interface DsIntro {
+        "mods"?: string | string[];
     }
     interface DsMain {
     }
@@ -691,8 +707,11 @@ declare namespace LocalJSX {
         "color"?: string;
         "highlight"?: boolean;
         "italic"?: boolean;
+        "main"?: boolean;
         "mods"?: string | string[];
         "size"?: string | number;
+        "sub"?: boolean;
+        "text"?: boolean;
         "type"?: string;
     }
     interface DsTitle {
@@ -767,13 +786,14 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "ds-app": DsApp;
+        "ds-bar": DsBar;
         "ds-block": DsBlock;
         "ds-button": DsButton;
         "ds-form-context": DsFormContext;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
-        "ds-header": DsHeader;
         "ds-input": DsInput;
+        "ds-intro": DsIntro;
         "ds-main": DsMain;
         "ds-panel": DsPanel;
         "ds-panel-group": DsPanelGroup;
@@ -795,13 +815,14 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
+            "ds-bar": LocalJSX.DsBar & JSXBase.HTMLAttributes<HTMLDsBarElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             "ds-form-context": LocalJSX.DsFormContext & JSXBase.HTMLAttributes<HTMLDsFormContextElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
-            "ds-header": LocalJSX.DsHeader & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-input": LocalJSX.DsInput & JSXBase.HTMLAttributes<HTMLDsInputElement>;
+            "ds-intro": LocalJSX.DsIntro & JSXBase.HTMLAttributes<HTMLDsIntroElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
