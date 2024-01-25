@@ -1,5 +1,5 @@
 import gulp from "gulp";
-import dartSass from 'sass';
+import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import clean from "gulp-clean";
 import autoprefixer from "gulp-autoprefixer";
@@ -68,7 +68,7 @@ const server = () => {
   
   gulp.watch( settings.scss.watch.map(pattern => `${paths.source.root}/${pattern}`), generateCSS);
   gulp.watch( settings.typescript.watch.map(pattern => `${paths.source.root}/${pattern}`), generateScripts);
-  gulp.watch( settings.images.watch.map(pattern => `${paths.source.root}/${pattern}`), generateImages);
+  //gulp.watch( settings.images.watch.map(pattern => `${paths.source.root}/${pattern}`), generateImages);
 }
 
 export default server;

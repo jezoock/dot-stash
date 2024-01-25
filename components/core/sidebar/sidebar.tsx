@@ -19,8 +19,9 @@ export class DSSidebar {
 
   @Prop({ reflect: true }) ctx = true;
   @Prop({ mutable: true, reflect: true }) isShown = false;
+  @Prop({ reflect: true }) hPos: 'left' | 'right' = SIDEBAR_POSITION.LEFT;
+  @Prop({ reflect: true }) vPos: 'top' | 'bottom' = SIDEBAR_POSITION.TOP;
   @Prop({ reflect: true }) mods: string | string[] = "";
-  @Prop({ reflect: true }) position: string | 'left' | 'right' | 'top' | 'bottom' = SIDEBAR_POSITION.RIGHT;
 
   //#endregion
 
@@ -50,7 +51,7 @@ export class DSSidebar {
    */
   @Method()
   async toggle( mustShow?: boolean ) {
-    const methodName = (typeof mustShow === "boolean" && mustShow || !this.isShown) ? 'show' : 'hide'
+    const methodName = (typeof mustShow === "boolean" && mustShow || !this.isShown) ? 'show' : 'hide';
     this[ methodName ]();
   }
   
@@ -142,7 +143,8 @@ export class DSSidebar {
           ...this.CSSClassList,
           "--shown": this.isShown,
           "--hidden": !this.isShown,
-          [`--${this.position}`]: true
+          [`--h-pos-${this.hPos}`]: true,
+          [`--v-pos-${this.vPos}`]: true
         }}
         
       >
