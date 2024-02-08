@@ -30,36 +30,30 @@ ds-sidebar {
     }
   }
 
+  &:not([v-pos]) {
+    top: 0;
+    bottom: 0;
+  }
+
   &[v-pos="top"] {
     top: 0;
-
-    &:not([h-pos]) {
-      left: 0;
-    }
   }
-  
+
   &[v-pos="bottom"] {
     bottom: 0;
-
-    &:not([h-pos]) {
-      left: 0;
-    }
   }
 
+  &:not([h-pos]) {
+    left: 0;
+    right: 0;
+  }
+  
   &[h-pos="left"] {
     left: 0;
-
-    &:not([v-pos]) {
-      top: 0;
-    }
   }
   
   &[h-pos="right"] {
     right: 0;
-
-    &:not([v-pos]) {
-      top: 0;
-    }
   }
 }
 /* 

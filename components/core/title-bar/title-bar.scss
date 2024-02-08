@@ -1,0 +1,21 @@
+.ds-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__before {
+    &:not(:has([slot="before"])) {
+      display: none;
+    }
+  }
+
+  &__content {
+    flex-grow: 1;
+  }
+
+  &__after {
+    &:not(:has([slot="after"])) {
+      display: none;
+    }
+  }
+}

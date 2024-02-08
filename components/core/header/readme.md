@@ -1,4 +1,4 @@
-# ds-header
+# ds-title
 
 
 
@@ -7,30 +7,30 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                 | Default     |
-| -------- | --------- | ----------- | -------------------- | ----------- |
-| `ctx`    | `ctx`     |             | `boolean`            | `undefined` |
-| `mods`   | `mods`    |             | `string \| string[]` | `[]`        |
+| Property     | Attribute     | Description | Type                 | Default     |
+| ------------ | ------------- | ----------- | -------------------- | ----------- |
+| `article`    | `article`     |             | `boolean`            | `undefined` |
+| `block`      | `block`       |             | `boolean`            | `undefined` |
+| `form`       | `form`        |             | `boolean`            | `undefined` |
+| `mods`       | `mods`        |             | `string \| string[]` | `[]`        |
+| `page`       | `page`        |             | `boolean`            | `undefined` |
+| `section`    | `section`     |             | `boolean`            | `undefined` |
+| `sub`        | `sub`         |             | `boolean`            | `undefined` |
+| `sup`        | `sup`         |             | `boolean`            | `undefined` |
+| `useContext` | `use-context` |             | `boolean`            | `undefined` |
 
 
 ## Dependencies
 
 ### Used by
 
- - [ds-main](../..)
-
-### Depends on
-
-- [ds-title](../title)
-- [ds-text](../text)
+ - [ds-header](../header)
 
 ### Graph
 ```mermaid
 graph TD;
   ds-header --> ds-title
-  ds-header --> ds-text
-  ds-main --> ds-header
-  style ds-header fill:#f9f,stroke:#333,stroke-width:4px
+  style ds-title fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

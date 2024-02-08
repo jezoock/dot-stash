@@ -8,8 +8,6 @@ import CssClassList from '../../types/css-class-list.interface';
 })
 export class DSTitle {
   CSSClassList: CssClassList;
-  hasSubTitle: boolean;
-  hasDescription: boolean;
 
   @Element() container: HTMLElement;
 
@@ -19,6 +17,7 @@ export class DSTitle {
   @Prop({ reflect: true, mutable: true }) page: boolean;
   @Prop({ reflect: true, mutable: true }) section: boolean;
   @Prop({ reflect: true, mutable: true }) block: boolean;
+  @Prop({ reflect: true, mutable: true }) modal: boolean;
   @Prop({ reflect: true, mutable: true }) sub: boolean;
   @Prop({ reflect: true, mutable: true }) sup: boolean;
   @Prop() useContext: boolean;
@@ -33,7 +32,12 @@ export class DSTitle {
   }
 
   getContext() {
-    return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form"; 
+    return this.article && 'article'
+      || this.block && "block" 
+      || this.section && "section" 
+      || this.form && "form" 
+      || this.form && "page" 
+      || this.modal && "modal"; 
   }
   
   async componentDidLoad() {

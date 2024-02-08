@@ -37,7 +37,7 @@ export class DSBlock {
   /**
    * Use to derivate the main class name
    */
-  @Prop({ reflect: true}) ext: string;
+  @Prop({ reflect: true}) name: string;
 
   /**
    * List of modifiers
@@ -51,15 +51,15 @@ export class DSBlock {
 
   @Method()
   async getContext() {
-    return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form";
+    return this.article && 'article' || this.section && "section" || this.form && "form" || "block";
   }
   
   async connectedCallback() {
     let blockName = 'ds';
     const blockContext = await this.getContext();
     const blockType = this.type || blockContext;
-    if (this.ext) {
-      blockName = `${blockName}-${this.ext}`;
+    if (this.name) {
+      blockName = `${blockName}-${this.name}`;
     }
     this.blockName = `${blockName}-${blockType}`;
     this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);

@@ -1,65 +1,88 @@
-import { Component, h, Prop, Watch, Element, Host } from '@stencil/core/internal';
+import { Component, h, Prop, Watch, Host, Element } from '@stencil/core/internal';
 import _ds from '../../../typescript/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 @Component({
-  tag: 'ds-bar',
+  tag: 'ds-header',
   styleUrl: 'header.scss',
 })
 export class DSHeader {
-  contextName = "header";
   CSSClassList: CssClassList;
-  hasContentBefore: boolean;
-  hasContentAfter: boolean;
-  titleProps: {
-    block?: boolean;
-    page?: boolean;
-    content?: boolean;
-    section?: boolean;
-  } = {};
+  hasSubTitle: boolean;
+  hasDescription: boolean;
 
   @Element() container: HTMLElement;
 
-  @Prop({ reflect: true }) ctx: boolean;
   @Prop({ reflect: true }) mods: string | string[] = [];
+  /* @Prop({ reflect: true, mutable: true }) article: boolean;
+  @Prop({ reflect: true, mutable: true }) form: boolean;
+  @Prop({ reflect: true, mutable: true }) page: boolean;
+  @Prop({ reflect: true, mutable: true }) section: boolean;
+  @Prop({ reflect: true, mutable: true }) block: boolean;
+  @Prop({ reflect: true, mutable: true }) sub: boolean;
+  @Prop({ reflect: true, mutable: true }) sup: boolean;
+  @Prop() useContext: boolean; */
 
   @Watch('mods')
   modsChangeHandler( mods: string | string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-header", _ds.props.toArray(mods));
   }
 
-  connectedCallback() {
-    this.hasContentBefore = this.container.querySelector("[slot='before']") !== null;
-    this.hasContentAfter = this.container.querySelector("[slot='after']") !== null;
-  }
-
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList("ds-header", _ds.props.toArray(this.mods));
+  }
+
+  /* getContext() {
+    return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form"; 
+  } */
+  
+  connectedCallback() {
+    /* let { useContext } = this;
+    if (typeof useContext === 'undefined') {
+      const { useContext: useContextFromConfig } = _ds.app.getConfig([ 'useContext' ]);
+      useContext = Boolean(useContextFromConfig);
+    }
+    if (useContext) {
+      const contextContainer = this.container.closest("ds-block");
+      if (contextContainer) {
+        const context = await contextContainer.getContext();
+        if (typeof this[context] === "undefined") {
+          this[context] = true;
+        }
+      }
+    } */
+
+    this.hasSubTitle = this.container.querySelector("[slot='sub-title']") !== null;
+    this.hasDescription = this.container.querySelector("[slot='description']") !== null;
   }
   
   render() {
     return (
       <Host
-        class={{
-          ...this.CSSClassList,
-        }}
+        class={this.CSSClassList}
       >
-        {this.hasContentBefore && (
-          <div class="ds-header__before">
-            <slot name="before" />
-          </div>
-        )}
-        <div class="ds-header__content">
-          <slot />
-        </div>
-        {this.hasContentAfter && (
-          <div class="ds-header__after">
-            <slot name="after" />
-          </div>
+        <hgroup class="ds-header__intro">
+          <ds-title sup
+            class="ds-header__title"
+          >
+            <slot />
+          </ds-title>
+          {this.hasSubTitle && (
+            <ds-title sub 
+              class="ds-header__sub-title"
+            >
+              <slot name="sub-title" />
+            </ds-title>
+          )}
+        </hgroup>
+        {this.hasDescription && (
+          <ds-text text
+            class="ds-header__description"
+          >
+            <slot name="description" />
+          </ds-text>
         )}
       </Host>
     );
   }
 }
-
-

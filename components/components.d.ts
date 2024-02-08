@@ -69,7 +69,7 @@ export namespace Components {
           * @param prop
           * @returns string[]
          */
-        "propToJSON": <T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
         /**
           * Convert an HTML property to a number
           * @param prop
@@ -87,23 +87,19 @@ export namespace Components {
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
     }
-    interface DsBar {
-        "ctx": boolean;
-        "mods": string | string[];
-    }
     interface DsBlock {
         "article": boolean;
         "block": boolean;
-        /**
-          * Use to derivate the main class name
-         */
-        "ext": string;
         "form": boolean;
-        "getContext": () => Promise<"" | "block" | "article" | "section" | "form">;
+        "getContext": () => Promise<"block" | "article" | "section" | "form">;
         /**
           * List of modifiers
          */
         "mods": string | string[];
+        /**
+          * Use to derivate the main class name
+         */
+        "name": string;
         "section": boolean;
         /**
           * Block type classname ( also used to build block classname )
@@ -139,13 +135,13 @@ export namespace Components {
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
         "width": number;
     }
+    interface DsHeader {
+        "mods": string | string[];
+    }
     interface DsInput {
         "name": string;
         "renderMethod": any;
         "useForm": string;
-    }
-    interface DsIntro {
-        "mods": string | string[];
     }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
@@ -186,13 +182,13 @@ export namespace Components {
     }
     interface DsSidebar {
         "ctx": boolean;
+        "hPos": 'left' | 'right';
         /**
           * Hide the sidebar
          */
         "hide": () => Promise<void>;
         "isShown": boolean;
         "mods": string | string[];
-        "position": string | 'left' | 'right' | 'top' | 'bottom';
         /**
           * Show the sidebar
          */
@@ -202,6 +198,7 @@ export namespace Components {
           * @param mustShow Used to specify wether the sidebar must be shown or hidden
          */
         "toggle": (mustShow?: boolean) => Promise<void>;
+        "vPos": 'top' | 'bottom';
     }
     interface DsSlider {
         "mods": string | string[];
@@ -231,12 +228,17 @@ export namespace Components {
         "article": boolean;
         "block": boolean;
         "form": boolean;
+        "modal": boolean;
         "mods": string | string[];
         "page": boolean;
         "section": boolean;
         "sub": boolean;
         "sup": boolean;
         "useContext": boolean;
+    }
+    interface DsTitleBar {
+        "ctx": boolean;
+        "mods": string | string[];
     }
     interface DsToaster {
         "closingDelay": number;
@@ -347,12 +349,6 @@ declare global {
         prototype: HTMLDsAppElement;
         new (): HTMLDsAppElement;
     };
-    interface HTMLDsBarElement extends Components.DsBar, HTMLStencilElement {
-    }
-    var HTMLDsBarElement: {
-        prototype: HTMLDsBarElement;
-        new (): HTMLDsBarElement;
-    };
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
     var HTMLDsBlockElement: {
@@ -394,17 +390,17 @@ declare global {
         prototype: HTMLDsGridItemElement;
         new (): HTMLDsGridItemElement;
     };
+    interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
+    }
+    var HTMLDsHeaderElement: {
+        prototype: HTMLDsHeaderElement;
+        new (): HTMLDsHeaderElement;
+    };
     interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
     }
     var HTMLDsInputElement: {
         prototype: HTMLDsInputElement;
         new (): HTMLDsInputElement;
-    };
-    interface HTMLDsIntroElement extends Components.DsIntro, HTMLStencilElement {
-    }
-    var HTMLDsIntroElement: {
-        prototype: HTMLDsIntroElement;
-        new (): HTMLDsIntroElement;
     };
     interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
     }
@@ -510,6 +506,12 @@ declare global {
         prototype: HTMLDsTitleElement;
         new (): HTMLDsTitleElement;
     };
+    interface HTMLDsTitleBarElement extends Components.DsTitleBar, HTMLStencilElement {
+    }
+    var HTMLDsTitleBarElement: {
+        prototype: HTMLDsTitleBarElement;
+        new (): HTMLDsTitleBarElement;
+    };
     interface HTMLDsToasterElementEventMap {
         "toasterShow": any;
         "toasterShown": any;
@@ -570,14 +572,13 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ds-app": HTMLDsAppElement;
-        "ds-bar": HTMLDsBarElement;
         "ds-block": HTMLDsBlockElement;
         "ds-button": HTMLDsButtonElement;
         "ds-form-context": HTMLDsFormContextElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
+        "ds-header": HTMLDsHeaderElement;
         "ds-input": HTMLDsInputElement;
-        "ds-intro": HTMLDsIntroElement;
         "ds-main": HTMLDsMainElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
@@ -587,6 +588,7 @@ declare global {
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
+        "ds-title-bar": HTMLDsTitleBarElement;
         "ds-toaster": HTMLDsToasterElement;
         "ds-toggle": HTMLDsToggleElement;
         "ds-toggle-group": HTMLDsToggleGroupElement;
@@ -602,22 +604,18 @@ declare namespace LocalJSX {
         "propertyName"?: string;
         "subscriberSelector"?: string;
     }
-    interface DsBar {
-        "ctx"?: boolean;
-        "mods"?: string | string[];
-    }
     interface DsBlock {
         "article"?: boolean;
         "block"?: boolean;
-        /**
-          * Use to derivate the main class name
-         */
-        "ext"?: string;
         "form"?: boolean;
         /**
           * List of modifiers
          */
         "mods"?: string | string[];
+        /**
+          * Use to derivate the main class name
+         */
+        "name"?: string;
         "section"?: boolean;
         /**
           * Block type classname ( also used to build block classname )
@@ -652,13 +650,13 @@ declare namespace LocalJSX {
         "ratioFromProps"?: number | string;
         "width"?: number;
     }
+    interface DsHeader {
+        "mods"?: string | string[];
+    }
     interface DsInput {
         "name"?: string;
         "renderMethod"?: any;
         "useForm"?: string;
-    }
-    interface DsIntro {
-        "mods"?: string | string[];
     }
     interface DsMain {
     }
@@ -686,13 +684,14 @@ declare namespace LocalJSX {
     }
     interface DsSidebar {
         "ctx"?: boolean;
+        "hPos"?: 'left' | 'right';
         "isShown"?: boolean;
         "mods"?: string | string[];
         "onSidebarHidden"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarHide"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarShow"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarShown"?: (event: DsSidebarCustomEvent<any>) => void;
-        "position"?: string | 'left' | 'right' | 'top' | 'bottom';
+        "vPos"?: 'top' | 'bottom';
     }
     interface DsSlider {
         "mods"?: string | string[];
@@ -718,12 +717,17 @@ declare namespace LocalJSX {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
+        "modal"?: boolean;
         "mods"?: string | string[];
         "page"?: boolean;
         "section"?: boolean;
         "sub"?: boolean;
         "sup"?: boolean;
         "useContext"?: boolean;
+    }
+    interface DsTitleBar {
+        "ctx"?: boolean;
+        "mods"?: string | string[];
     }
     interface DsToaster {
         "closingDelay"?: number;
@@ -786,14 +790,13 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "ds-app": DsApp;
-        "ds-bar": DsBar;
         "ds-block": DsBlock;
         "ds-button": DsButton;
         "ds-form-context": DsFormContext;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
+        "ds-header": DsHeader;
         "ds-input": DsInput;
-        "ds-intro": DsIntro;
         "ds-main": DsMain;
         "ds-panel": DsPanel;
         "ds-panel-group": DsPanelGroup;
@@ -803,6 +806,7 @@ declare namespace LocalJSX {
         "ds-slider-item": DsSliderItem;
         "ds-text": DsText;
         "ds-title": DsTitle;
+        "ds-title-bar": DsTitleBar;
         "ds-toaster": DsToaster;
         "ds-toggle": DsToggle;
         "ds-toggle-group": DsToggleGroup;
@@ -815,14 +819,13 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
-            "ds-bar": LocalJSX.DsBar & JSXBase.HTMLAttributes<HTMLDsBarElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             "ds-form-context": LocalJSX.DsFormContext & JSXBase.HTMLAttributes<HTMLDsFormContextElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
+            "ds-header": LocalJSX.DsHeader & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
             "ds-input": LocalJSX.DsInput & JSXBase.HTMLAttributes<HTMLDsInputElement>;
-            "ds-intro": LocalJSX.DsIntro & JSXBase.HTMLAttributes<HTMLDsIntroElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
@@ -832,6 +835,7 @@ declare module "@stencil/core" {
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
+            "ds-title-bar": LocalJSX.DsTitleBar & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
             "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;

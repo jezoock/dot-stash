@@ -99,7 +99,7 @@ export class DSMainTest {
         <ds-trigger type="button" mods="lg" target="#bob" action='next'>next</ds-trigger>
 
         <ds-block>
-          <ds-header slot="block-header">
+          <ds-header>
             <ds-title>
               <h1>Ttitre</h1>
               <h2 slot="sub-title">Sous-titre</h2>
@@ -148,31 +148,29 @@ export class DSMainTest {
           </ds-block> */}
 
           <section class="ds-homepage__history">
-            <ds-block section ext="homepage-history">
-              <header slot="block-header">
+            <ds-block section name="homepage-history">
+              <ds-title-bar slot="header">
+                <ds-button slot="before">
+                  Retour
+                  <ds-icon type="back" slot="before" />
+                </ds-button>
                 <ds-header>
-                  <ds-button slot="before">
-                    Retour
-                    <ds-icon type="back" slot="before" />
-                  </ds-button>
-                  <ds-intro>
-                    <h2>Titre de block</h2>
-                    <h3 slot="sub-title">Sous-titre de block</h3>
-                    <p slot="description">Description de block de test</p>
-                  </ds-intro>
-                  <ds-button slot="after">
-                    <ds-icon type="close" slot="after" />
-                    Fermer
-                  </ds-button>
+                  <h2>Titre de block</h2>
+                  <h3 slot="sub-title">Sous-titre de block</h3>
+                  <p slot="description">Description de block de test</p>
                 </ds-header>
-              </header>
+                <ds-button slot="after">
+                  <ds-icon type="close" slot="after" />
+                  Fermer
+                </ds-button>
+              </ds-title-bar>
 
               <ds-block block>
                 <div>sfhsdhfg</div>
               </ds-block>
               <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
 
-              <footer slot="block-footer">
+              <footer slot="footer">
                 Footer
               </footer>
             </ds-block>
