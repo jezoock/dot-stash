@@ -5,22 +5,22 @@ import Fragment from "stencil-fragment";
 import Translations from './translations';
 import { ButtonLevel } from "../../../../../../ui/button/button-level.enum";
 
-const componentName = "snk-store-note";
+const componentName = "ds-store-note";
 
 @Component({
-  tag: 'snk-store-note',
+  tag: 'ds-store-note',
   styleUrl: './store-note.scss'
 })
 export class SnkStoreNote {
   @Prop() note: string;
   @Prop() isCartActive: boolean;
 
-  @State() displayStoreNotesModal: boolean = false;
+  @State() displayStoreNotesModal = false;
 
 
   private allTranslations = {
-    resto: DS_setTranslations(Translations, "snk-store-note-restaurant"),
-    grocery: DS_setTranslations(Translations, "snk-store-note-grocery"),
+    resto: DS_setTranslations(Translations, "ds-store-note-restaurant"),
+    grocery: DS_setTranslations(Translations, "ds-store-note-grocery"),
   };
 
   private translations = this.allTranslations[DS_getAppTheme()];
@@ -55,7 +55,7 @@ export class SnkStoreNote {
     return (
       <Fragment>
 
-        <snk-two-columns class={componentName}>
+        <ds-two-columns class={componentName}>
 
           <ds-icon
             class={`${componentName}__info-icon`}
@@ -95,10 +95,10 @@ export class SnkStoreNote {
 
           </div>
 
-        </snk-two-columns>
+        </ds-two-columns>
 
         {this.displayStoreNotesModal && (
-          <snk-store-note-modal
+          <ds-store-note-modal
             note={this.note}
           />
         )}
@@ -107,4 +107,4 @@ export class SnkStoreNote {
     );
   }
 
-};
+}

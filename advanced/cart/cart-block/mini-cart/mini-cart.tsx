@@ -43,21 +43,21 @@ export class DSMiniCart {
   @Element() cartContainer: HTMLDivElement;
 
   @Prop() isActive: boolean;
-  @Prop({ mutable: true }) isLoggedIn: boolean = false;
+  @Prop({ mutable: true }) isLoggedIn = false;
   @Prop({ mutable: true, reflect: true }) cart: any;
-  @Prop({ mutable: true, reflect: true }) maxDisplayedProductCount: number = 3;
+  @Prop({ mutable: true, reflect: true }) maxDisplayedProductCount = 3;
   @Prop() isUserLoggedIn: boolean;
   @Prop() locale: string;
 
   @State() loadingCartItems: any = {};
-  @State() isMovModalShown: boolean = false;
-  @State() isModalErrorShown: boolean = false;
+  @State() isMovModalShown = false;
+  @State() isModalErrorShown = false;
   @State() error: { isBlocking: boolean, label: string } = { isBlocking: false, label: '' };
-  @State() askForConfirmation: boolean = false;
-  @State() contentLayerHeight: number = 0;
-  @State() isCollapsed: boolean = true;
+  @State() askForConfirmation = false;
+  @State() contentLayerHeight = 0;
+  @State() isCollapsed = true;
 
-  actionToConfirm: string = "productDelete";
+  actionToConfirm = "productDelete";
   confirmData: any;
   minAmountOrder: any;
   user: any;
@@ -65,11 +65,11 @@ export class DSMiniCart {
   translations: Translations = DS_setTranslations( translations, "ds_miniCart" );
   appTheme: string = DS_getAppTheme();
 
-  displayedContentHeight: number = 0;
-  visibleRowsHeight: number = 0;
-  contentHeight: number = 0;
-  isCollapsible: boolean = false;
-  addedProductToogle: boolean = true;
+  displayedContentHeight = 0;
+  visibleRowsHeight = 0;
+  contentHeight = 0;
+  isCollapsible = false;
+  addedProductToogle = true;
 
   @Watch("cart")
   cartWatcher(newCart, oldCart) {
@@ -279,7 +279,7 @@ export class DSMiniCart {
     this.updatePendingRequests(productId, false);
   }
 
-  requestQuantityUpdate(isUndoable: boolean = false): void {
+  requestQuantityUpdate(isUndoable = false): void {
     this.request_cartItemQuantityUpdate_event.emit({...this.confirmData, isUndoable});
     this.confirmData = null;
   }
@@ -290,8 +290,8 @@ export class DSMiniCart {
   }
 
   stateChangeHandler = (newCart) => {
-    let blockingError: boolean = false;
-    let errorLabel: string = "";
+    let blockingError = false;
+    let errorLabel = "";
 
     if (
       !newCart.deliveryAddress ||
@@ -364,7 +364,7 @@ export class DSMiniCart {
     if (productId) {
       loadingCartItems[productId] = isLoading;
     } else {
-      for (let loadState in loadingCartItems) {
+      for (const loadState in loadingCartItems) {
         loadingCartItems[loadState] = false;
       }
     }
@@ -623,7 +623,7 @@ export class DSMiniCart {
         >
           {isActive ? this.translations.title.activeCart : this.translations.title.inactiveCart}
         </ds-title>
-        <snk-mini-cart-header
+        <ds-mini-cart-header
           class="ds-mini-cart__store"
           store={{
             fullLogoUrl: `${DS_getAppSettings().cdnURL}${storeLogo}`,
@@ -658,7 +658,7 @@ export class DSMiniCart {
               )}
             </Fragment>
           )}
-        </snk-mini-cart-header>
+        </ds-mini-cart-header>
 
         {!isCartEmpty && (
           <div
@@ -707,24 +707,24 @@ export class DSMiniCart {
         {this.askForConfirmation && (
           <Fragment>
             {this.actionToConfirm === "productDelete" && (
-              <snk-confirm-modal
+              <ds-confirm-modal
                 onSnkConfirm={this.confirmProductDeleteHandler}
                 onSnkCancel={this.cancelProductDeleteHandler}
               >
                 <span slot="message">
                   {this.translations.modal.text.productDeleteConfirm}
                 </span>
-              </snk-confirm-modal>
+              </ds-confirm-modal>
             )}
             {this.actionToConfirm === "cartDelete" && (
-              <snk-confirm-modal
+              <ds-confirm-modal
                 onSnkConfirm={this.confirmCartDeleteHandler}
                 onSnkCancel={this.cancelCartDeleteHandler}
               >
                 <span slot="message">
                   {this.translations.modal.text.cartDeleteConfirm}
                 </span>
-              </snk-confirm-modal>
+              </ds-confirm-modal>
             )}
           </Fragment>
         )}
@@ -768,7 +768,7 @@ export class DSMiniCart {
         )}
 
         {this.isMovModalShown && (
-          <snk-confirm-modal
+          <ds-confirm-modal
             onSnkConfirm={this.addMoreItemsButtonClickHandler}
             onSnkCancel={this.keepCartButtonClickHandler}
           >
@@ -787,16 +787,16 @@ export class DSMiniCart {
             <span slot="labelCancelButton">
               {this.translations.modal.text.cancelOrder}
             </span>
-          </snk-confirm-modal>
+          </ds-confirm-modal>
         )}
 
         <footer class="ds-mini-cart__footer">
-          <snk-store-note
+          <ds-store-note
             note={this.cart.noteToStore}
             isCartActive={isActive}
           />
           {isActive && canSwitchToTakeaway && (
-            <snk-click-and-collect-toggle
+            <ds-click-and-collect-toggle
               cartId={this.cart.id}
               reducibleAmount={(reducibleAmountFromTakeaway / 100).toFixed(2)}
               reduciblePercentage={+DS_getAppSettings().clickNCollectCashbackAmount * 100}

@@ -6,7 +6,7 @@ import componentName from "./component-name";
 import { PageName } from "../../../../../../../enums/page-name.enum";
 
 @Component({
-  tag: 'snk-click-and-collect-toggle',
+  tag: 'ds-click-and-collect-toggle',
   styleUrl: './click-and-collect-toggle.scss'
 })
 export class ClickAndCollectToggle {
@@ -62,7 +62,7 @@ export class ClickAndCollectToggle {
   render() {
 
     return (
-      <snk-two-columns class={componentName}>
+      <ds-two-columns class={componentName}>
         <div
           slot="first-column-content"
           class={`${componentName}__icon-container`}
@@ -90,7 +90,7 @@ export class ClickAndCollectToggle {
             </span>
           )}
         </div>
-      </snk-two-columns>
+      </ds-two-columns>
     );
   }
-};
+}

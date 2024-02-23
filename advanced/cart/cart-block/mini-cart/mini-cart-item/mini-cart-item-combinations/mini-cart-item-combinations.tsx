@@ -2,21 +2,21 @@ import { Component, h, Prop } from '@stencil/core';
 import { DS_formatPrice } from '../../../../../../../../utils';
 
 @Component({
-  tag: 'snk-mini-cart-item-combinations',
+  tag: 'ds-mini-cart-item-combinations',
   styleUrl: 'mini-cart-item-combinations.scss'
 })
-export class SNKMiniCartItemCombinations {
+export class DSMiniCartItemCombinations {
 
   @Prop({ mutable: true }) combinations: any[] = [];
   
   render() {
     return (
-      <ul class="snk-mini-cart-item-combinations">
+      <ul class="ds-mini-cart-item-combinations">
         {this.combinations.map( choice => (
-          <li class="snk-mini-cart-item-combinations__combination">
+          <li class="ds-mini-cart-item-combinations__combination">
             <strong>{choice.name} x {choice.quantity}</strong>
             {Boolean(choice.totalPrice) && (
-              <span> ({DS_formatPrice({ price: choice.totalPrice, cents: true, isFrCurrency: false })})</span>
+              <span> ({choice.totalPrice})</span>
             )}
           </li>
         ))}

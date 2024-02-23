@@ -1,0 +1,9 @@
+.ds-title {
+  &.--block {
+    &.--cart {
+      color: snk-color(primary, base);
+      line-height: 1.75rem;
+      letter-spacing: 0.48px;
+    }
+  }
+}

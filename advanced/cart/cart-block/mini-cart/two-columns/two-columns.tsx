@@ -1,9 +1,9 @@
 import { Component, h } from "@stencil/core";
 
-const containerName = "snk-two-columns";
+const containerName = "ds-two-columns";
 
 @Component({
-  tag: 'snk-two-columns',
+  tag: 'ds-two-columns',
   styleUrl: './two-columns.scss'
 })
 export class SnkTwoColumns {
@@ -18,5 +18,5 @@ export class SnkTwoColumns {
         </div>
       </div>
     );
-  };
-};
+  }
+}

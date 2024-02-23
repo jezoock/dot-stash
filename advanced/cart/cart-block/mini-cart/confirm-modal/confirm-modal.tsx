@@ -6,17 +6,17 @@ import { ButtonLevel } from '../../../../../../ui/button/button-level.enum';
 import translations from "./translations";
 
 @Component({
-  tag: 'snk-confirm-modal',
+  tag: 'ds-confirm-modal',
   styleUrl: 'confirm-modal.scss'
 })
-export class SNKConfirmModal {
+export class DSConfirmModal {
 
-  translations: Translations = DS_setTranslations( translations, 'snkConfirmModal');
+  translations: Translations = DS_setTranslations( translations, 'dsConfirmModal');
 
   @Prop({ reflect: true, mutable: true }) modalTitle: string;
 
-  @Event() snkCancel: EventEmitter;
-  @Event() snkConfirm: EventEmitter;
+  @Event() dsCancel: EventEmitter;
+  @Event() dsConfirm: EventEmitter;
 
   constructor() {
     this.cancelButtonClickHandler = this.cancelButtonClickHandler.bind(this);
@@ -24,31 +24,31 @@ export class SNKConfirmModal {
   }
 
   cancelButtonClickHandler() {
-    this.snkCancel.emit();
+    this.dsCancel.emit();
   }
 
   confirmButtonClickHandler() {
-    this.snkConfirm.emit();
+    this.dsConfirm.emit();
   }
   
   render() {
     return (
-      <snk-mini-cart-modal
-        class="snk-confirm-modal"
+      <ds-mini-cart-modal
+        class="ds-confirm-modal"
         modalTitle={this.modalTitle}
         isClosingDisabled={true}
       >
         <div
           slot="content"
-          class="snk-confirm-modal__container"
+          class="ds-confirm-modal__container"
         >
 
-          <p class="snk-confirm-modal__message">
+          <p class="ds-confirm-modal__message">
             <slot name="message" />
           </p>
 
           <ds-button
-            class="snk-confirm-modal__confirm-button"
+            class="ds-confirm-modal__confirm-button"
             useSnack
             buttonLevel={ButtonLevel.PRIMARY}
             buttonMods={[ "cart-block", "checkout", "default", "label" ]}
@@ -64,7 +64,7 @@ export class SNKConfirmModal {
           </ds-button>
 
           <ds-button
-            class="snk-confirm-modal__cancel-button"
+            class="ds-confirm-modal__cancel-button"
             useSnack
             buttonLevel={ButtonLevel.SECONDARY}
             buttonMods={[ "cart-block", "checkout", "default", "label" ]}
@@ -81,7 +81,7 @@ export class SNKConfirmModal {
 
           
         </div>
-      </snk-mini-cart-modal>
+      </ds-mini-cart-modal>
     );
   }
 }

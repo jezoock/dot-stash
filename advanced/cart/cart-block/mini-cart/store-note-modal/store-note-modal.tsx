@@ -8,11 +8,11 @@ import componentName from "./component-name";
 import Translations from './translations';
 
 @Component({
-  tag: 'snk-store-note-modal',
+  tag: 'ds-store-note-modal',
   styleUrl: './store-note-modal.scss'
 })
 export class StoreNoteModal {
-  @Prop({ mutable: true }) note: string = "";
+  @Prop({ mutable: true }) note = "";
 
   private translations = DS_setTranslations(Translations, componentName);
   private textareaMaxLength = 140;
@@ -49,7 +49,7 @@ export class StoreNoteModal {
 
     if (this.note.length) {
       const charactersPerLine = this.textareaColumns;
-      let displayedContent = this.note;
+      const displayedContent = this.note;
       let lineNumber = 1;
       const matchedLineBreaks = this.note.match(/\n/g)?.length || 0;
       let lines = 2 + matchedLineBreaks;
@@ -83,7 +83,7 @@ export class StoreNoteModal {
     const formatted = this.getFormattedContent();
 
     return (
-      <snk-mini-cart-modal
+      <ds-mini-cart-modal
         class={componentName}
         modalTitle={this.translations.addNote}
       >
@@ -91,7 +91,7 @@ export class StoreNoteModal {
           slot="content"
           class={`${componentName}__container`}
         >
-          <snk-textarea
+          <ds-textarea
             content={formatted.content}
             class={`${componentName}__textarea`}
             onTextAreaUpdate={this.updateLocalNoteHandler}
@@ -121,7 +121,7 @@ export class StoreNoteModal {
             {this.translations.confirm}
           </ds-button>
         </div>
-      </snk-mini-cart-modal>
+      </ds-mini-cart-modal>
     );
   }
 }

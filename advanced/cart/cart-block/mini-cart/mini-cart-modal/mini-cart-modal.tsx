@@ -3,12 +3,12 @@ import { PageName } from "../../../../../../../enums/page-name.enum";
 import { TitleType } from "../../../../../../ui/title/title-type.enum";
 
 @Component({
-  tag: "snk-mini-cart-modal"
+  tag: "ds-mini-cart-modal"
 })
-export class SNKMiniCartModal {
-  @Prop({ mutable: true }) modalTitle: string = '';
-  @Prop({ mutable: true }) isClosingDisabled: boolean = false;
-  @Prop({ mutable: true }) isHeaderDisabled: boolean = false;
+export class DSMiniCartModal {
+  @Prop({ mutable: true }) modalTitle = '';
+  @Prop({ mutable: true }) isClosingDisabled = false;
+  @Prop({ mutable: true }) isHeaderDisabled = false;
   
   closeButtonMods: string[] = [  "cart-block", "close" ];
 
@@ -46,4 +46,4 @@ export class SNKMiniCartModal {
       </ds-modal>
     )
   }
-};
+}

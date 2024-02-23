@@ -1,0 +1,31 @@
+.ds-tooltip {
+  @media (min-width: $grid-lg-min) and (max-width: $grid-lg-max) {
+    &__message {
+      font-size: $text_font-size-1;
+      min-width: 180px;
+    }
+  }
+
+  @media (min-width: $grid-sm-min) and (max-width: $grid-md-max), (min-width: $grid-xl-min) {
+    &__message {
+      font-size: $text_font-size-2;
+      min-width: 220px;
+    }
+  }
+
+  @media (max-width: $grid-xs-max) {
+    &__message {
+      font-size: $text_font-size-1;
+      min-width: 200px;
+    }
+  }
+
+  @media (max-width: 320px) {
+    font-size: $text_font-size-1;
+
+    &__message {
+      font-size: $text_font-size-1;
+      min-width: 150px;
+    }
+  }
+}

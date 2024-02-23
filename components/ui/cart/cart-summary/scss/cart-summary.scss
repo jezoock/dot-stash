@@ -1,0 +1,78 @@
+@import "./button.scss";
+@import "./loader.scss";
+@import "./prices-block.scss";
+@import "./tooltip.scss";
+
+.ds-cart-summary {
+  position: sticky;
+  top: 100px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+
+    & > strong {
+      display: block;
+      font-size: $text_font-size-3;
+      font-weight: 700;
+    }
+  }
+
+  &__content {
+    background: #fff;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  &__products {
+    color: color(gray, dark);
+    border-bottom: 1px solid color(gray, light);
+  }
+
+  &__footer {
+  }
+
+  &__sub-total {
+  }
+
+  &__total {
+  }
+
+  &__loader {
+    margin: 0 0 0 0.5rem;
+  }
+
+  @include break-p(null, sm) {
+    &__header {
+      padding: 2rem 1rem 17px 1rem;
+    }
+  }
+
+  @media (max-width: $grid-md-max) {
+    &__content {
+      padding: 0.625rem 1.25rem;
+    }
+  }
+
+  @include break-p(md, md) {
+    &__header {
+      padding: 2rem 0 17px 0;
+    }
+  }
+
+  @include break-p(lg) {
+    margin-top: 85px;
+
+    &__header {
+      padding: 0 0 17px 0;
+    }
+
+    &__content {
+      padding: 1rem 2rem;
+      font-size: $text_font-size-2;
+    }
+
+    &__sub-total {
+      font-size: $text_font-size-2;
+    }
+  }
+}

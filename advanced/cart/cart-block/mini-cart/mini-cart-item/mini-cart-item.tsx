@@ -24,8 +24,8 @@ const componentName = "ds-mini-cart-item";
 export class DSMiniCartItem {
 
   @Prop({ mutable: true }) item: Product | any;
-  @Prop({ mutable: true }) readonly: boolean = false;
-  @Prop({ mutable: true, reflect: true }) debounceDelay: number = 250;
+  @Prop({ mutable: true }) readonly = false;
+  @Prop({ mutable: true, reflect: true }) debounceDelay = 250;
   @Prop() isCartActive: boolean;
 
   translations: Translations = DS_setTranslations(translations, ['ds_miniCartItem']);
@@ -162,7 +162,7 @@ export class DSMiniCartItem {
           )}
 
           {hasCombinations && (
-            <snk-mini-cart-item-combinations combinations={this.item.combinationChoices} />
+            <ds-mini-cart-item-combinations combinations={this.item.combinationChoices} />
           )}
 
           <div class={`${componentName}__pricing`}>

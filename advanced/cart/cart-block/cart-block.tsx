@@ -1,15 +1,4 @@
 import { Component, Event, EventEmitter, h, Listen, Prop, State } from '@stencil/core';
-import {
-  DS_eventDispatch,
-  DS_getDataCy,
-  DS_setTranslations,
-  DS_triggerTrackingEvent,
-} from '../../../../../utils';
-import { translations } from './translations';
-import { EventDetails, SnackbarOptions, Translations } from '../../../../interfaces';
-import { PageName } from '../../../../../enums/page-name.enum';
-import { TitleType } from '../../../../ui/title/title-type.enum';
-import { Universe } from '../../../../../utils/universe';
 import { SNACKBAR_OPTIONS } from './snackbar-options';
 
 @Component({
@@ -26,12 +15,10 @@ export class DSCartBlock {
 
   @Prop({ mutable: true }) carts: any[] = [];
   @Prop() activeCartId: string;
-  @Prop({ mutable: true, reflect: true }) isLoggedIn: boolean = false;
-  @Prop() universe: Universe = Universe.GROCERY;
-  @Prop() locale: string;
+  @Prop({ mutable: true, reflect: true }) isLoggedIn = false;
 
-  @State() showContent: boolean = false;
-  @State() popState: boolean = true;
+  @State() showContent = false;
+  @State() popState = true;
   @State() snackBar: SnackbarOptions = {
     isSnackBarShown: false,
     message: "",
@@ -43,7 +30,7 @@ export class DSCartBlock {
   };
 
   translations: Translations = DS_setTranslations( translations, "ds_cartBlock" );
-  sidebar: HTMLDSSidebarElement;
+  sidebar: HTMLDsSidebarElement;
   timeout: NodeJS.Timeout;
 
   //#endregion
@@ -129,7 +116,7 @@ export class DSCartBlock {
     const urlParams: URLSearchParams = new URLSearchParams(
       window.location.search
     );
-    const myParam: string = "openCart";
+    const myParam = "openCart";
 
     if (urlParams.has(myParam)) {
       const newUrl = window.location.href.split("?");
@@ -248,7 +235,7 @@ export class DSCartBlock {
 
     return (
       <div class="ds-cart-block">
-        <ds-button
+        <ds-trigger
           class="ds-cart-block__icon"
           onClick={this.cartIconClickHandler}
           buttonType="button"
@@ -258,9 +245,9 @@ export class DSCartBlock {
             "ds-cart-block__count": this.universe === Universe.GROCERY,
             "ds-cart-block__count-resto": this.universe === Universe.RESTAURANT,
           }}>{activeCart?.productCount || 0}</span>
-        </ds-button>
+        </ds-trigger>
 
-        <snk-sidebar
+        <ds-sidebar
           ref={(el) => (this.sidebar = el)}
           class="ds-cart-block__content"
           mods="cart"
@@ -270,17 +257,11 @@ export class DSCartBlock {
               slot="header"
               titleType={TitleType.TITLE2}
               mods={["block", "cart"]}
-              heading={3}
-              
-              dataCy={{
-                pageName: PageName.LOGIN,
-                elementName: "cartBlockTitle",
-              }}
             >
               {this.translations.title.orders}
             </ds-title>
             {this.snackBar.isSnackBarShown && (
-              <snk-snackbar
+              <ds-snackbar
                 message={this.snackBar.message}
                 type={this.snackBar.type}
                 undoLabel={this.snackBar.undoLabel}
@@ -311,18 +292,14 @@ export class DSCartBlock {
               ) : (
                 <p
                   class="ds-cart-block__empty-cart"
-                  data-cy={DS_getDataCy({
-                    pageName: PageName.CART,
-                    elementType: "Label",
-                    elementName: "CartEmpty",
-                  })}
+                 
                 >
                   {this.translations.empty}
                 </p>
               )}
             </div>
           </ds-block>
-        </snk-sidebar>
+        </ds-sidebar>
       </div>
     );
   }

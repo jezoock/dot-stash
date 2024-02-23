@@ -71,7 +71,7 @@ export class DSTrigger {
   eventHandler() {
     if(this.targetComponent) {
       const [ action, args ] = this.action.split(/:(.*)/s);
-      this.targetComponent[action](..._ds.props.fromJSON(args||[]));
+      this.targetComponent[action]?.(..._ds.props.fromJSON(args||[]));
     }
   }
 

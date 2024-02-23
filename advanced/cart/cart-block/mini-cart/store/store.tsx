@@ -1,14 +1,14 @@
 import { Component, h, Prop } from '@stencil/core';
 
 @Component({
-  tag: 'snk-mini-cart-store',
+  tag: 'ds-mini-cart-store',
   styleUrl: 'store.scss'
 })
-export class SNKMiniCartStore {
+export class DSMiniCartStore {
   
   @Prop() store: any = {};
 
-  hasLogo: boolean = false;
+  hasLogo = false;
 
   componentWillLoad() {
     this.hasLogo = Boolean(this.store.fullLogoUrl);
@@ -50,11 +50,11 @@ export class SNKMiniCartStore {
 
     return (
       <a
-        class="snk-mini-cart-store"
+        class="ds-mini-cart-store"
         href={fullUrl}
       >
         <span class={{
-          'snk-mini-cart-store__logo': true,
+          'ds-mini-cart-store__logo': true,
           '--pink-placeholder': !this.hasLogo
         }}>
           {this.hasLogo && (
@@ -64,10 +64,10 @@ export class SNKMiniCartStore {
             />
           )}
         </span>
-        <div class="snk-mini-cart-store__name">
-          <div class="snk-mini-cart-store__name-first-part">{shopNameStart}</div>
+        <div class="ds-mini-cart-store__name">
+          <div class="ds-mini-cart-store__name-first-part">{shopNameStart}</div>
           {shopNameEnd && (
-            <div class="snk-mini-cart-store__name-second-part">{shopNameEnd}</div>
+            <div class="ds-mini-cart-store__name-second-part">{shopNameEnd}</div>
           )}
         </div>
       </a>

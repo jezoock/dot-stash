@@ -1,0 +1,12 @@
+.snk-store-note-modal {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__confirm-note {
+    margin: 1.5rem 0 0 0;
+  }
+}
