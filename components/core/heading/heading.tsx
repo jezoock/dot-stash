@@ -3,10 +3,10 @@ import _ds from '../../../typescript/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 @Component({
-  tag: 'ds-header',
-  styleUrl: 'header.scss',
+  tag: 'ds-heading',
+  styleUrl: 'heading.scss',
 })
-export class DSHeader {
+export class DSHeading {
   CSSClassList: CssClassList;
   hasSubTitle: boolean;
   hasDescription: boolean;
@@ -25,11 +25,11 @@ export class DSHeader {
 
   @Watch('mods')
   modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-header", _ds.props.toArray(mods));
+    this.CSSClassList = _ds.props.toClassList("ds-heading", _ds.props.toArray(mods));
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-header", _ds.props.toArray(this.mods));
+    this.CSSClassList = _ds.props.toClassList("ds-heading", _ds.props.toArray(this.mods));
   }
 
   /* getContext() {
@@ -61,27 +61,27 @@ export class DSHeader {
       <Host
         class={this.CSSClassList}
       >
-        <hgroup class="ds-header__intro">
+        <hgroup class="ds-heading__intro">
           <ds-title sup
-            class="ds-header__title"
+            class="ds-heading__title"
           >
             <slot />
           </ds-title>
           {this.hasSubTitle && (
             <ds-title sub 
-              class="ds-header__sub-title"
+              class="ds-heading__sub-title"
             >
               <slot name="sub-title" />
             </ds-title>
           )}
+          {this.hasDescription && (
+            <ds-text text
+              class="ds-heading__description"
+            >
+              <slot name="description" />
+            </ds-text>
+          )}
         </hgroup>
-        {this.hasDescription && (
-          <ds-text text
-            class="ds-header__description"
-          >
-            <slot name="description" />
-          </ds-text>
-        )}
       </Host>
     );
   }

@@ -135,7 +135,7 @@ export namespace Components {
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
         "width": number;
     }
-    interface DsHeader {
+    interface DsHeading {
         "mods": string | string[];
     }
     interface DsInput {
@@ -145,6 +145,18 @@ export namespace Components {
     }
     interface DsMain {
         "getData": (key: string) => Promise<Record<string, any>>;
+    }
+    interface DsNavMenu {
+        "currentActiveItemId": string;
+        "mods": string|string[];
+    }
+    interface DsNavMenuItem {
+        "depth": number;
+        "dsItemId": string;
+        "hasChildren": boolean;
+        "isActive": boolean;
+        "isAnimated": boolean;
+        "type": string;
     }
     interface DsPanel {
         "expanded": boolean;
@@ -307,6 +319,10 @@ export interface DsButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsButtonElement;
 }
+export interface DsNavMenuItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsNavMenuItemElement;
+}
 export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelElement;
@@ -390,11 +406,11 @@ declare global {
         prototype: HTMLDsGridItemElement;
         new (): HTMLDsGridItemElement;
     };
-    interface HTMLDsHeaderElement extends Components.DsHeader, HTMLStencilElement {
+    interface HTMLDsHeadingElement extends Components.DsHeading, HTMLStencilElement {
     }
-    var HTMLDsHeaderElement: {
-        prototype: HTMLDsHeaderElement;
-        new (): HTMLDsHeaderElement;
+    var HTMLDsHeadingElement: {
+        prototype: HTMLDsHeadingElement;
+        new (): HTMLDsHeadingElement;
     };
     interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
     }
@@ -407,6 +423,29 @@ declare global {
     var HTMLDsMainElement: {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
+    };
+    interface HTMLDsNavMenuElement extends Components.DsNavMenu, HTMLStencilElement {
+    }
+    var HTMLDsNavMenuElement: {
+        prototype: HTMLDsNavMenuElement;
+        new (): HTMLDsNavMenuElement;
+    };
+    interface HTMLDsNavMenuItemElementEventMap {
+        "dsMenuItemClick": any;
+    }
+    interface HTMLDsNavMenuItemElement extends Components.DsNavMenuItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsNavMenuItemElementEventMap>(type: K, listener: (this: HTMLDsNavMenuItemElement, ev: DsNavMenuItemCustomEvent<HTMLDsNavMenuItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsNavMenuItemElementEventMap>(type: K, listener: (this: HTMLDsNavMenuItemElement, ev: DsNavMenuItemCustomEvent<HTMLDsNavMenuItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsNavMenuItemElement: {
+        prototype: HTMLDsNavMenuItemElement;
+        new (): HTMLDsNavMenuItemElement;
     };
     interface HTMLDsPanelElementEventMap {
         "panelShow": any;
@@ -577,9 +616,11 @@ declare global {
         "ds-form-context": HTMLDsFormContextElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
-        "ds-header": HTMLDsHeaderElement;
+        "ds-heading": HTMLDsHeadingElement;
         "ds-input": HTMLDsInputElement;
         "ds-main": HTMLDsMainElement;
+        "ds-nav-menu": HTMLDsNavMenuElement;
+        "ds-nav-menu-item": HTMLDsNavMenuItemElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
         "ds-rsp": HTMLDsRspElement;
@@ -650,7 +691,7 @@ declare namespace LocalJSX {
         "ratioFromProps"?: number | string;
         "width"?: number;
     }
-    interface DsHeader {
+    interface DsHeading {
         "mods"?: string | string[];
     }
     interface DsInput {
@@ -659,6 +700,19 @@ declare namespace LocalJSX {
         "useForm"?: string;
     }
     interface DsMain {
+    }
+    interface DsNavMenu {
+        "currentActiveItemId"?: string;
+        "mods"?: string|string[];
+    }
+    interface DsNavMenuItem {
+        "depth"?: number;
+        "dsItemId"?: string;
+        "hasChildren"?: boolean;
+        "isActive"?: boolean;
+        "isAnimated"?: boolean;
+        "onDsMenuItemClick"?: (event: DsNavMenuItemCustomEvent<any>) => void;
+        "type"?: string;
     }
     interface DsPanel {
         "expanded"?: boolean;
@@ -795,9 +849,11 @@ declare namespace LocalJSX {
         "ds-form-context": DsFormContext;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
-        "ds-header": DsHeader;
+        "ds-heading": DsHeading;
         "ds-input": DsInput;
         "ds-main": DsMain;
+        "ds-nav-menu": DsNavMenu;
+        "ds-nav-menu-item": DsNavMenuItem;
         "ds-panel": DsPanel;
         "ds-panel-group": DsPanelGroup;
         "ds-rsp": DsRsp;
@@ -824,9 +880,11 @@ declare module "@stencil/core" {
             "ds-form-context": LocalJSX.DsFormContext & JSXBase.HTMLAttributes<HTMLDsFormContextElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
-            "ds-header": LocalJSX.DsHeader & JSXBase.HTMLAttributes<HTMLDsHeaderElement>;
+            "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
             "ds-input": LocalJSX.DsInput & JSXBase.HTMLAttributes<HTMLDsInputElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
+            "ds-nav-menu": LocalJSX.DsNavMenu & JSXBase.HTMLAttributes<HTMLDsNavMenuElement>;
+            "ds-nav-menu-item": LocalJSX.DsNavMenuItem & JSXBase.HTMLAttributes<HTMLDsNavMenuItemElement>;
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
