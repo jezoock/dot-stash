@@ -1,0 +1,58 @@
+.ds-listing-toolbar {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid ds-color(gray, light);
+  height: 2rem;
+  flex-wrap: wrap;
+  
+  &__filter-button {
+    padding: 0 0.5rem 0 0;
+    margin: 0 1.5rem -2rem 0;
+    background: #fff;
+  }
+  
+  &__product-count {
+    & ds-text {
+      background: #fff;
+      padding: 0 0.5rem;
+    }
+    flex-grow: 1;
+    margin: 0 0 -1.75rem 0;
+  }
+  
+  &__sort-by {
+    background: #fff;
+    padding: 0 0 0 0.5rem;
+    margin: 0 0 -2rem 1.5rem;
+  }
+
+  @include break-p(null,md) {
+    justify-content: flex-end;
+
+    &__product-count {
+      & .--product-count {
+        display: none;
+      }
+
+      & strong {
+        font-weight: normal;
+        font-size: 0.875rem;
+        line-height: 1.5rem;
+      }
+    }
+  }
+
+  @include break-p(md) {
+    justify-content: space-between;
+  }
+}
+
+.ds-listing-sorter {
+  &__label {
+    display: none;
+  }
+  
+  &__dropdown {
+
+  }
+}

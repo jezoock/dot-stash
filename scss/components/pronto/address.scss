@@ -1,0 +1,78 @@
+.address-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  row-gap: 2rem;
+  flex-wrap: wrap;
+  padding: 2rem 0;
+}
+
+
+.ds-address {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  padding: 1rem;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &__body { }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: align-items;
+    padding: 1rem 0 0 0;
+
+    & ds-trigger {
+      margin: 0 0 0 1rem;
+    }
+  }
+  
+  & h4 {
+    font-weight: bold;
+    padding: 0 0 0.25rem 0;
+    color: color(color-2, base);
+  }
+
+  & address {
+    font-size: 0.875rem;
+    color: color(color-2, base);
+  }
+
+  &__footer {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    text-align: right;
+  }
+
+  @include break-p(null, sm) {
+    width: 100%;
+  }
+  @include break-p(sm) {
+    width: calc(50% - 1rem);
+  }
+}
+
+.ds-checkout-address {
+  &__title {
+    text-transform: uppercase;
+    color: ds-color(secondary, base);
+    padding: 1rem 0;
+  }
+
+  & .next-step {
+    padding: 2rem 0;
+    text-align: center; 
+    & ds-trigger {
+      margin: 0 1rem;
+    }
+  }
+
+  & .add-address {
+    text-align: center;
+    padding: 0 0 2rem 0;
+  }
+}

@@ -1,0 +1,14 @@
+.ds-sticky-cart-button {
+  position: fixed;
+  z-index: 10;
+  transition: opacity ease 0.4s;
+  cursor: pointer;
+
+  &:not(.--is-shown) {
+    opacity: 0;
+  }
+
+  &.--is-shown {
+    opacity: 1;
+  }
+}

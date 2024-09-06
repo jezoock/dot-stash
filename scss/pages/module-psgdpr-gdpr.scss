@@ -1,0 +1,29 @@
+@import '../pages.scss';
+
+.--module-psgdpr-gdpr {
+  & .psgdprinfo17 {
+    background: transparent;
+    padding: 0 1rem;
+    margin: 0;
+
+    & h2 {
+      font-weight: bold;
+      padding: 0 0 1rem 0;
+      color: ds-color(secondary, base);
+    }
+
+    & p {
+      padding: 0 0 1rem 0;
+      & a {
+        font-weight: bold;
+        color: ds-color(secondary, base );
+      }
+    }
+    
+    & #exportDataToPdf,
+    & #exportDataToCsv {
+      display: block;
+      margin: 0 0 1.5rem 0;
+    }
+  }
+}

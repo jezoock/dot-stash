@@ -1,0 +1,31 @@
+.ds-title {
+  &.--sub {
+    font-family: font(family, sub-title);
+    color: color(color-2, base);
+    text-align: center;
+    &:before {
+      background-color: color(color-2, base);
+      content: '';
+      display: block;
+    }
+    /* @media (max-width: $grid-sm-max) {
+      font-size: 1.25rem;
+      line-height: 1.5rem;
+      padding: 0 0 1.25rem 0;
+      &:before {
+        margin: 1.25rem auto;
+        width: 100px;
+        height: 1px;
+      }
+    }
+    @media (min-width: $grid-md-min) {
+      font-size: 1.75rem;
+      line-height: 4rem;
+      &:before {
+        margin: 2.5rem auto;
+        width: 200px;
+        height: 2px;
+      }
+    } */
+  }
+}

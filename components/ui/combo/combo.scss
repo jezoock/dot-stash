@@ -1,0 +1,122 @@
+.ds-combo {
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: inherit;
+
+  &__selected-option {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  & > menu {
+    position: relative;
+  }
+  
+  &__option-list {
+    position: absolute;
+    top: 0.5rem;
+    z-index: 100;
+    overflow-x: hidden;
+    width: 100%;
+    > * {
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+  }
+
+  &.--position-top {
+    &__option-list {
+      bottom: 0;
+    }
+  }
+
+  &.--position-right {
+    &__option-list {
+      left: 0;
+    }
+  }
+
+  &.--position-bottom {
+    &__option-list {
+      top: 0;
+    }
+  }
+
+  &.--position-left {
+    &__option-list {
+      right: 0;
+    }
+  }
+
+  &__option {
+    & > span,
+    & > a {
+      display: block;
+      white-space: nowrap;
+    }
+    
+    &.--selected {
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &.--default {
+    & .ds-combo {
+      &__selected-option {
+      }
+      &__option {
+        &-list {
+          top: 3.25rem;
+          right: -1px;
+        }
+      }
+      &.--open {
+      }
+    }
+  }
+
+  &.--alt {
+    & .ds-combo {
+      &__option {
+        &-list {
+        }
+      }
+      &__selected-option {
+      }
+    }
+  }
+
+  &.--image {
+    & .ds-combo__option-list {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      & > li {
+        position: relative;
+        overflow: hidden;
+        padding: 0;
+        & > span {
+          display: inline-block;
+          width: 100%;
+          text-align: center;
+          position: absolute;
+          top: 0;
+          left: 0.25rem;
+          z-index: 10;
+        }
+      }
+    }
+  }
+}

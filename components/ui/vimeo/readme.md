@@ -1,0 +1,76 @@
+# ds-video
+
+
+
+<!-- Auto Generated Below -->
+
+
+## Properties
+
+| Property      | Attribute     | Description | Type                 | Default     |
+| ------------- | ------------- | ----------- | -------------------- | ----------- |
+| `autoplay`    | `autoplay`    |             | `boolean`            | `false`     |
+| `controls`    | `controls`    |             | `boolean`            | `false`     |
+| `loop`        | `loop`        |             | `boolean`            | `false`     |
+| `mods`        | --            |             | `string[]`           | `[]`        |
+| `playsinline` | `playsinline` |             | `boolean`            | `false`     |
+| `poster`      | `poster`      |             | `string`             | `undefined` |
+| `sources`     | `sources`     |             | `string \| string[]` | `[]`        |
+
+
+## Methods
+
+### `mute() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `pause() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `play() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `stop() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `unmute() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

@@ -1,0 +1,17 @@
+@import '../pages.scss';
+
+.ds-customer-page {
+  &__menu {
+    display: none;
+  }
+
+  &__body {
+    flex-grow: 1;
+    max-width: unset;
+    width: 100%;
+  }
+}
+
+#customer-form {
+  padding: 3rem 0 0 0;
+}

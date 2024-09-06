@@ -1,0 +1,110 @@
+@import 'scss/title.scss';
+
+.ds-cart {
+  & .cart-items {
+    & .cart-item {
+      /* @include break-p(null, sm) {
+        & .product-line-grid {
+          text-align: center;
+          padding: 0 1rem;
+          &-body {
+            & .product-line-info {
+              & .label {
+                text-align: center;
+                padding: 0 0 1rem 0;
+              }
+            }
+            & .product-actions {
+              text-align: center;
+              flex-direction: column;
+              & .qty {
+                margin: 0 0 0.5rem 0 !important;
+                & input {
+                  text-align: center;
+                }
+              }
+            }
+          }
+        }
+      }
+      @include break-p(md) {
+        padding: 4rem 0 0 1.5rem;
+        & .product-line-grid {
+          display: flex;
+          justify-content: flex-start;
+        }
+      } */
+
+      & .product-line-grid {
+        &-left {
+          width: auto;
+          padding: 0 3rem 0 0;
+          & .product-image {
+            & img {
+              width: 295px;
+              max-width: none;
+            }
+          }
+        }
+        &-body {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 1rem 0;
+          & .product-line-info {
+            & > strong {
+              text-transform: uppercase;
+              font-weight: bold;
+              color: color(color-2, base);
+              display: block;
+              font-size: 1.75rem;
+              line-height: 1.75rem;
+              padding: 0 0 1.25rem 0;
+            }
+            & .label {
+              
+              color: color(color-2, base);
+              font-size: 1.25rem;
+              line-height: 1.25rem;
+              display: block;
+            }
+          }
+          & .product-price {
+            & .price {
+              display: block;
+              color: color(color-2, base);
+              
+              font-size: 1.75rem;
+            }
+          }
+          & .product-actions {
+            display: flex;
+            align-items: center;
+            & .qty {
+              width: calc(50% - 0.75rem);
+              margin: 0 0.75rem 0 0;
+              display: inline-block;
+            }
+            & .cart-line-product-actions {
+              display: inline-block;
+              & .remove-from-cart {
+                display: inline-block;
+                color: color(color-2, base);
+                text-transform: uppercase;
+                & i {
+                  display: none;
+                }
+                &:before {
+                  display: inline-block;
+                  vertical-align: top;
+                  padding: 0 0.25rem 0;
+                  /* @include --icon(close); */
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+.page-order-detail {
+  font-size: 0.875rem;
+  color: #7a7a7a;
+}
+.page-order-detail .box {
+  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.2);
+  background: #fff;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.page-order-detail h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #232323;
+  margin-bottom: 1rem;
+}
+.page-order-detail #order-infos ul {
+  margin: 0;
+}
+.page-order-detail #order-history .history-lines .history-line {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f6f6f6;
+}
+.page-order-detail #order-history .history-lines .history-line:last-child {
+  border-bottom: 0;
+}
+.page-order-detail #order-history .history-lines .history-line .label {
+  display: inline-block;
+  margin: 0.25rem 0;
+  padding: 0.25rem 0.375rem;
+  color: #fff;
+  border-radius: 3px;
+}
+.page-order-detail .addresses {
+}
+.page-order-detail .addresses h4 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.page-order-detail #order-products.return {
+  margin-bottom: 1rem;
+}
+.page-order-detail #order-products.return th.head-checkbox {
+  width: 30px;
+}
+.page-order-detail #order-products.return td {
+  padding: 1.375rem 0.75rem;
+}
+.page-order-detail #order-products.return td.qty {
+  min-width: 125px;
+}
+.page-order-detail #order-products.return td.qty .current {
+  width: 30%;
+  float: left;
+  text-align: right;
+  padding-right: 0.5rem;
+}
+.page-order-detail #order-products.return td.qty .select {
+  width: 70%;
+  float: left;
+  margin: -0.625rem 0;
+  padding-left: 0.25rem;
+}
+.page-order-detail #order-products.return td.qty .select select {
+  text-align: center;
+}
+.page-order-detail .order-items {
+  padding: 0 !important;
+}
+.page-order-detail .order-items .order-item {
+  padding: 1rem 1rem 0;
+  border-bottom: 1px solid #f6f6f6;
+}
+.page-order-detail .order-items .order-item .checkbox {
+  width: 30px;
+  float: left;
+  padding: 0 0.9375rem;
+}
+.page-order-detail .order-items .order-item .content {
+  width: calc(100% - 30px);
+  float: left;
+  padding: 0 0.9375rem;
+}
+.page-order-detail .order-items .order-item .desc {
+  margin-bottom: 1rem;
+}
+.page-order-detail .order-items .order-item .desc .name {
+  font-weight: 700;
+}
+.page-order-detail .order-items .order-item .qty {
+  margin-bottom: 1rem;
+}
+.page-order-detail .order-items .order-item .qty .q,
+.page-order-detail .order-items .order-item .qty .s {
+  margin-bottom: 0.25rem;
+}
+.page-order-detail .messages .message {
+  margin-top: 0.5rem;
+  border-bottom: 1px solid #f6f6f6;
+}
+.page-order-detail .messages .message:last-child {
+  border-bottom: 0;
+}
+.page-order-detail .messages .message > div {
+  margin-bottom: 0.5rem;
+}
+.page-order-detail .customization {
+  margin-top: 0.75rem;
+}

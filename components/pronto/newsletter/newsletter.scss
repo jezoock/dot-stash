@@ -1,0 +1,86 @@
+@import 'scss/title.scss';
+@import 'scss/button.scss';
+
+.ds-newsletter {
+  &__header {
+    & p {
+      text-align: center;
+      color: color(color-2, base);
+      padding: 0 0 1.5rem;
+    }
+  }
+  & fieldset {
+    margin: 0 auto;
+    & input {
+      display: block;
+      border: 1px solid color(color-2, base);
+      line-height: 3rem;
+      &::placeholder {
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  & .psgdpr_consent_message {
+    display: flex;
+    align-items: flex-start;
+    max-width: 760px;
+    margin: 0 auto;
+    & input[type='checkbox'] + span {
+      margin: 0.25rem 0.25rem 0 0;
+      & + span {
+        flex: none !important;
+        margin: 0;
+        color: color(color-2, base);
+        font-size: 0.875rem;
+      }
+    }
+  }
+  & .custom-checkbox {
+    display: block !important;
+  }
+  & .custom-checkbox span {
+    display: inline-block !important;
+  }
+  /* @media (max-width: $grid-sm-max) {
+    padding: 0 2rem 2.5rem 2rem;
+    &__header {
+      & p {
+        font-size: 1rem;
+      }
+    }
+    & fieldset {
+      padding: 0 0 0.75rem 0;
+      & input {
+        width: calc(100% - 2px);
+        padding: 0 0.5rem;
+        text-align: center;
+        margin: 0 0 0.5rem 0;
+      }
+    }
+    &__submit-button {
+    }
+  }
+  @media (min-width: $grid-md-min) {
+    padding: 0 4rem 4rem 4rem;
+    &__header {
+      & p {
+        font-size: 1.25rem;
+      }
+    }
+    & fieldset {
+      max-width: 760px;
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 0 0.75rem 0;
+      & input {
+        width: calc(100% - 192px);
+        line-height: 3rem;
+        padding: 0 1.25rem;
+      }
+    }
+    &__submit-button {
+      width: 190px;
+    }
+  } */
+}

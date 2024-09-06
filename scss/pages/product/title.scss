@@ -1,0 +1,144 @@
+.ds-title {
+  &.--product {
+    &.--brand {
+      color: ds-color(primary, base);
+      letter-spacing: 0.32px;
+      line-height: 1rem;
+      font-size: 1rem;
+      font-family: "Montserrat";
+      text-transform: uppercase;
+    }
+
+    &.--name {
+      color: #000;
+      line-height: 65px;
+      font-size: 55px;
+      font-family: "Montserrat";
+      text-transform: uppercase;
+
+      & span {
+        display: block;
+        font-size: 22px;
+        line-height: 24px;
+      }
+    }
+
+    &.--features {
+      font-weight: bold;
+      font-family: "Montserrat";
+      line-height: 19px;
+      letter-spacing: 1.28px;
+      font-size: 1rem;
+      color: ds-color(primary, base);
+    }
+
+    &[form] {
+      &[label] {
+        letter-spacing: 1.28px;
+        font-family: "Montserrat";
+        line-height: 19px;
+        font-size: 1rem;
+        color: ds-color(primary, base);
+        white-space: nowrap;
+        /* overflow: hidden;
+        text-overflow: ellipsis; */
+      }
+    }
+  }
+
+
+  &[ctx="product"] {
+    &:not([sub]) {
+      &[page] {
+        color: #000;
+      }
+    }
+
+    &[sub] {
+      &[page] {
+        color: ds-color(gray, light);
+      }
+    }
+
+    @include break-p(null,md) {
+      &:not([sub]) {
+        &[page] {
+          padding: 0 0 2.5rem 0;
+          font: normal normal bold 1.875rem/2.25rem Montserrat;
+        }
+      }
+
+      &[sub] {
+        &[page] {
+          font: normal normal normal 0.75rem/1rem Montserrat;
+        }
+      }
+    }
+    
+    @include break-p(md) {
+      &:not([sub]) {
+        &[page] {
+          padding: 0 0 3.5rem 0;
+          font: normal normal bold 2.1875rem/2.625rem Montserrat;
+        }
+      }
+
+      &[sub] {
+        &[page] {
+          font: normal normal normal 15px/18px Montserrat;
+        }
+      }
+    }
+  }
+}
+
+.ds-panel-group {
+  &.ds-product-page__description {
+
+    @include break-p(null, md) {
+      justify-content: space-between;
+    }
+    
+    & .ds-panel {
+      &__title {
+        @include break-p(null, md) {
+          font-size: 15px !important;
+        }
+        
+        @include break-p(md) {
+          &:nth-child(1) {
+            width: 33%;
+          }
+        }
+
+        &:after {
+          display: none;
+        }
+        
+        font-size: 1rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 0 0 1rem 0;
+        
+        /* max-width: 195px; */
+        white-space: nowrap;
+      }
+
+    }
+    & [expanded] {
+      & .ds-panel {
+        &__title {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    & ds-panel:not([expanded]) {
+      & > .ds-panel {
+        &__content {
+          padding: 0;
+        }
+      }
+    }
+  }
+}

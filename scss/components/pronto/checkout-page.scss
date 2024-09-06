@@ -1,0 +1,147 @@
+
+.ds-checkout-page {
+  max-width: 1700px;
+  margin: 0 auto;
+
+  &__header {
+    width: 100%;
+    padding: 2rem 0;
+    display: flex;
+
+    & ds-trigger {
+      padding: 0.75rem 1rem;
+
+      &.--hidden {
+        display: none;
+      }
+    }
+  }
+
+  &__content {
+    
+  }
+
+  &__body {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: start;
+  }
+
+  &__cart-summary {
+    padding: 4% 4% 2% 4%;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #000;
+  }
+
+  &__footer {
+    width: 100%;
+    padding: 0 0 3rem 0;
+    text-align: center;
+  }
+
+  @include break-p(null, md) {
+    &__header {
+      flex-wrap: wrap;
+
+      & ds-trigger {
+        border: none;
+      }
+
+      & ds-title {
+      }
+    }
+  }
+
+  @include break-p(md) {
+    &__header {
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  @include break-p(null, lg) {
+    padding: 0 3vw;
+
+    &__header {
+      & .ds-button {
+        min-width: auto;
+      }
+    }
+
+    &__content {
+      width: 100%;
+      padding: 1rem 0 0 0;
+    }
+
+    &__cart-summary {
+      margin: 2rem 0;
+      width: 100%;
+    }
+  }
+
+  @include break-p(lg) {
+    padding: 0 1vw;
+
+    &__body {
+      padding: 0 0 3rem 0;
+    }
+
+    &__content {
+      padding: 0 3vw 0 0;
+      flex: 1;
+    }
+    
+    &__cart-summary {
+      flex: 1;
+      max-width: 520px;
+
+    }
+
+    
+  }
+}
+
+.checkout-step {
+  overflow: hidden;
+
+  &.--close {
+    width: 0;
+    height: 0;
+  }
+}
+
+.ds-checkout-step-bar {
+  overflow: hidden;
+
+  &.--close {
+    height: 0;
+    width: 0;
+  }
+}
+
+
+.ds-title {
+  &.--checkout {
+    &[block] {
+      padding: 0 0 2rem 0;
+    }
+
+    &[page] {
+      width: 100%;
+      text-align: center;
+      
+      @include break-p(null, md) {
+        font-size: 32px !important;
+        padding: 2rem 0 1.5rem 0;
+      }
+      
+      @include break-p(md) {
+        font-size: 70px !important;
+        padding: 4rem 0 3rem 0;
+
+      }
+    }
+  }
+}

@@ -1,10 +1,39 @@
 import { AnyHTMLElement } from "@stencil/core/internal";
 import { SassStyles } from "./interfaces/sass-styles";
 
+const config = {
+  useContext: false,
+}
+
+export type AnyDsContextComponentElement = any;
+export type DsComponentContextType = "block" | 'article' | "section" | "form" | "modal" | "page";
+export const DsComponentContext: DsComponentContextType[] = ["block", 'article', "section", "form", "modal", "page"]
+
 const _ds = {
+  app: {
+    component: null,
+
+    getConfig: (keys: string[]): Record<string, unknown> => {
+      const pairs = {};
+      keys.map( key => pairs[key] = config[key] )
+      return pairs;
+    },
+    
+    addToCart: async (id: string, attributeId: string, attributeGroupId: string, customizationId: string) => {
+      _ds.app.component.addToCart(id, attributeId, attributeGroupId, customizationId);
+    }
+  },
+
+  context: {
+    get: (element: AnyDsContextComponentElement): DsComponentContextType => {
+      return DsComponentContext.find( context => element[context] );
+    },
+  },
+
   env: {
     touchSupport: () => 'touchend' in window,
   },
+
   css: {
     set: ( pairs: Partial<CSSStyleDeclaration>, elements: HTMLElement[] ): void => {
       Object.keys( pairs ).forEach( prop => {
@@ -13,11 +42,13 @@ const _ds = {
         })
       });
     },
+
     get: ( props: (keyof CSSStyleDeclaration)[], element: HTMLElement ): CSSRule | object => {
       const CSSProps = {};
       props.map( prop => CSSProps[prop] = element.style[prop] )
       return CSSProps;
     },
+
     toNumber: (prop: keyof CSSStyleDeclaration, element: HTMLElement) => parseInt((element.style[prop] as string).replace('px',''), 10),
   },
   
@@ -26,11 +57,16 @@ const _ds = {
       ? false
       : typeof prop === 'boolean'
         ? prop
-        : prop.toLowerCase() === 'true' || prop.toLowerCase() === '',
+        : ['true','','1'].includes(prop.toLowerCase()),
+
     toNumber: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseInt(prop, 10),
+
     toFloat: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseFloat(prop),
+
     toArray: <T = string>( prop: string | T[] ): T[] => typeof prop === 'string' ? prop.split(',') as T[]: prop,
+
     fromJSON: <T = string | Record<string, unknown> | unknown[]>( prop: T, rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
+
     toClassList: ( mainClass: string|string[], mods?: string|string[] ): Record<string, boolean> => {
       const classList = {};
       _ds.props.toArray(mainClass).forEach( CSSClass => {
@@ -41,26 +77,34 @@ const _ds = {
       });
       if (mods) {
         _ds.props.toArray(mods).forEach( CSSClass => {
-          const className = CSSClass.trim();
-          if (className !== '') {
-            classList[`--${className}`] = true;
+          if (CSSClass) {
+            const className = CSSClass.trim();
+            if (className !== '') {
+              classList[`--${className}`] = true;
+            }
           }
         });
       }
       return classList;
-    }
+    },
+
+    toString: (attributes: Record<string, unknown>) => Object.entries(attributes).map( ([key, value]) => (`${key}${value !== true && value !== "true" ? `="${Array.isArray(value) ? value.join(',') : value}"` : ''}`)).join(" "),
   },
+
   responsive: {
     isMobile: () => window.innerWidth < 768,
     isTablet: () => window.innerWidth > 767 && window.innerWidth < 992,
     isDesktop: () => window.innerWidth > 991,
   },
+
   form: {
     submit: ( form ) => form.dispatchEvent(new Event('submit')),
     reset: ( form ) => form.dispatchEvent(new Event('reset')),
   },
+
   ajax: {
     buildQuery: queryParams => Object.entries(queryParams).map(pair => pair.map(encodeURIComponent).join('=')).join('&'),
+
     get: ( url: string, queryParams?: any ): Promise<any> =>
       fetch(`${url}${queryParams ? `?${_ds.ajax.buildQuery(queryParams)}` : ''}`)
         .then((response: any) => new Promise((resolve, reject) => {
@@ -134,6 +178,90 @@ const _ds = {
   },
   tools: {
 
+    cleanHTML: (HTMLString: string): string => HTMLString.replace(/\>[\r\n ]+\</g, "><").replace(/(<.*?>)|\s+/g, (_, $1) => $1 || ' '),
+
+    beautifyHTML: (html) => {
+        var TAB_WIDTH = 2;
+        
+
+        function multi(_, spaces) {
+            var i, indent = '';
+    
+            for (i = 0; i < spaces; i++) {
+                indent += ' ';
+            }
+    
+            return indent;
+        }
+    
+        function squeeze(str) {
+          return str.replace(/^[ \n\t]+/, '').replace(/\>[\n\t ]+/g, '>'); 
+        }
+    
+        /* const indent = function(html) { */
+            var chr, i, chrs = squeeze(html).split(''),
+                result = '',
+                level = 0,
+                indent = '',
+                pInTag,
+                pCloseTag,
+                tagName;
+    
+            for (i = 0; i < chrs.length; i++) {
+                chr = chrs[i];
+                if (chr === '<') {
+                    pCloseTag = chrs[i+1] === '/';
+                    if (pCloseTag) {
+                        level--;
+                        indent = multi(' ', level * TAB_WIDTH);
+                    }
+                    result += '\n' + indent + '<';
+                }
+                else if (chr === '>') {
+                    tagName = getTagName(chrs, i-1);
+                    pInTag = !pCloseTag && chrs[i-1] !== '/' && tagName !== 'img' && tagName !== 'br';
+                    pCloseTag = false;
+                    if (pInTag) {
+                        level++;
+                    }
+                    indent = multi(' ', level * TAB_WIDTH);
+                    result += '>\n' + indent;
+                }
+                else {
+                    result += chr;
+                }
+            }
+    
+            function getTagName(chrs, i) {
+                var chr = chrs[i],
+                    ret = '';
+    
+                while (chr !== '<') {
+                    ret = chr + ret;
+                    chr = chrs[i--];
+                }
+    
+                return ret.substr(0, ret.indexOf(' '));
+            }
+
+            console.log(result);
+    
+            return result.replace(/\n *\n/g, '\n');
+        /* };
+    
+        exports.squeeze = squeeze;
+    
+        exports.escape = function(str) {
+            return str.replace(/\</g, '&lt;').replace(/\>/g, '&gt;');
+        }; */
+    },
+
+    getAppComponent: () => {
+      if (typeof _ds.app.component === "undefined") {
+        _ds.app.component = document.querySelector("ds-page") || [];
+      }
+      return _ds.app.component;
+    },
     getStylesJSON: (): SassStyles => {
       let style = '{}';
     
@@ -173,10 +301,10 @@ const _ds = {
 
     getFileExtension: ( fileLocation: string ): string => {
       const filename = fileLocation.split('/').pop();
-      return filename?.substr(filename.lastIndexOf('.')+1,filename.length) || '';
+      return filename?.substring(filename.lastIndexOf('.')+1,filename.length) || '';
     },
 
-    animate: (function () {
+    /* animate: (function () {
       const easings = {
         linear: t => t,
         easeInQuad: t => t * t,
@@ -246,7 +374,7 @@ const _ds = {
         promiseMap[element] = promise;
         return promise;
       };
-    })(),
+    })(), */
 
     getOffset: (el: AnyHTMLElement) => {
       const box = el.getBoundingClientRect();
@@ -257,7 +385,7 @@ const _ds = {
       };
     },
     
-    waitUntil: (
+    /* waitUntil: (
       func: () => void,
       pollingRate = 100,
       leading = false,
@@ -270,7 +398,7 @@ const _ds = {
         let i = 0;
         const rFunc = async () => {
           try {
-            const result = await func.apply(ctx/* , args */);
+            const result = await func.apply(ctx, args );
             if (result) {
               return resolve(result);
             }
@@ -284,8 +412,10 @@ const _ds = {
         };
         leading ? rFunc() : setTimeout(rFunc, pollingRate);
       });
-    }
+    } */
   }
 }
+
+_ds.app.component = _ds.app.component = document.querySelector("ds-page");
 
 export default _ds;

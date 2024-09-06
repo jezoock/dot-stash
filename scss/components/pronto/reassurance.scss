@@ -1,0 +1,32 @@
+.ds-reassurance {
+  column-gap: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+
+  & ds-text {
+    & img {
+      padding: 0 0.5rem 0 0;
+      width: 100%;
+      max-width: 2rem;
+    }
+  }
+
+  @include break-p(null, sm) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    & ds-text {
+      padding: 0 0 2rem 0;
+    }
+  }
+}
+.ds-text {
+  &.--reassurance {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font: normal normal normal 14px/17px Montserrat;
+  }
+}
+
+

@@ -1,0 +1,58 @@
+.ds-search {
+  position: relative;
+  
+  &__expand-button {
+  }
+
+  &__form {
+    position: fixed;
+    display: grid;
+    transition: grid-template-rows 0.4s ease;
+    overflow-y: hidden;
+    width: 100%;
+
+    & form {
+      overflow: hidden;
+      margin: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  &:after {
+    content: "";
+    display: block;
+    pointer-events: none;
+    background-color: #000;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    z-index: 1;
+    transition: opacity ease 0.4s;
+  }
+
+  &:not(.--is-collapsed) {
+    & .ds-search {
+      &__form {
+        grid-template-rows: 0fr;
+      }
+    }
+
+    &:after {
+      opacity: 0;
+    }
+  }
+
+  &.--is-collapsed {
+    & .ds-search {
+      &__form {
+        grid-template-rows: 1fr;
+      }
+    }
+
+    &:after {
+      opacity: 0.3;
+    }
+  }
+}

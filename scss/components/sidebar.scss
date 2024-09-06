@@ -1,0 +1,30 @@
+.ds-sidebar {
+  z-index: 10;
+
+  &.--left {
+    
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 425px;
+    min-width: 320px;
+    box-sizing: border-box;
+    padding: 2rem 0.75rem;
+    
+    & .ds-sidebar {
+      &__content {
+        height: calc(100%);
+        width: inherit;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    }
+
+    @include break-p(null, sm) {
+      top: 87px;
+    }
+
+    @include break-p(sm) {
+      top: 125px;
+    }
+  }
+}

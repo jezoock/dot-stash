@@ -1,0 +1,120 @@
+@import '../pages.scss';
+
+.ds-product-list-section {
+  
+  &__body {
+    max-width: 1700px;
+    margin: 0 auto;
+  }
+}
+
+.ds-page {
+  &.--category {
+    & .ds-page {
+      &__sidebar {
+      }
+    }
+  }
+}
+
+.ds-block
+
+.ds-block.--content {
+  & .ds-heading {
+    &.--image-text {
+      &.--category {
+        & .ds-heading {
+          &__content {
+            display: contents;
+          }
+  
+          &__main-title {
+            width: 100%;
+            text-align: center;
+            order: 1;
+            padding: 0 0 90px 0;
+  
+            & h2,
+            & h1 {
+              text-transform: uppercase;
+              font-size: 30px;
+  
+              & strong {
+                font-size: 60px;
+              }
+            }
+          }
+  
+          &__description {
+            & .ds-button {
+              &.--md {
+                padding: 0.75rem 1.5rem;
+              }
+            }
+          }
+  
+        }
+  
+        &.--left {
+          & .ds-heading {
+            &__description {
+              padding: 0 2rem 0 4vw;
+              order: 3;
+            }
+            
+            &__image {
+              order: 2;
+            }
+          }
+        }
+        
+        &.--right {
+          & .ds-heading {
+            &__description {
+              padding: 0 4vw 0 2rem;
+              order: 2;
+            }
+            
+            &__image {
+              order: 3;
+            }
+          }
+        }
+
+        @include break-p(null, md) {
+          & .ds-heading {
+            &__main-title {
+              padding: 0 0.75rem 50px 0.75rem !important;
+
+              & h2 {
+                font-size: 20px;
+    
+                & strong {
+                  font-size: 50px;
+                }
+              }
+            }
+
+            &__image {
+              order: 2 !important;
+            }
+
+            &__description {
+              width: 100%;
+              order: 3 !important;
+              padding: 0 1rem !important;
+            }
+          }
+        }
+        
+        @include break-p(md) {
+          & .ds-heading {
+            &__description {
+              width: 35%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

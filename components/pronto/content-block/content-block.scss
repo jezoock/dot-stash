@@ -1,0 +1,17 @@
+.ds-content-block {
+  &__before {
+    &:not(:has([slot])) {
+      display: none;
+    }
+  }
+  
+  &__content {
+    
+  }
+  
+  &__after {
+    &:not(:has([slot])) {
+      display: none;
+    }
+  }
+}

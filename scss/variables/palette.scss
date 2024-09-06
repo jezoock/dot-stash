@@ -3,18 +3,26 @@
 
 $colors: (
   primary: (
-    darker: #e60a784d,
-    dark: #cd0878,
-    base: #e60078,
-    light: #f7d4e3,
+    darker: #905f24,
+    dark: #C79F78,
+    base: #E4BE90,
+    light: #ffe0ba,
+  ),
+  secondary: (
+    darker: #6b1909,
+    dark: #c94328,
+    base: #0d0d0d,
+    light: #ff9580,
   ),
   gray: (
     white: #ffffff,
-    lightest: #fafafa,
-    lighter: #f2f2f5,
-    light: #e2e2e2,
-    base: #c8c8c8,
-    dark: #6d6d6d,
+    lightest: #f2f2f2,
+    lighter: #eeedec,
+    light: #ddd,
+    base: #bbb,
+    dark: #999,
+    darker: #444,
+    darkest: #161C27,
     black: #000000,
   ),
   status: (
@@ -22,7 +30,9 @@ $colors: (
     error: #ea0000,
     info: #3b86ff,
     busy: #c8c8c8,
-    disabled: #6d6d6d,
+    disabled: #3D3D3D,
+    discount: #FF7575,
+    new: #005F77,
   ),
   input: (
     caret: #5294f2,
@@ -49,18 +59,100 @@ $colorset: (
       border: map-get(map-get($colors, 'primary'), 'base'),
       background: map-get(map-get($colors, 'primary'), 'base'),
     ),
+    primary-hover: (
+      text: #fff,
+      border: map-get(map-get($colors, 'primary'), 'dark'),
+      background: map-get(map-get($colors, 'primary'), 'dark'),
+    ),
+    primary-light: (
+      text: #fff,
+      border: map-get(map-get($colors, 'primary'), 'light'),
+      background: map-get(map-get($colors, 'primary'), 'light'),
+    ),
+    primary-light-hover: (
+      text: #fff,
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: map-get(map-get($colors, 'primary'), 'base'),
+    ),
     secondary: (
-      text: #f00,
-      border: #f00,
+      text: #fff,
+      border: map-get(map-get($colors, 'secondary'), 'base'),
+      background: map-get(map-get($colors, 'secondary'), 'base'),
+    ),
+    secondary-hover: (
+      text: #fff,
+      border: map-get(map-get($colors, 'secondary'), 'dark'),
+      background: map-get(map-get($colors, 'secondary'), 'dark'),
+    ),
+    white: (
+      text: #000,
+      border: #fff,
       background: #fff,
+    ),
+    white-hover: (
+      text: #fff,
+      border: #000,
+      background: #000,
+    ),
+    gray: (
+      text: #000,
+      border: #dcdcdc,
+      background: #dcdcdc,
+    ),
+    gray-hover: (
+      text: #333,
+      border: #ccc,
+      background: #ccc,
     ),
     disabled: (
       text: #fff,
-      border: #555,
-      background: #555,
+      border: map-get(map-get($colors, status), 'disabled'),
+      background: map-get(map-get($colors, status), 'disabled'),
     ),
   ),
   outlined: (
+    default: (
+      text: map-get(map-get($colors, 'primary'), 'base'),
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: transparent,
+    ),
+    primary: (
+      text: map-get(map-get($colors, 'primary'), 'base'),
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: transparent,
+    ),
+    primary-hover: (
+      text: #fff,
+      border: map-get(map-get($colors, 'primary'), 'base'),
+      background: map-get(map-get($colors, 'primary'), 'base'),
+    ),
+    secondary: (
+      text: map-get(map-get($colors, 'secondary'), 'base'),
+      border: map-get(map-get($colors, 'secondary'), 'base'),
+      background: transparent,
+    ),
+    secondary-hover: (
+      text: #fff,
+      border: map-get(map-get($colors, 'secondary'), 'base'),
+      background: map-get(map-get($colors, 'secondary'), 'base'),
+    ),
+    white: (
+      text: #fff,
+      border: #fff,
+      background: transparent,
+    ),
+    white-hover: (
+      text: #000,
+      border: #fff,
+      background: #fff,
+    ),
+    disabled: (
+      text: map-get(map-get($colors, status), 'disabled'),
+      border: map-get(map-get($colors, status), 'disabled'),
+      background: transparent,
+    ),
+  ),
+  link: (
     default: (
       text: map-get(map-get($colors, 'primary'), 'base'),
       border: map-get(map-get($colors, 'primary'), 'base'),
@@ -72,8 +164,13 @@ $colorset: (
       background: #fff,
     ),
     secondary: (
-      text: #f00,
-      border: #f00,
+      text: map-get(map-get($colors, 'secondary'), 'base'),
+      border: map-get(map-get($colors, 'secondary'), 'base'),
+      background: #fff,
+    ),
+    disabled: (
+      text: map-get(map-get($colors, 'secondary'), 'base'),
+      border: map-get(map-get($colors, 'secondary'), 'base'),
       background: #fff,
     ),
   ),

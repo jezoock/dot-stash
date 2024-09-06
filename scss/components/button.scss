@@ -1,5 +1,256 @@
 .ds-button {
-  &.--back {
+  font-family: "Montserrat";
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0px;
+  transition-duration: 0.4s;
+  transition-property: color, background-color, border-color;
+  transition-timing-function: ease;
+  cursor: pointer;
+  
+  & > a,
+  & > button,
+  & > span,
+  & > strong,
+  & > div {
+    cursor: inherit;
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    display: block;
+    width: 100%;
+  }
+
+  &.--rounded {
+    border-radius: 50%;
+  }
+
+  &.--rounded,
+  &.--xs,
+  &.--sm,
+  &.--md,
+  &.--lg,
+  &.--xl {
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  &.--xs {
+    font-size: 10px;
+    line-height: 0.75rem;
+
+    &.--rounded {
+      border-radius: 0.75rem;
+    }
+  
+    &.--shadow {
+      box-shadow: 0px 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+
+  &.--sm {
+    font-size: 12px;
+    line-height: 1rem;
+
+    &.--rounded {
+      border-radius: 1.25rem;
+    }
+
+    &.--shadow {
+      box-shadow: 1px 2px 5px rgba(0,0,0,0.3);
+    }
+  }
+
+  &.--md {
+    letter-spacing: 0.96px;
+    
+    &.--shadow {
+      box-shadow: 3px 5px 10px rgba(0,0,0,0.3);
+    }
+    
+    @include break-p(null, md) {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+    
+    @include break-p(md) {
+      font-size: 1rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  &.--lg {
+    letter-spacing: 1px;
+    text-align: center;
+
+    &.--shadow {
+      box-shadow: 5px 8px 20px rgba(0,0,0,0.3);
+    }
+
+    @include break-p(null, md) {
+      font-size: 1rem;
+      line-height: 1.25rem;
+    }
+    
+    @include break-p(md) {
+      font-size: 1.25rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  &.--xl {
+    &.--shadow {
+      box-shadow: 5px 8px 20px rgba(0,0,0,0.3);
+    }
+    
+    @include break-p(null, md) {
+      font-size: 15px;
+      line-height: 18px;
+    }
+    
+    @include break-p(md) {
+      font-size: 1.25rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  &.--xs {
+    & > a,
+    & > button {
+      padding: 0.5rem;
+    }
+  }
+
+  &.--sm {
+  }
+
+  &.--md {
+    & > a,
+    & > button {
+      @include break-p(null, md) {
+        padding: 0.5rem 1.5rem;
+      }
+    
+      @include break-p(md) {
+        padding: 0.75rem 2.5rem;
+      }
+    }
+  }
+
+  &.--lg {
+    & > a,
+    & > button {
+      @include break-p(null, md) {
+        padding: 0.75rem 1rem;
+      }
+    
+      @include break-p(md) {
+        padding: 1rem 1.5rem;
+      }
+    }
+  }
+
+  &.--xl {
+    & > a,
+    & > button {
+      @include break-p(null, md) {
+        padding: 1rem 1.5rem;
+      }
+
+      @include break-p(md) {
+        padding: 1.25rem;
+      }
+    }
+  }
+
+  &:not(:has(a)):not(:has(button)):not(:has(span)):not(:has(strong)):not(:has(div)) {
+
+    &.--xs {
+      padding: 0.5rem;
+    }
+
+    &.--sm {
+    }
+
+    &.--md {
+      @include break-p(null, md) {
+        padding: 0.5rem 1.5rem;
+      }
+      
+      @include break-p(md) {
+        padding: 0.75rem 2.5rem;
+      }
+    }
+
+    &.--lg {
+      @include break-p(null, md) {
+        padding: 0.75rem 1rem;
+      }
+
+      @include break-p(md) {
+        padding: 1rem 1.5rem;
+      }
+    }
+
+    &.--xl {
+      @include break-p(null, md) {
+        padding: 1rem 1.5rem;
+      }
+      
+      @include break-p(md) {
+        padding: 1.25rem;
+      }
+    }
 
   }
+
+  &:not([disbaled]) {
+    &.--stl-1 {
+      @include ds-colorset-styles(solid, primary);
+
+      &:hover {
+        @include ds-colorset-styles(solid, primary-hover);
+      }
+    }
+    
+    &.--stl-2 {
+      @include ds-colorset-styles(outlined, secondary);
+
+      &:hover {
+        @include ds-colorset-styles(outlined, secondary-hover);
+      }
+    }
+
+    &.--stl-3 {
+      @include ds-colorset-styles(solid, gray);
+
+      &:hover {
+        @include ds-colorset-styles(solid, gray-hover);
+      }
+    }
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+
+    &.--stl-1,
+    &.--stl-3 {
+      @include ds-colorset-styles(solid, disabled);
+
+      &:hover {
+        @include ds-colorset-styles(solid, disabled);
+      }
+    }
+
+    &.--stl-2 {
+      @include ds-colorset-styles(outlined, disabled);
+
+      &:hover {
+        @include ds-colorset-styles(outlined, disabled);
+      }
+    }
+  }
+
+  
 }

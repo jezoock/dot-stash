@@ -1,0 +1,61 @@
+.ds-contact-form {
+  & #gdpr_consent {
+    margin: 0 0 0 37%;
+  }
+  & .form-group {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: start;
+    padding: 0 0 1.5rem 0;
+    & .input-group {
+      width: 63%;
+      & .form-control {
+        width: calc(100% - 140px);
+      }
+      & .input-group-btn {
+        max-width: 140px;
+      }
+      & .buttonText {
+        color: #fff;
+      }
+      & .btn.btn-default {
+        width: 100%;
+        line-height: 36px;
+        padding: 0;
+        background-color: color(color-2, base);
+      }
+    }
+    & > .form-control-label {
+      width: 37% !important;
+      padding: 0 2rem 0 0;
+      line-height: 36px;
+    }
+    & > .form-control {
+      width: 63% !important;
+    }
+    & .form-control-comment {
+      display: none;
+    }
+    & textarea {
+      height: auto !important;
+    }
+  }
+  .form-footer {
+    text-align: right;
+  }
+}
+
+.ds-contact-address {
+  & h2 {
+    font-weight: bold;
+    padding: 0 0 1.5rem 0;
+    color: color(color-2, base);
+    text-transform: uppercase;
+    font-size: 1.25rem;
+  }
+  & p {
+    color: color(color-2, base);
+    font-size: 1.25rem;
+  }
+}

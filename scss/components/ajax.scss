@@ -1,0 +1,30 @@
+.ds-ajax {
+  &.--is-loading {
+    &:before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.6);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      content: "";
+    }
+
+    &:after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      color: ds-color(secondary, base);
+      font-size: 3rem;
+      z-index: 1000;
+      @include ds-icon(arrows-cw);
+      @include spin();
+      text-shadow: 1px 1px rgba(0,0,0,0.5);
+      opacity: 0.5;
+    }
+  }
+}

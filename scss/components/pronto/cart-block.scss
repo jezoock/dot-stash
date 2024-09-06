@@ -1,0 +1,35 @@
+.ds-cart-block {
+  padding: 0;
+  &__link {
+    color: ds-color(primary, dark);
+    height: 32px;
+    width: 29px;
+    display: block;
+
+    background: url(../img/ico-panier.svg) no-repeat;
+    background-size: cover;
+    
+  }
+
+  &__products-count {
+    top: -0.75rem;
+    right: -0.75rem;
+    font-size: 0.875rem;
+    color: #fff;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    border-radius: 50%;
+    background-color: ds-color(status, discount);
+    text-align: center;
+  }
+
+  @include break-p(null, sm) {
+    &__link {
+    }
+  }
+  
+  @include break-p(sm) {
+    &__link {
+    }
+  }
+}

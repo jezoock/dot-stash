@@ -1,0 +1,27 @@
+.ds-heading {
+  &__image {
+    &:not(:has([slot="image"])) {
+      display: none;
+    }
+  }
+
+  &__title {
+    &:not(:has([slot="title"])) {
+      display: none;
+    }
+  }
+
+  &__sub-title {
+    &:not(:has([slot="sub-title"])) {
+      display: none;
+    }
+  }
+
+  &__description {
+    &:not(:has([slot="description"])) {
+      display: none;
+    }
+  }
+
+  &__content { }
+}

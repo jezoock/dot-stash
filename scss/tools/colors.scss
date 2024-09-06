@@ -75,7 +75,7 @@ $orientationToDirection: (
   @return map-get(map-get($gradients, $color-name), $attr);
 }
 
-@mixin --gradient($gradient, $orientation, $type: linear) {
+@mixin gradient($gradient, $orientation, $type: linear) {
   @if ($orientation == 'radial') {
     $type: radial;
     background: gradient($gradient, fallback);

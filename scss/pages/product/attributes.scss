@@ -1,0 +1,25 @@
+.ds-product-attributes {
+  position: relative;
+  display: block;
+  padding: 2rem 0 1.5rem 0;
+
+  & .ds-select {
+    border-color: ds-color(primary, base);
+    
+    &__label {
+      border: none;
+      font-family: "Montserrat";
+      font-weight: 300;
+      font-size: 20px;
+      line-height: 22px;
+      text-transform: uppercase;
+      display: block;
+      padding: 1rem;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      text-align: center;
+      color: ds-color(primary, base);
+    }
+  }
+}

@@ -1,0 +1,26 @@
+.ds-featured-products-block {
+  &__header {
+    text-align: center;
+  }
+
+  &__body {
+    padding: 0 0 100px 0;
+  }
+
+  &__footer {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+
+    & ds-title {
+      &[block] {
+        text-align: center;
+        padding: 0 0 30px 0;
+      }
+    }
+
+    & ds-trigger {
+      width: 100%;
+    }
+  }
+}

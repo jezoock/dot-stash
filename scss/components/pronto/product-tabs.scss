@@ -1,0 +1,88 @@
+.ds-tabs {
+  &__menu {
+    display: flex;
+    
+    align-items: flex-end;
+    border-bottom: 1px solid ds-color(gray, base);
+  }
+  
+  &__content {
+    padding: 3rem 0 0 0;
+    position: relative;
+    min-height: 100px;
+  }
+
+  @include break-p(null,md) {
+    &__menu {
+      justify-content: space-between;
+    }
+  }
+
+  @include break-p(md) {
+    &__menu {
+      justify-content: center;
+    }
+  }
+}
+
+.ds-tab-menu {
+  cursor: pointer;
+  text-transform: uppercase;
+  position: relative;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    transition: right ease 0.4s, left ease 0.4s, bottom ease 0.4s;
+    background-color: ds-color(gray, base);
+  }
+
+  &:hover {
+    &:before {
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      top: calc(100% - 1px);
+    }
+  }
+
+  &.--current {
+    color: ds-color(primary, base);
+    
+    &:before {
+      background-color: ds-color(primary, base);
+      left: 0;
+      right: 0;
+      bottom: -6px;
+      top: calc(100% - 3px);
+    }
+  }
+
+  @include break-p(null,md) {
+    padding: 0 0 0.75rem 0;
+    margin: 0 0.75rem;
+    font: normal normal normal 0.875rem/1.125rem Montserrat;
+  }
+
+  @include break-p(md) {
+    padding: 0 0 0.75rem 0;
+    margin: 0 1.5rem;
+    font: normal normal normal 1.25rem/1.5rem Montserrat;
+  }
+}
+
+ds-tab-content {
+  opacity: 0;
+  height: 0;
+  transition: opacity ease 0.4s;
+  overflow: hidden;
+  display: block;
+  
+  &[current] {
+    height: auto;
+    opacity: 1;
+  }
+}

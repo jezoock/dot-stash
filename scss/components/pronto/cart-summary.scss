@@ -1,0 +1,59 @@
+.ds-cart-summary {
+  &__products {
+  }
+
+  &__product-list {
+    display: none;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    /* border-bottom: 1px solid ds-color(gray, lighter); */
+    padding: 0 0 1rem 0;
+
+    & .label,
+    & .value {
+      margin: 0 0 -6px 0;
+      background: #fff;
+      display: block;
+    }
+    
+    & .label {
+      padding: 0 0.25rem 0 0;
+      color: ds-color(gray, darker);
+      font: normal normal normal 1.125rem/1.5rem Montserrat;
+      text-transform: uppercase;
+    }
+    
+    & .value {
+      padding: 0 0 0 0.25rem;
+      font: normal normal normal 1.25rem/1.5rem Montserrat;
+    }
+
+    &.product-list {
+
+    }
+  }
+
+  &__sub-totals {
+    padding: 0 0 2rem 0 ;
+  }
+
+  &__totals {
+    padding: 2rem 0 1rem 0 ;
+    border-top: 1px solid #000;
+  }
+
+  &__voucher {
+
+  }
+}
+
+.ds-button {
+  &.--cart-total {
+    width: 100%;
+    font: normal normal normal 1.25rem/30px Montserrat;
+    text-align: center;
+  }
+}

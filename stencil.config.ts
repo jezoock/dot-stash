@@ -2,9 +2,38 @@ import { Config } from '@stencil/core/internal';
 import { sass } from '@stencil/sass';
 
 export const config: Config = {
-  namespace: 'dot-stash',
-  srcDir: 'components',
+  namespace: 'maloo-dot-stash',
+  srcDir: './components',
   minifyJs: true,
+  extras: {
+    appendChildSlotFix: true,
+    cloneNodeFix: true,
+  },
+  /* bundles: [
+    {
+      components: [
+        'ds-page', 
+        'ds-heading', 
+        'ds-app-menu', 
+        'ds-nav', 
+        'ds-nav-item', 
+        'ds-product-block', 
+        'ds-account-block',
+        'ds-cart-block',
+        'ds-grid',
+        'ds-grid-item',
+        'ds-marquee',
+        'ds-trigger',
+        'ds-title',
+        'ds-text',
+        'ds-block',
+        'ds-rsp',
+        'ds-back-to-top-button',
+        'ds-slider',
+        'ds-slider-item',
+      ]
+    },
+  ], */
   plugins: [
     sass({
       includePaths: ['components/**/*.scss'],
@@ -22,14 +51,15 @@ export const config: Config = {
   ],
   outputTargets: [
     {
-      type: 'dist'
+      'type': 'www'
     },
     {
-      type: 'www',
-      serviceWorker: null, // disable service workers
+      type: 'dist',
+      dir: '../assets/components'
+      /* 
       copy: [
-        { src: '../www/build', dest: '../../assets/dot-stash' }
-      ]
-    },
+        { src: '../dist', dest: '../../../assets' }
+      ] */
+    }
   ],
 };

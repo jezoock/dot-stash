@@ -50,3 +50,15 @@
   font-weight: $weight;
   text-decoration: $decoration;
 }
+
+@mixin ds-icon-content($type: null) {
+  content: map-get($icons, $type);
+}
+
+@mixin ds-icon($type: null, $display: null) {
+  @if ($display != null) {
+    display: $display;
+  }
+  font-family: "pronto";
+  @include ds-icon-content($type);
+}

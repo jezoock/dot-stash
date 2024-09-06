@@ -1,0 +1,155 @@
+.ds-banner {
+  position: relative;
+
+  &__image { }
+
+  &__link {
+    display: block;
+  }
+
+  &__caption {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    max-width: 50%;
+    box-sizing: border-box;
+    transform: translate3d(0,-50%,0);
+    text-align: center;
+  }
+
+  &__title {
+    width: 100%;
+    max-width: 750px;
+    text-align: left;
+    display: block;
+    margin: 0;
+    text-transform: uppercase;
+    color: #000;
+  }
+  
+  &__description {
+    width: 100%;
+
+    & > p {
+      margin: 0;
+      color: #000;
+      font-weight: bold;
+      font-size: 1rem;
+      text-align: left;
+    }
+  }
+  
+  &__button {
+    display: block;
+    text-align: left;
+    width: 100%;
+    max-width: 300px;
+
+    & ds-trigger {
+      width: 100%;
+    }
+  }
+
+  @include break-p(null, sm) {
+    padding: 95% 0 0 0;
+
+    &__caption {
+      padding: 0 1rem 2rem 1rem;
+      transform: unset;
+      overflow: hidden;
+      right: 0;
+      max-width: unset;
+      top: unset;
+      bottom: 0;
+    }
+    
+    &__title {
+      font: normal normal bold 30px/36px Montserrat;
+      padding: 0 0 0.25rem 0;
+      text-align: center;
+      color: #fff;
+    }
+    
+    &__description {
+      padding: 0 0 1rem 0;
+      
+      & p {
+        color: #fff;
+        text-align: center;
+      }
+    }
+
+    &__image {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200% !important;
+      max-width: unset !important;
+      height: auto;
+    }
+
+    &__button {
+      width: 100%;
+      max-width: unset;
+      text-align: center;
+
+      & ds-trigger {
+        max-width: 300px;
+      }
+    }
+  }
+
+  @include break-p(sm, md) {
+    &__caption {
+      padding: 0 0 0 2rem;
+    }
+
+    &__title {
+      font: normal normal bold 2rem/2.5rem Montserrat;
+      padding: 0 0 0.25rem 0;
+    }
+
+    &__description {
+      font: normal normal normal 1.25rem/2.5rem Montserrat;
+      padding: 0 0 1rem 0;
+    }
+
+    &__button { display: none; }
+  }
+
+  @include break-p(md, lg) {
+    &__caption {
+      padding: 0 0 0 5rem;
+    }
+
+    &__title {
+      font: normal normal 700 3rem/3.5rem Montserrat;
+      padding: 0 0 0.25rem 0;
+    }
+
+    &__description {
+      padding: 0 0 1rem 0;
+      font: normal normal normal 2.25rem/3.5rem Montserrat;
+    }
+  }
+
+  @include break-p(lg) {
+    &__caption {
+      padding: 0 0 0 170px;
+    }
+
+    &__title {
+      font-size: 40px;
+      line-height: 3rem;
+      letter-spacing: 2.4px;
+      padding: 0 0 1rem 0;
+    }
+
+    &__description {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      letter-spacing: 0.32px;
+      padding: 0 0 1.5rem 0;
+    }
+  }
+}

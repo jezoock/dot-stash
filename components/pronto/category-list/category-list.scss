@@ -1,0 +1,11 @@
+.ds-category-list {
+  &:not([show-image]) {
+    & .ds-category-list {
+      &__root-category {
+        & img {
+          display: none;
+        }
+      }
+    }
+  }
+}

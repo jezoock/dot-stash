@@ -1,0 +1,78 @@
+.ds-pagination {
+  display: none;
+  /* display: flex; */
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 1.5rem 0;
+  
+  &__product-count {
+    
+  }
+  
+  &__page-list {
+    
+  }
+  
+  &__pages {
+    display: none;
+  }
+
+  &__page {
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid ds-color(primary, darker);
+    
+    & a {
+      display: block;
+      min-width: 2.75rem;
+      font: normal normal 700 0.8125rem/2.75rem 'Montserrat';
+      color: ds-color(primary, darker);
+      text-transform: uppercase;
+      text-align: center;
+      transition: color ease 0.4s, background-color ease 0.4s;
+    }
+    & a:hover {
+      color: #fff;
+      background-color: ds-color(primary, darker);
+    }
+    &.--current {
+      & a {
+        color: #fff;
+        background-color: ds-color(primary, darker);
+      }
+    }
+    
+    &.--previous {
+      & a {
+        &:before {
+          vertical-align: bottom;
+          padding: 0 0 0 0.25rem;
+          @include ds-icon(left-dir);
+        }
+      }
+    }
+    &.--next {
+      & a {
+        &:after {
+          vertical-align: bottom;
+          padding: 0 0 0 0.25rem;
+          @include ds-icon(right-dir);
+        }
+      }
+    }
+  }
+
+  @include break-p(null,md) {
+    justify-content: center;
+
+    &__product-count {
+      width: 100%;
+      padding: 0 0 2rem 0;
+      text-align: center;
+    }
+  }
+
+  @include break-p(md) {
+    justify-content: space-between;
+  }
+}

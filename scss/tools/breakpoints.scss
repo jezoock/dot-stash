@@ -1,5 +1,5 @@
 @function ds-breakpoint-list($label, $breakpointValue, $counter) {
-  @return '"#{$label}": #{str-slice(#{$breakpointValue},1,-3)}';
+  @return '"#{$label}": #{$breakpointValue}';
 }
 
 @function ds-breakpoints-to-json($newBreakpoints: null) {
@@ -25,71 +25,32 @@
   @return $sassToJSON; 
 }
 
-// Javascript hook for current breakpoint label
-
-/* @mixin break-p($breakpoint-min, $breakpoint-max: null) {
-  @if ($breakpoint-min == 'min' or $breakpoint-min == 'max') {
-    @if ($breakpoint-min == 'min') {
-      $max: map-get($breakpoints, 'min');
-      @media (max-width: $max) {
-        @content
-      }
-    }
-    @if ($breakpoint-min == 'max') {
-      $min: map-get($breakpoints, 'max');
-      @media (min-width: $min) {
-        @content
-      }
-    }
-  } @else {
-    @if ($breakpoint-min == null) {
-      $max: map-get($breakpoints, $breakpoint-max + '-max');
-      @media (max-width: $max) {
-        @content
-      }
-    }
-    @if ($breakpoint-max == null) {
-      $min: map-get($breakpoints, $breakpoint-min + '-min');
-      @media (min-width: $min) {
-        @content
-      }
-    }
-    @if ($breakpoint-min != null and $breakpoint-max != null) {
-      $min: map-get($breakpoints, $breakpoint-min + '-min');
-      $max: map-get($breakpoints, $breakpoint-max + '-max');
-      @media (min-width: $min) and (max-width: $max) {
-        @content
-      };
-    }
-  }
-} */
-
 @mixin break-p($breakpoint-min: null, $breakpoint-max: null) {
   @if ($breakpoint-min == 'min') {
     $max: map-get($breakpoints, 'min');
-    @media (max-width: $max) {
+    @media (max-width: '#{$max}px') {
       @content
     }
   };
 
   @if ($breakpoint-min == null) {
-    $max: map-get($breakpoints, $breakpoint-max - 1);
-    @media (max-width: $max) {
+    $max: map-get($breakpoints, $breakpoint-max);
+    @media (max-width: '#{$max - 1}px') {
       @content
     }
-  }
+  };
 
   @if ($breakpoint-max == null) {
     $min: map-get($breakpoints, $breakpoint-min);
-    @media (min-width: $min) {
+    @media (min-width: '#{$min}px') {
       @content
     }
   };
 
   @if ($breakpoint-min != null and $breakpoint-max != null) {
     $min: map-get($breakpoints, $breakpoint-min);
-    $max: map-get($breakpoints, $breakpoint-max - 1);
-    @media (min-width: $min) and (max-width: $max) {
+    $max: map-get($breakpoints, $breakpoint-max);
+    @media (min-width: '#{$min}px') and (max-width: '#{$max - 1}px') {
       @content
     };
   };

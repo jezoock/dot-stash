@@ -1,0 +1,35 @@
+.ds-select {
+  border: 1px solid ds-color(gray, light);
+  /* border-radius: 20px; */
+  /* width: calc(70% - 1rem); */
+  display: block;
+  position: relative;
+  box-sizing: border-box;
+
+  &__label {
+    text-align: center;
+    line-height: 38px;
+
+    &:before {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      @include ds-icon(angle-down);
+    }
+  }
+
+  &__input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    width: 100%;
+
+    & option {
+      font-size: 1.25rem;
+    }
+  }
+}
