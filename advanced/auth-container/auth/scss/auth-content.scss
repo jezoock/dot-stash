@@ -1,0 +1,149 @@
+.ds-lightbox {
+  .ds-previous-button {
+    margin: 1.5rem 1.5rem 1.5rem 1.5rem;
+  }
+
+  .ds-auth-content {
+    &__container {
+      padding: 0 1.5rem 1.5rem 1.5rem;
+
+      & > .ds-auth-content-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      & .ds-auth-content-components {
+        width: 100%;
+
+        &__login,
+        &__register,
+        &__account-validation,
+        &__reset-password,
+        &__thanks-for-registering {
+          display: block;
+          overflow: auto;
+        }
+
+        &__register,
+        &__lang-switcher {
+          margin: 1.875rem 0 0 0;
+        }
+
+        &__account-validation {
+          margin: 9.688rem 0 0 0;
+        }
+      }
+    }
+  }
+
+  @media (min-width: $grid-big-screen) {
+    .ds-auth-content {
+      height: 897px;
+
+      &:before {
+        padding: 124.6% 0 0 0;
+      }
+
+      &__container {
+        height: 897px;
+
+        & .ds-auth-content-components {
+          height: 100%;
+
+          &__login,
+          &__register,
+          &__account-validation,
+          &__reset-password,
+          &__thanks-for-registering {
+            height: 93%;
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: $grid-md-min) and (max-width: $grid-macbook-13p-max) {
+    .ds-auth-content {
+      height: 750px;
+
+      &:before {
+        height: 86%;
+        padding: 115.6% 0 0 0;
+      }
+
+      &__container {
+        height: 750px;
+
+        & .ds-auth-content-components {
+          height: 95%;
+          overflow: auto;
+
+          &__login,
+          &__register,
+          &__account-validation,
+          &__reset-password,
+          &__thanks-for-registering {
+            height: 100%;
+          }
+
+          &__thanks-for-registering {
+            padding: 0 0 2rem 0;
+          }
+        }
+
+        &__register {
+          margin: 1.875rem 0 0 0;
+        }
+
+        &__account-validation {
+          margin: 9.688rem 0 0 0;
+        }
+      }
+    }
+  }
+
+  @media (min-width: $grid-md-min) {
+    .ds-auth-content {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      
+      &:before {
+        content: "";
+        background-image: url("#{$assetPath}auth/login.png");
+        display: block;
+        width: 46%;
+      }
+
+      &-b2b {
+        &:before {
+          content: '';
+          background-image: url("#{$assetPath}auth/b2b.png");
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      }
+
+      &__container {
+        width: 53.5%;
+      }
+    }
+  }
+
+  @include break-p(null, sm) {
+    .ds-auth-content {
+      height: 100%;
+
+      &__container {
+        height: 100%;
+
+        & .ds-auth-content-components {
+          height: 95%;
+          overflow: auto;
+        }
+      }
+    }
+  }
+}

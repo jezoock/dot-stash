@@ -5,12 +5,12 @@
   margin: 0;
   
   &__header {
-    &:not(:has([slot="header"])) {
+    &:not(:has([slot="block-header"])) {
       display: none;
     }
   }
   &__footer {
-    &:not(:has([slot="footer"])) {
+    &:not(:has([slot="block-footer"])) {
       display: none;
     }
   }

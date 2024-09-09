@@ -1,0 +1,29 @@
+.ds-credit-card-list {
+  display: block;
+
+  &__card {
+    position: relative;
+    & ds-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &.--default {
+    & .ds-credit-card-list {
+      &__item {
+        padding: 0 0 0.5rem 0;
+        margin: 1rem 0 0 0;
+      }
+      &__card {
+        margin: 0 0 0.5rem 0;
+        & ds-button {
+          right: 1rem;
+        }
+      }
+    }
+  }
+
+}
+

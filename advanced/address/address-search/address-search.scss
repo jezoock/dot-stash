@@ -1,0 +1,12 @@
+.ds-address-search {
+  position: relative;
+  border: 1px solid color(gray, light);
+
+  &.--header {
+    & > button {
+      max-width: 80px;
+      width: 10%;
+      padding: 0;
+    }
+  }
+}

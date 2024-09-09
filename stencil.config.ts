@@ -1,8 +1,8 @@
-import { Config } from '@stencil/core/internal';
+import { StencilConfig } from '@stencil/core/internal';
 import { sass } from '@stencil/sass';
 
 export const config: Config = {
-  namespace: 'maloo-dot-stash',
+  namespace: 'dot-stash',
   srcDir: './components',
   minifyJs: true,
   extras: {

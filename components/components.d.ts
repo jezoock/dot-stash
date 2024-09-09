@@ -517,7 +517,7 @@ export namespace Components {
         "getData": () => Promise<{ breakpoints: Breakpoints; }>;
         "getParamsForBreakpoint": (currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>;
         "getSubscribers": () => Promise<Element[]>;
-        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
+        "processBreakpoints": (breakpoints: RawBreakpoint1) => Promise<Breakpoints1>;
         "propertyName": string;
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
@@ -599,8 +599,11 @@ export namespace Components {
         "content": boolean;
         "highlight": boolean;
         "italic": boolean;
+        "main": boolean;
         "mods": string | string[];
         "size": string | number;
+        "sub": boolean;
+        "text": boolean;
         "type": string;
     }
     interface DsTitle {
@@ -869,6 +872,10 @@ export interface DsProductSearchCustomEvent<T> extends CustomEvent<T> {
 export interface DsProductsConfiguratorCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsProductsConfiguratorElement;
+}
+export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPanelElement;
 }
 export interface DsRspCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1330,9 +1337,15 @@ declare global {
     };
     interface HTMLDsInfoWindowElement extends Components.DsInfoWindow, HTMLStencilElement {
     }
-    var HTMLDsInfoWindowElement: {
-        prototype: HTMLDsInfoWindowElement;
-        new (): HTMLDsInfoWindowElement;
+    var HTMLDsHeadingElement: {
+        prototype: HTMLDsHeadingElement;
+        new (): HTMLDsHeadingElement;
+    };
+    interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
+    }
+    var HTMLDsInputElement: {
+        prototype: HTMLDsInputElement;
+        new (): HTMLDsInputElement;
     };
     interface HTMLDsInputDateElementEventMap {
         "valueChange": any;
@@ -2718,8 +2731,11 @@ declare namespace LocalJSX {
         "content"?: boolean;
         "highlight"?: boolean;
         "italic"?: boolean;
+        "main"?: boolean;
         "mods"?: string | string[];
         "size"?: string | number;
+        "sub"?: boolean;
+        "text"?: boolean;
         "type"?: string;
     }
     interface DsTitle {

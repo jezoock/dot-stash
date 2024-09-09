@@ -1,0 +1,59 @@
+@import "./scss/modal.scss";
+
+.ds-order-details {
+  background: #fff;
+  &__top-content {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0px;
+  }
+  &__bottom-content {
+    display: flex;
+    flex-direction: row;
+  }
+  &__steps {
+    flex: 1 100%;
+    margin-right: 2rem;
+  }
+  &__cart {
+    flex: 1 100%;
+    margin-right: 2rem;
+  }
+  &__takeaway-label {
+    flex: 1 100%;
+    font-size: $title_font-size-3;
+    margin: 0rem 0rem 1rem 3rem;
+  }
+  &__takeaway-code {
+    color: color(color-1, base);
+  }
+  &__return {
+    margin: 1rem 0;
+    font-weight: 700;
+  }
+  &__messages {
+    flex: 2 40%;
+  }
+  &__informations {
+    flex: 2 40%;
+  }
+
+  @media (max-width: $grid-md-max) {
+    &__top-content {
+      margin-bottom: 0px;
+      flex-direction: column;
+    }
+    &__bottom-content {
+      flex-direction: column;
+    }
+    &__steps {
+      border-bottom: 1px solid color(gray, light);
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+      margin-right: 0px;
+    }
+    &__cart {
+      margin-right: 0px;
+    }
+  }
+}

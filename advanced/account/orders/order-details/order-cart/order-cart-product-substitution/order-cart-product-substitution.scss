@@ -1,0 +1,77 @@
+.ds-order-cart-product-substitution {
+
+  &__container {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  &__old-product,
+  &__new-product {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 45%;
+  }
+
+  &__old-product {
+    border: 2px solid color(tags, out-of-stock);
+  }
+
+  &__new-product {
+    border: 2px solid color(color-1, base);
+  }
+
+  &__arrow {
+    height: auto;
+    width: 50px;
+  }
+  @include break-p(null, sm) {
+    &__arrow {
+      width: 30px;
+    }
+  }
+
+  &__badge {
+    background-color: color(tags, out-of-stock);
+    border-radius: 1rem;
+    color: white;
+    font-size: 0.8rem;
+    left: 1rem;
+    padding: 0.25rem 0.5rem;
+    position: absolute;
+    top: 0.5rem;
+  }
+
+  &__image {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 150px;
+    height: 150px;
+    margin: 0.5rem 0;
+  }
+  @include break-p(null, sm) {
+    &__image {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  &__name {
+    min-height: 3rem;
+  }
+  @include break-p(null, sm) {
+    &__name {
+      font-size: 0.9rem;
+    }
+  }
+
+  &__price {
+    color: color(gray, base);
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+}

@@ -1,0 +1,26 @@
+.ds-order-cart-pickup-address {
+  font-weight: 700;
+
+  &__shop-name {
+    color: color(gray, darker);
+  }
+
+  &__google-link {
+    display: flex;
+
+    &::before,
+    a {
+      color: color(color-1, base);
+    }
+
+    &::before {
+      @include ds-icon(mapmarker);
+      margin: 0 0.6rem 0 0;
+    }
+
+    a,
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+}

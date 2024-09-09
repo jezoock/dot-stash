@@ -1,0 +1,13 @@
+.ds-b2b-success {
+  &__happy-bag {
+    background-image: url("#{$assetPath}auth/welcome-b2b.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 10rem;
+    background-position: center;
+  }
+
+  &__text-paragraph {
+    margin: 2rem 0;
+  }
+}

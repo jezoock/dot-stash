@@ -1,0 +1,28 @@
+.ds-slider {
+  position: relative;
+
+  &__container {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  &.--sliding {
+    & .ds-slider {
+      &__list {
+        transition: transform ease 0.6s;
+      }
+    }
+  }
+
+  &:not(.hydrated) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+

@@ -1,0 +1,109 @@
+.ds-account-order {
+  overflow-x: auto;
+  width: 100%;
+  min-height: 200px;
+  &.--details-mode {
+    & table {
+      display: none;
+    }
+  }
+
+  & table {
+    margin: 1rem 0;
+    & thead {
+      border: 1px solid color(gray, base);
+      & tr {
+        & th {
+          color: color(gray, darker);
+          height: 80px;
+          padding: 0.75rem;
+          vertical-align: middle;
+          border-top: 1px solid color(gray, light);
+          border-bottom: 1px solid color(gray, light);
+          font-weight: 700;
+          &:first-child {
+            border-left: 1px solid color(gray, light);
+          }
+          &:last-child {
+            border-right: 1px solid color(gray, light);
+          }
+        }
+      }
+    }
+    & > tbody {
+      & > tr {
+        & > td {
+          padding: 0.75rem;
+          border-bottom: 1px solid color(gray, lighter);
+          color: #434242;
+          vertical-align: middle;
+          &:first-child {
+            border-left: 1px solid color(gray, lighter);
+          }
+          &:last-child {
+            border-right: 1px solid color(gray, lighter);
+          }
+        }
+        &:last-child {
+          & > td {
+            border-bottom: 1px solid color(gray, lighter);
+          }
+        }
+      }
+    }
+  }
+  &__empty {
+    width: 100%;
+  }
+  &__restaurant {
+    width: 180px;
+    & > img {
+      width: 25px;
+      margin: 0 0.5rem 0 0;
+      border-radius: 50%;
+    }
+  }
+  &__invoice-button {
+    text-align: center;
+  }
+  &__detail-button {
+    &:before {
+      color: color( color-1, base);
+      font-size: $text_font-size-3;
+      @include --icon-font();
+      @include --icon-content(search);
+    }
+  }
+  &__reorder-button {
+  }
+}
+
+.ds-order-pages {
+  display: flex;
+  justify-content: flex-start;
+  padding: 1rem;
+  border-radius: 3px;
+}
+
+.ds-order-page {
+  border: 1px solid color(gray, light);
+  border-right: none;
+  display: inline-block;
+  width: 2rem;
+  line-height: 2rem;
+  text-align: center;
+  &:last-child {
+    border-right: 1px solid color(gray, light);
+    border-radius: 0 3px 3px 0;
+  }
+  &:first-child {
+    border-radius: 3px 0 0 3px;
+  }
+  &.--active {
+    & button {
+      color: #fff;
+    }
+    background: color(color-1, base);
+    border-color: color(color-1, base);
+  }
+}

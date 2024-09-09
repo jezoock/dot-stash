@@ -1,0 +1,20 @@
+.ds-register-form {
+  & .ds-input-field {
+    margin: 0 0 0.8rem 0;
+  }
+
+  &__button {
+    margin: 1rem 0 0 0;
+  }
+
+  & .grecaptcha-badge {
+    visibility: hidden;
+  }
+  
+  @include break-p(null, sm) {
+    &__button {
+      margin: 1rem 0 4rem 0;
+    }
+  }
+}
+

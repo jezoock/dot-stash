@@ -1,0 +1,54 @@
+.ds-button {
+  &.--address-dropdown {
+    width: 100%;
+    padding: 0 0.25rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 2rem;
+    text-align: left;
+    font-size: $text_font-size-1;
+
+    &:before {
+      margin: 0 0.5rem 0 0;
+      font-size: $title_font-size-1;
+      @include --icon-font();
+    }
+
+    &:hover {
+      background-color: color(gray, lighter);
+      color: color(color-1, base);
+    }
+
+    &.--address-select {
+      & > span {
+        color: #000;
+      }
+
+      &:before {
+        color: color(gray, base);
+        @include --icon-content(home);
+      }
+
+      & > span,
+      &:before {
+        transition: color ease 0.3s, background-color ease 0.3s;
+      }
+
+      &:hover {
+        &:before,
+        & > span {
+          color: color(color-1, base);
+        }
+      }
+    }
+
+    &.--new-address {
+      color: color(color-1, base);
+
+      &:before {
+        @include --icon-content(plus);
+      }
+    }
+  }
+}
