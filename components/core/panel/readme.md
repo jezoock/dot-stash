@@ -1,4 +1,4 @@
-# ds-toggler-item
+# ds-panel
 
 
 
@@ -7,13 +7,13 @@
 
 ## Properties
 
-| Property    | Attribute    | Description | Type                 | Default     |
-| ----------- | ------------ | ----------- | -------------------- | ----------- |
-| `expanded`  | `expanded`   |             | `boolean`            | `false`     |
-| `index`     | `index`      |             | `number`             | `undefined` |
-| `minHeight` | `min-height` |             | `string`             | `"0"`       |
-| `mods`      | `mods`       |             | `string \| string[]` | `[]`        |
-| `type`      | `type`       |             | `string`             | `"tab"`     |
+| Property    | Attribute    | Description | Type                     | Default     |
+| ----------- | ------------ | ----------- | ------------------------ | ----------- |
+| `expanded`  | `expanded`   |             | `boolean`                | `false`     |
+| `index`     | `index`      |             | `number`                 | `undefined` |
+| `minHeight` | `min-height` |             | `string`                 | `"0"`       |
+| `mods`      | `mods`       |             | `string \| string[]`     | `[]`        |
+| `type`      | `type`       |             | `"collapsible" \| "tab"` | `"tab"`     |
 
 
 ## Events
@@ -54,6 +54,22 @@ Type: `Promise<void>`
 
 
 
+### `setType(type: PanelType) => Promise<void>`
+
+
+
+#### Parameters
+
+| Name   | Type                     | Description |
+| ------ | ------------------------ | ----------- |
+| `type` | `"tab" \| "collapsible"` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `show() => Promise<void>`
 
 
@@ -85,12 +101,12 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [ds-main](../..)
+ - [ds-message](../message)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-panel
+  ds-message --> ds-panel
   style ds-panel fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -1,0 +1,10 @@
+@import '../scss/theme.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+  
+  &::before {
+    @include ds-theme();
+  }
+}

@@ -1,1 +1,0 @@
-{"file":"index2.js","mappings":"AAAA,iBAAe,CAAC,KAAK,EAAE,QAAQ,KAAK,EAAE,GAAG,QAAQ;;;;","names":[],"sources":["node_modules/stencil-fragment/index.js"],"sourcesContent":["export default (props, children) => [ ...children ]"],"version":3}

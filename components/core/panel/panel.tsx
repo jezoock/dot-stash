@@ -12,6 +12,8 @@ import {
 import _ds from "../../../typescript/dot-stash";
 import CssClassList from "../../types/css-class-list.interface";
 
+export type PanelType = "tab" | "collapsible";
+
 @Component({
   tag: "ds-panel",
   styleUrl: "panel.scss"
@@ -19,17 +21,22 @@ import CssClassList from "../../types/css-class-list.interface";
 export class DSPanel {
   CSSClassList: CssClassList;
 
-  @Element() container: HTMLElement;
+  @Element() container: HTMLDsPanelElement;
   
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop() minHeight = "0";
   @Prop({ mutable: true, reflect: true }) expanded = false;
-  @Prop({ mutable: true, reflect: true }) type = "tab";
-  @Prop({ reflect: true }) index: number;
-
+  @Prop({ mutable: true, reflect: true }) index: number;
+  @Prop({ mutable: true, reflect: true }) type: PanelType = "tab";
+  
   @Watch('mods')
   modsChangeHandler( mods: string | string[] ) {
     this.CSSClassList = _ds.props.toClassList("ds-panel", _ds.props.toArray(mods));
+  }
+
+  @Watch('expanded')
+  expandedChangeHandler(expanded: boolean) {
+    this[`panel${expanded ? 'Show' : 'Hide'}`].emit({ index: this.index });
   }
 
   @Event() panelShow: EventEmitter;
@@ -43,6 +50,14 @@ export class DSPanel {
       this.index = index;
     }
   }
+
+  @Method()
+  async setType(type: PanelType) {
+    if (["tab", "collapsible"].includes(type)) {
+      this.type = type;
+    }
+  }
+
   @Method()
   async show() {
     this.setExpanded(true);
@@ -69,11 +84,16 @@ export class DSPanel {
   setExpanded(mustShow?: boolean) {
     const expanded = typeof mustShow === "boolean" ? mustShow : !this.expanded;
     this.expanded = expanded;
-    this[`panel${expanded ? 'Show' : 'Hide'}`].emit({ index: this.index });
   }
 
   titleClickHandler() {
-    this.setExpanded();
+    if (this.type === "tab") {
+      if (!this.expanded) {
+        this.setExpanded();
+      }
+    } else {
+      this.setExpanded();
+    }
   }
 
   render() {

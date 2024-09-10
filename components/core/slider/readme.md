@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                       | Default |
-| -------- | --------- | ----------- | -------------------------- | ------- |
-| `mods`   | `mods`    |             | `string \| string[]`       | `[]`    |
-| `params` | `params`  |             | `DSSliderParams \| string` | `{}`    |
-| `type`   | `type`    |             | `string`                   | `"sld"` |
+| Property   | Attribute   | Description | Type                       | Default                 |
+| ---------- | ----------- | ----------- | -------------------------- | ----------------------- |
+| `mods`     | `mods`      |             | `string \| string[]`       | `[]`                    |
+| `params`   | `params`    |             | `DSSliderParams \| string` | `{}`                    |
+| `sliderId` | `slider-id` |             | `string`                   | ``slide-${sliderId++}`` |
+| `type`     | `type`      |             | `string`                   | `"sld"`                 |
 
 
 ## Events
@@ -23,15 +24,42 @@
 
 ## Methods
 
-### `next(step?: number) => Promise<void>`
+### `goTo(itemIndex: number) => Promise<void>`
 
 
 
 #### Parameters
 
-| Name   | Type     | Description |
-| ------ | -------- | ----------- |
-| `step` | `number` |             |
+| Name        | Type     | Description |
+| ----------- | -------- | ----------- |
+| `itemIndex` | `number` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `initialize() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `next(step?: number, startPosition?: number) => Promise<void>`
+
+
+
+#### Parameters
+
+| Name            | Type     | Description |
+| --------------- | -------- | ----------- |
+| `step`          | `number` |             |
+| `startPosition` | `number` |             |
 
 #### Returns
 
@@ -49,15 +77,15 @@ Type: `Promise<void>`
 
 
 
-### `prev(step?: number) => Promise<void>`
+### `pointerDownHandler(event: PointerEvent) => Promise<void>`
 
 
 
 #### Parameters
 
-| Name   | Type     | Description |
-| ------ | -------- | ----------- |
-| `step` | `number` |             |
+| Name    | Type           | Description |
+| ------- | -------------- | ----------- |
+| `event` | `PointerEvent` |             |
 
 #### Returns
 
@@ -65,7 +93,50 @@ Type: `Promise<void>`
 
 
 
-### `refresh(reset: boolean) => Promise<void>`
+### `pointerMoveHandler() => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `pointerUpHandler(event: PointerEvent) => Promise<void>`
+
+
+
+#### Parameters
+
+| Name    | Type           | Description |
+| ------- | -------------- | ----------- |
+| `event` | `PointerEvent` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `prev(step?: number, startPosition?: number) => Promise<void>`
+
+
+
+#### Parameters
+
+| Name            | Type     | Description |
+| --------------- | -------- | ----------- |
+| `step`          | `number` |             |
+| `startPosition` | `number` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `refresh(reset?: boolean) => Promise<void>`
 
 
 
@@ -74,6 +145,16 @@ Type: `Promise<void>`
 | Name    | Type      | Description |
 | ------- | --------- | ----------- |
 | `reset` | `boolean` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `reset() => Promise<void>`
+
+
 
 #### Returns
 
@@ -94,14 +175,16 @@ Type: `Promise<void>`
 
 ## Dependencies
 
-### Used by
+### Depends on
 
- - [ds-main](../..)
+- [ds-trigger](../../core/trigger)
+- [ds-slider-menu](slider-menu)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-slider
+  ds-slider --> ds-trigger
+  ds-slider --> ds-slider-menu
   style ds-slider fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
