@@ -13,14 +13,14 @@ import { MediaPosition, MediaProps, MediaType, MediaUrlType } from "./pronto-con
 import { DSOption as DSOption2 } from "./core/dropdown/dropdown";
 import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./core/map/map.type";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-import { AppLocale } from "./toSort-propal/page/page";
+import { AppLocale } from "../toSort-propal/page/page";
 import { PanelType } from "./core/panel/panel";
 import { PanelType as PanelType1 } from "./core/panel/panel";
 import { ProductBlockParams } from "./pronto/product-block/product-block";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 import { DSSliderParams } from "./core/slider/slider";
 import { AnyHTMLElement } from "@stencil/core/internal";
-import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./toSort-propal/toaster/toaster-positions.enum";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "../toSort-propal/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { DSOption } from "./core/combo/combo";
 export { DSOption as DSOption1 } from "./core/dropdown/dropdown";
@@ -30,14 +30,14 @@ export { MediaPosition, MediaProps, MediaType, MediaUrlType } from "./pronto-con
 export { DSOption as DSOption2 } from "./core/dropdown/dropdown";
 export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./core/map/map.type";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-export { AppLocale } from "./toSort-propal/page/page";
+export { AppLocale } from "../toSort-propal/page/page";
 export { PanelType } from "./core/panel/panel";
 export { PanelType as PanelType1 } from "./core/panel/panel";
 export { ProductBlockParams } from "./pronto/product-block/product-block";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 export { DSSliderParams } from "./core/slider/slider";
 export { AnyHTMLElement } from "@stencil/core/internal";
-export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./toSort-propal/toaster/toaster-positions.enum";
+export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "../toSort-propal/toaster/toaster-positions.enum";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
     interface DsAccountBlock {

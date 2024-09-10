@@ -1,5 +1,5 @@
 import { Component, h, Prop } from '@stencil/core';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../typescript/dot-stash';
 
 @Component({
   tag: 'ds-newsletter',

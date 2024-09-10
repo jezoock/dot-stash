@@ -1,6 +1,6 @@
 import { Component, Element, h, Host, Prop, State, Watch } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import _ds from '../../typescript/dot-stash';
+import CssClassList from '../../components/types/css-class-list.interface';
 
 @Component({
   tag: 'ds-vimeo',
