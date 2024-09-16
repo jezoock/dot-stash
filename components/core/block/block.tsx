@@ -6,7 +6,8 @@ enum DsBlockTypeToTag {
   PAGE = "Host",
   SECTION = "section",
   BLOCK = "div",
-  CONTENT = "div"
+  CONTENT = "div",
+  FORM = "div",
 }
 
 @Component({
@@ -24,10 +25,11 @@ export class DSBlock {
 
   @Element() hostContainer: HTMLElement;
 
-  @Prop({ reflect: true }) article: boolean;
-  @Prop({ reflect: true }) block: boolean;
   @Prop({ reflect: true }) section: boolean;
+  @Prop({ reflect: true }) block: boolean;
+  @Prop({ reflect: true }) article: boolean;
   @Prop({ reflect: true }) form: boolean;
+  @Prop({ reflect: true }) modal: boolean;
   
   /**
    * Block type classname ( also used to build block classname )
@@ -51,7 +53,7 @@ export class DSBlock {
 
   @Method()
   async getContext() {
-    return this.article && 'article' || this.section && "section" || this.form && "form" || "block";
+    return this.article && 'article' || this.section && "section" || this.form && "form" || this.form && "modal" || "block";
   }
   
   async connectedCallback() {

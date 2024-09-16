@@ -1,4 +1,4 @@
-import { Component, h, Prop } from '@stencil/core/internal';
+import { Component, h, Host, Prop } from '@stencil/core/internal';
 import { Element, Method } from '@stencil/sass/dist/declarations';
 import _ds from '../../../typescript/dot-stash';
 import { defaultMapParams, GMapsParams, GMapsTypeId, MapMarkerOptions } from './map.type';
@@ -77,7 +77,7 @@ export class DSMap {
             language = `&language=${language}`;
           }
           if(this.mapParams.region) {
-            region = `&language=${region}`;
+            region = `&region=${region}`;
           }
           await _ds.tools.loadScript(`https://maps.googleapis.com/maps/api/js?${key}${callback}${language}${region}`, "gMaps")
           console.log("[LOG] DSMap initialize: GMaps script succesfully loaded.");
@@ -211,12 +211,12 @@ export class DSMap {
   
   render() {
     return (
-      <div class="ds-map">
+      <Host class="ds-map">
         <div class="ds-map__map" />
         <div class="ds-map__controls">
           <slot name="controls" />
         </div>
-      </div>
+      </Host>
     );
   }
 }
