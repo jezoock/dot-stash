@@ -8,15 +8,12 @@ import CssClassList from '../../types/css-class-list.interface';
 })
 export class DSText {
   @Prop() mods: string | string[] = "default";
-	@Prop() type = "p";
-	@Prop() text: boolean;
-	@Prop() main: boolean;
+	@Prop() type: "code" | "quote" = "p";
+	@Prop() inline: boolean;
+	@Prop() sup: boolean;
 	@Prop() sub: boolean;
-	@Prop() italic: boolean;
-	@Prop() bold: boolean;
-	@Prop() highlight: boolean;
-	@Prop() size: string | number;
-	@Prop() color: string;
+	@Prop() weight: "thin" | "light" | "normal" | "bold" | "bolder";
+
 
 	CSSClassList: CssClassList;
 
