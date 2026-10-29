@@ -13,6 +13,6 @@
     "jsx": "react",
     "jsxFactory": "h",
   },
-  "include": ["components", "typescript", "toSort-propal"],
+  "include": ["components", "typescript"],
   "exclude": ["node_modules"]
 }
