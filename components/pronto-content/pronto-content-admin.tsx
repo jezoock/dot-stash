@@ -39,6 +39,7 @@ export class ProntoContentAdmin {
   
   @Prop({ mutable: true, reflect: true }) adminUrl: string;
   @Prop({ mutable: true, reflect: true }) filemanagerUrl: string;
+  @Prop({ mutable: true, reflect: true }) tinymceApiKey: string;
   @Prop({ mutable: true, reflect: true }) controllerUrl: string;
   @Prop({ mutable: true, reflect: true }) blockTitle: string = '';
   @Prop({ mutable: true, reflect: true }) pageType: string = '';
@@ -95,6 +96,7 @@ export class ProntoContentAdmin {
       this.config = _ds.props.fromJSON(this.settings);
     }
     window["fileManagerUrl"] = this.filemanagerUrl;
+    window['tinymceApiKey'] = this.tinymceApiKey;
   }
 
   searchProductAutocompleteInit() {

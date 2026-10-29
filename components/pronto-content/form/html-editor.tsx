@@ -33,6 +33,7 @@ export class DSHtmlEditor {
 
   @Prop() name: string;
   @Prop() content: string;
+  @Prop() apiKey: string;
 
   @State() value: string;
   @State() showModal: boolean = false;
@@ -78,7 +79,7 @@ export class DSHtmlEditor {
       <Host class="ds-html-editor">
         <tinymce-editor
           class="ds-html-editor__tiny-mce"
-          api-key="***REMOVED***" 
+          api-key={this.apiKey || window['tinymceApiKey']}
           menubar="false" 
           toolbar={this.toolbar}
           plugins={this.plugins}

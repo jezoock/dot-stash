@@ -1,10 +1,6 @@
 import { Component, h, Method } from '@stencil/core/internal';
 /* import { mapStyles } from './map-styles'; */
 
-const SERVER_ADDRESS = 'https://easylove-shop.com/api/products/?output_format=JSON';
-let token = "***REMOVED***";
-token = btoa("***REMOVED***"); 
-
 @Component({
   tag: 'ds-main',
   styleUrl: './global.scss',
@@ -41,23 +37,10 @@ export class DSMainTest {
     console.log(event);
   };
 
-  async api() {
-      const products = await fetch(SERVER_ADDRESS, {
-          method: 'GET',
-          headers: {
-            'Authorization': 'Basic ' + token,
-            'Content-Type': 'application/json',
-          }/* , mode: 'no-cors' */
-      }).then(response => response.json() ).then( results => results.products ) 
-        console.log(products);
-  }
-
   render() {
     return (
       <div class="ds-components-demo">
         <ds-app></ds-app>
-
-        <ds-trigger onClick={this.api}>test</ds-trigger>
 
         <ds-block>
           <ds-toggle type="radio"></ds-toggle>
@@ -66,7 +49,7 @@ export class DSMainTest {
         </ds-block>
          {/* <ds-title section sub>test</ds-title>
         <ds-map
-          api-key="***REMOVED***"
+          api-key="YOUR_GOOGLE_MAPS_API_KEY"
           params={{
             useCluster: false,
             mapStyles: [{ name: "newStyles", styles: mapStyles }]

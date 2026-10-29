@@ -23,6 +23,7 @@
 | `pageType`       | `page-type`       |             | `string`            | `''`        |
 | `settings`       | `settings`        |             | `any`               | `undefined` |
 | `startDate`      | `start-date`      |             | `string`            | `undefined` |
+| `tinymceApiKey`  | `tinymce-api-key` |             | `string`            | `undefined` |
 
 
 ## Events
