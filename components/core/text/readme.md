@@ -10,10 +10,10 @@
 | Property | Attribute | Description | Type                                                  | Default     |
 | -------- | --------- | ----------- | ----------------------------------------------------- | ----------- |
 | `inline` | `inline`  |             | `boolean`                                             | `undefined` |
-| `mods`   | `mods`    |             | `string \| string[]`                                  | `"default"` |
+| `mods`   | `mods`    |             | `string \| string[]`                                  | `'default'` |
 | `sub`    | `sub`     |             | `boolean`                                             | `undefined` |
 | `sup`    | `sup`     |             | `boolean`                                             | `undefined` |
-| `type`   | `type`    |             | `"code" \| "p" \| "quote"`                            | `"p"`       |
+| `type`   | `type`    |             | `"code" \| "p" \| "quote"`                            | `'p'`       |
 | `weight` | `weight`  |             | `"bold" \| "bolder" \| "light" \| "normal" \| "thin"` | `undefined` |
 
 

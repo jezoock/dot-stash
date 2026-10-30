@@ -9,14 +9,12 @@ export const config: Config = {
     appendChildSlotFix: true,
     cloneNodeFix: true,
   },
-  plugins: [
-    sass()
-  ],
+  plugins: [sass()],
   outputTargets: [
     {
       type: 'www',
       // No generated service worker: Workbox would load its runtime from a third-party CDN.
-      serviceWorker: null
+      serviceWorker: null,
     },
     {
       type: 'dist',
@@ -25,7 +23,7 @@ export const config: Config = {
       esmLoaderPath: '../loader',
       // The gulp theme tasks write dist/css and dist/images:
       // do not let Stencil empty dist/ before each build.
-      empty: false
-    }
+      empty: false,
+    },
   ],
 };

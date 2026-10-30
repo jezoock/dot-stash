@@ -7,7 +7,7 @@ import CssClassList from '../../types/css-class-list.interface';
   styleUrl: 'title-bar.scss',
 })
 export class DSTitleBar {
-  contextName = "title-bar";
+  contextName = 'title-bar';
   CSSClassList: CssClassList;
   hasContentBefore: boolean;
   hasContentAfter: boolean;
@@ -18,8 +18,8 @@ export class DSTitleBar {
   @Prop({ reflect: true }) mods: string | string[] = [];
 
   @Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-title-bar", _ds.props.toArray(mods));
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList('ds-title-bar', _ds.props.toArray(mods));
   }
 
   connectedCallback() {
@@ -28,9 +28,9 @@ export class DSTitleBar {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-title-bar", _ds.props.toArray(this.mods));
+    this.CSSClassList = _ds.props.toClassList('ds-title-bar', _ds.props.toArray(this.mods));
   }
-  
+
   render() {
     return (
       <Host

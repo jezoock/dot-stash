@@ -11,9 +11,9 @@
 | ----------- | ------------ | ----------- | ------------------------ | ----------- |
 | `expanded`  | `expanded`   |             | `boolean`                | `false`     |
 | `index`     | `index`      |             | `number`                 | `undefined` |
-| `minHeight` | `min-height` |             | `string`                 | `"0"`       |
+| `minHeight` | `min-height` |             | `string`                 | `'0'`       |
 | `mods`      | `mods`       |             | `string \| string[]`     | `[]`        |
-| `type`      | `type`       |             | `"collapsible" \| "tab"` | `"tab"`     |
+| `type`      | `type`       |             | `"collapsible" \| "tab"` | `'tab'`     |
 
 
 ## Events

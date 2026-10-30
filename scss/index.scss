@@ -4,7 +4,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Montserrat';
-  
+
   &::before {
     @include ds-theme();
   }
@@ -80,7 +80,7 @@ section {
   &.alert {
     padding: 0 0 2rem 0;
     font-weight: bold;
-    
+
     &.--danger {
       color: red;
     }

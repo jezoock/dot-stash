@@ -1,10 +1,4 @@
-const throttle = (
-  func,
-  wait,
-  leading = false,
-  trailing = false,
-  context?
-) => {
+const throttle = (func, wait, leading = false, trailing = false, context?) => {
   let ctx, args, result;
   let timeout = null;
   let previous: any = 0;

@@ -10,7 +10,7 @@
 | Property        | Attribute        | Description | Type                 | Default          |
 | --------------- | ---------------- | ----------- | -------------------- | ---------------- |
 | `block`         | `block`          |             | `boolean`            | `undefined`      |
-| `imagePosition` | `image-position` |             | `string`             | `"block-before"` |
+| `imagePosition` | `image-position` |             | `string`             | `'block-before'` |
 | `mods`          | `mods`           |             | `string \| string[]` | `[]`             |
 | `section`       | `section`        |             | `boolean`            | `undefined`      |
 | `useContext`    | `use-context`    |             | `boolean`            | `undefined`      |

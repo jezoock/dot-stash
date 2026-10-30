@@ -12,7 +12,7 @@
 | `mods`     | `mods`      |             | `string \| string[]`       | `[]`                    |
 | `params`   | `params`    |             | `DSSliderParams \| string` | `{}`                    |
 | `sliderId` | `slider-id` |             | `string`                   | ``slide-${sliderId++}`` |
-| `type`     | `type`      |             | `string`                   | `"sld"`                 |
+| `type`     | `type`      |             | `string`                   | `'sld'`                 |
 
 
 ## Events

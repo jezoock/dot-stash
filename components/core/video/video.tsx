@@ -11,11 +11,11 @@ interface VideoSource {
   fileFormat: VideoFormat;
 }
 type VideoSources = VideoSource[];
-const allowedVideoFormat: VideoFormat[] = [ 'mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mks', 'mts' ];
+const allowedVideoFormat: VideoFormat[] = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mks', 'mts'];
 
 @Component({
   tag: 'ds-video',
-  styleUrl: 'video.scss'
+  styleUrl: 'video.scss',
 })
 export class DSVideo {
   @Element() container: HTMLDivElement;
@@ -27,11 +27,11 @@ export class DSVideo {
   @Prop({ mutable: true, reflect: true }) controls = false;
   @Prop({ mutable: true, reflect: true }) loop = false;
   @Prop({ mutable: true, reflect: true }) playsinline = false;
-  
+
   @State() isPlaying = false;
   @State() isPaused = false;
   @State() isMuted = false;
-  
+
   isReady = false;
   CSSClassList: CssClassList;
   useControls = false;
@@ -42,8 +42,8 @@ export class DSVideo {
   //#region PROP WATCHERS
 
   @Watch('mods')
-  dsmodsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-video", _ds.props.toArray(mods));
+  dsmodsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList('ds-video', _ds.props.toArray(mods));
   }
 
   //#endregion
@@ -53,7 +53,7 @@ export class DSVideo {
   @Method()
   async play() {
     if (!this.isPlaying) {
-      if( !this.isReady ) {
+      if (!this.isReady) {
         this.isReady = true;
       }
       this.isPlaying = true;
@@ -70,7 +70,7 @@ export class DSVideo {
     videoPlayer.currentTime = 0;
     videoPlayer.load();
   }
-  
+
   @Method()
   async pause() {
     this.isPlaying = false;
@@ -92,7 +92,7 @@ export class DSVideo {
   //#endregion
 
   //#region LYFECYCLE
-  
+
   constructor() {
     this.playButtonclickHandler = this.playButtonclickHandler.bind(this);
     this.pauseButtonclickHandler = this.pauseButtonclickHandler.bind(this);
@@ -103,21 +103,21 @@ export class DSVideo {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-video", _ds.props.toArray(this.mods));
+    this.CSSClassList = _ds.props.toClassList('ds-video', _ds.props.toArray(this.mods));
     this.useControls = _ds.props.isTrue(this.controls);
     this.playOnload = _ds.props.isTrue(this.autoplay);
     this.playOnLoop = _ds.props.isTrue(this.loop);
 
-    const videoSources = _ds.props.toArray(this.sources).map( videoSource => ({ path: videoSource, fileFormat: this.getVideoFileFormat(videoSource) }) );
+    const videoSources = _ds.props.toArray(this.sources).map(videoSource => ({ path: videoSource, fileFormat: this.getVideoFileFormat(videoSource) }));
     this.videoSources = videoSources;
 
     if (this.playOnload && !this.isOnScreen()) {
-      window.addEventListener("scroll", debounce(this.scrollWatcher, 50), false);
+      window.addEventListener('scroll', debounce(this.scrollWatcher, 50), false);
     }
   }
- 
+
   disconnectedCallback() {
-    window.removeEventListener("scroll", this.scrollWatcher);
+    window.removeEventListener('scroll', this.scrollWatcher);
   }
 
   //#endregion
@@ -125,17 +125,17 @@ export class DSVideo {
   //#region UTILS
 
   getPlayer() {
-    return this.container.querySelector("video");
+    return this.container.querySelector('video');
   }
 
   isOnScreen() {
     const { offsetTop } = this.container;
-    return offsetTop - 50 < window.scrollY + window.innerHeight
+    return offsetTop - 50 < window.scrollY + window.innerHeight;
   }
 
-  getVideoFileFormat( fileLocation: string ): VideoFormat {
+  getVideoFileFormat(fileLocation: string): VideoFormat {
     const filename = fileLocation.split('/').pop();
-    const fileExtension = filename.substring(filename.lastIndexOf('.')+1,filename.length).toLowerCase() as VideoFormat;
+    const fileExtension = filename.substring(filename.lastIndexOf('.') + 1, filename.length).toLowerCase() as VideoFormat;
     let videoFileFormat: VideoFormat = 'mp4';
 
     if (allowedVideoFormat.includes(fileExtension)) {
@@ -149,11 +149,11 @@ export class DSVideo {
 
   //#region HANDLERS
 
-   scrollWatcher = debounce(() => {
-    if(this.isOnScreen()) {
+  scrollWatcher = debounce(() => {
+    if (this.isOnScreen()) {
       this.play();
     }
-  }, 50)
+  }, 50);
 
   playButtonclickHandler() {
     this.play();
@@ -179,12 +179,14 @@ export class DSVideo {
 
   render() {
     return (
-      <Host class={{
-        ...this.CSSClassList,
-        [`--playing`]: this.isPlaying,
-        [`--paused`]: this.isPaused,
-        [`--muted`]: this.isMuted
-      }}>
+      <Host
+        class={{
+          ...this.CSSClassList,
+          [`--playing`]: this.isPlaying,
+          [`--paused`]: this.isPaused,
+          [`--muted`]: this.isMuted,
+        }}
+      >
         <video
           class="ds-video__player"
           poster={this.poster}
@@ -196,36 +198,17 @@ export class DSVideo {
           loop={this.playOnLoop}
           playsinline={this.playsinline}
         >
-          {this.videoSources.map( ({path, fileFormat}) => 
-            <source
-              src={path}
-              type={`video/${fileFormat}`}
-            />
-          )}
+          {this.videoSources.map(({ path, fileFormat }) => (
+            <source src={path} type={`video/${fileFormat}`} />
+          ))}
         </video>
         <slot name="controls" />
         {this.useControls && (
           <Fragment>
-            <ds-button
-              class="ds-video__pause-button"        
-              mods={['video-player', 'pause']}
-              onClick={this.pauseButtonclickHandler}
-            />
-            <ds-button
-              class="ds-video__play-button"        
-              mods={['video-player', 'play']}
-              onClick={this.playButtonclickHandler}
-            />
-            <ds-button
-              class="ds-video__mute-button"        
-              mods={['video-player', "mute"]}
-              onClick={this.muteButtonclickHandler}
-            />
-            <ds-button
-              class="ds-video__unmute-button"        
-              mods={['video-player', "unmute"]}
-              onClick={this.unmuteButtonclickHandler}
-            />
+            <ds-button class="ds-video__pause-button" mods={['video-player', 'pause']} onClick={this.pauseButtonclickHandler} />
+            <ds-button class="ds-video__play-button" mods={['video-player', 'play']} onClick={this.playButtonclickHandler} />
+            <ds-button class="ds-video__mute-button" mods={['video-player', 'mute']} onClick={this.muteButtonclickHandler} />
+            <ds-button class="ds-video__unmute-button" mods={['video-player', 'unmute']} onClick={this.unmuteButtonclickHandler} />
           </Fragment>
         )}
       </Host>

@@ -30,20 +30,20 @@ export interface DSGridParams {
 export class DSGrid {
   CSSClassList: CssClassList;
   options: DSGridParams;
-  
+
   @Element() container: HTMLDivElement;
-  
+
   @Prop({ reflect: true }) dataUseRsp = true;
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) type: string | DSGridType = 'fixed';
-  @Prop({ mutable: true, reflect: true }) cols: string | number  = 1;
+  @Prop({ mutable: true, reflect: true }) cols: string | number = 1;
   @Prop({ mutable: true, reflect: true }) hGap = '0';
   @Prop({ mutable: true, reflect: true }) vGap = '0';
-  @Prop({ mutable: true, reflect: true }) align: string | DSGridAlignment = "start";
-  @Prop({ mutable: true, reflect: true }) vAlign: string | DSGridAlignment = "start";
+  @Prop({ mutable: true, reflect: true }) align: string | DSGridAlignment = 'start';
+  @Prop({ mutable: true, reflect: true }) vAlign: string | DSGridAlignment = 'start';
   @Prop({ mutable: true, reflect: true }) cellRatio: string | number;
 
-  @Listen("breakpointChange")
+  @Listen('breakpointChange')
   onBreakpointChange() {
     this.processChildren();
   }
@@ -56,7 +56,7 @@ export class DSGrid {
 
   @Watch('type')
   typeWatcher(type: DSGridType) {
-    this.options = { ...this.options, type};
+    this.options = { ...this.options, type };
     this.processChildren();
   }
 
@@ -68,31 +68,31 @@ export class DSGrid {
 
   @Watch('hGap')
   hGapWatcher(hGap: string) {
-    this.options = { ...this.options, hGap};
+    this.options = { ...this.options, hGap };
     this.processChildren();
   }
 
   @Watch('vGap')
   vGapWatcher(vGap: string) {
-    this.options = { ...this.options, vGap};
+    this.options = { ...this.options, vGap };
     this.processChildren();
   }
-  
+
   @Watch('align')
   alignWatcher(align: DSGridAlignment) {
-    this.options = { ...this.options, align};
+    this.options = { ...this.options, align };
     this.processChildren();
   }
-  
+
   @Watch('vAlign')
   vAlignWatcher(vAlign: DSGridAlignment) {
-    this.options = { ...this.options, vAlign};
+    this.options = { ...this.options, vAlign };
     this.processChildren();
   }
 
   @Watch('cellRatio')
   cellRatioWatcher(cellRatio: string | number) {
-    this.options = { ...this.options, cellRatio: _ds.props.toNumber(cellRatio)};
+    this.options = { ...this.options, cellRatio: _ds.props.toNumber(cellRatio) };
     this.processChildren();
   }
 
@@ -102,7 +102,7 @@ export class DSGrid {
     const cols = _ds.props.toNumber(colsFromProps);
     const type = typeFromProps as DSGridType;
     const align = alignFromProps as DSGridAlignment;
-    const vAlign = vAlignFromProps  as DSGridAlignment;
+    const vAlign = vAlignFromProps as DSGridAlignment;
     const options: DSGridParams = { type, hGap, vGap, align, vAlign, cols };
     if (this.cellRatio) {
       options.cellRatio = _ds.props.toNumber(this.cellRatio);
@@ -118,13 +118,13 @@ export class DSGrid {
     const children = Array.from(this.container.querySelectorAll('ds-grid-item'));
     /* const rowCount = Math.ceil(children.length/this.options.cols); */
     let offset = 0;
-    for (let i=0; i<children.length; i++) {
+    for (let i = 0; i < children.length; i++) {
       const child = children[i];
       const styles = await this.processCols(offset, child);
       offset = offset + child.width;
-      await child.setStyles( styles );
+      await child.setStyles(styles);
     }
-/*     children.map( async (child) => {
+    /*     children.map( async (child) => {
     }); */
   }
 
@@ -135,17 +135,16 @@ export class DSGrid {
 
     if (type === 'fixed') {
       // styles.width = `calc( ${(100 * colWidth / cols).toFixed(4)}% + (${hGap} * (${colWidth} - 1)) )`;
-      styles.width = `${(100 * colWidth / cols).toFixed(4)}%`;
+      styles.width = `${((100 * colWidth) / cols).toFixed(4)}%`;
 
       if (hGap) {
         styles.paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
-        styles.paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - (((index+colWidth-1) % cols)+1)})`;
+        styles.paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - (((index + colWidth - 1) % cols) + 1)})`;
       }
 
       if (vGap) {
         styles.paddingBlockEnd = `calc(${vGap})`;
       }
-
     } else if (type === 'fluid') {
       let gapWidth = '0';
 
@@ -164,10 +163,10 @@ export class DSGrid {
     } /* else if ( type === 'system') {
 
     } */
-    
+
     return styles;
   }
-  
+
   async processStyles(rowCount: number, index: number, gridItem: HTMLDsGridItemElement): Promise<DSGridItemStyles> {
     const { type, hGap, vGap, cols } = this.options;
     const styles: DSGridItemStyles = {};
@@ -185,7 +184,6 @@ export class DSGrid {
         styles.paddingBlockStart = `calc((${vGap} / ${rowCount}) * ${itemRow % rowCount})`;
         styles.paddingBlockEnd = `calc((${vGap} / ${rowCount}) * ${rowCount - ((itemRow % rowCount) + 1)})`;
       }
-      
     } else if (type === 'fluid') {
       let gapWidth = '0';
 
@@ -200,17 +198,16 @@ export class DSGrid {
         const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
         rowContainer.style.rowGap = `${vGap}`;
       } */
-      
 
       styles.width = `calc(100% / ${cols / gridItem.width} - ${gapWidth}`;
 
       /* if (cellRatio) {
         paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
       } */
-    }/*  else if ( type === 'system') {
+    } /*  else if ( type === 'system') {
 
     } */
-    
+
     return styles;
   }
 

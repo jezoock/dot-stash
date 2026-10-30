@@ -212,7 +212,7 @@ export namespace Components {
     }
     interface DsNav {
         "currentActiveItemId": string;
-        "mods": string|string[];
+        "mods": string | string[];
     }
     interface DsNavItem {
         "depth": number;
@@ -244,8 +244,8 @@ export namespace Components {
         "type": PanelType1;
     }
     interface DsRatingList {
-        "dsAverage": string|number;
-        "dsRatings": string|any[];
+        "dsAverage": string | number;
+        "dsRatings": string | any[];
     }
     interface DsRsp {
         "breakpointsFromProp": Record<string, number>;
@@ -321,8 +321,8 @@ export namespace Components {
         "mods": string | string[];
         "sub": boolean;
         "sup": boolean;
-        "type": "p" | "code" | "quote";
-        "weight": "thin" | "light" | "normal" | "bold" | "bolder";
+        "type": 'p' | 'code' | 'quote';
+        "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
     interface DsTitle {
         "article": boolean;
@@ -357,7 +357,7 @@ export namespace Components {
         "setName": (name: string) => Promise<void>;
         "setProps": (properties: Record<string, unknown>) => Promise<void>;
         "setType": (type: "radio" | "icon" | "checkbox" | "switch" | string) => Promise<void>;
-        "type": "radio" | "icon" | "checkbox" | "switch" | string;
+        "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "value": any;
     }
     interface DsToggleGroup {
@@ -709,7 +709,7 @@ declare global {
         new (): HTMLDsSidebarElement;
     };
     interface HTMLDsSliderElementEventMap {
-        "sliderEvent": {slide: string; direction: number; currentIndex?: number;};
+        "sliderEvent": { slide: string; direction: number; currentIndex?: number };
     }
     interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -994,7 +994,7 @@ declare namespace LocalJSX {
     }
     interface DsNav {
         "currentActiveItemId"?: string;
-        "mods"?: string|string[];
+        "mods"?: string | string[];
     }
     interface DsNavItem {
         "depth"?: number;
@@ -1023,8 +1023,8 @@ declare namespace LocalJSX {
         "type"?: PanelType1;
     }
     interface DsRatingList {
-        "dsAverage"?: string|number;
-        "dsRatings"?: string|any[];
+        "dsAverage"?: string | number;
+        "dsRatings"?: string | any[];
     }
     interface DsRsp {
         "breakpointsFromProp"?: Record<string, number>;
@@ -1053,7 +1053,7 @@ declare namespace LocalJSX {
     }
     interface DsSlider {
         "mods"?: string | string[];
-        "onSliderEvent"?: (event: DsSliderCustomEvent<{slide: string; direction: number; currentIndex?: number;}>) => void;
+        "onSliderEvent"?: (event: DsSliderCustomEvent<{ slide: string; direction: number; currentIndex?: number }>) => void;
         "params"?: DSSliderParams | string;
         "sliderId"?: string;
         "type"?: string;
@@ -1070,8 +1070,8 @@ declare namespace LocalJSX {
         "mods"?: string | string[];
         "sub"?: boolean;
         "sup"?: boolean;
-        "type"?: "p" | "code" | "quote";
-        "weight"?: "thin" | "light" | "normal" | "bold" | "bolder";
+        "type"?: 'p' | 'code' | 'quote';
+        "weight"?: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
     interface DsTitle {
         "article"?: boolean;
@@ -1104,7 +1104,7 @@ declare namespace LocalJSX {
         "mods"?: string | string[];
         "name"?: string;
         "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
-        "type"?: "radio" | "icon" | "checkbox" | "switch" | string;
+        "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "value"?: any;
     }
     interface DsToggleGroup {

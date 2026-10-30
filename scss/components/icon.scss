@@ -3,7 +3,7 @@
     font-weight: 400;
     text-align: center;
     vertical-align: middle;
-    font-family: "ds-icons";
+    font-family: 'ds-icons';
   }
 
   &.--cart {
@@ -77,7 +77,7 @@
       @include ds-icon-content(angle-right);
     }
   }
-  
+
   &.--arrow-down {
     &:before {
       @include ds-icon-content(angle-down);
@@ -131,13 +131,13 @@
       @include ds-icon-content(dir-right);
     }
   }
-  
+
   &.--show {
     &:before {
       @include ds-icon-content(eye);
     }
   }
-  
+
   &.--hide {
     &:before {
       @include ds-icon-content(eye-off);
@@ -155,7 +155,7 @@
       @include ds-icon-content(trash);
     }
   }
-  
+
   &.--plus {
     &:before {
       @include ds-icon-content(plus);

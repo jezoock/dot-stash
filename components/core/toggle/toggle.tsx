@@ -14,7 +14,7 @@ export class DSToggle {
   @Prop({ mutable: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) value: any;
   @Prop({ mutable: true, reflect: true }) name: string;
-  @Prop({ mutable: true, reflect: true }) type: "radio" | "icon" | "checkbox" | "switch" | string = "switch";
+  @Prop({ mutable: true, reflect: true }) type: 'radio' | 'icon' | 'checkbox' | 'switch' | string = 'switch';
   @Prop({ reflect: true, mutable: true }) disabled: boolean;
   @Prop({ reflect: true, mutable: true }) checked: boolean;
 
@@ -33,22 +33,22 @@ export class DSToggle {
   }
 
   @Method()
-  async setType(type: "radio" | "icon" | "checkbox" | "switch" | string) {
-    if (typeof this.type === "undefined") {
+  async setType(type: 'radio' | 'icon' | 'checkbox' | 'switch' | string) {
+    if (typeof this.type === 'undefined') {
       this.type = type;
     }
   }
 
   @Method()
   async setName(name: string) {
-    if (typeof this.name === "undefined") {
+    if (typeof this.name === 'undefined') {
       this.name = name;
     }
   }
 
   @Method()
   async setProps(properties: Record<string, unknown>) {
-    Object.entries(properties).map( ([ key, value ]) => this[key] && value && (this[key] = value) )    
+    Object.entries(properties).map(([key, value]) => this[key] && value && (this[key] = value));
   }
 
   componentWillLoad() {

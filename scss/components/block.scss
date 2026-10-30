@@ -9,15 +9,14 @@
   }
 
   &.--content {
-
     h2,
     h3,
     h5,
     h6,
     p {
-      font-family: "Mulish", sans-serif !important;
+      font-family: 'Mulish', sans-serif !important;
     }
-    
+
     p,
     li {
       line-height: 1.4 !important;
@@ -26,19 +25,18 @@
     ul {
       padding: 0 0 28px 0;
     }
-    
+
     li {
-      font-family: "Mulish", sans-serif;
+      font-family: 'Mulish', sans-serif;
       padding: 0 0 0 0.5rem;
       margin: 0 0 0 0.75rem;
 
       &::marker {
-        content: "*";
+        content: '*';
       }
     }
 
-    h1
-    h2,
+    h1 h2,
     h3,
     h4,
     h5,
@@ -52,14 +50,14 @@
 
     h1,
     h4 {
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       text-transform: uppercase;
     }
 
     h1 {
       font-weight: normal;
     }
-    
+
     h2,
     h3 {
       font-weight: bold;
@@ -74,7 +72,7 @@
 
     & .ds-panel {
       & .ds-title {
-        font-family: "Mulish", sans-serif !important;
+        font-family: 'Mulish', sans-serif !important;
         padding: 0 0 10px 0 !important;
         font-weight: bold;
         text-transform: none;
@@ -96,7 +94,7 @@
       h1 {
         padding: 0 0 20px 0 !important;
       }
-  
+
       h4 {
         padding: 0 0 20px 0 !important;
       }
@@ -114,7 +112,7 @@
       h1 {
         padding: 0 0 40px 0 !important;
       }
-  
+
       h4 {
         padding: 0 0 28px 0 !important;
       }
@@ -143,7 +141,7 @@
       }
     }
   }
-  
+
   &.--md {
     & .ds-block,
     & .ds-section {
@@ -152,7 +150,7 @@
       }
     }
   }
-  
+
   &.--lg {
     & .ds-block,
     & .ds-section {
@@ -161,7 +159,7 @@
       }
     }
   }
-    
+
   &.--full-width {
     & .ds-block,
     & .ds-section {
@@ -224,7 +222,7 @@
         @include break-p(md) {
           align-items: center;
           justify-content: center;
-          
+
           & .ds-heading {
             &__content {
               width: 35%;
@@ -241,27 +239,26 @@
                 order: 2;
                 padding: 0 2rem 0 4vw;
               }
-              
+
               &__image {
                 order: 1;
               }
             }
           }
-          
+
           &.--right {
             & .ds-heading {
               &__content {
                 padding: 0 4vw 0 2rem;
                 order: 1;
               }
-        
+
               &__image {
                 order: 2;
               }
             }
           }
         }
-
 
         &.--under {
           position: relative;
@@ -270,19 +267,18 @@
           display: block;
           margin: auto;
           padding: 0;
-          
-          & .ds-heading {
 
+          & .ds-heading {
             &__content {
               position: absolute;
               top: 50%;
               left: 50%;
-              transform: translate3d(-50%,-50%,0);
+              transform: translate3d(-50%, -50%, 0);
               z-index: 1;
               text-align: center;
               color: #fff;
             }
-            
+
             &__image {
               position: relative;
               z-index: 0;
@@ -295,21 +291,20 @@
                 width: 90%;
 
                 & > h3 {
-                  padding: 0 0 0.75rem 0
+                  padding: 0 0 0.75rem 0;
                 }
               }
-                  
+
               &__image {
-                overflow: hidden; 
+                overflow: hidden;
 
                 & img {
                   width: 200%;
-                  transform: translate3d(-25%,0,0,);
+                  transform: translate3d(-25%, 0, 0);
                 }
               }
             }
           }
-
         }
       }
     }

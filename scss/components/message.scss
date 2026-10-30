@@ -32,7 +32,7 @@
   &.--error {
     border-left-color: ds-color(status, error);
     color: ds-color(status, error);
-    
+
     &:before {
       color: ds-color(status, error);
       @include ds-icon(cancel);

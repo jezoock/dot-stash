@@ -1,6 +1,5 @@
 .ds-panel-group {
-
-  &[type="tab"] {
+  &[type='tab'] {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -8,7 +7,6 @@
     overflow: hidden;
   }
 
-  &[type="collapsible"] {
-    
+  &[type='collapsible'] {
   }
 }

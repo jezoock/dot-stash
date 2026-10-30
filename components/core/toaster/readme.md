@@ -7,13 +7,13 @@
 
 ## Properties
 
-| Property            | Attribute             | Description | Type                                                                 | Default                                                             |
-| ------------------- | --------------------- | ----------- | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `closingDelay`      | `closing-delay`       |             | `number`                                                             | `3000`                                                              |
-| `maxDisplayedToast` | `max-displayed-toast` |             | `number`                                                             | `3`                                                                 |
-| `messages`          | `messages`            |             | `string \| string[]`                                                 | `undefined`                                                         |
-| `mods`              | `mods`                |             | `string \| string[]`                                                 | `""`                                                                |
-| `position`          | `position`            |             | `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION] \| string` | `[TOASTER_VERTICAL_POSITION.TOP, TOASTER_HORIZONTAL_POSITION.LEFT]` |
+| Property            | Attribute             | Description | Type                                                                 | Default                                                                          |
+| ------------------- | --------------------- | ----------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `closingDelay`      | `closing-delay`       |             | `number`                                                             | `3000`                                                                           |
+| `maxDisplayedToast` | `max-displayed-toast` |             | `number`                                                             | `3`                                                                              |
+| `messages`          | `messages`            |             | `string \| string[]`                                                 | `undefined`                                                                      |
+| `mods`              | `mods`                |             | `string \| string[]`                                                 | `''`                                                                             |
+| `position`          | `position`            |             | `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION] \| string` | `[     TOASTER_VERTICAL_POSITION.TOP,     TOASTER_HORIZONTAL_POSITION.LEFT,   ]` |
 
 
 ## Events

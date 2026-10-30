@@ -22,37 +22,36 @@
 
   $sassToJSON: $sassToJSON + '}';
 
-  @return $sassToJSON; 
+  @return $sassToJSON;
 }
 
 @mixin break-p($breakpoint-min: null, $breakpoint-max: null) {
   @if ($breakpoint-min == 'min') {
     $max: map-get($breakpoints, 'min');
     @media (max-width: '#{$max}px') {
-      @content
+      @content;
     }
-  };
+  }
 
   @if ($breakpoint-min == null) {
     $max: map-get($breakpoints, $breakpoint-max);
     @media (max-width: '#{$max - 1}px') {
-      @content
+      @content;
     }
-  };
+  }
 
   @if ($breakpoint-max == null) {
     $min: map-get($breakpoints, $breakpoint-min);
     @media (min-width: '#{$min}px') {
-      @content
+      @content;
     }
-  };
+  }
 
   @if ($breakpoint-min != null and $breakpoint-max != null) {
     $min: map-get($breakpoints, $breakpoint-min);
     $max: map-get($breakpoints, $breakpoint-max);
     @media (min-width: '#{$min}px') and (max-width: '#{$max - 1}px') {
-      @content
-    };
-  };
-
+      @content;
+    }
+  }
 }

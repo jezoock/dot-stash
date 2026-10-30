@@ -1,6 +1,6 @@
 import { Component, Element, h, Host, Prop, Watch, Method } from '@stencil/core/internal';
 import _ds from '../../../utils/dot-stash';
-import { DSGridItemStyles } from "../grid";
+import { DSGridItemStyles } from '../grid';
 
 @Component({
   tag: 'ds-grid-item',
@@ -11,7 +11,7 @@ export class DSGridItem {
   useRatio = false;
 
   @Element() container: HTMLDivElement;
-  @Prop({ reflect: true, attribute: "ratio"}) ratioFromProps: number | string;
+  @Prop({ reflect: true, attribute: 'ratio' }) ratioFromProps: number | string;
   @Prop({ reflect: true, mutable: true }) width = 1;
 
   @Watch('ratioFromProps')

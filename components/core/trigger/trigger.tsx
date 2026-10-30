@@ -20,13 +20,10 @@ export class DSTrigger {
   @Prop() target: string;
   @Prop() type: 'button' | 'control' | 'link' = 'control';
   @Prop({ reflect: true }) mods: string | string[] = [];
-  
-	@Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList(
-      `ds-${this.type}`,
-      _ds.props.toArray(mods)
-    );
+
+  @Watch('mods')
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList(`ds-${this.type}`, _ds.props.toArray(mods));
   }
 
   //#region LYFECYCLE CALLBACKS
@@ -35,38 +32,33 @@ export class DSTrigger {
     this.eventHandler = this.eventHandler.bind(this);
   }
 
-	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList(
-      `ds-${this.type}`,
-      _ds.props.toArray(this.mods)
-    );
-	}
+  componentWillLoad() {
+    this.CSSClassList = _ds.props.toClassList(`ds-${this.type}`, _ds.props.toArray(this.mods));
+  }
 
   connectedCallback() {
     if (this.target) {
       let target: TargetComponent;
-      if (this.target === "window") {
+      if (this.target === 'window') {
         target = window;
-      } else if (this.target === "document") {
+      } else if (this.target === 'document') {
         target = document;
       } else {
         target = document.querySelector(this.target);
       }
 
-      if(target) {
+      if (target) {
         this.targetComponent = target;
-        this.hostContainer.addEventListener( this.on, this.eventHandler );
+        this.hostContainer.addEventListener(this.on, this.eventHandler);
       } else {
-        console.log(
-          `[ERROR] DSControl: can't find target component, selector: ${this.target}, type: ${this.type}`
-        );
-      } 
+        console.log(`[ERROR] DSControl: can't find target component, selector: ${this.target}, type: ${this.type}`);
+      }
     }
   }
 
   disconnectedCallback() {
     if (this.target && this.targetComponent) {
-      this.hostContainer.removeEventListener( this.on, this.eventHandler );
+      this.hostContainer.removeEventListener(this.on, this.eventHandler);
     }
   }
 
@@ -75,9 +67,9 @@ export class DSTrigger {
   //#region HANDLERS
 
   eventHandler() {
-    if(this.targetComponent) {
-      const [ action, args ] = this.action.split(/:(.*)/g);
-      this.targetComponent[action](..._ds.props.fromJSON(args||[]));
+    if (this.targetComponent) {
+      const [action, args] = this.action.split(/:(.*)/g);
+      this.targetComponent[action](..._ds.props.fromJSON(args || []));
     }
   }
 
@@ -85,9 +77,7 @@ export class DSTrigger {
 
   render() {
     return (
-      <Host
-        class={this.CSSClassList}
-      >
+      <Host class={this.CSSClassList}>
         <slot />
       </Host>
     );

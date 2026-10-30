@@ -21,10 +21,9 @@ ds-tooltip {
     & > span {
       white-space: nowrap;
     }
-
   }
 
-  & [slot="message"] {
+  & [slot='message'] {
     display: none;
     position: absolute;
     padding: 0.75rem;
@@ -41,63 +40,62 @@ ds-tooltip {
   }
 
   &.--top {
-    & [slot="message"] {
+    & [slot='message'] {
       bottom: calc(100% + 10px);
       left: 50%;
       transform: translateX(-50%);
     }
   }
   &.--top-left {
-    & [slot="message"] {
+    & [slot='message'] {
       bottom: calc(100% + 10px);
       left: 50%;
       transform: translateX(-10%);
     }
   }
   &.--top-right {
-    & [slot="message"] {
+    & [slot='message'] {
       bottom: calc(100% + 10px);
       left: 50%;
       transform: translateX(-85%);
     }
   }
   &.--bottom {
-    & [slot="message"] {
+    & [slot='message'] {
       top: calc(100% + 10px);
       left: 50%;
       transform: translateX(-50%);
     }
   }
   &.--bottom-left {
-    & [slot="message"] {
+    & [slot='message'] {
       top: calc(100% + 10px);
       left: 15%;
       transform: translateX(-5%);
     }
   }
   &.--bottom-right {
-    & [slot="message"] {
+    & [slot='message'] {
       top: calc(100% + 10px);
       left: 15%;
       transform: translateX(-85%);
     }
   }
   &.--left {
-    & [slot="message"] {
+    & [slot='message'] {
       right: calc(100% + 10px);
       top: -50%;
       transform: translateY(-50%);
     }
   }
   &.--right {
-    & [slot="message"] {
+    & [slot='message'] {
       left: calc(100% + 10px);
       top: 50%;
       transform: translateY(-50%);
     }
   }
   &.--with-arrow {
-    
     /* &.--top {
       &:after {
         top: 0;
@@ -156,23 +154,22 @@ ds-tooltip {
       }
     } */
   }
-  
+
   &.--is-shown {
     &.--top,
-    &.--top-left, 
-    &.--top-right, 
+    &.--top-left,
+    &.--top-right,
     &.--bottom,
-    &.--bottom-left, 
-    &.--bottom-right, 
-    &.--left, 
+    &.--bottom-left,
+    &.--bottom-right,
+    &.--left,
     &.--right {
       &:after {
         display: block;
       }
     }
-    & [slot="message"] {
+    & [slot='message'] {
       display: block;
     }
   }
 }
-

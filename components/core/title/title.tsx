@@ -3,36 +3,36 @@ import _ds from '../../utils/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 @Component({
-	tag: 'ds-title',
-	styleUrl: 'title.scss',
+  tag: 'ds-title',
+  styleUrl: 'title.scss',
 })
 export class DSTitle {
-	CSSClassList: CssClassList;
+  CSSClassList: CssClassList;
 
-	@Prop({ reflect: true }) mods: string | string[] = [];
-	@Prop({ reflect: true }) article: boolean;
-	@Prop({ reflect: true }) form: boolean;
-	@Prop({ reflect: true }) page: boolean;
-	@Prop({ reflect: true }) section: boolean;
-	@Prop({ reflect: true }) block: boolean;
-	@Prop({ reflect: true }) sub: boolean;
-	@Prop({ reflect: true }) sup: boolean;
-	/*@Prop() useContext: boolean;*/
+  @Prop({ reflect: true }) mods: string | string[] = [];
+  @Prop({ reflect: true }) article: boolean;
+  @Prop({ reflect: true }) form: boolean;
+  @Prop({ reflect: true }) page: boolean;
+  @Prop({ reflect: true }) section: boolean;
+  @Prop({ reflect: true }) block: boolean;
+  @Prop({ reflect: true }) sub: boolean;
+  @Prop({ reflect: true }) sup: boolean;
+  /*@Prop() useContext: boolean;*/
 
-	@Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(mods));
+  @Watch('mods')
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList('ds-title', _ds.props.toArray(mods));
   }
 
-	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(this.mods));
-	}
+  componentWillLoad() {
+    this.CSSClassList = _ds.props.toClassList('ds-title', _ds.props.toArray(this.mods));
+  }
 
-	/* getContext() {
+  /* getContext() {
 		return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form"; 
 	} */
-	
-	/*async connectedCallback() {
+
+  /*async connectedCallback() {
 		let { useContext } = this;
 		if (typeof useContext === 'undefined') {
 			const { useContext: useContextFromConfig } = _ds.app.getConfig([ 'useContext' ]);
@@ -48,14 +48,12 @@ export class DSTitle {
 			}
 		}
 	}*/
-	
-	render() {
-		return (
-			<Host
-				class={this.CSSClassList}
-			>
-				<slot />
-			</Host>
-		);
-	}
+
+  render() {
+    return (
+      <Host class={this.CSSClassList}>
+        <slot />
+      </Host>
+    );
+  }
 }

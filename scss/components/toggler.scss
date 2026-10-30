@@ -1,5 +1,4 @@
 .ds-toggler {
-
 }
 
 .ds-toggler-item {
@@ -7,13 +6,15 @@
     &.--faq {
       & .ds-toggler-item {
         &__title {
-          position: relative; 
+          position: relative;
           margin: 2.5rem 0 1.5rem 0;
           padding: 0 4rem 0 0;
-  
+
           &:before,
           &:after {
-            transition: transform ease 0.4s, opacity ease 0.4s;
+            transition:
+              transform ease 0.4s,
+              opacity ease 0.4s;
             position: absolute;
             top: 50%;
             right: 0;
@@ -24,35 +25,35 @@
             text-align: center;
             z-index: 10;
           }
-          
+
           &:before {
-            transform: translate3d(0,-50%,0) rotateZ(-360deg);
+            transform: translate3d(0, -50%, 0) rotateZ(-360deg);
             @include ds-icon(minus);
             opacity: 0;
           }
-  
+
           &:after {
-            transform: translate3d(0,-50%,0) rotateZ(0);
+            transform: translate3d(0, -50%, 0) rotateZ(0);
             @include ds-icon(plus);
             opacity: 1;
           }
         }
-  
+
         &__content {
           margin-bottom: 1rem;
         }
       }
-  
+
       &.--is-active {
         & .ds-toggler-item {
           &__title {
             &:before {
-              transform: translate3d(0,-50%,0) rotateZ(0);
+              transform: translate3d(0, -50%, 0) rotateZ(0);
               opacity: 1;
             }
-  
+
             &:after {
-              transform: translate3d(0,-50%,0) rotateZ(360deg);
+              transform: translate3d(0, -50%, 0) rotateZ(360deg);
               opacity: 0;
             }
           }
@@ -65,9 +66,7 @@
       
       @include break-p(md) {
       } */
-
     }
-    
   }
 
   & .ds-title {
@@ -75,7 +74,7 @@
       font: normal normal 600 25px/30px Montserrat;
       position: relative;
       text-align: left;
-      
+
       & h3 {
         background: #fff;
         position: relative;
@@ -84,7 +83,7 @@
         display: inline;
         padding: 0 0.5rem 0 0;
       }
-  
+
       &:before {
         position: absolute;
         content: '';
@@ -92,7 +91,7 @@
         z-index: 0;
         height: 1px;
         width: 100%;
-        
+
         left: 0;
         background-color: ds-color(gray, lighter);
       }
@@ -102,7 +101,7 @@
           bottom: -0.5rem;
         }
       }
-      
+
       @include break-p(sm) {
         &:before {
           top: calc(50% - 1px);
@@ -110,18 +109,18 @@
       }
     }
   }
-  
+
   & .ds-text {
     &.--toggler {
       border-left: 3px solid ds-color(primary, base);
       padding: 0 0 0 0.875rem;
       display: block;
-      
+
       & h3 {
         font: normal normal bold 1.125rem/2rem Montserrat;
         padding: 0.5rem 0 1.5rem 0;
       }
-      
+
       & p {
         font: normal normal normal 15px/20px Montserrat;
         padding: 0 0 1rem 0;
@@ -129,4 +128,3 @@
     }
   }
 }
-

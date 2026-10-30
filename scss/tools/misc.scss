@@ -2,17 +2,17 @@
 
 @mixin ds-arrow($size, $direction, $color) {
   border: $size solid transparent;
-  content: "";
-  @if ($direction == "top") {
+  content: '';
+  @if ($direction == 'top') {
     border-bottom-color: $color;
   }
-  @if ($direction == "right") {
+  @if ($direction == 'right') {
     border-left-color: $color;
   }
-  @if ($direction == "bottom") {
+  @if ($direction == 'bottom') {
     border-top-color: $color;
   }
-  @if ($direction == "left") {
+  @if ($direction == 'left') {
     border-right-color: $color;
   }
   width: $size;

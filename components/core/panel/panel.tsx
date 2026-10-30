@@ -1,37 +1,27 @@
-import {
-  Component,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  Prop,
-  Method,
-  Element,
-  Watch
-} from "@stencil/core";
-import _ds from "../../utils/dot-stash";
-import CssClassList from "../../types/css-class-list.interface";
+import { Component, Event, EventEmitter, h, Host, Prop, Method, Element, Watch } from '@stencil/core';
+import _ds from '../../utils/dot-stash';
+import CssClassList from '../../types/css-class-list.interface';
 
-export type PanelType = "tab" | "collapsible";
+export type PanelType = 'tab' | 'collapsible';
 
 @Component({
-  tag: "ds-panel",
-  styleUrl: "panel.scss"
+  tag: 'ds-panel',
+  styleUrl: 'panel.scss',
 })
 export class DSPanel {
   CSSClassList: CssClassList;
 
   @Element() container: HTMLDsPanelElement;
-  
+
   @Prop({ reflect: true }) mods: string | string[] = [];
-  @Prop() minHeight = "0";
+  @Prop() minHeight = '0';
   @Prop({ mutable: true, reflect: true }) expanded = false;
   @Prop({ mutable: true, reflect: true }) index: number;
-  @Prop({ mutable: true, reflect: true }) type: PanelType = "tab";
-  
+  @Prop({ mutable: true, reflect: true }) type: PanelType = 'tab';
+
   @Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-panel", _ds.props.toArray(mods));
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList('ds-panel', _ds.props.toArray(mods));
   }
 
   @Watch('expanded')
@@ -46,14 +36,14 @@ export class DSPanel {
 
   @Method()
   async setIndex(index: number) {
-    if (typeof index === "number") {
+    if (typeof index === 'number') {
       this.index = index;
     }
   }
 
   @Method()
   async setType(type: PanelType) {
-    if (["tab", "collapsible"].includes(type)) {
+    if (['tab', 'collapsible'].includes(type)) {
       this.type = type;
     }
   }
@@ -78,16 +68,16 @@ export class DSPanel {
   }
 
   componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList("ds-panel", _ds.props.toArray(this.mods));
-	}
+    this.CSSClassList = _ds.props.toClassList('ds-panel', _ds.props.toArray(this.mods));
+  }
 
   setExpanded(mustShow?: boolean) {
-    const expanded = typeof mustShow === "boolean" ? mustShow : !this.expanded;
+    const expanded = typeof mustShow === 'boolean' ? mustShow : !this.expanded;
     this.expanded = expanded;
   }
 
   titleClickHandler() {
-    if (this.type === "tab") {
+    if (this.type === 'tab') {
       if (!this.expanded) {
         this.setExpanded();
       }
@@ -101,20 +91,14 @@ export class DSPanel {
       <Host
         class={{
           ...this.CSSClassList,
-          [`--${this.type}`]: true
+          [`--${this.type}`]: true,
         }}
       >
-        <div
-          class="ds-panel__title"
-          onClick={this.titleClickHandler}
-        >
+        <div class="ds-panel__title" onClick={this.titleClickHandler}>
           <slot name="title" />
         </div>
         <div class="ds-panel__content">
-          <div
-            class="ds-panel__content-wrapper"
-            style={{ "min-height": this.minHeight }}
-          >
+          <div class="ds-panel__content-wrapper" style={{ 'min-height': this.minHeight }}>
             <slot />
           </div>
         </div>

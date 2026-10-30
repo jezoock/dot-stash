@@ -5,9 +5,8 @@
       justify-content: flex-start;
       align-items: flex-end;
       white-space: nowrap;
-      
     }
-    
+
     &.--sub {
       text-align: left;
       display: flex;
@@ -24,7 +23,6 @@
       }
     }
   }
-
 }
 
 .ds-nav-item {
@@ -83,7 +81,7 @@
 
     &.--depth-0 {
       border-bottom: 1px solid ds-color(gray, light);
-      
+
       & > .ds-nav-item {
         &__expand-button {
           top: 26px;
@@ -98,7 +96,6 @@
     }
 
     &.--depth-1 {
-
       &:not(:last-child()) {
         border-bottom: 1px solid ds-color(gray, light);
       }
@@ -136,11 +133,10 @@
 
     &.--depth-0 {
       & > .ds-nav-item {
-        
         &__link {
           padding: 0 0.75rem;
           display: block;
-          
+
           & > a {
             padding: 1.5rem 0.5rem;
             line-height: 19px;

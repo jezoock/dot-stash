@@ -18,7 +18,6 @@
         &__label {
           padding: 0 1rem 0 0;
           font-size: 1.25rem;
-          
         }
         &__score {
         }
@@ -34,7 +33,7 @@
       &__title {
         font-size: 2rem;
         width: 12.5%;
-        
+
         color: color(color-2, base);
         &:after {
           /* @include --icon(star, top); */

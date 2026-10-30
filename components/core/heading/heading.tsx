@@ -7,7 +7,7 @@ import CssClassList from '../../types/css-class-list.interface';
   styleUrl: 'heading.scss',
 })
 export class DSHeading {
-  contextName = "header";
+  contextName = 'header';
   CSSClassList: CssClassList;
   titleProps: {
     block?: boolean;
@@ -18,18 +18,18 @@ export class DSHeading {
   hasImage: boolean;
   hasSubTitle: boolean;
   hasDescription: boolean;
-  
+
   @Element() container: HTMLElement;
-  
+
   @Prop() useContext: boolean;
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ reflect: true, mutable: true }) section: boolean;
-	@Prop({ reflect: true, mutable: true }) block: boolean;
-	@Prop({ reflect: true, mutable: true }) imagePosition: string = "block-before";
+  @Prop({ reflect: true, mutable: true }) block: boolean;
+  @Prop({ reflect: true, mutable: true }) imagePosition: string = 'block-before';
 
   @Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-heading", _ds.props.toArray(mods));
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList('ds-heading', _ds.props.toArray(mods));
   }
 
   connectedCallback() {
@@ -39,14 +39,14 @@ export class DSHeading {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-heading", _ds.props.toArray(this.mods));
+    this.CSSClassList = _ds.props.toClassList('ds-heading', _ds.props.toArray(this.mods));
     const { section, block } = this;
     this.titleProps = {
       section,
-      block
-    }
+      block,
+    };
   }
-  
+
   render() {
     return (
       <Host
@@ -61,17 +61,11 @@ export class DSHeading {
           </div>
         )}
         <hlgroup class="ds-heading__content">
-          <ds-title sup
-            class="ds-heading__main-title"
-            {...this.titleProps}
-          >
+          <ds-title sup class="ds-heading__main-title" {...this.titleProps}>
             <slot />
           </ds-title>
           {this.hasImage && (
-            <ds-title sub 
-              class="ds-heading__sub-title"
-              {...this.titleProps} 
-            >
+            <ds-title sub class="ds-heading__sub-title" {...this.titleProps}>
               <slot name="sub-title" />
             </ds-title>
           )}
@@ -85,5 +79,3 @@ export class DSHeading {
     );
   }
 }
-
-

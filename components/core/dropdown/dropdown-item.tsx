@@ -4,10 +4,9 @@ import { Component, h, Host, Prop } from '@stencil/core';
   tag: 'ds-dropdown-item',
 })
 export class DSDropdownItem {
-
   @Prop() name: string;
   @Prop() value: any;
-  
+
   render() {
     return (
       <Host>

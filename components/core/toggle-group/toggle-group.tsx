@@ -7,7 +7,7 @@ import _ds from '../../utils/dot-stash';
 })
 export class DSToggleGroup {
   @Element() host: HTMLDsToggleGroupElement;
-  
+
   @Prop({ reflect: true }) name: string;
   @Prop({ reflect: true }) type: string;
   @Prop({ reflect: true }) disabled: boolean;
@@ -36,7 +36,7 @@ export class DSToggleGroup {
   constructor() {
     this.toggleHandler = this.toggleHandler.bind(this);
   }
-  
+
   componentWillLoad() {
     this.CSSClassList = _ds.props.toClassList('ds-toggle-group', _ds.props.toArray(this.mods));
     this.valuesCount = _ds.props.fromJSON(this.count);
@@ -68,11 +68,11 @@ export class DSToggleGroup {
         newValue = currentValue.filter(value => value !== toggleValue);
       }
     }
-    
+
     this.value = newValue;
 
     this.toggleValueChange.emit({ value: newValue });
-  };
+  }
 
   async registerToggle(toggle: HTMLDsToggleElement) {
     const { checked: isChecked, value } = toggle;
@@ -87,18 +87,17 @@ export class DSToggleGroup {
     this.values = values;
 
     toggle.setProps({ name, mods, type });
-  };
+  }
 
   getContextValue() {
     return this.value;
   }
 
   connectedCallback() {
-    Array.from(this.host.querySelectorAll('ds-toggle')).map( (toggle: HTMLDsToggleElement) => this.registerToggle(toggle) );
+    Array.from(this.host.querySelectorAll('ds-toggle')).map((toggle: HTMLDsToggleElement) => this.registerToggle(toggle));
   }
 
-  componentDidLoad() {
-  }
+  componentDidLoad() {}
 
   render() {
     return (

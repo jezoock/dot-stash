@@ -13,7 +13,7 @@
 | `disabled` | `disabled` |             | `boolean`            | `undefined` |
 | `mods`     | `mods`     |             | `string \| string[]` | `[]`        |
 | `name`     | `name`     |             | `string`             | `undefined` |
-| `type`     | `type`     |             | `string`             | `"switch"`  |
+| `type`     | `type`     |             | `string`             | `'switch'`  |
 | `value`    | `value`    |             | `any`                | `undefined` |
 
 

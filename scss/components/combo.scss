@@ -24,7 +24,6 @@
   & > menu {
   }
 
-  
   &__option-list {
     background: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
@@ -60,7 +59,7 @@
         color: #fff;
       }
     }
-    
+
     &.--selected {
       background-color: ds-color(gray, lighter);
       &:hover {
@@ -105,7 +104,6 @@
       }
       &.--open {
         border-color: color(color-1, base);
-        
       }
     }
   }
@@ -143,7 +141,9 @@
         }
         & > img {
           transform: translateY(-20%);
-          transition: transform ease 0.4s, opacity ease 0.4s;
+          transition:
+            transform ease 0.4s,
+            opacity ease 0.4s;
         }
         &:hover {
           & > img {

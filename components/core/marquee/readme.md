@@ -14,7 +14,7 @@
 | `mods`         | `mods`           |             | `string \| string[]` | `[]`                    |
 | `pauseOnHover` | `pause-on-hover` |             | `boolean \| string`  | `false`                 |
 | `speed`        | `speed`          |             | `number \| string`   | `10`                    |
-| `transition`   | `transition`     |             | `string`             | `"slide-left-to-right"` |
+| `transition`   | `transition`     |             | `string`             | `'slide-left-to-right'` |
 
 
 ## Methods

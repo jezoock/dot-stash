@@ -3,20 +3,19 @@ import _ds from '../../utils/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 enum DsBlockTypeToTag {
-  PAGE = "Host",
-  SECTION = "section",
-  BLOCK = "div",
-  CONTENT = "div",
-  FORM = "div",
+  PAGE = 'Host',
+  SECTION = 'section',
+  BLOCK = 'div',
+  CONTENT = 'div',
+  FORM = 'div',
 }
 
 @Component({
   tag: 'ds-block',
-  styleUrl: './block.scss'
+  styleUrl: './block.scss',
 })
 export class DSBlock {
-
-  blockName = "ds-block";
+  blockName = 'ds-block';
   blockTag: DsBlockTypeToTag = DsBlockTypeToTag.BLOCK;
   context = 'block';
   CSSClassList: CssClassList;
@@ -30,7 +29,7 @@ export class DSBlock {
   @Prop({ reflect: true }) article: boolean;
   @Prop({ reflect: true }) form: boolean;
   @Prop({ reflect: true }) modal: boolean;
-  
+
   /**
    * Block type classname ( also used to build block classname )
    */
@@ -39,7 +38,7 @@ export class DSBlock {
   /**
    * Use to derivate the main class name
    */
-  @Prop({ reflect: true}) name: string;
+  @Prop({ reflect: true }) name: string;
 
   /**
    * List of modifiers
@@ -53,9 +52,9 @@ export class DSBlock {
 
   @Method()
   async getContext() {
-    return this.article && 'article' || this.section && "section" || this.form && "form" || this.form && "modal" || "block";
+    return (this.article && 'article') || (this.section && 'section') || (this.form && 'form') || (this.form && 'modal') || 'block';
   }
-  
+
   async connectedCallback() {
     let blockName = 'ds';
     const blockContext = await this.getContext();
@@ -73,9 +72,7 @@ export class DSBlock {
 
   render() {
     return (
-      <Host
-        class={this.CSSClassList}
-      >
+      <Host class={this.CSSClassList}>
         {this.hasHeader && (
           <div class={`${this.blockName}__header`}>
             <slot name="header" />

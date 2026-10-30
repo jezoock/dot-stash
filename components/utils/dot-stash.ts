@@ -1,26 +1,26 @@
-import { AnyHTMLElement } from "@stencil/core/internal";
-import { SassStyles } from "./interfaces/sass-styles";
+import { AnyHTMLElement } from '@stencil/core/internal';
+import { SassStyles } from './interfaces/sass-styles';
 
 const config = {
   useContext: false,
-}
+};
 
 export type AnyDsContextComponentElement = any;
-export type DsComponentContextType = "block" | 'article' | "section" | "form" | "modal" | "page";
-export const DsComponentContext: DsComponentContextType[] = ["block", 'article', "section", "form", "modal", "page"]
+export type DsComponentContextType = 'block' | 'article' | 'section' | 'form' | 'modal' | 'page';
+export const DsComponentContext: DsComponentContextType[] = ['block', 'article', 'section', 'form', 'modal', 'page'];
 
 const _ds = {
   app: {
     getConfig: (keys: string[]): Record<string, unknown> => {
       const pairs = {};
-      keys.map( key => pairs[key] = config[key] )
+      keys.map(key => (pairs[key] = config[key]));
       return pairs;
     },
   },
 
   context: {
     get: (element: AnyDsContextComponentElement): DsComponentContextType => {
-      return DsComponentContext.find( context => element[context] );
+      return DsComponentContext.find(context => element[context]);
     },
   },
 
@@ -29,48 +29,45 @@ const _ds = {
   },
 
   css: {
-    set: ( pairs: Partial<CSSStyleDeclaration>, elements: HTMLElement[] ): void => {
-      Object.keys( pairs ).forEach( prop => {
-        elements.forEach( element => {
+    set: (pairs: Partial<CSSStyleDeclaration>, elements: HTMLElement[]): void => {
+      Object.keys(pairs).forEach(prop => {
+        elements.forEach(element => {
           element.style[prop] = pairs[prop];
-        })
+        });
       });
     },
 
-    get: ( props: (keyof CSSStyleDeclaration)[], element: HTMLElement ): CSSRule | object => {
+    get: (props: (keyof CSSStyleDeclaration)[], element: HTMLElement): CSSRule | object => {
       const CSSProps = {};
-      props.map( prop => CSSProps[prop] = element.style[prop] )
+      props.map(prop => (CSSProps[prop] = element.style[prop]));
       return CSSProps;
     },
 
-    toNumber: (prop: keyof CSSStyleDeclaration, element: HTMLElement) => parseInt((element.style[prop] as string).replace('px',''), 10),
+    toNumber: (prop: keyof CSSStyleDeclaration, element: HTMLElement) => parseInt((element.style[prop] as string).replace('px', ''), 10),
   },
-  
+
   props: {
-    isTrue: ( prop: string|boolean ): boolean => typeof prop === 'undefined'
-      ? false
-      : typeof prop === 'boolean'
-        ? prop
-        : ['true','','1'].includes(prop.toLowerCase()),
+    isTrue: (prop: string | boolean): boolean => (typeof prop === 'undefined' ? false : typeof prop === 'boolean' ? prop : ['true', '', '1'].includes(prop.toLowerCase())),
 
-    toNumber: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseInt(prop, 10),
+    toNumber: (prop: string | number): number => (typeof prop === 'number' ? prop : parseInt(prop, 10)),
 
-    toFloat: ( prop: string|number ): number => typeof prop === 'number' ? prop : parseFloat(prop),
+    toFloat: (prop: string | number): number => (typeof prop === 'number' ? prop : parseFloat(prop)),
 
-    toArray: <T = string>( prop: string | T[] ): T[] => typeof prop === 'string' ? prop.split(',') as T[]: prop,
+    toArray: <T = string>(prop: string | T[]): T[] => (typeof prop === 'string' ? (prop.split(',') as T[]) : prop),
 
-    fromJSON: <T = string | Record<string, unknown> | unknown[]>( prop: T, rootKey?: string ) => typeof prop === 'string' ? ( rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
+    fromJSON: <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) =>
+      typeof prop === 'string' ? (rootKey ? JSON.parse(prop)[rootKey] : JSON.parse(prop)) : rootKey ? prop[rootKey] : prop,
 
-    toClassList: ( mainClass: string|string[], mods?: string|string[] ): Record<string, boolean> => {
+    toClassList: (mainClass: string | string[], mods?: string | string[]): Record<string, boolean> => {
       const classList = {};
-      _ds.props.toArray(mainClass).forEach( CSSClass => {
+      _ds.props.toArray(mainClass).forEach(CSSClass => {
         const className = CSSClass.trim();
         if (className !== '') {
           classList[className] = true;
         }
       });
       if (mods) {
-        _ds.props.toArray(mods).forEach( CSSClass => {
+        _ds.props.toArray(mods).forEach(CSSClass => {
           if (CSSClass) {
             const className = CSSClass.trim();
             if (className !== '') {
@@ -82,7 +79,10 @@ const _ds = {
       return classList;
     },
 
-    toString: (attributes: Record<string, unknown>) => Object.entries(attributes).map( ([key, value]) => (`${key}${value !== true && value !== "true" ? `="${Array.isArray(value) ? value.join(',') : value}"` : ''}`)).join(" "),
+    toString: (attributes: Record<string, unknown>) =>
+      Object.entries(attributes)
+        .map(([key, value]) => `${key}${value !== true && value !== 'true' ? `="${Array.isArray(value) ? value.join(',') : value}"` : ''}`)
+        .join(' '),
   },
 
   responsive: {
@@ -92,39 +92,46 @@ const _ds = {
   },
 
   form: {
-    submit: ( form ) => form.dispatchEvent(new Event('submit')),
-    reset: ( form ) => form.dispatchEvent(new Event('reset')),
+    submit: form => form.dispatchEvent(new Event('submit')),
+    reset: form => form.dispatchEvent(new Event('reset')),
   },
 
   ajax: {
-    buildQuery: queryParams => Object.entries(queryParams).map(pair => pair.map(encodeURIComponent).join('=')).join('&'),
+    buildQuery: queryParams =>
+      Object.entries(queryParams)
+        .map(pair => pair.map(encodeURIComponent).join('='))
+        .join('&'),
 
-    get: ( url: string, queryParams?: any ): Promise<any> =>
-      fetch(`${url}${queryParams ? `?${_ds.ajax.buildQuery(queryParams)}` : ''}`)
-        .then((response: any) => new Promise((resolve, reject) => {
-          response
-            .json()
-            .then(response.ok ? resolve : reject)
-            .catch(reject)
-          })
-        ),
-    
+    get: (url: string, queryParams?: any): Promise<any> =>
+      fetch(`${url}${queryParams ? `?${_ds.ajax.buildQuery(queryParams)}` : ''}`).then(
+        (response: any) =>
+          new Promise((resolve, reject) => {
+            response
+              .json()
+              .then(response.ok ? resolve : reject)
+              .catch(reject);
+          }),
+      ),
+
     post: (url: string, payload: any = {}): Promise<any> => {
       return fetch(url, {
         headers: new Headers({
-          "Accept": "application/json, text/javascript, */*; q=0.01",
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "Access-Control-Origin": "*"
+          'Accept': 'application/json, text/javascript, */*; q=0.01',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'Access-Control-Origin': '*',
         }),
-        method: "POST",
-        body: new URLSearchParams(payload)
-      }).then((response: any) => new Promise((resolve, reject) => {
-        response
-          .json()
-          .then(response.ok ? resolve : reject)
-          .catch(reject)
-        })
-      )},
+        method: 'POST',
+        body: new URLSearchParams(payload),
+      }).then(
+        (response: any) =>
+          new Promise((resolve, reject) => {
+            response
+              .json()
+              .then(response.ok ? resolve : reject)
+              .catch(reject);
+          }),
+      );
+    },
   },
   data: {
     set: (dataSet: any, contener: AnyHTMLElement, index?: number) => {
@@ -171,77 +178,76 @@ const _ds = {
     },
   },
   tools: {
+    cleanHTML: (HTMLString: string): string => HTMLString.replace(/\>[\r\n ]+\</g, '><').replace(/(<.*?>)|\s+/g, (_, $1) => $1 || ' '),
 
-    cleanHTML: (HTMLString: string): string => HTMLString.replace(/\>[\r\n ]+\</g, "><").replace(/(<.*?>)|\s+/g, (_, $1) => $1 || ' '),
+    beautifyHTML: html => {
+      var TAB_WIDTH = 2;
 
-    beautifyHTML: (html) => {
-        var TAB_WIDTH = 2;
-        
+      function multi(_, spaces) {
+        var i,
+          indent = '';
 
-        function multi(_, spaces) {
-            var i, indent = '';
-    
-            for (i = 0; i < spaces; i++) {
-                indent += ' ';
-            }
-    
-            return indent;
+        for (i = 0; i < spaces; i++) {
+          indent += ' ';
         }
-    
-        function squeeze(str) {
-          return str.replace(/^[ \n\t]+/, '').replace(/\>[\n\t ]+/g, '>'); 
-        }
-    
-        /* const indent = function(html) { */
-            var chr, i, chrs = squeeze(html).split(''),
-                result = '',
-                level = 0,
-                indent = '',
-                pInTag,
-                pCloseTag,
-                tagName;
-    
-            for (i = 0; i < chrs.length; i++) {
-                chr = chrs[i];
-                if (chr === '<') {
-                    pCloseTag = chrs[i+1] === '/';
-                    if (pCloseTag) {
-                        level--;
-                        indent = multi(' ', level * TAB_WIDTH);
-                    }
-                    result += '\n' + indent + '<';
-                }
-                else if (chr === '>') {
-                    tagName = getTagName(chrs, i-1);
-                    pInTag = !pCloseTag && chrs[i-1] !== '/' && tagName !== 'img' && tagName !== 'br';
-                    pCloseTag = false;
-                    if (pInTag) {
-                        level++;
-                    }
-                    indent = multi(' ', level * TAB_WIDTH);
-                    result += '>\n' + indent;
-                }
-                else {
-                    result += chr;
-                }
-            }
-    
-            function getTagName(chrs, i) {
-                var chr = chrs[i],
-                    ret = '';
-    
-                while (chr !== '<') {
-                    ret = chr + ret;
-                    chr = chrs[i--];
-                }
-    
-                return ret.substr(0, ret.indexOf(' '));
-            }
 
-            console.log(result);
-    
-            return result.replace(/\n *\n/g, '\n');
-        /* };
+        return indent;
+      }
+
+      function squeeze(str) {
+        return str.replace(/^[ \n\t]+/, '').replace(/\>[\n\t ]+/g, '>');
+      }
+
+      /* const indent = function(html) { */
+      var chr,
+        i,
+        chrs = squeeze(html).split(''),
+        result = '',
+        level = 0,
+        indent = '',
+        pInTag,
+        pCloseTag,
+        tagName;
+
+      for (i = 0; i < chrs.length; i++) {
+        chr = chrs[i];
+        if (chr === '<') {
+          pCloseTag = chrs[i + 1] === '/';
+          if (pCloseTag) {
+            level--;
+            indent = multi(' ', level * TAB_WIDTH);
+          }
+          result += '\n' + indent + '<';
+        } else if (chr === '>') {
+          tagName = getTagName(chrs, i - 1);
+          pInTag = !pCloseTag && chrs[i - 1] !== '/' && tagName !== 'img' && tagName !== 'br';
+          pCloseTag = false;
+          if (pInTag) {
+            level++;
+          }
+          indent = multi(' ', level * TAB_WIDTH);
+          result += '>\n' + indent;
+        } else {
+          result += chr;
+        }
+      }
+
+      function getTagName(chrs, i) {
+        var chr = chrs[i],
+          ret = '';
+
+        while (chr !== '<') {
+          ret = chr + ret;
+          chr = chrs[i--];
+        }
+
+        return ret.substr(0, ret.indexOf(' '));
+      }
+
+      console.log(result);
+
+      return result.replace(/\n *\n/g, '\n');
+      /* };
     
         exports.squeeze = squeeze;
     
@@ -252,7 +258,7 @@ const _ds = {
 
     getStylesJSON: (): SassStyles => {
       let style = '{}';
-    
+
       if (window?.getComputedStyle?.(document.body, '::before')) {
         const computedStyle = window.getComputedStyle(document.body, '::before');
         style = (computedStyle.content !== 'none' && computedStyle.content) || '{}';
@@ -260,26 +266,25 @@ const _ds = {
       return JSON.parse(_ds.tools.removeQuotes(style));
     },
 
-    removeQuotes: (quotedString: string): string => typeof quotedString === 'string' ?
-        quotedString = quotedString.replace(/^['"]+|\s+|\\|(;\s?})+|['"]$/g, '') : quotedString,
+    removeQuotes: (quotedString: string): string => (typeof quotedString === 'string' ? (quotedString = quotedString.replace(/^['"]+|\s+|\\|(;\s?})+|['"]$/g, '')) : quotedString),
 
     loadScript: (scriptUrl: string, scriptId: string) => {
       return new Promise((resolve, reject) => {
         if (!document.querySelector(`#${scriptId}`)) {
           const script = document.createElement('script');
-        
+
           script.id = scriptId;
           script.async = true;
           script.defer = true;
           script.src = scriptUrl;
-          script.onerror = (err) => reject(err);
+          script.onerror = err => reject(err);
           script.onload = () => resolve(true);
-      
+
           document.querySelector('head')?.appendChild(script);
         } else {
           reject(`[WARNING] ds loadScript - script already loaded: ${scriptUrl}`);
         }
-      })
+      });
     },
 
     scrollTo: (element: string, offset = 100): void => {
@@ -287,9 +292,9 @@ const _ds = {
       window.scroll(0, scrollY);
     },
 
-    getFileExtension: ( fileLocation: string ): string => {
+    getFileExtension: (fileLocation: string): string => {
       const filename = fileLocation.split('/').pop();
-      return filename?.substring(filename.lastIndexOf('.')+1,filename.length) || '';
+      return filename?.substring(filename.lastIndexOf('.') + 1, filename.length) || '';
     },
 
     /* animate: (function () {
@@ -366,13 +371,13 @@ const _ds = {
 
     getOffset: (el: AnyHTMLElement) => {
       const box = el.getBoundingClientRect();
-    
+
       return {
         top: box.top + window.pageYOffset - document.documentElement.clientTop,
-        left: box.left + window.pageXOffset - document.documentElement.clientLeft
+        left: box.left + window.pageXOffset - document.documentElement.clientLeft,
       };
     },
-    
+
     /* waitUntil: (
       func: () => void,
       pollingRate = 100,
@@ -401,7 +406,7 @@ const _ds = {
         leading ? rFunc() : setTimeout(rFunc, pollingRate);
       });
     } */
-  }
-}
+  },
+};
 
 export default _ds;

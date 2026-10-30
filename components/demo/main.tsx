@@ -53,8 +53,7 @@ export class DSMainTest {
           <ds-trigger on="click" action='toggle'>fermer</ds-trigger>
         </ds-sidebar>
          */}
-        <ds-slider style={{"height":"4rem"}} id="bob">
-          
+        <ds-slider style={{ height: '4rem' }} id="bob">
           <ds-slider-item>sdfkdfjskdfjkkjsdf 1</ds-slider-item>
           <ds-slider-item>sdfkdfjskdfjkkjsdf 2</ds-slider-item>
           <ds-slider-item>sdfkdfjskdfjkkjsdf 3</ds-slider-item>
@@ -62,11 +61,18 @@ export class DSMainTest {
           <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item>
-            <ds-button><strong>test </strong><span slot="before">sdfkdfjskdfjkkjsdf 0000</span></ds-button>
+            <ds-button>
+              <strong>test </strong>
+              <span slot="before">sdfkdfjskdfjkkjsdf 0000</span>
+            </ds-button>
           </ds-slider-item>
         </ds-slider>
-        <ds-trigger type="button" mods="lg" target="#bob" action='prev'>prev</ds-trigger>
-        <ds-trigger type="button" mods="lg" target="#bob" action='next'>next</ds-trigger>
+        <ds-trigger type="button" mods="lg" target="#bob" action="prev">
+          prev
+        </ds-trigger>
+        <ds-trigger type="button" mods="lg" target="#bob" action="next">
+          next
+        </ds-trigger>
 
         <ds-block>
           <ds-header>
@@ -77,16 +83,12 @@ export class DSMainTest {
             </ds-title>
           </ds-header>
 
-          <div>
-            Contenu
-          </div>
+          <div>Contenu</div>
 
-          <footer>
-            Footer
-          </footer>
+          <footer>Footer</footer>
         </ds-block>
 
-          {/* <ds-header slot="block-header">
+        {/* <ds-header slot="block-header">
             <ds-button slot="before">
               Retour
               <ds-icon type="back" slot="before" />
@@ -117,37 +119,35 @@ export class DSMainTest {
 
           </ds-block> */}
 
-          <section class="ds-homepage__history">
-            <ds-block section name="homepage-history">
-              <ds-title-bar slot="header">
-                <ds-button slot="before">
-                  Retour
-                  <ds-icon type="back" slot="before" />
-                </ds-button>
-                <ds-header>
-                  <h2>Titre de block</h2>
-                  <h3 slot="sub-title">Sous-titre de block</h3>
-                  <p slot="description">Description de block de test</p>
-                </ds-header>
-                <ds-button slot="after">
-                  <ds-icon type="close" slot="after" />
-                  Fermer
-                </ds-button>
-              </ds-title-bar>
+        <section class="ds-homepage__history">
+          <ds-block section name="homepage-history">
+            <ds-title-bar slot="header">
+              <ds-button slot="before">
+                Retour
+                <ds-icon type="back" slot="before" />
+              </ds-button>
+              <ds-header>
+                <h2>Titre de block</h2>
+                <h3 slot="sub-title">Sous-titre de block</h3>
+                <p slot="description">Description de block de test</p>
+              </ds-header>
+              <ds-button slot="after">
+                <ds-icon type="close" slot="after" />
+                Fermer
+              </ds-button>
+            </ds-title-bar>
 
-              <ds-block block>
-                <div>sfhsdhfg</div>
-              </ds-block>
-              <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
-
-              <footer slot="footer">
-                Footer
-              </footer>
+            <ds-block block>
+              <div>sfhsdhfg</div>
             </ds-block>
-          </section>
+            <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
 
-          <section class="ds-homepage__history">
-            {/* <ds-block section ext="homepage-history">
+            <footer slot="footer">Footer</footer>
+          </ds-block>
+        </section>
+
+        <section class="ds-homepage__history">
+          {/* <ds-block section ext="homepage-history">
               <ds-button slot="before">
                 Retour
                 <ds-icon type="back" slot="before" />
@@ -155,21 +155,62 @@ export class DSMainTest {
               <h2 slot="title">Titre de block</h2>
               <p slot="sub-title">Sous-titre de block de test</p>
             </ds-block> */}
-            <ds-panel-group>
-              <ds-panel type="tab" index={0}>
-                <h1 slot="title">Title</h1>
-                <div>Contenu<br />Contenu<br />Contenu<br />Contenu<br />Contenu<br /></div>
-              </ds-panel>
-              <ds-panel type="tab" index={1}>
-                <h1 slot="title">Title 2</h1>
-                <div>Contenusdfsdf<br />Csdfontenu<br />Contenusdfsdf<br />Csdfontenu<br />Contsdfenu<br />Contesdfsdfnu<br />Cosdfsfdntenu<br /></div>
-              </ds-panel>
-              <ds-panel type="tab" index={2}>
-                <h1 slot="title">Title 3</h1>
-                <div>Contenusdfsdf<br />Csdfontenu<br />Contenusdfsdf<br />Csdfontenu<br />Contsdfenu<br />Contesdfsdfnu<br />Cosdfsfdntenu<br /></div>
-              </ds-panel>
-            </ds-panel-group>
-          </section>
+          <ds-panel-group>
+            <ds-panel type="tab" index={0}>
+              <h1 slot="title">Title</h1>
+              <div>
+                Contenu
+                <br />
+                Contenu
+                <br />
+                Contenu
+                <br />
+                Contenu
+                <br />
+                Contenu
+                <br />
+              </div>
+            </ds-panel>
+            <ds-panel type="tab" index={1}>
+              <h1 slot="title">Title 2</h1>
+              <div>
+                Contenusdfsdf
+                <br />
+                Csdfontenu
+                <br />
+                Contenusdfsdf
+                <br />
+                Csdfontenu
+                <br />
+                Contsdfenu
+                <br />
+                Contesdfsdfnu
+                <br />
+                Cosdfsfdntenu
+                <br />
+              </div>
+            </ds-panel>
+            <ds-panel type="tab" index={2}>
+              <h1 slot="title">Title 3</h1>
+              <div>
+                Contenusdfsdf
+                <br />
+                Csdfontenu
+                <br />
+                Contenusdfsdf
+                <br />
+                Csdfontenu
+                <br />
+                Contsdfenu
+                <br />
+                Contesdfsdfnu
+                <br />
+                Cosdfsfdntenu
+                <br />
+              </div>
+            </ds-panel>
+          </ds-panel-group>
+        </section>
 
         {/* 
           <ds-block>
@@ -203,78 +244,72 @@ export class DSMainTest {
             </ds-grid>
           </ds-block> */}
 
-<ds-rsp>
-        <ds-block>
-          <ds-grid
-            data-use-rsp
-            class="ds-button-list"
-            cols={5}
-            hGap="10px"
-            vGap="1rem"
-            type="fixed"
-          >
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button id="button" mods={["solid", "primary", "xs"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item
-              class="ds-buttton-list__item"
-              width={1}
-              data-use-rsp
-              data-rsp={{
-                "xs": {"width": 2},
-                "sm": {"width": 3},
-                "md": {"width": 4},
-                "lg": {"width": 5}
-              }}
-            >
-              <ds-button mods={["solid", "primary", "sm"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["solid", "primary", "md"]} disabled>
-                <div slot="before">Before sdkjfh sjkdf</div>
-                <div>Click me !</div>
-                <div slot="after">After</div>
-              </ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button
-                mods={["solid", "primary", "lg"]}>Mods Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["solid", "primary", "xl"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "xs"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "sm"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "md"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "lg"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "xl"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "xs"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "sm"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "md"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "lg"]}>Click me !</ds-button>
-            </ds-grid-item>
-            <ds-grid-item class="ds-buttton-list__item">
-              <ds-button mods={["outlined", "primary", "xl"]}>Click me !</ds-button>
-            </ds-grid-item>
-          </ds-grid>
-        </ds-block>
+        <ds-rsp>
+          <ds-block>
+            <ds-grid data-use-rsp class="ds-button-list" cols={5} hGap="10px" vGap="1rem" type="fixed">
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button id="button" mods={['solid', 'primary', 'xs']}>
+                  Click me !
+                </ds-button>
+              </ds-grid-item>
+              <ds-grid-item
+                class="ds-buttton-list__item"
+                width={1}
+                data-use-rsp
+                data-rsp={{
+                  xs: { width: 2 },
+                  sm: { width: 3 },
+                  md: { width: 4 },
+                  lg: { width: 5 },
+                }}
+              >
+                <ds-button mods={['solid', 'primary', 'sm']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['solid', 'primary', 'md']} disabled>
+                  <div slot="before">Before sdkjfh sjkdf</div>
+                  <div>Click me !</div>
+                  <div slot="after">After</div>
+                </ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['solid', 'primary', 'lg']}>Mods Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['solid', 'primary', 'xl']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'xs']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'sm']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'md']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'lg']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'xl']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'xs']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'sm']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'md']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'lg']}>Click me !</ds-button>
+              </ds-grid-item>
+              <ds-grid-item class="ds-buttton-list__item">
+                <ds-button mods={['outlined', 'primary', 'xl']}>Click me !</ds-button>
+              </ds-grid-item>
+            </ds-grid>
+          </ds-block>
         </ds-rsp>
       </div>
     );

@@ -12,7 +12,7 @@
 | `ctx`     | `ctx`      |             | `boolean`            | `true`                  |
 | `hPos`    | `h-pos`    |             | `"left" \| "right"`  | `SIDEBAR_POSITION.LEFT` |
 | `isShown` | `is-shown` |             | `boolean`            | `false`                 |
-| `mods`    | `mods`     |             | `string \| string[]` | `""`                    |
+| `mods`    | `mods`     |             | `string \| string[]` | `''`                    |
 | `vPos`    | `v-pos`    |             | `"bottom" \| "top"`  | `SIDEBAR_POSITION.TOP`  |
 
 

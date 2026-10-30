@@ -6,7 +6,7 @@ export enum DSMarqueeTransitionEnum {
   SLIDE_TOP_TO_BOTTOM = 'slide-ttb',
   SLIDE_BOTTOM_TO_TOP = 'slide-btt',
   SLIDE_LEFT_TO_RIGHT = 'slide-ltr',
-  SLIDE_RIGHT_TO_LEFT = 'slide-rtl'
+  SLIDE_RIGHT_TO_LEFT = 'slide-rtl',
 }
 
 interface DSMarqueeParams {
@@ -19,24 +19,23 @@ const DSMarqueeDefaultParams = {
   transition: DSMarqueeTransitionEnum.SLIDE_RIGHT_TO_LEFT,
   speed: 10,
   pauseOnHover: false,
-}
+};
 
 @Component({
   tag: 'ds-marquee',
-  styleUrl: 'marquee.scss'
+  styleUrl: 'marquee.scss',
 })
 export class DSSlideMsg {
-  
   CSSClassList: CssClassList;
-	blockName = "ds-marquee";
+  blockName = 'ds-marquee';
   params: DSMarqueeParams = DSMarqueeDefaultParams;
   messageContainer: HTMLDivElement;
-  
+
   @Element() container: HTMLDivElement;
 
   @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
   @Prop() speed: string | number = 10;
-  @Prop() transition: string | DSMarqueeTransitionEnum = "slide-left-to-right";
+  @Prop() transition: string | DSMarqueeTransitionEnum = 'slide-left-to-right';
   @Prop() pauseOnHover: string | boolean = false;
   @Prop() color: string;
   @Prop() bgColor: string;
@@ -44,25 +43,25 @@ export class DSSlideMsg {
   @State() isPlaying: boolean = true;
 
   @Watch('speed')
-	speedCahngeHandler(newSpeed: number) {
-		this.params = {
+  speedCahngeHandler(newSpeed: number) {
+    this.params = {
       ...this.params,
       speed: newSpeed,
-    }
-	}
+    };
+  }
 
   @Watch('pauseOnHover')
-	pauseOnHoverCahngeHandler(pause: boolean) {
-		this.params = {
+  pauseOnHoverCahngeHandler(pause: boolean) {
+    this.params = {
       ...this.params,
       pauseOnHover: pause,
-    }
-	}
+    };
+  }
 
   @Watch('mods')
-	modsChangeHandler(mods: string | string[]) {
-		this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
-	}
+  modsChangeHandler(mods: string | string[]) {
+    this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
+  }
 
   constructor() {
     this.containerMouseInHandler = this.containerMouseInHandler.bind(this);
@@ -77,7 +76,7 @@ export class DSSlideMsg {
       transition: this.transition as DSMarqueeTransitionEnum,
       speed: _ds.props.toNumber(this.speed),
       pauseOnHover: _ds.props.isTrue(this.pauseOnHover),
-    }
+    };
   }
 
   componentDidLoad() {
@@ -86,7 +85,7 @@ export class DSSlideMsg {
     const { speed } = this.params;
 
     this.messageContainer = messageContainer;
-    
+
     if (speed > 0) {
       messageContainer.insertAdjacentHTML('beforeend', clone);
       messageContainer.insertAdjacentHTML('beforeend', clone);
@@ -126,41 +125,42 @@ export class DSSlideMsg {
   }
 
   containerMouseMoveHandler() {
-    if(!window.ontouchstart) {
+    if (!window.ontouchstart) {
       this.pause();
     }
   }
-  
+
   containerMouseInHandler() {
-    if(!window.ontouchstart) {
+    if (!window.ontouchstart) {
       this.pause();
     }
   }
-  
+
   containerMouseOutHandler() {
-    if(!window.ontouchstart) {
+    if (!window.ontouchstart) {
       this.play();
     }
   }
-  
+
   render() {
     return (
       <Host
         class={{
           ...this.CSSClassList,
-          "--playing": this.isPlaying,
-          "--paused": !this.isPlaying,
+          '--playing': this.isPlaying,
+          '--paused': !this.isPlaying,
           [`--transition-${this.params.transition}`]: true,
-          "--no-scroll": this.params.speed === 0
+          '--no-scroll': this.params.speed === 0,
         }}
         onMouseOver={this.containerMouseMoveHandler}
         onMouseOut={this.containerMouseOutHandler}
       >
         <div class={`${this.blockName}__container`}>
-          <div class={`${this.blockName}__content`}
-            style={{ 
-              color: this.color, 
-              backgroundColor: this.bgColor 
+          <div
+            class={`${this.blockName}__content`}
+            style={{
+              color: this.color,
+              backgroundColor: this.bgColor,
             }}
           >
             <slot />

@@ -12,7 +12,7 @@
 | `isActive`    | `active`       |             | `boolean`                | `true`  |
 | `mods`        | `mods`         |             | `string \| string[]`     | `[]`    |
 | `soloContent` | `solo-content` |             | `boolean`                | `false` |
-| `type`        | `type`         |             | `"collapsible" \| "tab"` | `"tab"` |
+| `type`        | `type`         |             | `"collapsible" \| "tab"` | `'tab'` |
 
 
 ## Methods

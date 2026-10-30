@@ -1,19 +1,16 @@
-import { Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch } from "@stencil/core";
-import throttle from "../../utils/throttle";
+import { Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch } from '@stencil/core';
+import throttle from '../../utils/throttle';
 
 @Component({
-  tag: "ds-modal",
-  styleUrls: [
-    "modal.scss",
-  ]
+  tag: 'ds-modal',
+  styleUrls: ['modal.scss'],
 })
 export class DSModal {
-
   @Element() container: HTMLDsModalElement;
 
   @Prop({ mutable: true, reflect: true }) shown = false;
   @Prop() overlay = false;
-  @Prop({ mutable: true }) lightboxClass: any = { "--dialog": true };
+  @Prop({ mutable: true }) lightboxClass: any = { '--dialog': true };
   @Prop() lightboxClassObject: any;
 
   @State() isReady = false;
@@ -21,44 +18,44 @@ export class DSModal {
   @Event() modalClose: EventEmitter;
   @Event() modalOpen: EventEmitter;
 
-  @Watch("lightboxClass")
+  @Watch('lightboxClass')
   lightboxClassWatcher() {
     this.refreshCSSClasses();
   }
 
-  @Watch("shown")
+  @Watch('shown')
   shownWatchHandler() {
-    const body = document.querySelector("body");
+    const body = document.querySelector('body');
     if (this.shown) {
-      body.classList.add("ds-js--modal-open");
+      body.classList.add('ds-js--modal-open');
       this.modalInit();
     } else {
       this.modalCloseHandler();
       this.isReady = false;
     }
 
-    this[`modal${this.shown ? "Open" : "Close"}`].emit();
+    this[`modal${this.shown ? 'Open' : 'Close'}`].emit();
   }
 
-  @Listen("request_toggleModal_event")
+  @Listen('request_toggleModal_event')
   request_toggleModal_eventHandler(event) {
     const { show } = event.details;
     this.toggle(show);
   }
 
-  @Listen("request_showModal_event")
+  @Listen('request_showModal_event')
   request_showModal_eventHandler() {
     this.toggle(true);
   }
 
-  @Listen("request_hideModal_event")
+  @Listen('request_hideModal_event')
   request_hideModal_eventHandler() {
     this.toggle(false);
   }
 
   @Method()
   async setContent(content: string) {
-    this.container.querySelector(".ds-modal__content").innerHTML = content;
+    this.container.querySelector('.ds-modal__content').innerHTML = content;
   }
 
   constructor() {
@@ -73,9 +70,7 @@ export class DSModal {
   }
 
   private refreshCSSClasses(): void {
-    this.lightboxClassObject = typeof this.lightboxClass === "string"
-      ? JSON.parse(this.lightboxClass)
-      : this.lightboxClass;
+    this.lightboxClassObject = typeof this.lightboxClass === 'string' ? JSON.parse(this.lightboxClass) : this.lightboxClass;
   }
 
   /**
@@ -110,10 +105,7 @@ export class DSModal {
    */
   modalInit(): void {
     if (!this.isReady) {
-        document.addEventListener(
-          "keyup",
-          this.documentKeyDownHandler
-        );
+      document.addEventListener('keyup', this.documentKeyDownHandler);
       this.isReady = true;
     }
   }
@@ -122,8 +114,8 @@ export class DSModal {
     e => {
       e = e || window.event;
       let isEscape = false;
-      if ("key" in e) {
-        isEscape = e.key === "Escape" || e.key === "Esc";
+      if ('key' in e) {
+        isEscape = e.key === 'Escape' || e.key === 'Esc';
       } else {
         isEscape = e.keyCode === 27;
       }
@@ -133,27 +125,20 @@ export class DSModal {
     },
     500,
     true,
-    false
+    false,
   );
 
   modalCloseHandler(): void {
+    const body = document.querySelector('body');
 
-    const body = document.querySelector("body");
+    body.classList.remove('ds-js--modal-open');
+    body.style.overflow = 'visible';
 
-    body.classList.remove("ds-js--modal-open");
-    body.style.overflow = "visible";
-
-    document.removeEventListener(
-      "keyup",
-      this.documentKeyDownHandler
-    );
-
+    document.removeEventListener('keyup', this.documentKeyDownHandler);
   }
 
   modalMouseDownHandler(event: MouseEvent): void {
-    if (
-      !(event.target as HTMLDivElement).closest(".ds-modal")
-    ) {
+    if (!(event.target as HTMLDivElement).closest('.ds-modal')) {
       this.hide();
     }
   }
@@ -164,10 +149,11 @@ export class DSModal {
 
   render() {
     return (
-      <Host class={{
-          "ds-lightbox": true,
-          "--overlay": this.overlay,
-          ...this.lightboxClassObject
+      <Host
+        class={{
+          'ds-lightbox': true,
+          '--overlay': this.overlay,
+          ...this.lightboxClassObject,
         }}
         onMouseDown={this.modalMouseDownHandler}
         onMouseUp={this.modalMouseUpHandler}

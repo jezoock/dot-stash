@@ -1,11 +1,11 @@
 .ds-title {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 
   &[page] {
     font-weight: normal;
     text-transform: uppercase;
   }
-  
+
   &[section] {
     letter-spacing: 1.8px;
     text-transform: uppercase;
@@ -22,17 +22,17 @@
       &[page] {
         font-size: 40px;
       }
-  
+
       &[section] {
         font-size: 20px;
         line-height: 25px;
       }
-  
+
       &[block] {
         font-size: 18px;
       }
     }
-    
+
     &[sup] {
       &[section] {
         font-size: 24px;

@@ -1,16 +1,13 @@
-import { Component, Element, h, Host, Prop, Method, Event, EventEmitter, Watch } from "@stencil/core";
-import CssClassList from "../../types/css-class-list.interface";
-import _ds from "../../utils/dot-stash";
-import SIDEBAR_POSITION from "../../types/sidebar-position.enum";
+import { Component, Element, h, Host, Prop, Method, Event, EventEmitter, Watch } from '@stencil/core';
+import CssClassList from '../../types/css-class-list.interface';
+import _ds from '../../utils/dot-stash';
+import SIDEBAR_POSITION from '../../types/sidebar-position.enum';
 
 @Component({
-  tag: "ds-sidebar",
-  styleUrls: [
-    "sidebar.scss",
-  ]
+  tag: 'ds-sidebar',
+  styleUrls: ['sidebar.scss'],
 })
 export class DSSidebar {
-
   //#region PROPS
 
   CSSClassList: CssClassList;
@@ -21,13 +18,13 @@ export class DSSidebar {
   @Prop({ mutable: true, reflect: true }) isShown = false;
   @Prop({ reflect: true }) hPos: 'left' | 'right' = SIDEBAR_POSITION.LEFT;
   @Prop({ reflect: true }) vPos: 'top' | 'bottom' = SIDEBAR_POSITION.TOP;
-  @Prop({ reflect: true }) mods: string | string[] = "";
+  @Prop({ reflect: true }) mods: string | string[] = '';
 
   //#endregion
 
   //#region WATCHERS
 
-  @Watch("mods")
+  @Watch('mods')
   modsChangeHandler(newMods: string | string[]) {
     this.computeCSSClasslist(newMods);
   }
@@ -35,7 +32,7 @@ export class DSSidebar {
   //#endregion
 
   //#region EVENTS
-  
+
   @Event() sidebarHide: EventEmitter;
   @Event() sidebarHidden: EventEmitter;
   @Event() sidebarShow: EventEmitter;
@@ -50,11 +47,11 @@ export class DSSidebar {
    * @param mustShow Used to specify wether the sidebar must be shown or hidden
    */
   @Method()
-  async toggle( mustShow?: boolean ) {
-    const methodName = (typeof mustShow === "boolean" && mustShow || !this.isShown) ? 'show' : 'hide';
-    this[ methodName ]();
+  async toggle(mustShow?: boolean) {
+    const methodName = (typeof mustShow === 'boolean' && mustShow) || !this.isShown ? 'show' : 'hide';
+    this[methodName]();
   }
-  
+
   /**
    * Show the sidebar
    */
@@ -62,27 +59,26 @@ export class DSSidebar {
   async show() {
     this.containerRefresh();
     this.sidebarShow.emit();
-    this.container.addEventListener( "transitionend", this.animationEndHandler);
+    this.container.addEventListener('transitionend', this.animationEndHandler);
     this.isShown = true;
-    
   }
-  
+
   /**
    * Hide the sidebar
    */
   @Method()
   async hide() {
     this.sidebarHide.emit();
-    this.container.addEventListener( "transitionend", this.animationEndHandler);
+    this.container.addEventListener('transitionend', this.animationEndHandler);
     this.isShown = false;
   }
 
   //#endregion
-  
+
   //#region TOOLS
-  
+
   computeCSSClasslist(modifiers: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList("ds-sidebar", modifiers);
+    this.CSSClassList = _ds.props.toClassList('ds-sidebar', modifiers);
   }
 
   containerRefresh() {
@@ -96,7 +92,7 @@ export class DSSidebar {
   preventScroll(event: Event) {
     event.preventDefault();
   }
-  
+
   //#endregion
 
   //#region LYFECYCLE
@@ -106,11 +102,7 @@ export class DSSidebar {
   }
 
   connectedCallback() {
-    this.container.addEventListener(
-      "touchmove",
-      this.preventScroll,
-      { passive: true }
-    );
+    this.container.addEventListener('touchmove', this.preventScroll, { passive: true });
   }
 
   componentWillLoad() {
@@ -118,21 +110,18 @@ export class DSSidebar {
   }
 
   disconnectedCallback() {
-    this.container.removeEventListener(
-      "touchmove",
-      this.preventScroll
-    );
+    this.container.removeEventListener('touchmove', this.preventScroll);
   }
 
-  //#region 
+  //#region
 
   //#region HANDLERS
 
   animationEndHandler() {
-    this.container.removeEventListener("transitionend", this.animationEndHandler);
+    this.container.removeEventListener('transitionend', this.animationEndHandler);
     const eventName = `sidebar${this.isShown ? 'Shown' : 'Hidden'}`;
-    this[ eventName ].emit();
-  }  
+    this[eventName].emit();
+  }
 
   //#endregion
 
@@ -141,12 +130,11 @@ export class DSSidebar {
       <Host
         class={{
           ...this.CSSClassList,
-          "--shown": this.isShown,
-          "--hidden": !this.isShown,
+          '--shown': this.isShown,
+          '--hidden': !this.isShown,
           [`--h-pos-${this.hPos}`]: true,
-          [`--v-pos-${this.vPos}`]: true
+          [`--v-pos-${this.vPos}`]: true,
         }}
-        
       >
         <div class="ds-sidebar__content">
           <slot />

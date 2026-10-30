@@ -1,9 +1,8 @@
 import { Component, h } from '@stencil/core/internal';
 
-
 @Component({
   tag: 'ds-slider-item',
-  styleUrl: 'slider-item.scss'
+  styleUrl: 'slider-item.scss',
 })
 export class DSSliderItem {
   render() {

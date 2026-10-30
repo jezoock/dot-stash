@@ -27,23 +27,23 @@
       }
     }
   }
-  
+
   &.--transition-slide-btt {
     & .ds-marquee {
       &__content {
-       animation-name: slide-btt;
+        animation-name: slide-btt;
       }
     }
   }
-  
+
   &.--transition-slide-rtl {
     & .ds-marquee {
       &__content {
-       animation-name: slide-rtl;
+        animation-name: slide-rtl;
       }
     }
   }
-  
+
   &.--transition-slide-ltr {
     & .ds-marquee {
       &__content {
@@ -54,21 +54,37 @@
 }
 
 @keyframes slide-ttb {
-  0%   { transform: translate3d(0,-100%,0) }
-  100% { transform: translate3d(0,100%,0) }
+  0% {
+    transform: translate3d(0, -100%, 0);
+  }
+  100% {
+    transform: translate3d(0, 100%, 0);
+  }
 }
 
 @keyframes slide-btt {
-  0%   { transform: translate3d(0,100%,0) }
-  100% { transform: translate3d(0,-100%,0) }
+  0% {
+    transform: translate3d(0, 100%, 0);
+  }
+  100% {
+    transform: translate3d(0, -100%, 0);
+  }
 }
 
 @keyframes slide-rtl {
-  0%   { transform: translate3d(100%,0,0) }
-  100% { transform: translate3d(-100%,0,0) }
+  0% {
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 @keyframes slide-ltr {
-  0%   { transform: translate3d(-100%,0,0) }
-  100% { transform: translate3d(100%,0,0) }
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
 }
