@@ -1,4 +1,4 @@
-import { Component, Element, Fragment, h, Host, Prop, State, Method } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, Fragment, h, Host, Prop, State, Method } from '@stencil/core';
 import { isTrue, toArray, toClassList } from '../../utils/props';
 import debounce from '../../utils/debounce';
 
@@ -11,6 +11,10 @@ interface VideoSource {
 type VideoSources = VideoSource[];
 const allowedVideoFormat: VideoFormat[] = ['mp4', 'mov', 'wmv', 'webm', 'avi', 'flv', 'mks', 'mts'];
 
+/**
+ * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
+ * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
+ */
 @Component({
   tag: 'ds-video',
   styleUrl: 'video.scss',
@@ -37,23 +41,39 @@ export class DSVideo {
   playOnLoop = false;
   videoSources: VideoSources;
 
+  /**
+   * Emitted when the browser refuses to play the video (the promise of the player's `play()` is rejected), for
+   * example with a `NotAllowedError` when autoplay is blocked. The component is then back to its state before the
+   * call: not playing. Detail: `{ error }`. A `play()` interrupted by `pause()` or `stop()` emits nothing.
+   */
+  @Event() playError: EventEmitter<{ error: unknown }>;
+
   //#region METHODS
 
+  /**
+   * Plays the video. Resolves at once, without waiting for the player (which can wait for its source for ever):
+   * a refusal of the player is reported with `playError`.
+   */
   @Method()
   async play() {
-    if (!this.isPlaying) {
-      if (!this.isReady) {
-        this.isReady = true;
-      }
-      this.isPlaying = true;
-      this.isPaused = false;
-      const videoPlayer = this.getPlayer();
-      videoPlayer.play();
+    if (this.isPlaying) {
+      return;
     }
+
+    const wasPaused = this.isPaused;
+    this.isReady = true;
+    this.isPlaying = true;
+    this.isPaused = false;
+
+    // A promise in all browsers (some returned undefined), and an exception thrown by play() is a rejection too.
+    new Promise(resolve => resolve(this.getPlayer().play())).catch(error => this.playRejectionHandler(error, wasPaused));
   }
 
+  /** Stops the video: paused, back to the beginning, reloaded. Neither `--playing` nor `--paused`. */
   @Method()
   async stop() {
+    this.isPlaying = false;
+    this.isPaused = false;
     const videoPlayer = this.getPlayer();
     videoPlayer.pause();
     videoPlayer.currentTime = 0;
@@ -166,6 +186,38 @@ export class DSVideo {
     this.unmute();
   }
 
+  /** The player refused to play: back to the state before play(), and `playError`. */
+  playRejectionHandler(error: unknown, wasPaused: boolean) {
+    // A pending play() interrupted by pause(), stop() or load() is rejected with an AbortError: they set the state.
+    if ((error as Error)?.name === 'AbortError') {
+      return;
+    }
+    // Unless another call has changed the state meanwhile.
+    if (this.isPlaying) {
+      this.isPlaying = false;
+      this.isPaused = wasPaused;
+    }
+    this.playError.emit({ error });
+  }
+
+  /** The player started playing on its own (native controls, autoplay): the state follows, without a new play() call. */
+  videoPlayHandler = () => {
+    this.isReady = true;
+    this.isPlaying = true;
+    this.isPaused = false;
+  };
+
+  /**
+   * The player paused (native controls, end of the video): paused, if it was playing. A pause caused by pause() or
+   * stop() changes nothing: stop() must not end paused.
+   */
+  videoPauseHandler = () => {
+    if (this.isPlaying) {
+      this.isPlaying = false;
+      this.isPaused = true;
+    }
+  };
+
   //#endregion
 
   render() {
@@ -184,8 +236,8 @@ export class DSVideo {
           controls={this.useControls && this.isReady}
           muted={this.isMuted}
           autoplay={this.playOnload && this.isOnScreen()}
-          onPlay={this.playButtonclickHandler}
-          onPause={this.pauseButtonclickHandler}
+          onPlay={this.videoPlayHandler}
+          onPause={this.videoPauseHandler}
           loop={this.playOnLoop}
           playsinline={this.playsinline}
         >

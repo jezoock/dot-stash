@@ -539,6 +539,10 @@ export namespace Components {
         "target": string;
         "type": 'button' | 'control' | 'link';
     }
+    /**
+     * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
+     * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
+     */
     interface DsVideo {
         "autoplay": boolean;
         "controls": boolean;
@@ -549,10 +553,16 @@ export namespace Components {
         "mods": string | string[];
         "mute": () => Promise<void>;
         "pause": () => Promise<void>;
+        /**
+          * Plays the video. Resolves at once, without waiting for the player (which can wait for its source for ever): a refusal of the player is reported with `playError`.
+         */
         "play": () => Promise<void>;
         "playsinline": boolean;
         "poster": string;
         "sources": string | string[];
+        /**
+          * Stops the video: paused, back to the beginning, reloaded. Neither `--playing` nor `--paused`.
+         */
         "stop": () => Promise<void>;
         "unmute": () => Promise<void>;
     }
@@ -604,6 +614,10 @@ export interface DsToggleCustomEvent<T> extends CustomEvent<T> {
 export interface DsToggleGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToggleGroupElement;
+}
+export interface DsVideoCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsVideoElement;
 }
 declare global {
     /**
@@ -989,7 +1003,22 @@ declare global {
         prototype: HTMLDsTriggerElement;
         new (): HTMLDsTriggerElement;
     };
+    interface HTMLDsVideoElementEventMap {
+        "playError": { error: unknown };
+    }
+    /**
+     * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
+     * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
+     */
     interface HTMLDsVideoElement extends Components.DsVideo, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsVideoElementEventMap>(type: K, listener: (this: HTMLDsVideoElement, ev: DsVideoCustomEvent<HTMLDsVideoElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsVideoElementEventMap>(type: K, listener: (this: HTMLDsVideoElement, ev: DsVideoCustomEvent<HTMLDsVideoElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsVideoElement: {
         prototype: HTMLDsVideoElement;
@@ -1483,6 +1512,10 @@ declare namespace LocalJSX {
         "target"?: string;
         "type"?: 'button' | 'control' | 'link';
     }
+    /**
+     * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
+     * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
+     */
     interface DsVideo {
         "autoplay"?: boolean;
         "controls"?: boolean;
@@ -1491,6 +1524,10 @@ declare namespace LocalJSX {
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods"?: string | string[];
+        /**
+          * Emitted when the browser refuses to play the video (the promise of the player's `play()` is rejected), for example with a `NotAllowedError` when autoplay is blocked. The component is then back to its state before the call: not playing. Detail: `{ error }`. A `play()` interrupted by `pause()` or `stop()` emits nothing.
+         */
+        "onPlayError"?: (event: DsVideoCustomEvent<{ error: unknown }>) => void;
         "playsinline"?: boolean;
         "poster"?: string;
         "sources"?: string | string[];
@@ -1624,6 +1661,10 @@ declare module "@stencil/core" {
              * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
              */
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
+            /**
+             * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
+             * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
+             */
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
         }
     }

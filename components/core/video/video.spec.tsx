@@ -128,4 +128,95 @@ describe('ds-video', () => {
 
     expect(scrollListeners(addEventListenerSpy)).toHaveLength(0);
   });
+
+  /** A player whose play() resolves, or rejects with the given error name. */
+  const mockPlayer = (video: HTMLVideoElement, rejection?: string) => {
+    video.play = jest.fn(() => (rejection ? Promise.reject(Object.assign(new Error(rejection), { name: rejection })) : Promise.resolve()));
+    video.pause = jest.fn();
+    video.load = jest.fn();
+  };
+
+  const state = (page): string[] => ['--playing', '--paused'].filter(className => page.root.classList.contains(className));
+
+  it('stop() leaves the playing and paused states, also once the player emits its pause event', async () => {
+    const page = await render('<ds-video sources="/video.mp4"></ds-video>');
+    const video = page.root.querySelector('video');
+    mockPlayer(video);
+
+    await page.root.play();
+    await page.waitForChanges();
+    expect(state(page)).toEqual(['--playing']);
+
+    await page.root.stop();
+    video.dispatchEvent(new Event('pause'));
+    await page.waitForChanges();
+    expect(state(page)).toEqual([]);
+    expect(video.load).toHaveBeenCalledTimes(1);
+
+    await page.root.play();
+    await page.root.pause();
+    await page.root.stop();
+    await page.waitForChanges();
+    expect(state(page)).toEqual([]);
+  });
+
+  it('when the browser refuses to play (autoplay blocked), it is back to not playing and emits playError', async () => {
+    const page = await render('<ds-video sources="/video.mp4"></ds-video>');
+    const video = page.root.querySelector('video');
+    const errors: string[] = [];
+    page.root.addEventListener('playError', (event: CustomEvent) => errors.push(event.detail.error.name));
+    mockPlayer(video, 'NotAllowedError');
+
+    await page.root.play();
+    await page.waitForChanges();
+    expect(state(page)).toEqual([]);
+    expect(errors).toEqual(['NotAllowedError']);
+
+    // Paused before: paused again.
+    await page.root.pause();
+    await page.root.play();
+    await page.waitForChanges();
+    expect(state(page)).toEqual(['--paused']);
+    expect(errors).toEqual(['NotAllowedError', 'NotAllowedError']);
+
+    // Allowed again (after a user gesture): it plays.
+    mockPlayer(video);
+    await page.root.play();
+    await page.waitForChanges();
+    expect(state(page)).toEqual(['--playing']);
+  });
+
+  it('a play() interrupted by pause() (AbortError) emits no playError and stays paused', async () => {
+    const page = await render('<ds-video sources="/video.mp4"></ds-video>');
+    const video = page.root.querySelector('video');
+    const onPlayError = jest.fn();
+    page.root.addEventListener('playError', onPlayError);
+    let rejectPlay: (error: Error) => void;
+    mockPlayer(video);
+    video.play = jest.fn(() => new Promise<void>((_, reject) => (rejectPlay = reject)));
+
+    const playing = page.root.play();
+    await page.root.pause();
+    rejectPlay(Object.assign(new Error('interrupted'), { name: 'AbortError' }));
+    await playing;
+    await page.waitForChanges();
+
+    expect(state(page)).toEqual(['--paused']);
+    expect(onPlayError).not.toHaveBeenCalled();
+  });
+
+  it("follows the player's own play and pause events, without calling play() again", async () => {
+    const page = await render('<ds-video sources="/video.mp4"></ds-video>');
+    const video = page.root.querySelector('video');
+    mockPlayer(video);
+
+    video.dispatchEvent(new Event('play'));
+    await page.waitForChanges();
+    expect(state(page)).toEqual(['--playing']);
+    expect(video.play).not.toHaveBeenCalled();
+
+    video.dispatchEvent(new Event('pause'));
+    await page.waitForChanges();
+    expect(state(page)).toEqual(['--paused']);
+  });
 });
