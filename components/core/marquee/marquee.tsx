@@ -15,6 +15,10 @@ const DSMarqueeDefaultParams = {
   pauseOnHover: false,
 };
 
+/**
+ * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
+ * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
+ */
 @Component({
   tag: 'ds-marquee',
   styleUrl: 'marquee.scss',
@@ -24,12 +28,16 @@ export class DSSlideMsg {
   blockName = 'ds-marquee';
   params: DSMarqueeParams = DSMarqueeDefaultParams;
   messageContainer: HTMLDivElement;
+  /** requestAnimationFrame id of the running animation. */
+  frameId: number;
 
   @Element() container: HTMLDivElement;
 
   @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
+  /** Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll. */
   @Prop() speed: string | number = 10;
-  @Prop() transition: string | DSMarqueeTransitionEnum = 'slide-left-to-right';
+  /** Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`. */
+  @Prop() transition: string | DSMarqueeTransitionEnum = DSMarqueeDefaultParams.transition;
   @Prop() pauseOnHover: string | boolean = false;
   @Prop() color: string;
   @Prop() bgColor: string;
@@ -37,18 +45,18 @@ export class DSSlideMsg {
   @State() isPlaying: boolean = true;
 
   @Watch('speed')
-  speedCahngeHandler(newSpeed: number) {
+  speedCahngeHandler(newSpeed: string | number) {
     this.params = {
       ...this.params,
-      speed: newSpeed,
+      speed: toNumber(newSpeed),
     };
   }
 
   @Watch('pauseOnHover')
-  pauseOnHoverCahngeHandler(pause: boolean) {
+  pauseOnHoverCahngeHandler(pause: string | boolean) {
     this.params = {
       ...this.params,
-      pauseOnHover: pause,
+      pauseOnHover: isTrue(pause),
     };
   }
 
@@ -71,6 +79,15 @@ export class DSSlideMsg {
       speed: toNumber(this.speed),
       pauseOnHover: isTrue(this.pauseOnHover),
     };
+
+    // componentDidLoad only runs once: restart the animation when the element is put back in the document.
+    if (this.messageContainer && this.params.speed > 0) {
+      this.start();
+    }
+  }
+
+  disconnectedCallback() {
+    this.stopAnimation();
   }
 
   componentDidLoad() {
@@ -93,23 +110,49 @@ export class DSSlideMsg {
     }
   }
 
+  stopAnimation() {
+    if (this.frameId !== undefined) {
+      cancelAnimationFrame(this.frameId);
+      this.frameId = undefined;
+    }
+  }
+
+  /**
+   * Starts scrolling the messages to the left, from the beginning (a running animation is replaced).
+   * The offset grows by `speed / 10` px every 4 ms: the pace of the former `setInterval(…, 0)`, which browsers
+   * run every 4 ms; it is now computed on animation frames, which follow the display and stop in background tabs.
+   */
   @Method()
   async start() {
     const messageContainer = this.container.querySelector(`.${this.blockName}__content`) as HTMLDivElement;
-    const firstElement = messageContainer.children[0] as HTMLElement;
-    let i = 0;
+    const firstElement = messageContainer?.children[0] as HTMLElement;
+    let offset = 0;
+    let previousTime: number;
 
+    this.stopAnimation();
     this.isPlaying = true;
 
-    setInterval(() => {
-      firstElement.style.marginLeft = `-${i}px`;
-      if (i > firstElement.clientWidth) {
-        i = 0;
-      }
+    if (!firstElement) {
+      return;
+    }
+
+    const step = (time: number) => {
+      // Capped, so that the messages do not jump when a background tab comes back.
+      const elapsed = previousTime === undefined ? 0 : Math.min(time - previousTime, 100);
+      previousTime = time;
+
       if (this.isPlaying) {
-        i = i + this.params.speed / 10;
+        offset += (this.params.speed / 10) * (elapsed / 4);
       }
-    }, 0);
+      if (offset > firstElement.clientWidth) {
+        offset = 0;
+      }
+      firstElement.style.marginLeft = `-${offset}px`;
+
+      this.frameId = requestAnimationFrame(step);
+    };
+
+    this.frameId = requestAnimationFrame(step);
   }
 
   play() {

@@ -126,13 +126,26 @@ export namespace Components {
     interface DsMain {
         "getData": (key: string) => Promise<unknown>;
     }
+    /**
+     * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
+     * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
+     */
     interface DsMarquee {
         "bgColor": string;
         "color": string;
         "mods": string | string[];
         "pauseOnHover": string | boolean;
+        /**
+          * Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.
+         */
         "speed": string | number;
+        /**
+          * Starts scrolling the messages to the left, from the beginning (a running animation is replaced). The offset grows by `speed / 10` px every 4 ms: the pace of the former `setInterval(…, 0)`, which browsers run every 4 ms; it is now computed on animation frames, which follow the display and stop in background tabs.
+         */
         "start": () => Promise<void>;
+        /**
+          * Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`.
+         */
         "transition": string | DSMarqueeTransitionEnum;
     }
     interface DsModal {
@@ -515,6 +528,10 @@ declare global {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
     };
+    /**
+     * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
+     * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
+     */
     interface HTMLDsMarqueeElement extends Components.DsMarquee, HTMLStencilElement {
     }
     var HTMLDsMarqueeElement: {
@@ -919,12 +936,22 @@ declare namespace LocalJSX {
     }
     interface DsMain {
     }
+    /**
+     * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
+     * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
+     */
     interface DsMarquee {
         "bgColor"?: string;
         "color"?: string;
         "mods"?: string | string[];
         "pauseOnHover"?: string | boolean;
+        /**
+          * Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.
+         */
         "speed"?: string | number;
+        /**
+          * Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`.
+         */
         "transition"?: string | DSMarqueeTransitionEnum;
     }
     interface DsModal {
@@ -1176,6 +1203,10 @@ declare module "@stencil/core" {
             "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
             "ds-icon": LocalJSX.DsIcon & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
+            /**
+             * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
+             * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
+             */
             "ds-marquee": LocalJSX.DsMarquee & JSXBase.HTMLAttributes<HTMLDsMarqueeElement>;
             "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-nav": LocalJSX.DsNav & JSXBase.HTMLAttributes<HTMLDsNavElement>;
