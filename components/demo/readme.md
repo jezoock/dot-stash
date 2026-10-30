@@ -34,11 +34,12 @@ Type: `Promise<unknown>`
 - [ds-slider-item](../core/slider/slider-item)
 - [ds-button](../core/button)
 - [ds-trigger](../core/trigger)
-- [ds-title](../core/title)
+- [ds-heading](../core/heading)
 - [ds-title-bar](../core/title-bar)
 - [ds-icon](../core/icon)
 - [ds-panel-group](../core/panel-group)
 - [ds-panel](../core/panel)
+- [ds-combo](../core/combo)
 - [ds-rsp](../core/responsive)
 - [ds-grid](../core/grid)
 - [ds-grid-item](../core/grid/grid-item)
@@ -52,16 +53,19 @@ graph TD;
   ds-main --> ds-slider-item
   ds-main --> ds-button
   ds-main --> ds-trigger
-  ds-main --> ds-title
+  ds-main --> ds-heading
   ds-main --> ds-title-bar
   ds-main --> ds-icon
   ds-main --> ds-panel-group
   ds-main --> ds-panel
+  ds-main --> ds-combo
   ds-main --> ds-rsp
   ds-main --> ds-grid
   ds-main --> ds-grid-item
   ds-slider --> ds-trigger
   ds-slider --> ds-slider-menu
+  ds-heading --> ds-title
+  ds-heading --> ds-text
   style ds-main fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

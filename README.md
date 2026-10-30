@@ -204,6 +204,25 @@ defineCustomElements();
 
 Add `dot-stash/dist/css/style.css` to the page with your usual CSS pipeline.
 
+### Components
+
+Each component documents its properties, events, methods and slots in the `readme.md` generated next to its source (`components/core/<component>/readme.md`). Among them:
+
+- **`ds-button`** ([readme](components/core/button/readme.md)): a native `<button>` (`type` `button`, `submit` or `reset`; in the light DOM, a submit button inside a `<form>` submits it), or a link when `href` is set. Slots `before`, default and `after`. The theme skins it with modifiers: sizes `xs` to `xl`, `rounded`, `shadow`, colors `stl-1` to `stl-3`. While `disabled`, the native button is disabled, a link loses its `href`, and the component stops the clicks before they reach its listeners (`onClick` in JSX included).
+- **`ds-combo`** ([readme](components/core/combo/readme.md)): a custom select with single or `multiple` selection. Its options are data (an array, or its JSON string in HTML): text options, links (`url`), images (`mode="image"`), disabled options and placeholders (empty `value`). Pre-select options with `selected` (`{ index }`, `{ value }` or `{ name }`) or with the options' `selected` flags; each user selection emits `optionSelected` (`{ name, option, selectedOptions }`). `open()`, `close()` and `toggle()` drive the list; `mode="dropdown"` renders no toggle button, for a list opened by another element. A click outside closes the list. `ds-combo` replaces `ds-dropdown` and `ds-dropdown-item`, which were removed: their slotted items had no selection behavior.
+- **`ds-trigger`** ([readme](components/core/trigger/readme.md)): calls a method of a target element on an event (`target`, `action`, `on`). With `type="button"` it also gets the `.ds-button` skin, but it is not a native button: it is not focusable and does not submit forms. Use `ds-button` for buttons and links, and `ds-trigger` to bind an action to another element.
+
+```html
+<ds-combo name="color" options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue"}]' selected='{"value": "blue"}'></ds-combo>
+<ds-combo id="menu" mode="dropdown" options='[{"name": "Docs", "value": "docs", "url": "/docs"}]'></ds-combo>
+<ds-trigger type="button" mods="sm,stl-2" target="#menu" action="toggle">Menu</ds-trigger>
+
+<form>
+  <ds-button mods="md,stl-1" type="submit">Send</ds-button>
+  <ds-button mods="md,stl-2" href="/help">Help</ds-button>
+</form>
+```
+
 The package entry also exports the shared utilities, with their types:
 
 ```ts

@@ -1,4 +1,4 @@
-# ds-header
+# ds-heading
 
 
 
@@ -18,6 +18,10 @@
 
 ## Dependencies
 
+### Used by
+
+ - [ds-main](../../demo)
+
 ### Depends on
 
 - [ds-title](../title)
@@ -28,6 +32,7 @@
 graph TD;
   ds-heading --> ds-title
   ds-heading --> ds-text
+  ds-main --> ds-heading
   style ds-heading fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

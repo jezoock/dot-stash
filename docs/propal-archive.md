@@ -74,6 +74,9 @@ Propal. **Drop**: Propal business logic, or only meaningful with an external app
 - **`components/core/rating-list/rating-list.scss`** styles `ds-grade-star`. Task 24, if `grade-star` is recovered.
 - **Theme SCSS**: `.ds-form` (`scss/components/form/form.scss`) has no matching component (Propal's `ds-form` is
   an empty stub). Review with Task 24.
+- **`ds-button`** now exists (`components/core/button`). The archived components that use it pass props it does
+  not have (`buttonMods`, `buttonLevel`, `isDisabled`, `dataCy`) and listen to `DSButtonClick`: when recovering one,
+  use `mods`, `disabled` and the native `click` event instead.
 
 `components/components.d.ts`, the generated readmes and `stencil.config.ts` no longer reference the removed
 components (Task 3).

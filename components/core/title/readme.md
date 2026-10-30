@@ -24,13 +24,11 @@
 ### Used by
 
  - [ds-heading](../heading)
- - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
   ds-heading --> ds-title
-  ds-main --> ds-title
   style ds-title fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
