@@ -181,8 +181,16 @@ export namespace Components {
         "dsAverage": string | number;
         "dsRatings": string | number[];
     }
+    /**
+     * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+     * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+     */
     interface DsRsp {
-        "breakpointsFromProp": Record<string, number>;
+        /**
+          * Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`.
+         */
+        "breakpointsFromProp": string | RawBreakpoint;
         "debounceDelay": number;
         /**
           * Get the current breakpoint
@@ -570,6 +578,11 @@ declare global {
     interface HTMLDsRspElementEventMap {
         "breakpointChange": any;
     }
+    /**
+     * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+     * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+     */
     interface HTMLDsRspElement extends Components.DsRsp, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsRspElementEventMap>(type: K, listener: (this: HTMLDsRspElement, ev: DsRspCustomEvent<HTMLDsRspElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -931,8 +944,16 @@ declare namespace LocalJSX {
         "dsAverage"?: string | number;
         "dsRatings"?: string | number[];
     }
+    /**
+     * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+     * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+     */
     interface DsRsp {
-        "breakpointsFromProp"?: Record<string, number>;
+        /**
+          * Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`.
+         */
+        "breakpointsFromProp"?: string | RawBreakpoint;
         "debounceDelay"?: number;
         "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
         "propertyName"?: string;
@@ -1122,6 +1143,11 @@ declare module "@stencil/core" {
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
             "ds-rating-list": LocalJSX.DsRatingList & JSXBase.HTMLAttributes<HTMLDsRatingListElement>;
+            /**
+             * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+             * attribute the properties their `data-rsp` attribute declares for it (see the README).
+             * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+             */
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
             "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;

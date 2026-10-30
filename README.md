@@ -157,9 +157,10 @@ The stylesheet then targets `.ds-block.--content.--top-header`. The same convers
 
 - `responsive.getStylesJSON()` (also available as `ds.tools.getStylesJSON()`) reads and parses that JSON. It returns `{}` when the theme stylesheet is not loaded.
 - `responsive.processBreakpoints()` turns the map into ranges with the mobile-first semantics of `break-p`: each label starts at its value and ends at the next value - 1, the first label also covers the smaller widths (it starts at 0) and the last one has no maximum. With the theme map: `xxs` 0–575, `xs` 576–767, `sm` 768–991, `md` 992–1199, `lg` 1200–1399, `xl` 1400–1599, `xxl` 1600 and up. `responsive.getBreakpoint()` returns the label and limits (`[min, max]`, or `[min]` for the last label) for a width.
-- `<ds-rsp>` reads the breakpoints (or takes them from its `breakpointsFromProp` property), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when the breakpoint changes:
+- `<ds-rsp>` reads the breakpoints (or takes them from its `breakpoints` attribute, written like the Sass map: `breakpoints='{"sm": 0, "lg": 992}'`), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when the breakpoint changes:
   - dispatches a `breakpointChange` event (`detail: { all, current, previous, isGrowing }`) to every element with a `data-use-rsp` attribute;
-  - sets on these elements the properties declared in their `data-rsp` attribute for the current breakpoint (or the closest smaller breakpoint that has some).
+  - sets on these elements the properties declared in their `data-rsp` attribute (a JSON string) for the current breakpoint (or the closest smaller breakpoint that has some). Unknown labels are ignored with a warning; the initial values of the changing properties are kept for the smallest breakpoint. Initialised elements get a `data-rsp-init` attribute.
+  - Without breakpoints (theme stylesheet not loaded, no `breakpoints` attribute), it logs a warning and does nothing.
 
 ```html
 <ds-rsp></ds-rsp>

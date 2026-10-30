@@ -4,19 +4,30 @@ import { fromJSON } from '../../utils/props';
 import { getBreakpoint, getParamsForBreakpoint, getStylesJSON, processBreakpoints } from '../../utils/responsive';
 import { Breakpoint, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
 
+/**
+ * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+ * attribute the properties their `data-rsp` attribute declares for it (see the README).
+ * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+ */
 @Component({
   tag: 'ds-rsp',
 })
 export class DSRsp {
-  breakpoints: Breakpoints;
+  breakpoints: Breakpoints = {};
   currentBreakpoint: Breakpoint;
   subscribers: Element[] = [];
   waitingSubscribers: Element[] = [];
+  /** The debounced `resize` listener, kept so that the same function is removed. */
+  resizeHandler: () => void;
 
   @Prop() debounceDelay = 500;
   @Prop() subscriberSelector = '[data-use-rsp]:not([data-rsp-init])';
   @Prop() propertyName = 'data-rsp';
-  @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: Record<string, number>;
+  /**
+   * Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px.
+   * As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`.
+   */
+  @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: string | RawBreakpoint;
 
   @Method()
   async subscribe(target: Element) {
@@ -74,27 +85,73 @@ export class DSRsp {
   }
 
   async componentWillLoad() {
-    this.breakpoints = this.breakpointsFromProp ? fromJSON(this.breakpointsFromProp) : await this.getBreakpoints();
+    this.breakpoints = this.breakpointsFromProp ? processBreakpoints(fromJSON(this.breakpointsFromProp)) : await this.getBreakpoints();
+
+    if (!this.hasBreakpoints()) {
+      console.warn(
+        '[ds-rsp] no breakpoints: load the theme stylesheet (it writes them in the content of body::before) or set the breakpoints property. Breakpoint changes are not tracked.',
+      );
+    }
   }
 
   componentDidLoad() {
-    this.waitingSubscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
-    window.addEventListener('resize', debounce(this.notifySubscribers, this.debounceDelay), false);
-    this.notifySubscribers();
+    if (this.hasBreakpoints()) {
+      this.resizeHandler = debounce(this.notifySubscribers, this.debounceDelay);
+      this.start();
+    }
+  }
+
+  connectedCallback() {
+    // componentDidLoad only runs once: start again when the element is moved or put back in the document.
+    if (this.resizeHandler) {
+      this.start();
+    }
   }
 
   disconnectedCallback() {
-    window.removeEventListener('resize', debounce(this.notifySubscribers, this.debounceDelay));
-    const subscribers = document.querySelectorAll('[data-use-rsp]');
-    subscribers.forEach(subscriber => subscriber.removeEventListener('breakpointChange', this.breakpointChangeHandler));
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler, false);
+    }
+    this.subscribers.forEach(subscriber => {
+      subscriber.removeEventListener('breakpointChange', this.breakpointChangeHandler, false);
+      subscriber.removeAttribute('data-rsp-init');
+    });
+    this.subscribers = [];
+    this.currentBreakpoint = undefined;
+  }
+
+  hasBreakpoints(): boolean {
+    return Object.keys(this.breakpoints ?? {}).length > 0;
+  }
+
+  /** Collects the subscribers, listens to `resize` and applies the current breakpoint. */
+  start() {
+    const subscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
+    this.waitingSubscribers = Array.from(new Set([...this.waitingSubscribers, ...subscribers]));
+    window.addEventListener('resize', this.resizeHandler, false);
+    this.notifySubscribers();
+  }
+
+  /** The responsive params of an element (`{}`, with a warning, when its attribute is not valid JSON). */
+  readParams(element: Element): { [breakpointLabel: string]: Record<string, unknown> } {
+    const attributeValue = element.getAttribute(this.propertyName);
+    try {
+      return fromJSON(attributeValue) || {};
+    } catch {
+      console.warn(`[ds-rsp] the ${this.propertyName} attribute is not valid JSON, it is ignored: ${attributeValue}`, element);
+      return {};
+    }
   }
 
   initSubscribers = () => {
-    this.waitingSubscribers.forEach(subscriber => {
-      const paramsFormProps = fromJSON(subscriber.getAttribute('data-rsp'));
-      const minBreakpointParams: { xxs?: Record<string, unknown> } = {};
+    // The smallest breakpoint gets the initial values of the changing properties, so that they come back on small screens.
+    const [smallestLabel] = Object.keys(this.breakpoints);
 
-      if (paramsFormProps && !paramsFormProps.xxs) {
+    this.waitingSubscribers.forEach(subscriber => {
+      const paramsFormProps = this.readParams(subscriber);
+      const minBreakpointParams: { [breakpointLabel: string]: Record<string, unknown> } = {};
+
+      if (!paramsFormProps[smallestLabel]) {
         const changingProps = [];
         Object.values(paramsFormProps).map(params => {
           Object.keys(params).map(key => {
@@ -104,19 +161,20 @@ export class DSRsp {
           });
         });
         if (changingProps.length) {
-          minBreakpointParams.xxs = {};
-          changingProps.map(prop => (minBreakpointParams['xxs'][prop] = subscriber.getAttribute(prop)));
+          minBreakpointParams[smallestLabel] = {};
+          changingProps.map(prop => (minBreakpointParams[smallestLabel][prop] = subscriber.getAttribute(prop)));
         }
       }
 
       const responsiveParams = JSON.stringify({ ...minBreakpointParams, ...paramsFormProps });
 
       subscriber.setAttribute('data-use-rsp', 'true');
-      subscriber.setAttribute('data-rsp', responsiveParams);
-      subscriber['data-rsp-init'] = 'true';
+      subscriber.setAttribute(this.propertyName, responsiveParams);
+      // An attribute, so that the default subscriber selector (`:not([data-rsp-init])`) skips this element from now on.
+      subscriber.setAttribute('data-rsp-init', 'true');
       subscriber.addEventListener('breakpointChange', this.breakpointChangeHandler, false);
     });
-    this.subscribers = [...this.waitingSubscribers];
+    this.subscribers = [...this.subscribers, ...this.waitingSubscribers];
     this.waitingSubscribers = [];
   };
 
@@ -130,7 +188,8 @@ export class DSRsp {
         all: this.breakpoints,
         current: this.currentBreakpoint,
         previous: previousBreakpoint,
-        isGrowing: newBreakpoint.limits[1] > previousBreakpoint?.limits[1],
+        // Compared on the minimum: the last breakpoint has no maximum.
+        isGrowing: previousBreakpoint !== undefined && newBreakpoint.limits[0] > previousBreakpoint.limits[0],
       };
       const event = new CustomEvent('breakpointChange', { detail: eventDetails });
       const subscribers = document.querySelectorAll('[data-use-rsp]');
@@ -148,8 +207,7 @@ export class DSRsp {
       detail: { current },
     } = event;
 
-    const attributeValue = (element as Element).getAttribute(this.propertyName);
-    const params: { [breakpointLabel: string]: Record<string, unknown> } = fromJSON(attributeValue) || {};
+    const params = this.readParams(element as Element);
 
     // Calculate limits from parameters
     const breakpointParams = await this.getParamsForBreakpoint(current, params);

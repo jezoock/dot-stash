@@ -5,14 +5,20 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+attribute the properties their `data-rsp` attribute declares for it (see the README).
+Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+
 ## Properties
 
-| Property              | Attribute             | Description | Type                       | Default                                 |
-| --------------------- | --------------------- | ----------- | -------------------------- | --------------------------------------- |
-| `breakpointsFromProp` | --                    |             | `{ [x: string]: number; }` | `undefined`                             |
-| `debounceDelay`       | `debounce-delay`      |             | `number`                   | `500`                                   |
-| `propertyName`        | `property-name`       |             | `string`                   | `'data-rsp'`                            |
-| `subscriberSelector`  | `subscriber-selector` |             | `string`                   | `'[data-use-rsp]:not([data-rsp-init])'` |
+| Property              | Attribute             | Description                                                                                                                                                          | Type                      | Default                                 |
+| --------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | --------------------------------------- |
+| `breakpointsFromProp` | `breakpoints`         | Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. | `RawBreakpoint \| string` | `undefined`                             |
+| `debounceDelay`       | `debounce-delay`      |                                                                                                                                                                      | `number`                  | `500`                                   |
+| `propertyName`        | `property-name`       |                                                                                                                                                                      | `string`                  | `'data-rsp'`                            |
+| `subscriberSelector`  | `subscriber-selector` |                                                                                                                                                                      | `string`                  | `'[data-use-rsp]:not([data-rsp-init])'` |
 
 
 ## Events
