@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { DSButtonType } from "./core/button/button.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
@@ -14,6 +15,7 @@ import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
+export { DSButtonType } from "./core/button/button.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
@@ -62,6 +64,46 @@ export namespace Components {
           * Block type classname ( also used to build block classname )
          */
         "type": string;
+    }
+    /**
+     * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
+     * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
+     * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
+     * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
+     * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
+     * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
+     * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
+     * listeners of the host (such as `onClick` in JSX) or of its ancestors.
+     */
+    interface DsButton {
+        /**
+          * Disables the button or the link, and stops the clicks on the component.
+         */
+        "disabled": boolean;
+        /**
+          * Renders a link (`<a>`) to this URL instead of a button. Read when the component loads to choose between a link and a button: afterwards, it changes the URL of a link, but a button stays a button and a link stays a link.
+         */
+        "href": string;
+        /**
+          * Accessible name of the button or link (its `aria-label`), for a button without text, such as an icon-only button.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
+        "mods": string | string[];
+        /**
+          * `rel` of the link (with `href`).
+         */
+        "rel": string;
+        /**
+          * `target` of the link (with `href`).
+         */
+        "target": string;
+        /**
+          * Type of the native button: `button`, `submit` or `reset` (any other value gives `button`). Not used with `href`.
+         */
+        "type": DSButtonType;
     }
     /**
      * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
@@ -565,6 +607,22 @@ declare global {
         prototype: HTMLDsBlockElement;
         new (): HTMLDsBlockElement;
     };
+    /**
+     * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
+     * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
+     * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
+     * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
+     * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
+     * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
+     * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
+     * listeners of the host (such as `onClick` in JSX) or of its ancestors.
+     */
+    interface HTMLDsButtonElement extends Components.DsButton, HTMLStencilElement {
+    }
+    var HTMLDsButtonElement: {
+        prototype: HTMLDsButtonElement;
+        new (): HTMLDsButtonElement;
+    };
     interface HTMLDsComboElementEventMap {
         "optionSelected": DSComboSelectedEventDetail;
     }
@@ -913,6 +971,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "ds-ajax": HTMLDsAjaxElement;
         "ds-block": HTMLDsBlockElement;
+        "ds-button": HTMLDsButtonElement;
         "ds-combo": HTMLDsComboElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
@@ -981,6 +1040,46 @@ declare namespace LocalJSX {
           * Block type classname ( also used to build block classname )
          */
         "type"?: string;
+    }
+    /**
+     * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
+     * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
+     * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
+     * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
+     * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
+     * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
+     * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
+     * listeners of the host (such as `onClick` in JSX) or of its ancestors.
+     */
+    interface DsButton {
+        /**
+          * Disables the button or the link, and stops the clicks on the component.
+         */
+        "disabled"?: boolean;
+        /**
+          * Renders a link (`<a>`) to this URL instead of a button. Read when the component loads to choose between a link and a button: afterwards, it changes the URL of a link, but a button stays a button and a link stays a link.
+         */
+        "href"?: string;
+        /**
+          * Accessible name of the button or link (its `aria-label`), for a button without text, such as an icon-only button.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
+        "mods"?: string | string[];
+        /**
+          * `rel` of the link (with `href`).
+         */
+        "rel"?: string;
+        /**
+          * `target` of the link (with `href`).
+         */
+        "target"?: string;
+        /**
+          * Type of the native button: `button`, `submit` or `reset` (any other value gives `button`). Not used with `href`.
+         */
+        "type"?: DSButtonType;
     }
     /**
      * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
@@ -1358,6 +1457,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ds-ajax": DsAjax;
         "ds-block": DsBlock;
+        "ds-button": DsButton;
         "ds-combo": DsCombo;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
@@ -1399,6 +1499,17 @@ declare module "@stencil/core" {
              */
             "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
+            /**
+             * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
+             * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
+             * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
+             * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
+             * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
+             * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
+             * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
+             * listeners of the host (such as `onClick` in JSX) or of its ancestors.
+             */
+            "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
             /**
              * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
              * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles

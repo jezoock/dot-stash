@@ -196,10 +196,10 @@ export class DSVideo {
         <slot name="controls" />
         {this.useControls && (
           <Fragment>
-            <ds-button class="ds-video__pause-button" mods={['video-player', 'pause']} onClick={this.pauseButtonclickHandler} />
-            <ds-button class="ds-video__play-button" mods={['video-player', 'play']} onClick={this.playButtonclickHandler} />
-            <ds-button class="ds-video__mute-button" mods={['video-player', 'mute']} onClick={this.muteButtonclickHandler} />
-            <ds-button class="ds-video__unmute-button" mods={['video-player', 'unmute']} onClick={this.unmuteButtonclickHandler} />
+            <ds-button class="ds-video__pause-button" mods={['video-player', 'pause']} label="Pause" onClick={this.pauseButtonclickHandler} />
+            <ds-button class="ds-video__play-button" mods={['video-player', 'play']} label="Play" onClick={this.playButtonclickHandler} />
+            <ds-button class="ds-video__mute-button" mods={['video-player', 'mute']} label="Mute" onClick={this.muteButtonclickHandler} />
+            <ds-button class="ds-video__unmute-button" mods={['video-player', 'unmute']} label="Unmute" onClick={this.unmuteButtonclickHandler} />
           </Fragment>
         )}
       </Host>

@@ -1,4 +1,5 @@
 import { newSpecPage } from '@stencil/core/testing';
+import { DSButton } from '../button/button';
 import { DSVideo } from './video';
 
 describe('ds-video', () => {
@@ -7,7 +8,7 @@ describe('ds-video', () => {
 
   /** newSpecPage resets the window: the spies are installed once the page exists, then the content is rendered. */
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSVideo], html: '' });
+    const page = await newSpecPage({ components: [DSVideo, DSButton], html: '' });
 
     addEventListenerSpy = jest.spyOn(window, 'addEventListener');
     removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
@@ -87,6 +88,39 @@ describe('ds-video', () => {
     await page.root.unmute();
     await page.waitForChanges();
     expect(isMuted(video)).toBe(false);
+  });
+
+  it('renders a ds-button per control, and a click on a button calls its method', async () => {
+    const page = await render('<ds-video controls sources="/video.mp4"></ds-video>');
+    const video = page.root.querySelector('video');
+    video.play = jest.fn(() => Promise.resolve());
+    video.pause = jest.fn();
+    const button = (name: string) => page.root.querySelector(`.ds-video__${name}-button`) as HTMLElement;
+    const click = async (name: string) => {
+      (button(name).querySelector('button') as HTMLElement).click();
+      await page.waitForChanges();
+    };
+
+    expect(['pause', 'play', 'mute', 'unmute'].map(name => [button(name).className, button(name).querySelector('button').getAttribute('aria-label')])).toEqual([
+      ['ds-video__pause-button ds-button --video-player --pause', 'Pause'],
+      ['ds-video__play-button ds-button --video-player --play', 'Play'],
+      ['ds-video__mute-button ds-button --video-player --mute', 'Mute'],
+      ['ds-video__unmute-button ds-button --video-player --unmute', 'Unmute'],
+    ]);
+
+    await click('play');
+    expect(video.play).toHaveBeenCalledTimes(1);
+    expect(page.root).toHaveClass('--playing');
+
+    await click('pause');
+    expect(video.pause).toHaveBeenCalledTimes(1);
+    expect(page.root).toHaveClass('--paused');
+
+    await click('mute');
+    expect(page.root).toHaveClass('--muted');
+
+    await click('unmute');
+    expect(page.root).not.toHaveClass('--muted');
   });
 
   it('does not watch the scroll without autoplay', async () => {

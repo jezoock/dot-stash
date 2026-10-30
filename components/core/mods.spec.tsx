@@ -1,6 +1,7 @@
 import { h } from '@stencil/core';
 import { newSpecPage, SpecPage } from '@stencil/core/testing';
 import { DSBlock } from './block/block';
+import { DSButton } from './button/button';
 import { DSCombo } from './combo/combo';
 import { DSGrid } from './grid/grid';
 import { DSHeading } from './heading/heading';
@@ -27,6 +28,7 @@ type ClassTarget = 'host' | 'root';
 // [tag, component, main class, class target, other props the component needs to render]
 const components: [string, unknown, string, ClassTarget, Record<string, string>?][] = [
   ['ds-block', DSBlock, 'ds-block', 'host'],
+  ['ds-button', DSButton, 'ds-button', 'host'],
   ['ds-combo', DSCombo, 'ds-combo', 'root'],
   ['ds-grid', DSGrid, 'ds-grid', 'root'],
   ['ds-heading', DSHeading, 'ds-heading', 'host'],
