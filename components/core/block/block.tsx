@@ -55,7 +55,7 @@ export class DSBlock {
 
   @Method()
   async getContext() {
-    return (this.article && 'article') || (this.section && 'section') || (this.form && 'form') || (this.form && 'modal') || 'block';
+    return (this.article && 'article') || (this.section && 'section') || (this.form && 'form') || (this.modal && 'modal') || 'block';
   }
 
   async connectedCallback() {
