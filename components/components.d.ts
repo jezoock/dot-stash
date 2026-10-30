@@ -280,13 +280,30 @@ export namespace Components {
         "ctx": boolean;
         "mods": string | string[];
     }
+    /**
+     * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+     * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+     * at the end of that transition.
+     */
     interface DsToaster {
+        /**
+          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
+         */
         "closingDelay": number;
+        /**
+          * Shows the toaster, then hides it after `closingDelay` ms (counted from the last call).
+         */
         "displayToast": () => Promise<void>;
         "hide": () => Promise<void>;
         "maxDisplayedToast": number;
+        /**
+          * The messages, one toast each: an array, or a comma-separated string.
+         */
         "messages": string | string[];
         "mods": string | string[];
+        /**
+          * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+         */
         "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
     }
@@ -698,6 +715,11 @@ declare global {
         "toasterHide": any;
         "toasterHidden": any;
     }
+    /**
+     * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+     * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+     * at the end of that transition.
+     */
     interface HTMLDsToasterElement extends Components.DsToaster, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToasterElementEventMap>(type: K, listener: (this: HTMLDsToasterElement, ev: DsToasterCustomEvent<HTMLDsToasterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1013,15 +1035,29 @@ declare namespace LocalJSX {
         "ctx"?: boolean;
         "mods"?: string | string[];
     }
+    /**
+     * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+     * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+     * at the end of that transition.
+     */
     interface DsToaster {
+        /**
+          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
+         */
         "closingDelay"?: number;
         "maxDisplayedToast"?: number;
+        /**
+          * The messages, one toast each: an array, or a comma-separated string.
+         */
         "messages"?: string | string[];
         "mods"?: string | string[];
         "onToasterHidden"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterHide"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShow"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
+        /**
+          * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+         */
         "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
     }
     interface DsToggle {
@@ -1157,6 +1193,11 @@ declare module "@stencil/core" {
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-title-bar": LocalJSX.DsTitleBar & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
+            /**
+             * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+             * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+             * at the end of that transition.
+             */
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
             "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;

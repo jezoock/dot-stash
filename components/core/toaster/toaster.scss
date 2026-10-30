@@ -2,6 +2,15 @@
   position: fixed;
   z-index: 10000;
   pointer-events: none;
+  // show() / hide(): toasterShown and toasterHidden are emitted at the end of this transition.
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+
+  &.--hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
 
   &__container {
     box-sizing: border-box;
@@ -27,6 +36,12 @@
 
     &--error {
       background-color: color(error);
+    }
+  }
+
+  &__toast {
+    & + & {
+      margin-top: 0.75rem;
     }
   }
 
@@ -82,33 +97,39 @@
     }
   }
 
-  &--position-vertical {
-    &-top {
-      top: 0;
-      -webkit-animation: fadeinTop 0.5s;
-      animation: fadeinTop 0.5s;
-    }
-
-    &-bottom {
-      bottom: 0;
-      -webkit-animation: fadeinBottom 0.5s;
-      animation: fadeinBottom 0.5s;
-    }
+  // Position classes: --v-pos-<TOASTER_VERTICAL_POSITION> and --h-pos-<TOASTER_HORIZONTAL_POSITION>.
+  &.--v-pos-top {
+    top: 0;
+    -webkit-animation: fadeinTop 0.5s;
+    animation: fadeinTop 0.5s;
   }
 
-  &--position-horizontal {
-    &-left {
-      left: 0;
-    }
+  &.--v-pos-middle {
+    top: 50%;
+    transform: translateY(-50%);
+  }
 
-    &-right {
-      right: 0;
-    }
+  &.--v-pos-bottom {
+    bottom: 0;
+    -webkit-animation: fadeinBottom 0.5s;
+    animation: fadeinBottom 0.5s;
+  }
 
-    &-center {
-      left: 50%;
-      transform: translateX(-50%);
-    }
+  &.--h-pos-left {
+    left: 0;
+  }
+
+  &.--h-pos-right {
+    right: 0;
+  }
+
+  &.--h-pos-center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.--v-pos-middle.--h-pos-center {
+    transform: translate(-50%, -50%);
   }
 
   @-webkit-keyframes fadeinBottom {

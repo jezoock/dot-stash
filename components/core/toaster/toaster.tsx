@@ -3,6 +3,11 @@ import CssClassList from '../../utils/interfaces/css-class-list';
 import { toArray, toClassList } from '../../utils/props';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
 
+/**
+ * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+ * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+ * at the end of that transition.
+ */
 @Component({
   tag: 'ds-toaster',
   styleUrl: 'toaster.scss',
@@ -10,21 +15,29 @@ import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaste
 export class DSToaster {
   container: HTMLDivElement;
   CSSClassList: CssClassList;
+  closingTimer: ReturnType<typeof setTimeout>;
 
+  /**
+   * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`,
+   * or as an attribute a comma-separated string (`position="bottom,right"`).
+   * Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+   */
   @Prop({ mutable: true, reflect: true }) position: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION] = [
     TOASTER_VERTICAL_POSITION.TOP,
     TOASTER_HORIZONTAL_POSITION.LEFT,
   ];
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = '';
+  /** The messages, one toast each: an array, or a comma-separated string. */
   @Prop({ mutable: true, reflect: true }) messages: string | string[];
   @Prop({ reflect: true }) maxDisplayedToast = 3;
+  /** Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. */
   @Prop() closingDelay = 3000;
 
   @State() isShown = false;
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-title', toArray(mods));
+    this.CSSClassList = toClassList('ds-toaster', toArray(mods));
   }
 
   @Event() toasterShow: EventEmitter;
@@ -32,11 +45,13 @@ export class DSToaster {
   @Event() toasterHide: EventEmitter;
   @Event() toasterHidden: EventEmitter;
 
+  /** Shows the toaster, then hides it after `closingDelay` ms (counted from the last call). */
   @Method()
   async displayToast() {
     this.show();
+    clearTimeout(this.closingTimer);
     if (this.closingDelay !== 0) {
-      setTimeout(() => {
+      this.closingTimer = setTimeout(() => {
         this.hide();
       }, this.closingDelay);
     }
@@ -44,52 +59,73 @@ export class DSToaster {
 
   @Method()
   async show() {
-    this.toasterShow.emit();
-    this.container.addEventListener('transitionend', this.animationEndHandler);
-    this.isShown = true;
+    if (!this.isShown) {
+      this.toasterShow.emit();
+      this.container.addEventListener('transitionend', this.animationEndHandler);
+      this.isShown = true;
+    }
   }
 
   @Method()
   async hide() {
-    this.toasterHide.emit();
-    this.container.addEventListener('transitionend', this.animationEndHandler);
-    this.isShown = false;
+    if (this.isShown) {
+      this.toasterHide.emit();
+      this.container.addEventListener('transitionend', this.animationEndHandler);
+      this.isShown = false;
+    }
   }
 
   constructor() {
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
+    this.animationEndHandler = this.animationEndHandler.bind(this);
   }
 
   componentWillLoad() {
     this.CSSClassList = toClassList('ds-toaster', toArray(this.mods));
   }
 
+  disconnectedCallback() {
+    clearTimeout(this.closingTimer);
+    this.container?.removeEventListener('transitionend', this.animationEndHandler);
+  }
+
   //#region HANDLERS
 
-  animationEndHandler() {
-    this.container.removeEventListener('transitionend', this.animationEndHandler);
-    this[`toaster${this.isShown ? 'Shown' : 'Hidden'}`].emit();
+  animationEndHandler(event: Event) {
+    // Only the toaster's own transition (several properties may end it), not the ones of its content.
+    if (event.target === this.container) {
+      this.container.removeEventListener('transitionend', this.animationEndHandler);
+      this[`toaster${this.isShown ? 'Shown' : 'Hidden'}`].emit();
+    }
   }
 
   //#endregion
 
   render() {
+    const [verticalPosition, horizontalPosition] = toArray(this.position).map(position => position.trim());
+
     return (
       <div
         class={{
-          'ds-toaster': true,
-          [`--v-pos-${this.position[0]}`]: true,
-          [`--h-pos-${this.position[1]}`]: true,
+          ...this.CSSClassList,
+          [`--v-pos-${verticalPosition}`]: true,
+          [`--h-pos-${horizontalPosition}`]: true,
+          '--shown': this.isShown,
+          '--hidden': !this.isShown,
         }}
         ref={el => {
           this.container = el as HTMLDivElement;
         }}
         onClick={this.hide}
       >
-        <div class={`ds-toaster__container`}>
-          {toArray(this.messages).map(message => (
-            <ds-toast>{message}</ds-toast>
+        <div class="ds-toaster__container">
+          {toArray(this.messages ?? []).map(message => (
+            <div class="ds-toaster__toast">
+              <div class="ds-toaster__content">
+                <span class="ds-toaster__message">{message}</span>
+              </div>
+            </div>
           ))}
         </div>
       </div>
