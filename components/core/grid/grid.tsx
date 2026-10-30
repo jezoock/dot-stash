@@ -122,49 +122,17 @@ export class DSGrid {
         styles.paddingBlockEnd = `calc(${vGap})`;
       }
     } else if (type === 'fluid') {
-      let gapWidth = '0';
+      const width = `100% / ${cols / gridItem.width}`;
 
-      if (hGap) {
+      // A unitless or zero gap ('0', the default) would make the calc() invalid: no gap then.
+      if (hGap && parseFloat(hGap) !== 0) {
         const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
         rowContainer.style.columnGap = `${hGap}`;
 
-        gapWidth = `calc((${cols - 1} * ${hGap}) / ${cols})`;
+        styles.width = `calc(${width} - calc((${cols - 1} * ${hGap}) / ${cols}))`;
+      } else {
+        styles.width = `calc(${width})`;
       }
-
-      styles.width = `calc(100% / ${cols / gridItem.width} - ${gapWidth}`;
-    }
-
-    return styles;
-  }
-
-  async processStyles(rowCount: number, index: number, gridItem: HTMLDsGridItemElement): Promise<DSGridItemStyles> {
-    const { type, hGap, vGap, cols } = this.options;
-    const styles: DSGridItemStyles = {};
-
-    if (type === 'fixed') {
-      styles.width = `${(100 / cols).toFixed(4)}%`;
-
-      if (hGap) {
-        styles.paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
-        styles.paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - ((index % cols) + 1)})`;
-      }
-
-      if (vGap) {
-        const itemRow = Math.floor(index / cols);
-        styles.paddingBlockStart = `calc((${vGap} / ${rowCount}) * ${itemRow % rowCount})`;
-        styles.paddingBlockEnd = `calc((${vGap} / ${rowCount}) * ${rowCount - ((itemRow % rowCount) + 1)})`;
-      }
-    } else if (type === 'fluid') {
-      let gapWidth = '0';
-
-      if (hGap) {
-        const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
-        rowContainer.style.columnGap = `${hGap}`;
-
-        gapWidth = `calc((${cols - 1} * ${hGap}) / ${cols})`;
-      }
-
-      styles.width = `calc(100% / ${cols / gridItem.width} - ${gapWidth}`;
     }
 
     return styles;
