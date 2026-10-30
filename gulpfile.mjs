@@ -7,7 +7,6 @@ import merge from "merge2";
 import concat from "gulp-concat";
 import BrowserSync from "browser-sync";
 import DotstashConfig from "./dot-stash.config.mjs";
-import ts from "gulp-typescript";
 import imagemin from 'gulp-imagemin';
 import webp from "gulp-webp";
 
@@ -64,20 +63,6 @@ export const generatePagesCSS = (scssFile) => {
   return merge(previouslyGeneratedFiles, newlyGeneratedFiles);
 }
 
-export const generateScripts = () => {
-  const tsResult = gulp.src(`${paths.source.root}/${paths.source.scripts}/**/*.ts`)
-    .pipe(
-      ts({
-        declaration: true
-      })
-    );
-
-    return merge([
-      tsResult.dts.pipe(gulp.dest(`${paths.destination.root}/${paths.destination.scripts}/definitions`)),
-      tsResult.js.pipe(gulp.dest(`${paths.destination.root}/${paths.destination.scripts}`))
-    ]);
-}
-
 export const generateImages = () => {
   return gulp.src('./images/*')
     .pipe(imagemin())
@@ -97,9 +82,6 @@ const server = () => {
   
   const pageStylesWatcher = gulp.watch( settings.scss.pages.watch.map(pattern => `${paths.source.root}/${pattern}`));
   pageStylesWatcher.on("change", generatePagesCSS);
-  
-  const scriptsWatcher = gulp.watch( settings.typescript.watch.map(pattern => `${paths.source.root}/${pattern}`));
-  scriptsWatcher.on("change", generateScripts);
   
   /* const imagesWatcher = gulp.watch( settings.images.watch.map(pattern => `${paths.source.root}/${pattern}`));
   imagesWatcher.on("change", generateImages); */

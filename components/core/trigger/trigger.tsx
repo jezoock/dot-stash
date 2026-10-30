@@ -1,5 +1,5 @@
 import { Element, Prop, Component, Host, h, Watch } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../utils/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 type TargetComponent = undefined | typeof window | typeof document | Element;

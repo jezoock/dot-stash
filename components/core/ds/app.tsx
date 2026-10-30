@@ -1,5 +1,5 @@
 import { Component, h, Method, Host, Event, EventEmitter, Prop } from '@stencil/core';
-import { SassStyles, Breakpoint, Breakpoints, RawBreakpoint } from '../../../typescript/interfaces/sass-styles';
+import { SassStyles, Breakpoint, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
 
 
 @Component({

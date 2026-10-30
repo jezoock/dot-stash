@@ -2,7 +2,7 @@ import { Component, Element, h, Listen, Prop, State, Watch } from "@stencil/core
 import { AnyHTMLElement } from "@stencil/core/internal";
 import { TooltipPosition } from "./tooltip-position.enum";
 import CssClassList from "../../types/css-class-list.interface";
-import _ds from "../../../typescript/dot-stash";
+import _ds from "../../utils/dot-stash";
 /**
  * Simple icon tooltip component
  *

@@ -4,13 +4,11 @@ const DotstashConfig = {
       root: ".",
       css: "scss",
       images: "images",
-      scripts: "typescript",
     },
     destination: {
       root: "dist",
       css: "css",
       images: "images",
-      scripts: "js",
     },
   },
   gulp: {
@@ -33,9 +31,6 @@ const DotstashConfig = {
         watch: ["./scss/pages/*.scss"],
         sourceFiles: './scss/pages.scss'
       }
-    },
-    typescript : {
-      watch: ["./typescript/**/*.ts"],
     }
   }
 }

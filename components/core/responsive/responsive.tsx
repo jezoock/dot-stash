@@ -1,8 +1,8 @@
 import { Component, Event, EventEmitter, h, Host } from '@stencil/core/internal';
 import { Method, Prop } from '@stencil/core/internal';
-import debounce from '../../../typescript/debounce';
-import _ds from '../../../typescript/dot-stash';
-import { Breakpoint, Breakpoints, RawBreakpoint } from '../../../typescript/interfaces/sass-styles';
+import debounce from '../../utils/debounce';
+import _ds from '../../utils/dot-stash';
+import { Breakpoint, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
 
 @Component({
   tag: 'ds-rsp',

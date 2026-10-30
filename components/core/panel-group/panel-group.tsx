@@ -1,6 +1,6 @@
 import { Component, Element, h, Host, Listen, Prop, Watch, Method } from "@stencil/core";
 import CssClassList from "../../types/css-class-list.interface";
-import _ds from "../../../typescript/dot-stash";
+import _ds from "../../utils/dot-stash";
 import { PanelType } from "../panel/panel";
 
 @Component({

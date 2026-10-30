@@ -1,5 +1,5 @@
 import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../utils/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
 
 export type DSGridAlignment = 'start' | 'center' | 'end';

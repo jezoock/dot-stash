@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
+import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "./utils/interfaces/sass-styles";
 import { DSOption } from "./core/combo/combo";
 import { DSOption as DSOption1 } from "./core/dropdown/dropdown";
 import { DSGridAlignment, DSGridType } from "./core/grid/grid";
@@ -17,7 +17,7 @@ import { DSSliderParams } from "./core/slider/slider";
 import { AnyHTMLElement } from "@stencil/core/internal";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
-export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
+export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "./utils/interfaces/sass-styles";
 export { DSOption } from "./core/combo/combo";
 export { DSOption as DSOption1 } from "./core/dropdown/dropdown";
 export { DSGridAlignment, DSGridType } from "./core/grid/grid";

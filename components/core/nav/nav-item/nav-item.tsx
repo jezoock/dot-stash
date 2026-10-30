@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, h, Prop, Element, State, Fragment } from '@stencil/core/internal';
-import  _ds from '../../../../typescript/dot-stash';
+import  _ds from '../../../utils/dot-stash';
 
 @Component({
   tag: 'ds-nav-item',

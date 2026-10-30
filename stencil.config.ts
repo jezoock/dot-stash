@@ -23,7 +23,7 @@ export const config: Config = {
       dir: 'dist',
       // Matches the "loader/" entry of package.json "files".
       esmLoaderPath: '../loader',
-      // The gulp theme tasks write dist/css, dist/js and dist/images:
+      // The gulp theme tasks write dist/css and dist/images:
       // do not let Stencil empty dist/ before each build.
       empty: false
     }

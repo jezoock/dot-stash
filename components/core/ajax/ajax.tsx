@@ -1,5 +1,5 @@
 import { Component, h, Element, Host, Prop, State } from '@stencil/core';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../utils/dot-stash';
 
 
 /** 

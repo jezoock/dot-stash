@@ -1,8 +1,8 @@
 import { Component, Element, h, Host, Prop, State, Watch, Method } from '@stencil/core/internal';
 import { Fragment } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../utils/dot-stash';
 import CssClassList from '../../types/css-class-list.interface';
-import debounce from '../../../typescript/debounce';
+import debounce from '../../utils/debounce';
 
 type VideoFormat = 'mp4' | 'mov' | 'wmv' | 'webm' | 'avi' | 'flv' | 'mks' | 'mts';
 

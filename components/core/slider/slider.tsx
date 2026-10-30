@@ -1,7 +1,7 @@
 import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method, State } from '@stencil/core/internal';
 import { AnyHTMLElement } from '@stencil/core/internal';
 import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../utils/dot-stash';
 
 let sliderId = 0;
 

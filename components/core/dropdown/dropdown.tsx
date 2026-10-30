@@ -8,7 +8,7 @@ import {
   Element,
   Method
 } from "@stencil/core";
-import uuid from "../../../typescript/uuid";
+import uuid from "../../utils/uuid";
 
 export interface DSOption {
   index: number;

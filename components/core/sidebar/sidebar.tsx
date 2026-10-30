@@ -1,6 +1,6 @@
 import { Component, Element, h, Host, Prop, Method, Event, EventEmitter, Watch } from "@stencil/core";
 import CssClassList from "../../types/css-class-list.interface";
-import _ds from "../../../typescript/dot-stash";
+import _ds from "../../utils/dot-stash";
 import SIDEBAR_POSITION from "../../types/sidebar-position.enum";
 
 @Component({

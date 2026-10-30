@@ -1,6 +1,6 @@
 import { Component, Method, h, Host, Prop, Watch, State, Element } from '@stencil/core';
 import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../../typescript/dot-stash';
+import _ds from '../../utils/dot-stash';
 
 export enum DSMarqueeTransitionEnum {
   SLIDE_TOP_TO_BOTTOM = 'slide-ttb',

@@ -1,5 +1,5 @@
 import { Component, Element, h, Host, Prop, Watch, Method } from '@stencil/core/internal';
-import _ds from '../../../../typescript/dot-stash';
+import _ds from '../../../utils/dot-stash';
 import { DSGridItemStyles } from "../grid";
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component, h, Watch, Method, State, Prop, Event, EventEmitter } from "@stencil/core";
 import CssClassList from "../../types/css-class-list.interface";
-import _ds from "../../../typescript/dot-stash";
+import _ds from "../../utils/dot-stash";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./toaster-positions.enum";
 
 @Component({

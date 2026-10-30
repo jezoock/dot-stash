@@ -8,8 +8,8 @@ import {
   Watch,
   Method
 } from "@stencil/core";
-import uuid from "../../../typescript/uuid";
-import _ds from "../../../typescript/dot-stash";
+import uuid from "../../utils/uuid";
+import _ds from "../../utils/dot-stash";
 import CssClassList from "../../types/css-class-list.interface";
 
 export interface DSOption {

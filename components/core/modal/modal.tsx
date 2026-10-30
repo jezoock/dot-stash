@@ -1,5 +1,5 @@
 import { Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch } from "@stencil/core";
-import throttle from "../../../typescript/throttle";
+import throttle from "../../utils/throttle";
 
 @Component({
   tag: "ds-modal",
