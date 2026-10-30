@@ -32,10 +32,6 @@ export class DSMainTest {
     return data;
   }
 
-  changeHandler = event => {
-    console.log(event);
-  };
-
   render() {
     return (
       <div class="ds-components-demo">
@@ -45,12 +41,6 @@ export class DSMainTest {
           <ds-toggle type="switch"></ds-toggle>
         </ds-block>
 
-        {/* <ds-sidebar position='right'>
-          sdfhlsdfklsdfk
-          <div>sdkfljsdklfkl</div>
-          <ds-trigger on="click" action='toggle'>fermer</ds-trigger>
-        </ds-sidebar>
-         */}
         <ds-slider style={{ height: '4rem' }} id="bob">
           <ds-slider-item>sdfkdfjskdfjkkjsdf 1</ds-slider-item>
           <ds-slider-item>sdfkdfjskdfjkkjsdf 2</ds-slider-item>
@@ -86,37 +76,6 @@ export class DSMainTest {
           <footer>Footer</footer>
         </ds-block>
 
-        {/* <ds-header slot="block-header">
-            <ds-button slot="before">
-              Retour
-              <ds-icon type="back" slot="before" />
-            </ds-button>
-            <h2 slot="title">Titre de block</h2>
-            <p slot="sub-title">Sous-titre de block de test</p>
-            <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
-            <ds-button slot="after">
-              <ds-icon type="close" slot="after" />
-              Fermer
-            </ds-button>
-          </ds-header>
-
-          <ds-block>
-            <ds-header slot="block-header">
-              <ds-button slot="before">
-                Retour
-                <ds-icon type="back" slot="before" />
-              </ds-button>
-              <h2 slot="title">Titre de block</h2>
-              <p slot="sub-title">Sous-titre de block de test</p>
-              <div>Plein de texte ne plus parce que c'est la classe à dallas.</div>
-              <ds-button>
-                <ds-icon type="close" slot="after" />
-                Fermer
-              </ds-button>
-            </ds-header>
-
-          </ds-block> */}
-
         <section class="ds-homepage__history">
           <ds-block section name="homepage-history">
             <ds-title-bar slot="header">
@@ -145,14 +104,6 @@ export class DSMainTest {
         </section>
 
         <section class="ds-homepage__history">
-          {/* <ds-block section ext="homepage-history">
-              <ds-button slot="before">
-                Retour
-                <ds-icon type="back" slot="before" />
-              </ds-button>
-              <h2 slot="title">Titre de block</h2>
-              <p slot="sub-title">Sous-titre de block de test</p>
-            </ds-block> */}
           <ds-panel-group>
             <ds-panel type="tab" index={0}>
               <h1 slot="title">Title</h1>
@@ -209,38 +160,6 @@ export class DSMainTest {
             </ds-panel>
           </ds-panel-group>
         </section>
-
-        {/* 
-          <ds-block>
-            <ds-title slot="header">
-              Default button
-            </ds-title>
-            <ds-grid
-              class="ds-button-list"
-              hGap="10px"
-              type="fluid"
-              cols="3"
-            >
-              <ds-grid-item width={2}>
-                <ds-button mods="default,sm">Click me !</ds-button>
-              </ds-grid-item>
-              <ds-grid-item>
-                <ds-button mods={["default", "md"]}>Click me !</ds-button>
-              </ds-grid-item>
-              <ds-grid-item>
-                <ds-button mods={["default", "lg"]}>Click me !</ds-button>
-              </ds-grid-item>
-              <ds-grid-item>
-                <ds-button mods="default,sm">Click me !</ds-button>
-              </ds-grid-item>
-              <ds-grid-item>
-                <ds-button mods={["default", "md"]}>Click me !</ds-button>
-              </ds-grid-item>
-              <ds-grid-item>
-                <ds-button mods={["default", "lg"]}>Click me !</ds-button>
-              </ds-grid-item>
-            </ds-grid>
-          </ds-block> */}
 
         <ds-rsp>
           <ds-block>

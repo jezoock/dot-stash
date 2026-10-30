@@ -79,8 +79,6 @@ export class DSTooltip {
   }
 
   componentDidRender() {
-    console.log(this.containerSelector, this.isShown);
-
     if (!!this.containerSelector && this.isShown) {
       const messageLayer = this.container.querySelector("[slot='message']") as HTMLDivElement;
       const limitContainer = document.querySelector<HTMLElement>(this.containerSelector);

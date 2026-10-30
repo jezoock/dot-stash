@@ -2,8 +2,6 @@ import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, Watch }
 import { toArray, toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
 
-/* type ToogleType = "radio" | "icon" | "checkbox" | "switch" | string; */
-
 @Component({
   tag: 'ds-toggle',
   styleUrl: 'toggle.scss',

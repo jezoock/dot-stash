@@ -70,9 +70,7 @@ export class DSSlider {
 
   isScrollable = false;
   isDraggable = false;
-  /* isTransitionStarted = false; */
   isPlaying = true;
-  /* isReady = false; */
   CSSClassList: CssClassList;
 
   isDragging = false;
@@ -148,28 +146,11 @@ export class DSSlider {
   }
 
   @Method()
-  async reset() {
-    console.log('reset');
-  }
+  async reset() {}
 
   @Method()
   async initialize() {
     if (!this.isReady) {
-      /* if( this.options.index !== 0 ) {
-
-				if( this.options.index === "rand" ) {
-          this.options.index = Math.floor( Math.random()*this.listLen );
-        }
-				
-				this.items = this.list.children(":visible");
-				const start = this.items.slice(0, this.options.index).clone(true,true);
-				const end = this.items.slice( this.options.index ).clone(true,true);
-					
-				this.list.empty().append(end).append(start);
-				this.items = this.list.children(":visible");
-				
-			}	 */
-
       this.refresh(true);
 
       if (this.isScrollable) {
@@ -206,13 +187,7 @@ export class DSSlider {
       this.options.xOffset = cssToNumber('marginLeft', this.list);
       this.dspDim = this.sliderContener[`offset${this.options.orientation === 'vtc' ? 'Height' : 'Width'}`];
 
-      /* console.log("available space", this.dspDim, this.items, ); */
-
-      /* Array.from(this.list.querySelectorAll("img")).map(img => console.log(img.offsetHeight)) */
-
       this.list.removeAttribute('style');
-
-      /* console.log(this.options.autoplay); */
 
       if (this.options.autoplay) {
         clearTimeout(this.timer);
@@ -231,7 +206,6 @@ export class DSSlider {
 
           setCss(
             {
-              /* width: `${offsetWidth}px`, */
               maxWidth: `${offsetWidth}px`,
               maxHeight: `${offsetHeight}px`,
             },
@@ -266,8 +240,6 @@ export class DSSlider {
       } else {
         this.listDim = this.options.orientation === 'vtc' ? listHeight : listWidth;
       }
-
-      /* console.log("list dim", this.listDim) */
 
       this.dspItems = this.options.forceItemDspCount
         ? this.options.forceItemDspCount
@@ -349,22 +321,11 @@ export class DSSlider {
     } = event as any;
     this.isDragging = true;
     this.xStart = xStart;
-    /* this.yStart = yStart; */
     this.startDrag = +new Date();
   }
 
   @Method()
-  async pointerMoveHandler(/* event: PointerEvent */): Promise<void> {
-    /* if (this.isDragging) {
-      const dragTime = (+new Date()) - this.startDrag;
-      const { touches: [{clientX: currentX}] } = event as any;
-      if (dragTime > this.swipeDelay) {
-        const distance = currentX - this.xStart;
-        const transformation = `translate3d( ${distance}px, 0, 0 )`;
-        setCss({ "transform": transformation}, [this.list]);
-      }
-    } */
-  }
+  async pointerMoveHandler(): Promise<void> {}
 
   @Method()
   async pointerUpHandler(event: PointerEvent): Promise<void> {
@@ -386,14 +347,7 @@ export class DSSlider {
         this.softCleanup = false;
         const step = Math.floor(distance / this.itemWidth) + 1;
         setTimeout(() => this[action](step, distance), 0);
-      } /*  else {
-        const transform = `translate3d(0, 0, 0)`;
-        setTimeout( () => {
-          this.softCleanup = true;
-          this.list.classList.add("--sliding");
-          setCss( { transform }, [this.list])
-        }, 50);
-      } */
+      }
     }
   }
 
@@ -404,8 +358,6 @@ export class DSSlider {
     } = this;
     let step = index - itemIndex;
     let move = Math.abs(step);
-    /*     const step2 = (index + step) % this.listLen
-    console.log({"curent": index, "req": itemIndex, "step": step}); */
     if (step !== 0) {
       if (step >= this.listLen) {
         move = step - this.listLen;
@@ -414,8 +366,6 @@ export class DSSlider {
       if (step < -this.listLen) {
         move = step + this.listLen;
       }
-
-      /* console.log(step, move); */
 
       this[step < 0 ? 'next' : 'prev'](move);
     }
@@ -426,8 +376,6 @@ export class DSSlider {
     if (this.options.autoplay) {
       clearTimeout(this.timer);
     }
-
-    /* console.log("next", {step, startPosition}); */
 
     if (!this.isTransitionStarted) {
       this.transitionDirection = 'next';
@@ -449,13 +397,6 @@ export class DSSlider {
       } else {
         let distance = this.itemWidth * step;
         let nextItemWidth = this.itemWidth * step;
-        /* if( !this.options.autoWidth ) {
-          distance = 0;
-          for( let i=0; i<step; i++ ) {
-            distance += this.items[i].offsetWidth;
-          }
-          nextItemWidth = distance;
-        } */
         from.transform = `translate3d(-${startPosition}px, 0, 0)`;
         from.width = `${this.listDim + nextItemWidth}px`;
         to.transform = `translate3d( -${distance}px, 0, 0 )`;
@@ -480,12 +421,6 @@ export class DSSlider {
       clearTimeout(this.timer);
     }
 
-    /* if( !this.options.loop && (this.currentItem.index - step < 0) ) {
-			step = this.currentItem.index;
-    } */
-
-    /* console.log("prev", {step, startPosition}); */
-
     if (!this.isTransitionStarted) {
       this.transitionDirection = 'prev';
       this.sliderEvent.emit({
@@ -502,23 +437,14 @@ export class DSSlider {
       if (this.options.orientation === 'vtc') {
         from.height = `${this.listDim + this.itemHeight * step}px`;
         from.transform = `translate3d( 0, -${this.itemHeight * step}px, 0 )`;
-        //from.marginTop = `${this.itemHeight*step}px`;
       } else {
         let distance = this.itemWidth * step - startPosition;
         let prevItemWidth = this.itemWidth * step;
-        /* if( !this.options.autoWidth ) {
-          distance = 0;
-          for( let i=1; i<=step; i++ ) {
-            distance += this.items[this.listLen-i].offsetWidth;
-          }
-          prevItemWidth = distance;
-        } */
 
         from.width = `${this.listDim + prevItemWidth}px`;
         from.transform = `translate3d( -${distance}px, 0, 0 )`;
       }
 
-      /* for( let i=this.listLen-1; i > this.listLen-1-step; i-- ) { */
       for (let i = step; i > 0; i--) {
         this.list.insertBefore(this.items[this.listLen - 1].cloneNode(true), this.items[0]);
         this.items = this.getListItems();
@@ -550,7 +476,6 @@ export class DSSlider {
   transitionCleanUp = () => {
     this.list.classList.remove('--sliding');
     this.isTransitionStarted = false;
-    //this.list.removeEventListener( 'transitionend', this.slideTransitionEndHandler );
     setCss(
       {
         transform: 'translate3d(0,0,0)',
@@ -592,25 +517,10 @@ export class DSSlider {
       this.items = this.getListItems();
     }
 
-    /* for( let i=0; i < step; i++ ) {
-      while(this.items[this.listLen].firstChild) {
-        this.items[this.listLen].removeChild(this.items[this.listLen].firstChild)
-      }
-      this.items[this.listLen].remove();
-      this.items = this.getListItems();
-    } */
-
     this.items = this.getListItems();
-
-    /* for( let i=0; i < step; i++ ) {
-      this.getList().appendChild(this.items[0]);
-      this.items = this.getListItems();
-    } */
 
     this.transitionCleanUp();
     const { index: previousIndex } = this.currentItem;
-
-    /* console.log("nextHandler", {step, previousIndex, newIndex: (previousIndex + step) % this.listLen}); */
 
     const newIndex = previousIndex + (previousIndex + step > this.listLen - 1 ? -(this.listLen - 1) : step);
     this.currentItem.index = newIndex;
@@ -636,26 +546,11 @@ export class DSSlider {
       this.items = this.getListItems();
     }
 
-    /* for( let i=0; i < step; i++ ) {
-      while(this.items[0].firstChild) {
-        this.items[0].removeChild(this.items[0].firstChild)
-      }
-      this.items[0].remove();
-      this.items = this.getListItems();
-    } */
-
     this.items = this.getListItems();
-
-    /* for( let i=0; i < step; i++ ) {
-      this.getList().prepend(this.items[this.items.length-1]);
-      this.items = this.getListItems();
-    } */
 
     this.transitionCleanUp();
     const { index: previousIndex } = this.currentItem;
     const newIndex = previousIndex - (previousIndex < 0 ? this.listLen - 1 : step);
-
-    /* console.log("prevHandler", {step, previousIndex, newIndex}); */
 
     this.currentItem.index = newIndex;
 

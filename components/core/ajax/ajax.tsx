@@ -56,7 +56,7 @@ export class DSAjax {
         this.hostContainer.addEventListener(this.on, this.eventHandler);
       }
     } else {
-      console.log('[ Error ] DSLink - no anchor found');
+      console.error('[ds-ajax] no anchor found');
     }
   }
 

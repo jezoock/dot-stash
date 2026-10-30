@@ -1,4 +1,4 @@
-import { Component, Element, h, Listen, Prop, Watch } from '@stencil/core';
+import { Component, Element, h, Prop, Watch } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
 
@@ -19,11 +19,6 @@ export class DSNav {
     this.CSSClassList = toClassList('ds-nav', newMods);
   }
 
-  @Listen('DSMenuItemClick')
-  onDSMenuItemClick({ detail: { menuItem } }) {
-    console.log(menuItem);
-  }
-
   componentWillLoad() {
     this.CSSClassList = toClassList('ds-nav', this.mods);
   }
@@ -38,10 +33,7 @@ export class DSNav {
     return items.length ? items : [];
   }
 
-  setActiveMenuItem() {
-    //const items = this.getItems(0);
-    //items.forEach( item => item.dsIsSelected = item.dsItemId === this.currentActiveItemId );
-  }
+  setActiveMenuItem() {}
 
   render() {
     return (

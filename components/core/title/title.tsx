@@ -27,10 +27,6 @@ export class DSTitle {
     this.CSSClassList = toClassList('ds-title', toArray(this.mods));
   }
 
-  /* getContext() {
-		return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form"; 
-	} */
-
   render() {
     return (
       <Host class={this.CSSClassList}>

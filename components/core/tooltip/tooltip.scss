@@ -95,66 +95,6 @@ ds-tooltip {
       transform: translateY(-50%);
     }
   }
-  &.--with-arrow {
-    /* &.--top {
-      &:after {
-        top: 0;
-        left: 50%;
-        transform: translate3d(-50%, -100%, 0) rotate(180deg);
-      }
-    }
-  
-    &.--top-left {
-      &:after {
-        top: 0;
-        left: 0;
-        transform: translate3d(-20%,-100%, 0) rotate(180deg);
-      }
-    }
-    &.--top-right {
-      &:after {
-        top: 0;
-        right: 0;
-        transform: translate3d(20%,-100%, 0) rotate(180deg);
-      }
-    }
-    &.--bottom {
-      &:after {
-        bottom: 0;
-        left: 50%;
-        transform: translate3d(-50%, 100%, 0);
-      }
-    }
-    &.--bottom-left {
-      &:after {
-        bottom: 0;
-        left: 0;
-        transform: translate3d(-20%, 100%, 0);
-      }
-    }
-    &.--bottom-right {
-      &:after {
-        bottom: 0;
-        right: 0;
-        transform: translate3d(20%, 100%, 0);
-      }
-    }
-    &.--left {
-      &:after {
-        left: 0;
-        top: 50%;
-        transform: translate3d(-100%, -50%, 0) rotate(90deg);
-      }
-    }
-    &.--right {
-      &:after {
-        right: 0;
-        top: 50%;
-        transform: translate3d(100%, -50%, 0) rotate(-90deg);
-      }
-    } */
-  }
-
   &.--is-shown {
     &.--top,
     &.--top-left,

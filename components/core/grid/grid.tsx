@@ -96,7 +96,6 @@ export class DSGrid {
 
   async processChildren(): Promise<void> {
     const children = Array.from(this.container.querySelectorAll('ds-grid-item'));
-    /* const rowCount = Math.ceil(children.length/this.options.cols); */
     let offset = 0;
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
@@ -104,8 +103,6 @@ export class DSGrid {
       offset = offset + child.width;
       await child.setStyles(styles);
     }
-    /*     children.map( async (child) => {
-    }); */
   }
 
   async processCols(index: number, gridItem: HTMLDsGridItemElement): Promise<DSGridItemStyles> {
@@ -114,7 +111,6 @@ export class DSGrid {
     const colWidth = gridItem.width;
 
     if (type === 'fixed') {
-      // styles.width = `calc( ${(100 * colWidth / cols).toFixed(4)}% + (${hGap} * (${colWidth} - 1)) )`;
       styles.width = `${((100 * colWidth) / cols).toFixed(4)}%`;
 
       if (hGap) {
@@ -136,13 +132,7 @@ export class DSGrid {
       }
 
       styles.width = `calc(100% / ${cols / gridItem.width} - ${gapWidth}`;
-
-      /* if (cellRatio) {
-        paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
-      } */
-    } /* else if ( type === 'system') {
-
-    } */
+    }
 
     return styles;
   }
@@ -174,19 +164,8 @@ export class DSGrid {
         gapWidth = `calc((${cols - 1} * ${hGap}) / ${cols})`;
       }
 
-      /* if (vGap) {
-        const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
-        rowContainer.style.rowGap = `${vGap}`;
-      } */
-
       styles.width = `calc(100% / ${cols / gridItem.width} - ${gapWidth}`;
-
-      /* if (cellRatio) {
-        paddingBlockStart = `${(cellRatio * colWidth).toFixed(4)}%`;
-      } */
-    } /*  else if ( type === 'system') {
-
-    } */
+    }
 
     return styles;
   }

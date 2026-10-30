@@ -137,8 +137,8 @@ export class DSRsp {
 
       subscribers.forEach(element => element.dispatchEvent(event));
 
-      // Needs testing as triggering component event might also trigger the event for registred components a second time
-      // this.breakpointChange.emit(eventDetails);
+      // The breakpointChange @Event is not emitted here: it might reach the registered
+      // components a second time (needs testing).
     }
   }
 
@@ -147,8 +147,6 @@ export class DSRsp {
       target: element,
       detail: { current },
     } = event;
-
-    /* console.log(event.target); */
 
     const attributeValue = (element as Element).getAttribute(this.propertyName);
     const params: { [breakpointLabel: string]: Record<string, unknown> } = fromJSON(attributeValue) || {};

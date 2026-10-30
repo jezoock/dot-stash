@@ -51,7 +51,7 @@ export class DSTrigger {
         this.targetComponent = target;
         this.hostContainer.addEventListener(this.on, this.eventHandler);
       } else {
-        console.log(`[ERROR] DSControl: can't find target component, selector: ${this.target}, type: ${this.type}`);
+        console.error(`[ds-trigger] can't find target component, selector: ${this.target}, type: ${this.type}`);
       }
     }
   }

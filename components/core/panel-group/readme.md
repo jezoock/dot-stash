@@ -27,15 +27,15 @@ Type: `Promise<HTMLDsPanelElement[]>`
 
 
 
-### `hidePanel(index?: number) => Promise<void>`
+### `hidePanel(_index?: number) => Promise<void>`
 
-
+Not implemented yet: does nothing.
 
 #### Parameters
 
-| Name    | Type     | Description |
-| ------- | -------- | ----------- |
-| `index` | `number` |             |
+| Name     | Type     | Description |
+| -------- | -------- | ----------- |
+| `_index` | `number` |             |
 
 #### Returns
 

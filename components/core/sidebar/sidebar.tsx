@@ -113,7 +113,7 @@ export class DSSidebar {
     this.container.removeEventListener('touchmove', this.preventScroll);
   }
 
-  //#region
+  //#endregion
 
   //#region HANDLERS
 

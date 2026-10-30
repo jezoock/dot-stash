@@ -27,7 +27,6 @@
       & > .ds-panel {
         &__content {
           opacity: 0;
-          /* display: block; */
           & > .ds-panel__content-wrapper {
             pointer-events: none;
             z-index: -1;
@@ -44,7 +43,6 @@
       & > .ds-panel {
         &__content {
           opacity: 1;
-          /* display: block; */
           & > .ds-panel__content-wrapper {
             z-index: 1;
             position: relative;

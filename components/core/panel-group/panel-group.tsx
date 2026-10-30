@@ -52,10 +52,12 @@ export class DSPanelGroup {
     }
   }
 
+  /**
+   * Not implemented yet: does nothing.
+   */
   @Method()
-  async hidePanel(index?: number) {
-    console.log(index);
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- keeps the public signature until hiding is implemented
+  async hidePanel(_index?: number) {}
 
   componentWillLoad() {
     this.CSSClassList = toClassList('ds-panel-group', toArray(this.mods));

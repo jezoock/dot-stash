@@ -4,7 +4,6 @@ import { DSOption } from './dropdown.types';
 
 @Component({
   tag: 'ds-dropdown',
-  /* styleUrl: "combo.scss" */
 })
 export class DSDropdown {
   @Element() container: HTMLElement;

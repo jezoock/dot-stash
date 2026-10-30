@@ -72,10 +72,6 @@ export class DSToaster {
     this[`toaster${this.isShown ? 'Shown' : 'Hidden'}`].emit();
   }
 
-  toastClickHandler = (): void => {
-    console.log('click');
-  };
-
   //#endregion
 
   render() {
@@ -93,7 +89,7 @@ export class DSToaster {
       >
         <div class={`ds-toaster__container`}>
           {toArray(this.messages).map(message => (
-            <ds-toast onClick={this.toastClickHandler}>{message}</ds-toast>
+            <ds-toast>{message}</ds-toast>
           ))}
         </div>
       </div>

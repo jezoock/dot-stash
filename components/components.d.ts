@@ -165,7 +165,10 @@ export namespace Components {
     }
     interface DsPanelGroup {
         "getItems": () => Promise<HTMLDsPanelElement[]>;
-        "hidePanel": (index?: number) => Promise<void>;
+        /**
+          * Not implemented yet: does nothing.
+         */
+        "hidePanel": (_index?: number) => Promise<void>;
         "isActive": boolean;
         "mods": string | string[];
         "showPanel": (index: number) => Promise<void>;

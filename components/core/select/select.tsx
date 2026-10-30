@@ -33,7 +33,6 @@ export class DSSelect {
   }
 
   inputChangeHandler = () => {
-    /* this.opened = false; */
     if (!this.disabled) {
       const select = this.hostContainer.querySelector('select');
       const [selectedOption] = Array.from(select.selectedOptions);
@@ -88,14 +87,7 @@ export class DSSelect {
         onClick={this.inputClickHandler}
       >
         <div class="ds-select__label">{this.label}</div>
-        <select
-          class="ds-select__input"
-          name={this.name}
-          id={this.name}
-
-          onFocusout={this.inputFocusOutHandler}
-          onChange={this.inputChangeHandler}
-        >
+        <select class="ds-select__input" name={this.name} id={this.name} onFocusout={this.inputFocusOutHandler} onChange={this.inputChangeHandler}>
           <slot />
         </select>
       </Host>

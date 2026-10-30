@@ -40,7 +40,6 @@ export class DSToggleGroup {
   componentWillLoad() {
     this.CSSClassList = toClassList('ds-toggle-group', toArray(this.mods));
     this.valuesCount = fromJSON(this.count);
-    /* console.log(this.valuesCount) */
   }
 
   toggleHandler(toggle, isChecked: boolean, toggleValue) {
@@ -49,8 +48,6 @@ export class DSToggleGroup {
       valuesCount: [min],
     } = this;
     let newValue;
-
-    console.log(isChecked, toggleValue, currentValue);
 
     if (min === 1) {
       if (isChecked && !currentValue.includes(toggleValue)) {
