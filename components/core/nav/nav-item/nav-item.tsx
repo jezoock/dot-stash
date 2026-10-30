@@ -1,4 +1,4 @@
-import { Component, Event, EventEmitter, h, Prop, Element, State, Fragment } from '@stencil/core/internal';
+import { Component, Event, EventEmitter, h, Prop, Element, State, Fragment } from '@stencil/core';
 import { isTrue, toNumber } from '../../../utils/props';
 
 @Component({

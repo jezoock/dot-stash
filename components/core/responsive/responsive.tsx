@@ -1,5 +1,4 @@
-import { Component, Event, EventEmitter, h, Host } from '@stencil/core/internal';
-import { Method, Prop } from '@stencil/core/internal';
+import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 import debounce from '../../utils/debounce';
 import { fromJSON } from '../../utils/props';
 import { getBreakpoint, getParamsForBreakpoint, getStylesJSON, processBreakpoints } from '../../utils/responsive';

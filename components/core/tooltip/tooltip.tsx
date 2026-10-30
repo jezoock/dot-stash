@@ -1,5 +1,4 @@
 import { Component, Element, h, Listen, Prop, State, Watch } from '@stencil/core';
-import { AnyHTMLElement } from '@stencil/core/internal';
 import { TooltipPosition } from './tooltip-position.enum';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { toClassList } from '../../utils/props';
@@ -84,7 +83,7 @@ export class DSTooltip {
 
     if (!!this.containerSelector && this.isShown) {
       const messageLayer = this.container.querySelector("[slot='message']") as HTMLDivElement;
-      const limitContainer = document.querySelector(this.containerSelector) as AnyHTMLElement;
+      const limitContainer = document.querySelector<HTMLElement>(this.containerSelector);
       if (messageLayer && limitContainer) {
         /* Horizontal positionning for only 2 positions */
         /* Need to split position prop in 2 props => vertical-position, horizontal-position */

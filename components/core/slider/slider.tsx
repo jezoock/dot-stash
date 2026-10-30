@@ -1,5 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method, State } from '@stencil/core/internal';
-import { AnyHTMLElement } from '@stencil/core/internal';
+import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method, State } from '@stencil/core';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
 import { fromJSON, toClassList } from '../../utils/props';
@@ -31,7 +30,7 @@ export interface DSSliderParams {
   duration?: number;
   forceItemDspCount?: number;
   minItemDspCount?: number;
-  menu?: AnyHTMLElement;
+  menu?: HTMLElement;
   xOffset?: number;
   yOffset?: number;
   forceHeight?: boolean;
@@ -92,9 +91,9 @@ export class DSSlider {
   dspItems = 0;
   listDim = 0;
   step = 1;
-  timer: NodeJS.Timeout = null;
+  timer: ReturnType<typeof setTimeout> = null;
   duration = 4000;
-  menu: AnyHTMLElement;
+  menu: HTMLElement;
   transitionDirection: string;
 
   isScrollable = false;
@@ -207,7 +206,7 @@ export class DSSlider {
         }
         this.step = this.options.step;
         if (this.options.menu) {
-          this.menu = this.host.querySelector(this.options.selectors.menu) as AnyHTMLElement;
+          this.menu = this.host.querySelector<HTMLElement>(this.options.selectors.menu);
         }
       }
 

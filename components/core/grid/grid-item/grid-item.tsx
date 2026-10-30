@@ -1,4 +1,4 @@
-import { Component, Element, h, Host, Prop, Watch, Method } from '@stencil/core/internal';
+import { Component, Element, h, Host, Prop, Watch, Method } from '@stencil/core';
 import { toNumber } from '../../../utils/props';
 import { DSGridItemStyles } from '../grid';
 

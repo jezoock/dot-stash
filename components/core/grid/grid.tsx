@@ -1,4 +1,4 @@
-import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core/internal';
+import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core';
 import { toClassList, toNumber } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
 

@@ -1,5 +1,4 @@
-import { Component, Element, h, Host, Prop, State, Watch, Method } from '@stencil/core/internal';
-import { Fragment } from '@stencil/core/internal';
+import { Component, Element, Fragment, h, Host, Prop, State, Watch, Method } from '@stencil/core';
 import { isTrue, toArray, toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import debounce from '../../utils/debounce';

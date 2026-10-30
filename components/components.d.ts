@@ -14,7 +14,6 @@ import { PanelType } from "./core/panel/panel";
 import { PanelType as PanelType1 } from "./core/panel/panel";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 import { DSSliderParams } from "./core/slider/slider";
-import { AnyHTMLElement } from "@stencil/core/internal";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { DSOption } from "./core/combo/combo";
@@ -26,7 +25,6 @@ export { PanelType } from "./core/panel/panel";
 export { PanelType as PanelType1 } from "./core/panel/panel";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 export { DSSliderParams } from "./core/slider/slider";
-export { AnyHTMLElement } from "@stencil/core/internal";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {

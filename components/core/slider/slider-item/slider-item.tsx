@@ -1,4 +1,4 @@
-import { Component, h } from '@stencil/core/internal';
+import { Component, h } from '@stencil/core';
 
 @Component({
   tag: 'ds-slider-item',

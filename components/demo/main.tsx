@@ -1,4 +1,4 @@
-import { Component, h, Method } from '@stencil/core/internal';
+import { Component, h, Method } from '@stencil/core';
 
 @Component({
   tag: 'ds-main',
