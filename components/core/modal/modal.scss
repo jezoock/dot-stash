@@ -1,0 +1,4 @@
+// Set on the body while a modal is shown (see modal.tsx): the page does not scroll behind the modal.
+body.ds-js--modal-open {
+  overflow: hidden;
+}

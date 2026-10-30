@@ -234,6 +234,11 @@ export namespace Components {
          */
         "transition": string | DSMarqueeTransitionEnum;
     }
+    /**
+     * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
+     * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
+     * the class is removed when the last shown modal is hidden or removed from the document.
+     */
     interface DsModal {
         "lightboxClass": any;
         "lightboxClassObject": any;
@@ -703,6 +708,11 @@ declare global {
         "modalClose": any;
         "modalOpen": any;
     }
+    /**
+     * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
+     * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
+     * the class is removed when the last shown modal is hidden or removed from the document.
+     */
     interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1205,6 +1215,11 @@ declare namespace LocalJSX {
          */
         "transition"?: string | DSMarqueeTransitionEnum;
     }
+    /**
+     * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
+     * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
+     * the class is removed when the last shown modal is hidden or removed from the document.
+     */
     interface DsModal {
         "lightboxClass"?: any;
         "lightboxClassObject"?: any;
@@ -1550,6 +1565,11 @@ declare module "@stencil/core" {
              * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
              */
             "ds-marquee": LocalJSX.DsMarquee & JSXBase.HTMLAttributes<HTMLDsMarqueeElement>;
+            /**
+             * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
+             * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
+             * the class is removed when the last shown modal is hidden or removed from the document.
+             */
             "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-nav": LocalJSX.DsNav & JSXBase.HTMLAttributes<HTMLDsNavElement>;
             "ds-nav-item": LocalJSX.DsNavItem & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;

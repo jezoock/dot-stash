@@ -1,6 +1,14 @@
-import { Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, Watch } from '@stencil/core';
 import throttle from '../../utils/throttle';
 
+/** The body class set while at least one modal is shown; the structural stylesheet locks the page scroll with it. */
+const MODAL_OPEN_CLASS = 'ds-js--modal-open';
+
+/**
+ * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
+ * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
+ * the class is removed when the last shown modal is hidden or removed from the document.
+ */
 @Component({
   tag: 'ds-modal',
   styleUrls: ['modal.scss'],
@@ -15,7 +23,8 @@ export class DSModal {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stencil derives the attribute handling from the prop type; a precise type would change it
   @Prop() lightboxClassObject: any;
 
-  @State() isReady = false;
+  /** Whether the modal applies its open state: its body class and its Escape listener. Not rendered. */
+  isActive = false;
 
   @Event() modalClose: EventEmitter;
   @Event() modalOpen: EventEmitter;
@@ -27,13 +36,10 @@ export class DSModal {
 
   @Watch('shown')
   shownWatchHandler() {
-    const body = document.querySelector('body');
     if (this.shown) {
-      body.classList.add('ds-js--modal-open');
       this.modalInit();
     } else {
       this.modalCloseHandler();
-      this.isReady = false;
     }
 
     this[`modal${this.shown ? 'Open' : 'Close'}`].emit();
@@ -68,10 +74,10 @@ export class DSModal {
     this.modalMouseUpHandler = this.modalMouseUpHandler.bind(this);
   }
 
-  componentWillLoad() {
-    // The shown watcher does not run for the initial value: a modal rendered open is set up here (no modalOpen event).
+  connectedCallback() {
+    // The shown watcher does not run for the initial value: a modal rendered open, or put back in the document
+    // while shown, is set up here (no modalOpen event).
     if (this.shown) {
-      document.querySelector('body').classList.add('ds-js--modal-open');
       this.modalInit();
     }
   }
@@ -108,12 +114,13 @@ export class DSModal {
   }
 
   /**
-   * Initialize modal
+   * Applies the open state: the body class and the Escape listener.
    */
   modalInit(): void {
-    if (!this.isReady) {
+    document.body.classList.add(MODAL_OPEN_CLASS);
+    if (!this.isActive) {
       document.addEventListener('keyup', this.documentKeyDownHandler);
-      this.isReady = true;
+      this.isActive = true;
     }
   }
 
@@ -135,13 +142,21 @@ export class DSModal {
     false,
   );
 
+  /**
+   * Removes the open state (modal hidden or removed from the document). The body class stays while another modal
+   * of the document is shown; the body's inline styles are never touched.
+   */
   modalCloseHandler(): void {
-    const body = document.querySelector('body');
-
-    body.classList.remove('ds-js--modal-open');
-    body.style.overflow = 'visible';
-
+    if (!this.isActive) {
+      return;
+    }
+    this.isActive = false;
     document.removeEventListener('keyup', this.documentKeyDownHandler);
+
+    const isAnotherModalShown = Array.from(document.querySelectorAll('ds-modal')).some(modal => modal !== this.container && modal.shown);
+    if (!isAnotherModalShown) {
+      document.body.classList.remove(MODAL_OPEN_CLASS);
+    }
   }
 
   modalMouseDownHandler(event: MouseEvent): void {

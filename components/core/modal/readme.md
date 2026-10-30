@@ -5,6 +5,12 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
+the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
+the class is removed when the last shown modal is hidden or removed from the document.
+
 ## Properties
 
 | Property              | Attribute               | Description | Type      | Default                |
