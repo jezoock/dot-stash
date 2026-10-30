@@ -155,7 +155,8 @@ The stylesheet then targets `.ds-block.--content.--top-header`. The same convers
 
 `scss/index.scss` applies `@include ds-theme()` to `body::before`: the breakpoints (and the primary base color) are written as JSON in the pseudo-element's `content`, which is hidden. The SCSS map stays the single source of truth:
 
-- `responsive.getStylesJSON()` (also available as `ds.tools.getStylesJSON()`) reads and parses that JSON.
+- `responsive.getStylesJSON()` (also available as `ds.tools.getStylesJSON()`) reads and parses that JSON. It returns `{}` when the theme stylesheet is not loaded.
+- `responsive.processBreakpoints()` turns the map into ranges with the mobile-first semantics of `break-p`: each label starts at its value and ends at the next value - 1, the first label also covers the smaller widths (it starts at 0) and the last one has no maximum. With the theme map: `xxs` 0–575, `xs` 576–767, `sm` 768–991, `md` 992–1199, `lg` 1200–1399, `xl` 1400–1599, `xxl` 1600 and up. `responsive.getBreakpoint()` returns the label and limits (`[min, max]`, or `[min]` for the last label) for a width.
 - `<ds-rsp>` reads the breakpoints (or takes them from its `breakpointsFromProp` property), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when the breakpoint changes:
   - dispatches a `breakpointChange` event (`detail: { all, current, previous, isGrowing }`) to every element with a `data-use-rsp` attribute;
   - sets on these elements the properties declared in their `data-rsp` attribute for the current breakpoint (or the closest smaller breakpoint that has some).
@@ -218,7 +219,7 @@ The helpers are split into modules, each exported as a namespace:
 | `props`      | `isTrue`, `toNumber`, `toFloat`, `toArray`, `fromJSON`, `toClassList`, `toString`                                                                   |
 | `css`        | `set`, `get`, `toNumber` (inline styles)                                                                                                            |
 | `dom`        | `cleanHTML`, `loadScript`, `scrollTo`, `getFileExtension`, `getOffset`                                                                              |
-| `ajax`       | `buildQuery`, `get`, `post` (JSON responses)                                                                                                        |
+| `ajax`       | `buildQuery`, `get`, `post` (JSON responses; `get(url, query, { responseType: 'text' })` returns the body as text, e.g. HTML)                       |
 | `responsive` | `getStylesJSON`, `removeQuotes` (Sass bridge), `processBreakpoints`, `getBreakpoint`, `getParamsForBreakpoint`, `isMobile`, `isTablet`, `isDesktop` |
 | `env`        | `touchSupport`                                                                                                                                      |
 | `form`       | `submit`, `reset`                                                                                                                                   |

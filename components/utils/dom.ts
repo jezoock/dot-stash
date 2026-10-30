@@ -28,10 +28,16 @@ export const loadScript = (scriptUrl: string, scriptId: string): Promise<boolean
   });
 };
 
-/** Scrolls the window to the element matching `selector`, `offset` px above it. */
+/** Scrolls the window to the element matching `selector`, `offset` px above it. Does nothing (with a warning) when no element matches. */
 export const scrollTo = (selector: string, offset = 100): void => {
-  const scrollY = document.querySelector<HTMLElement>(selector).offsetTop - offset;
-  window.scroll(0, scrollY);
+  const element = document.querySelector<HTMLElement>(selector);
+
+  if (!element) {
+    console.warn(`[ds] scrollTo: no element matches "${selector}"`);
+    return;
+  }
+
+  window.scroll(0, element.offsetTop - offset);
 };
 
 /** Returns the extension of the file name at the end of a path or URL, or `''`. */

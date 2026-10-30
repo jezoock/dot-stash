@@ -6,6 +6,7 @@ describe('props', () => {
       [true, true],
       [false, false],
       [undefined, false],
+      [null, false],
       ['true', true],
       ['TRUE', true],
       ['', true],

@@ -2,9 +2,9 @@
  * Helpers for component properties, which come either from HTML attributes (strings) or from JavaScript.
  */
 
-/** `undefined` gives `false`; a string is true when it is `'true'`, `''` or `'1'` (case-insensitive). */
-export const isTrue = (prop: string | boolean): boolean =>
-  typeof prop === 'undefined' ? false : typeof prop === 'boolean' ? prop : ['true', '', '1'].includes(prop.toLowerCase());
+/** `undefined` and `null` give `false`; a string is true when it is `'true'`, `''` or `'1'` (case-insensitive). */
+export const isTrue = (prop: string | boolean | null | undefined): boolean =>
+  prop === undefined || prop === null ? false : typeof prop === 'boolean' ? prop : ['true', '', '1'].includes(String(prop).toLowerCase());
 
 export const toNumber = (prop: string | number): number => (typeof prop === 'number' ? prop : parseInt(prop, 10));
 
