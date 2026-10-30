@@ -60,11 +60,11 @@ export class DSHeading {
             <slot name="image" />
           </div>
         )}
-        <hlgroup class="ds-heading__content">
+        <hgroup class="ds-heading__content">
           <ds-title sup class="ds-heading__main-title" {...this.titleProps}>
             <slot />
           </ds-title>
-          {this.hasImage && (
+          {this.hasSubTitle && (
             <ds-title sub class="ds-heading__sub-title" {...this.titleProps}>
               <slot name="sub-title" />
             </ds-title>
@@ -74,7 +74,7 @@ export class DSHeading {
               <slot name="description" />
             </ds-text>
           )}
-        </hlgroup>
+        </hgroup>
       </Host>
     );
   }
