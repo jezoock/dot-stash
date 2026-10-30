@@ -51,9 +51,9 @@ CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then
 ```
 components/
   core/            ds-* components, one folder each (.tsx, optional structural .scss, generated readme.md)
-  utils/           shared TypeScript: the `ds` helper object (dot-stash.ts), debounce, throttle, uuid,
-                   modifiers, interfaces/
-  types/           internal shared types
+  utils/           shared TypeScript: utility modules (props, css, dom, ajax, responsive, env, form,
+                   context), the `ds` object grouping them (dot-stash.ts), debounce, throttle, uuid,
+                   and shared types and enums (interfaces/)
   demo/            ds-main, the demo component used by the dev pages
   index.ts         package entry point
   index.html       page served by the Stencil dev server
@@ -153,7 +153,7 @@ The stylesheet then targets `.ds-block.--content.--top-header`. The same convers
 
 `scss/index.scss` applies `@include ds-theme()` to `body::before`: the breakpoints (and the primary base color) are written as JSON in the pseudo-element's `content`, which is hidden. The SCSS map stays the single source of truth:
 
-- `ds.tools.getStylesJSON()` reads and parses that JSON.
+- `responsive.getStylesJSON()` (also available as `ds.tools.getStylesJSON()`) reads and parses that JSON.
 - `<ds-rsp>` reads the breakpoints (or takes them from its `breakpointsFromProp` property), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when the breakpoint changes:
   - dispatches a `breakpointChange` event (`detail: { all, current, previous, isGrowing }`) to every element with a `data-use-rsp` attribute;
   - sets on these elements the properties declared in their `data-rsp` attribute for the current breakpoint (or the closest smaller breakpoint that has some).
@@ -201,14 +201,28 @@ Add `dot-stash/dist/css/style.css` to the page with your usual CSS pipeline.
 The package entry also exports the shared utilities, with their types:
 
 ```ts
-import { ds, debounce, throttle, uuid, AppStatus, DsComponentContext } from 'dot-stash';
-import type { Breakpoint, Breakpoints, RawBreakpoint, SassStyles, ViewItemData, DsComponentContextType } from 'dot-stash';
+import { ds, props, responsive, debounce, throttle, uuid, AppStatus, DsComponentContext } from 'dot-stash';
+import type { Breakpoint, Breakpoints, RawBreakpoint, SassStyles, DsComponentContextType } from 'dot-stash';
 
-const { breakpoints } = ds.tools.getStylesJSON();
+const { breakpoints } = responsive.getStylesJSON();
+const classList = props.toClassList('ds-card', 'large,dark');
 const onResize = debounce(() => console.log(window.innerWidth), 200);
 ```
 
-`ds` groups helpers for props (`ds.props.isTrue`, `toArray`, `fromJSON`, `toClassList`…), CSS, forms, fetch requests (`ds.ajax.get`, `ds.ajax.post`) and DOM tools (`ds.tools.scrollTo`, `getOffset`…).
+The helpers are split into modules, each exported as a namespace:
+
+| Module       | Functions                                                                                                                                           |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `props`      | `isTrue`, `toNumber`, `toFloat`, `toArray`, `fromJSON`, `toClassList`, `toString`                                                                   |
+| `css`        | `set`, `get`, `toNumber` (inline styles)                                                                                                            |
+| `dom`        | `cleanHTML`, `loadScript`, `scrollTo`, `getFileExtension`, `getOffset`                                                                              |
+| `ajax`       | `buildQuery`, `get`, `post` (JSON responses)                                                                                                        |
+| `responsive` | `getStylesJSON`, `removeQuotes` (Sass bridge), `processBreakpoints`, `getBreakpoint`, `getParamsForBreakpoint`, `isMobile`, `isTablet`, `isDesktop` |
+| `env`        | `touchSupport`                                                                                                                                      |
+| `form`       | `submit`, `reset`                                                                                                                                   |
+| `context`    | `get`, `DsComponentContext`                                                                                                                         |
+
+`ds` groups the same modules in one object (`ds.props.toClassList(...)`, `ds.ajax.get(...)`), and `ds.tools` keeps the DOM helpers and the Sass bridge under their former key (`ds.tools.scrollTo`, `ds.tools.getStylesJSON`…). Inside the library, components import the functions from their module (`import { toClassList } from '../../utils/props'`), so each bundle only contains the helpers it uses.
 
 ## Archived code
 
