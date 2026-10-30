@@ -2,11 +2,15 @@ import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/
 import debounce from '../../utils/debounce';
 import { fromJSON } from '../../utils/props';
 import { getBreakpoint, getParamsForBreakpoint, getStylesJSON, processBreakpoints } from '../../utils/responsive';
-import { Breakpoint, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
+import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
+
+/** `hGap` → `h-gap`: the attribute of a camelCase property. */
+const toKebabCase = (name: string): string => name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 
 /**
  * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
  * attribute the properties their `data-rsp` attribute declares for it (see the README).
+ * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
  * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
  */
 @Component({
@@ -19,6 +23,8 @@ export class DSRsp {
   waitingSubscribers: Element[] = [];
   /** The debounced `resize` listener, kept so that the same function is removed. */
   resizeHandler: () => void;
+  /** Subscribes the matching elements inserted in the document later (when the browser has MutationObserver). */
+  observer: MutationObserver;
 
   @Prop() debounceDelay = 500;
   @Prop() subscriberSelector = '[data-use-rsp]:not([data-rsp-init])';
@@ -29,9 +35,13 @@ export class DSRsp {
    */
   @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: string | RawBreakpoint;
 
+  /**
+   * Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once
+   * (before, when ds-rsp starts).
+   */
   @Method()
-  async subscribe(target: Element) {
-    return this.waitingSubscribers.push(target);
+  async subscribe(target: Element): Promise<void> {
+    this.addSubscribers([target]);
   }
 
   @Method()
@@ -77,7 +87,12 @@ export class DSRsp {
     return getParamsForBreakpoint(currentBreakpoint, params, this.breakpoints);
   }
 
-  @Event() breakpointChange: EventEmitter;
+  /**
+   * Emitted by ds-rsp when the breakpoint changes (and when it starts), once the subscribers have their params.
+   * It bubbles. Each subscriber also receives a `breakpointChange` event on itself, which does not bubble: a
+   * subscriber that contains ds-rsp gets both, and should only handle the one whose target is itself.
+   */
+  @Event() breakpointChange: EventEmitter<BreakpointChangeDetail>;
 
   constructor() {
     this.notifySubscribers = this.notifySubscribers.bind(this);
@@ -112,6 +127,8 @@ export class DSRsp {
     if (this.resizeHandler) {
       window.removeEventListener('resize', this.resizeHandler, false);
     }
+    this.observer?.disconnect();
+    this.observer = undefined;
     this.subscribers.forEach(subscriber => {
       subscriber.removeEventListener('breakpointChange', this.breakpointChangeHandler, false);
       subscriber.removeAttribute('data-rsp-init');
@@ -124,12 +141,60 @@ export class DSRsp {
     return Object.keys(this.breakpoints ?? {}).length > 0;
   }
 
-  /** Collects the subscribers, listens to `resize` and applies the current breakpoint. */
+  /** Collects the subscribers, listens to `resize` and to the insertions in the document, and applies the current breakpoint. */
   start() {
     const subscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
     this.waitingSubscribers = Array.from(new Set([...this.waitingSubscribers, ...subscribers]));
     window.addEventListener('resize', this.resizeHandler, false);
+    this.observe();
     this.notifySubscribers();
+  }
+
+  observe() {
+    if (typeof MutationObserver === 'undefined' || this.observer) {
+      return;
+    }
+    this.observer = new MutationObserver(records => this.mutationHandler(records));
+    // data-use-rsp: a component can reflect it after ds-rsp has started (ds-grid does).
+    this.observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-use-rsp'] });
+  }
+
+  /** Subscribes the inserted elements (and their descendants), and the elements that got a data-use-rsp attribute, that match the subscriber selector. */
+  mutationHandler(records: MutationRecord[]) {
+    const elements: Element[] = [];
+
+    records.forEach(({ type, target, addedNodes }) => {
+      if (type === 'attributes') {
+        if ((target as Element).matches(this.subscriberSelector)) {
+          elements.push(target as Element);
+        }
+        return;
+      }
+      Array.from(addedNodes)
+        .filter((node): node is Element => node.nodeType === 1)
+        .forEach(element => {
+          if (element.matches(this.subscriberSelector)) {
+            elements.push(element);
+          }
+          elements.push(...Array.from(element.querySelectorAll(this.subscriberSelector)));
+        });
+    });
+
+    if (elements.length) {
+      this.addSubscribers(elements);
+    }
+  }
+
+  /** Adds subscribers; once ds-rsp has started, they are initialised and get the params of the current breakpoint at once. */
+  addSubscribers(elements: Element[]) {
+    const newSubscribers = elements.filter(element => !this.subscribers.includes(element) && !this.waitingSubscribers.includes(element));
+    this.waitingSubscribers = [...this.waitingSubscribers, ...newSubscribers];
+
+    if (this.currentBreakpoint) {
+      const subscribers = this.waitingSubscribers;
+      this.initSubscribers();
+      subscribers.forEach(subscriber => this.applyParams(subscriber, this.currentBreakpoint));
+    }
   }
 
   /** The responsive params of an element (`{}`, with a warning, when its attribute is not valid JSON). */
@@ -141,6 +206,15 @@ export class DSRsp {
       console.warn(`[ds-rsp] the ${this.propertyName} attribute is not valid JSON, it is ignored: ${attributeValue}`, element);
       return {};
     }
+  }
+
+  /**
+   * The current value of a property of an element: the property itself (a component's camelCase property such as
+   * `hGap` included), else its attribute (`h-gap`, or the name as written), else `null`.
+   */
+  readInitialValue(element: Element, prop: string): unknown {
+    const value = element[prop];
+    return value !== undefined ? value : (element.getAttribute(toKebabCase(prop)) ?? element.getAttribute(prop));
   }
 
   initSubscribers = () => {
@@ -162,7 +236,7 @@ export class DSRsp {
         });
         if (changingProps.length) {
           minBreakpointParams[smallestLabel] = {};
-          changingProps.map(prop => (minBreakpointParams[smallestLabel][prop] = subscriber.getAttribute(prop)));
+          changingProps.map(prop => (minBreakpointParams[smallestLabel][prop] = this.readInitialValue(subscriber, prop)));
         }
       }
 
@@ -178,44 +252,47 @@ export class DSRsp {
     this.waitingSubscribers = [];
   };
 
-  async notifySubscribers() {
+  notifySubscribers() {
     const { currentBreakpoint: previousBreakpoint } = this;
-    const newBreakpoint = await this.getBreakpoint(this.breakpoints);
-    if (newBreakpoint.label !== previousBreakpoint?.label) {
-      this.currentBreakpoint = newBreakpoint;
-      this.initSubscribers();
-      const eventDetails = {
-        all: this.breakpoints,
-        current: this.currentBreakpoint,
-        previous: previousBreakpoint,
-        // Compared on the minimum: the last breakpoint has no maximum.
-        isGrowing: previousBreakpoint !== undefined && newBreakpoint.limits[0] > previousBreakpoint.limits[0],
-      };
-      const event = new CustomEvent('breakpointChange', { detail: eventDetails });
-      const subscribers = document.querySelectorAll('[data-use-rsp]');
+    const newBreakpoint = getBreakpoint(this.breakpoints);
 
-      subscribers.forEach(element => element.dispatchEvent(event));
+    if (newBreakpoint.label === previousBreakpoint?.label) {
+      return;
+    }
 
-      // The breakpointChange @Event is not emitted here: it might reach the registered
-      // components a second time (needs testing).
+    this.currentBreakpoint = newBreakpoint;
+    this.initSubscribers();
+    const detail: BreakpointChangeDetail = {
+      all: this.breakpoints,
+      current: this.currentBreakpoint,
+      previous: previousBreakpoint,
+      // Compared on the minimum: the last breakpoint has no maximum.
+      isGrowing: previousBreakpoint !== undefined && newBreakpoint.limits[0] > previousBreakpoint.limits[0],
+    };
+
+    // On each subscriber, an event that does not bubble: its own listeners, and ds-rsp's, which sets its params.
+    const event = new CustomEvent('breakpointChange', { detail });
+    document.querySelectorAll('[data-use-rsp]').forEach(element => element.dispatchEvent(event));
+
+    // Then from ds-rsp, for the page: it bubbles.
+    this.breakpointChange.emit(detail);
+  }
+
+  /** Sets on an element the params its `data-rsp` attribute declares for a breakpoint. */
+  applyParams(element: Element, breakpoint: Breakpoint) {
+    const params = getParamsForBreakpoint(breakpoint, this.readParams(element), this.breakpoints);
+
+    if (params) {
+      Object.entries(params).forEach(([prop, value]) => {
+        element[prop] = value;
+      });
     }
   }
 
-  async breakpointChangeHandler(event: CustomEvent<{ current: Breakpoint }>) {
-    const {
-      target: element,
-      detail: { current },
-    } = event;
-
-    const params = this.readParams(element as Element);
-
-    // Calculate limits from parameters
-    const breakpointParams = await this.getParamsForBreakpoint(current, params);
-
-    if (breakpointParams) {
-      Object.entries(breakpointParams).map(([prop, value]) => {
-        element[prop] = value;
-      });
+  breakpointChangeHandler(event: CustomEvent<BreakpointChangeDetail>) {
+    // Only the event dispatched on the subscriber, not the one ds-rsp emits, which bubbles up to a subscriber that contains it.
+    if (event.target === event.currentTarget) {
+      this.applyParams(event.currentTarget as Element, event.detail.current);
     }
   }
 

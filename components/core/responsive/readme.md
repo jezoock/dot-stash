@@ -9,6 +9,7 @@
 
 Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
 attribute the properties their `data-rsp` attribute declares for it (see the README).
+Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
 Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
 
 ## Properties
@@ -23,9 +24,9 @@ Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) 
 
 ## Events
 
-| Event              | Description | Type               |
-| ------------------ | ----------- | ------------------ |
-| `breakpointChange` |             | `CustomEvent<any>` |
+| Event              | Description                                                                                                                                                                                                                                                                                                            | Type                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `breakpointChange` | Emitted by ds-rsp when the breakpoint changes (and when it starts), once the subscribers have their params. It bubbles. Each subscriber also receives a `breakpointChange` event on itself, which does not bubble: a subscriber that contains ds-rsp gets both, and should only handle the one whose target is itself. | `CustomEvent<BreakpointChangeDetail>` |
 
 
 ## Methods
@@ -119,9 +120,10 @@ Type: `Promise<Breakpoints>`
 
 
 
-### `subscribe(target: Element) => Promise<number>`
+### `subscribe(target: Element) => Promise<void>`
 
-
+Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once
+(before, when ds-rsp starts).
 
 #### Parameters
 
@@ -131,7 +133,7 @@ Type: `Promise<Breakpoints>`
 
 #### Returns
 
-Type: `Promise<number>`
+Type: `Promise<void>`
 
 
 

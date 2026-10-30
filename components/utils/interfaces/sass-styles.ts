@@ -17,3 +17,14 @@ export interface RawBreakpoint {
 export interface SassStyles {
   breakpoints: RawBreakpoint;
 }
+
+/** The detail of the `breakpointChange` events of `ds-rsp`. */
+export interface BreakpointChangeDetail {
+  /** All the breakpoints, as returned by `processBreakpoints`. */
+  all: Breakpoints;
+  current: Breakpoint;
+  /** The former breakpoint; `undefined` for the first event, when ds-rsp starts. */
+  previous: Breakpoint | undefined;
+  /** Whether the window grew, compared on the minimum widths; `false` for the first event. */
+  isGrowing: boolean;
+}

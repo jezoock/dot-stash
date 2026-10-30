@@ -22,9 +22,12 @@ export class DSGrid {
   @Prop({ mutable: true, reflect: true }) vAlign: string | DSGridAlignment = 'start';
   @Prop({ mutable: true, reflect: true }) cellRatio: string | number;
 
+  /** ds-rsp dispatches `breakpointChange` on its subscribers; the one it emits itself bubbles up to a grid that contains it, and is ignored. */
   @Listen('breakpointChange')
-  onBreakpointChange() {
-    this.processChildren();
+  onBreakpointChange(event: CustomEvent) {
+    if (event.target === this.container) {
+      this.processChildren();
+    }
   }
 
   @Watch('mods')

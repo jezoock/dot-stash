@@ -159,9 +159,11 @@ A string `mods` is reflected to the `mods` attribute. An array set in JavaScript
 
 - `responsive.getStylesJSON()` (also available as `ds.tools.getStylesJSON()`) reads and parses that JSON. It returns `{}` when the theme stylesheet is not loaded.
 - `responsive.processBreakpoints()` turns the map into ranges with the mobile-first semantics of `break-p`: each label starts at its value and ends at the next value - 1, the first label also covers the smaller widths (it starts at 0) and the last one has no maximum. With the theme map: `xxs` 0–575, `xs` 576–767, `sm` 768–991, `md` 992–1199, `lg` 1200–1399, `xl` 1400–1599, `xxl` 1600 and up. `responsive.getBreakpoint()` returns the label and limits (`[min, max]`, or `[min]` for the last label) for a width.
-- `<ds-rsp>` reads the breakpoints (or takes them from its `breakpoints` attribute, written like the Sass map: `breakpoints='{"sm": 0, "lg": 992}'`), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when the breakpoint changes:
-  - dispatches a `breakpointChange` event (`detail: { all, current, previous, isGrowing }`) to every element with a `data-use-rsp` attribute;
-  - sets on these elements the properties declared in their `data-rsp` attribute (a JSON string) for the current breakpoint (or the closest smaller breakpoint that has some). Unknown labels are ignored with a warning; the initial values of the changing properties are kept for the smallest breakpoint. Initialised elements get a `data-rsp-init` attribute.
+- `<ds-rsp>` reads the breakpoints (or takes them from its `breakpoints` attribute, written like the Sass map: `breakpoints='{"sm": 0, "lg": 992}'`), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when it starts and each time the breakpoint changes:
+  - dispatches a `breakpointChange` event (`detail: { all, current, previous, isGrowing }`, type `BreakpointChangeDetail`) on every element with a `data-use-rsp` attribute. This event does not bubble;
+  - sets on these elements the properties declared in their `data-rsp` attribute (a JSON string) for the current breakpoint (or the closest smaller breakpoint that has some). Unknown labels are ignored with a warning; the initial values of the changing properties are kept for the smallest breakpoint. They are read from the element's property (a camelCase property such as `hGap` included), else from its attribute (`h-gap`). Initialised elements get a `data-rsp-init` attribute;
+  - then emits the same `breakpointChange` event from `<ds-rsp>` itself. This one bubbles: listen to it on `<ds-rsp>` or on `document`. A subscriber that contains `<ds-rsp>` receives both events and should only handle the one whose `target` is itself, as `ds-grid` does.
+  - Elements subscribed after it started, with its `subscribe(element)` method, or inserted in the document (or given a `data-use-rsp` attribute) and matching `subscriber-selector`, get the params of the current breakpoint at once. Insertions are detected with a `MutationObserver`.
   - Without breakpoints (theme stylesheet not loaded, no `breakpoints` attribute), it logs a warning and does nothing.
 
 ```html
@@ -227,7 +229,7 @@ The package entry also exports the shared utilities, with their types:
 
 ```ts
 import { ds, props, responsive, debounce, throttle, uuid, AppStatus, DsComponentContext } from 'dot-stash';
-import type { Breakpoint, Breakpoints, RawBreakpoint, SassStyles, DsComponentContextType } from 'dot-stash';
+import type { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint, SassStyles, DsComponentContextType } from 'dot-stash';
 
 const { breakpoints } = responsive.getStylesJSON();
 const classList = props.toClassList('ds-card', 'large,dark');

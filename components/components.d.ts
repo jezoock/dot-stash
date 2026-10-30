@@ -11,7 +11,7 @@ import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 import { PanelType } from "./core/panel/panel.types";
-import { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
+import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
@@ -22,7 +22,7 @@ export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 export { PanelType } from "./core/panel/panel.types";
-export { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
+export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 export { DSSliderParams } from "./core/slider/slider.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
@@ -298,6 +298,7 @@ export namespace Components {
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
      * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
      */
     interface DsRsp {
@@ -319,7 +320,10 @@ export namespace Components {
         "getSubscribers": () => Promise<Element[]>;
         "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
         "propertyName": string;
-        "subscribe": (target: Element) => Promise<number>;
+        /**
+          * Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once (before, when ds-rsp starts).
+         */
+        "subscribe": (target: Element) => Promise<void>;
         "subscriberSelector": string;
     }
     interface DsSelect {
@@ -783,11 +787,12 @@ declare global {
         new (): HTMLDsRatingListElement;
     };
     interface HTMLDsRspElementEventMap {
-        "breakpointChange": any;
+        "breakpointChange": BreakpointChangeDetail;
     }
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
      * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
      */
     interface HTMLDsRspElement extends Components.DsRsp, HTMLStencilElement {
@@ -1274,6 +1279,7 @@ declare namespace LocalJSX {
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
      * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
      */
     interface DsRsp {
@@ -1282,7 +1288,10 @@ declare namespace LocalJSX {
          */
         "breakpointsFromProp"?: string | RawBreakpoint;
         "debounceDelay"?: number;
-        "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
+        /**
+          * Emitted by ds-rsp when the breakpoint changes (and when it starts), once the subscribers have their params. It bubbles. Each subscriber also receives a `breakpointChange` event on itself, which does not bubble: a subscriber that contains ds-rsp gets both, and should only handle the one whose target is itself.
+         */
+        "onBreakpointChange"?: (event: DsRspCustomEvent<BreakpointChangeDetail>) => void;
         "propertyName"?: string;
         "subscriberSelector"?: string;
     }
@@ -1579,6 +1588,7 @@ declare module "@stencil/core" {
             /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
+             * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
              * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
              */
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
