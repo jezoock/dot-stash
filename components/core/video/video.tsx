@@ -98,7 +98,6 @@ export class DSVideo {
     this.stopButtonclickHandler = this.stopButtonclickHandler.bind(this);
     this.muteButtonclickHandler = this.muteButtonclickHandler.bind(this);
     this.unmuteButtonclickHandler = this.unmuteButtonclickHandler.bind(this);
-    this.scrollWatcher = this.scrollWatcher.bind(this);
   }
 
   componentWillLoad() {
@@ -106,17 +105,19 @@ export class DSVideo {
     this.useControls = isTrue(this.controls);
     this.playOnload = isTrue(this.autoplay);
     this.playOnLoop = isTrue(this.loop);
+    // Browsers only autoplay muted videos.
+    this.isMuted = this.playOnload;
 
     const videoSources = toArray(this.sources).map(videoSource => ({ path: videoSource, fileFormat: this.getVideoFileFormat(videoSource) }));
     this.videoSources = videoSources;
 
     if (this.playOnload && !this.isOnScreen()) {
-      window.addEventListener('scroll', debounce(this.scrollWatcher, 50), false);
+      window.addEventListener('scroll', this.scrollWatcher, false);
     }
   }
 
   disconnectedCallback() {
-    window.removeEventListener('scroll', this.scrollWatcher);
+    window.removeEventListener('scroll', this.scrollWatcher, false);
   }
 
   //#endregion
@@ -148,8 +149,10 @@ export class DSVideo {
 
   //#region HANDLERS
 
+  /** Autoplay below the fold: plays the video once it is scrolled on screen. Debounced once, and added and removed as is. */
   scrollWatcher = debounce(() => {
     if (this.isOnScreen()) {
+      window.removeEventListener('scroll', this.scrollWatcher, false);
       this.play();
     }
   }, 50);
@@ -190,7 +193,7 @@ export class DSVideo {
           class="ds-video__player"
           poster={this.poster}
           controls={this.useControls && this.isReady}
-          muted={this.playOnload}
+          muted={this.isMuted}
           autoplay={this.playOnload && this.isOnScreen()}
           onPlay={this.playButtonclickHandler}
           onPause={this.pauseButtonclickHandler}
