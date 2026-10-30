@@ -1,6 +1,5 @@
-import { Component, Element, h, Prop, Watch } from '@stencil/core';
+import { Component, Element, h, Prop } from '@stencil/core';
 import { toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
 
 @Component({
   tag: 'ds-nav',
@@ -10,18 +9,8 @@ export class DSNav {
   @Element() container: HTMLDivElement;
 
   @Prop() currentActiveItemId: string;
-  @Prop() mods: string | string[];
-
-  CSSClassList: CssClassList;
-
-  @Watch('mods')
-  modsChangeHandler(newMods) {
-    this.CSSClassList = toClassList('ds-nav', newMods);
-  }
-
-  componentWillLoad() {
-    this.CSSClassList = toClassList('ds-nav', this.mods);
-  }
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
 
   componentDidLoad() {
     this.setActiveMenuItem();
@@ -37,7 +26,7 @@ export class DSNav {
 
   render() {
     return (
-      <div class={this.CSSClassList}>
+      <div class={toClassList('ds-nav', this.mods)}>
         <slot />
       </div>
     );

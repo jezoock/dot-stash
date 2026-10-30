@@ -1,6 +1,5 @@
-import { Component, h, Prop, Watch, Host, Element, Method } from '@stencil/core';
+import { Component, h, Prop, Host, Element, Method } from '@stencil/core';
 import { toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
 
 // A const object rather than an enum: several block types map to the same tag.
 const DsBlockTypeToTag = {
@@ -18,10 +17,15 @@ type DsBlockTypeToTag = (typeof DsBlockTypeToTag)[keyof typeof DsBlockTypeToTag]
   styleUrl: './block.scss',
 })
 export class DSBlock {
+  /** `ds[-<name>]-<type or context>`: the main class and the prefix of the element classes, computed by connectedCallback. */
   blockName = 'ds-block';
+  /**
+   * The host's main class: `blockName` once connectedCallback has computed it; until then the host has no class.
+   * connectedCallback is async: in browsers it ends after the first render.
+   */
+  mainClass: string;
   blockTag: DsBlockTypeToTag = DsBlockTypeToTag.BLOCK;
   context = 'block';
-  CSSClassList: CssClassList;
   hasHeader: boolean;
   hasFooter: boolean;
 
@@ -43,15 +47,8 @@ export class DSBlock {
    */
   @Prop({ reflect: true }) name: string;
 
-  /**
-   * List of modifiers
-   */
-  @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList(this.blockName, mods);
-  }
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
 
   @Method()
   async getContext() {
@@ -66,7 +63,7 @@ export class DSBlock {
       blockName = `${blockName}-${this.name}`;
     }
     this.blockName = `${blockName}-${blockType}`;
-    this.CSSClassList = toClassList(this.blockName, this.mods);
+    this.mainClass = this.blockName;
     this.context = blockContext;
 
     this.hasHeader = this.hostContainer.querySelector("[slot='header']") !== null;
@@ -75,7 +72,7 @@ export class DSBlock {
 
   render() {
     return (
-      <Host class={this.CSSClassList}>
+      <Host class={this.mainClass && toClassList(this.mainClass, this.mods)}>
         {this.hasHeader && (
           <div class={`${this.blockName}__header`}>
             <slot name="header" />

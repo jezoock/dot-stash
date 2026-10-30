@@ -1,5 +1,4 @@
-import { Component, h, Watch, Method, State, Prop, Event, EventEmitter } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { Component, h, Method, State, Prop, Event, EventEmitter } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
 
@@ -14,7 +13,6 @@ import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaste
 })
 export class DSToaster {
   container: HTMLDivElement;
-  CSSClassList: CssClassList;
   closingTimer: ReturnType<typeof setTimeout>;
 
   /**
@@ -26,7 +24,8 @@ export class DSToaster {
     TOASTER_VERTICAL_POSITION.TOP,
     TOASTER_HORIZONTAL_POSITION.LEFT,
   ];
-  @Prop({ mutable: true, reflect: true }) mods: string | string[] = '';
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   /** The messages, one toast each: an array, or a comma-separated string. */
   @Prop({ mutable: true, reflect: true }) messages: string | string[];
   @Prop({ reflect: true }) maxDisplayedToast = 3;
@@ -34,11 +33,6 @@ export class DSToaster {
   @Prop() closingDelay = 3000;
 
   @State() isShown = false;
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-toaster', toArray(mods));
-  }
 
   @Event() toasterShow: EventEmitter;
   @Event() toasterShown: EventEmitter;
@@ -81,10 +75,6 @@ export class DSToaster {
     this.animationEndHandler = this.animationEndHandler.bind(this);
   }
 
-  componentWillLoad() {
-    this.CSSClassList = toClassList('ds-toaster', toArray(this.mods));
-  }
-
   disconnectedCallback() {
     clearTimeout(this.closingTimer);
     this.container?.removeEventListener('transitionend', this.animationEndHandler);
@@ -108,7 +98,7 @@ export class DSToaster {
     return (
       <div
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-toaster', this.mods),
           [`--v-pos-${verticalPosition}`]: true,
           [`--h-pos-${horizontalPosition}`]: true,
           '--shown': this.isShown,

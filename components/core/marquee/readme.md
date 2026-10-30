@@ -16,7 +16,7 @@ Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the
 | -------------- | ---------------- | --------------------------------------------------------------------------------------------------- | -------------------- | ----------------------------------- |
 | `bgColor`      | `bg-color`       |                                                                                                     | `string`             | `undefined`                         |
 | `color`        | `color`          |                                                                                                     | `string`             | `undefined`                         |
-| `mods`         | `mods`           |                                                                                                     | `string \| string[]` | `[]`                                |
+| `mods`         | `mods`           | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.  | `string \| string[]` | `[]`                                |
 | `pauseOnHover` | `pause-on-hover` |                                                                                                     | `boolean \| string`  | `false`                             |
 | `speed`        | `speed`          | Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.                   | `number \| string`   | `10`                                |
 | `transition`   | `transition`     | Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`. | `string`             | `DSMarqueeDefaultParams.transition` |

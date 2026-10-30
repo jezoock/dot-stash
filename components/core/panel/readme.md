@@ -7,13 +7,13 @@
 
 ## Properties
 
-| Property    | Attribute    | Description | Type                     | Default     |
-| ----------- | ------------ | ----------- | ------------------------ | ----------- |
-| `expanded`  | `expanded`   |             | `boolean`                | `false`     |
-| `index`     | `index`      |             | `number`                 | `undefined` |
-| `minHeight` | `min-height` |             | `string`                 | `'0'`       |
-| `mods`      | `mods`       |             | `string \| string[]`     | `[]`        |
-| `type`      | `type`       |             | `"collapsible" \| "tab"` | `'tab'`     |
+| Property    | Attribute    | Description                                                                                        | Type                     | Default     |
+| ----------- | ------------ | -------------------------------------------------------------------------------------------------- | ------------------------ | ----------- |
+| `expanded`  | `expanded`   |                                                                                                    | `boolean`                | `false`     |
+| `index`     | `index`      |                                                                                                    | `number`                 | `undefined` |
+| `minHeight` | `min-height` |                                                                                                    | `string`                 | `'0'`       |
+| `mods`      | `mods`       | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]`     | `[]`        |
+| `type`      | `type`       |                                                                                                    | `"collapsible" \| "tab"` | `'tab'`     |
 
 
 ## Events

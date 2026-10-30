@@ -7,14 +7,14 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                                                  | Default     |
-| -------- | --------- | ----------- | ----------------------------------------------------- | ----------- |
-| `inline` | `inline`  |             | `boolean`                                             | `undefined` |
-| `mods`   | `mods`    |             | `string \| string[]`                                  | `'default'` |
-| `sub`    | `sub`     |             | `boolean`                                             | `undefined` |
-| `sup`    | `sup`     |             | `boolean`                                             | `undefined` |
-| `type`   | `type`    |             | `"code" \| "p" \| "quote"`                            | `'p'`       |
-| `weight` | `weight`  |             | `"bold" \| "bolder" \| "light" \| "normal" \| "thin"` | `undefined` |
+| Property | Attribute | Description                                                                                        | Type                                                  | Default     |
+| -------- | --------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------- |
+| `inline` | `inline`  |                                                                                                    | `boolean`                                             | `undefined` |
+| `mods`   | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]`                                  | `[]`        |
+| `sub`    | `sub`     |                                                                                                    | `boolean`                                             | `undefined` |
+| `sup`    | `sup`     |                                                                                                    | `boolean`                                             | `undefined` |
+| `type`   | `type`    |                                                                                                    | `"code" \| "p" \| "quote"`                            | `'p'`       |
+| `weight` | `weight`  |                                                                                                    | `"bold" \| "bolder" \| "light" \| "normal" \| "thin"` | `undefined` |
 
 
 ## Dependencies

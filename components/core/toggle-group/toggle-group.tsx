@@ -1,5 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State } from '@stencil/core';
 import { fromJSON, toArray, toClassList } from '../../utils/props';
 import { DSToggleValue } from '../toggle/toggle.types';
 
@@ -21,17 +20,12 @@ export class DSToggleGroup {
    * than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
    */
   @Prop() count: number[] | string = [1, 1];
-  @Prop() mods: string | string[] = [];
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
 
   @State() value: DSToggleValue[] = [];
 
-  CSSClassList: CssClassList;
   values: DSToggleValue[] = [];
-
-  @Watch('mods')
-  modsWatcher(newMods) {
-    this.CSSClassList = toClassList('ds-toggle-group', toArray(newMods));
-  }
 
   @Event() toggleValueChange: EventEmitter;
 
@@ -47,7 +41,6 @@ export class DSToggleGroup {
   }
 
   componentWillLoad() {
-    this.CSSClassList = toClassList('ds-toggle-group', toArray(this.mods));
     this.valuesCount = fromJSON(this.count);
   }
 
@@ -113,11 +106,7 @@ export class DSToggleGroup {
 
   render() {
     return (
-      <Host
-        class={{
-          ...this.CSSClassList,
-        }}
-      >
+      <Host class={toClassList('ds-toggle-group', this.mods)}>
         <slot />
       </Host>
     );

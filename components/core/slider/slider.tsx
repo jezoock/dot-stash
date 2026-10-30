@@ -1,5 +1,4 @@
 import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method, State } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
 import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
 import { fromJSON, toClassList } from '../../utils/props';
 import { DSSliderParams } from './slider.types';
@@ -38,7 +37,8 @@ export class DSSlider {
   @Element() host: HTMLDivElement;
 
   @Prop({ mutable: true, reflect: true }) sliderId: string = `slide-${sliderId++}`;
-  @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) params: DSSliderParams | string = {};
   @Prop({ mutable: true, reflect: true }) type = 'sld';
 
@@ -71,7 +71,6 @@ export class DSSlider {
   isScrollable = false;
   isDraggable = false;
   isPlaying = true;
-  CSSClassList: CssClassList;
 
   isDragging = false;
   xStart = 0;
@@ -96,11 +95,6 @@ export class DSSlider {
         }
       }
     }
-  }
-
-  @Watch('mods')
-  modsChangeHandler(newMods: string | string[]) {
-    this.CSSClassList = toClassList('ds-slider', newMods);
   }
 
   @Event() sliderEvent: EventEmitter<{ slide: string; direction: number; currentIndex?: number }>;
@@ -131,7 +125,6 @@ export class DSSlider {
   componentWillLoad() {
     const optionsFromProps = fromJSON(this.params);
     this.options = { ...DSSliderDefaults, ...optionsFromProps, selectors: { ...DSSliderDefaults.selectors, ...optionsFromProps.selectors } };
-    this.CSSClassList = toClassList('ds-slider', this.mods);
   }
 
   componentDidLoad() {
@@ -573,7 +566,7 @@ export class DSSlider {
     return (
       <div
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-slider', this.mods),
           [`--${this.options.orientation}`]: true,
           '--playing': this.isPlaying,
           '--paused': !this.isPlaying,

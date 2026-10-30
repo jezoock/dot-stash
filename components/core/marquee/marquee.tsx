@@ -1,5 +1,4 @@
 import { Component, Method, h, Host, Prop, Watch, State, Element } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
 import { isTrue, toClassList, toNumber } from '../../utils/props';
 import { DSMarqueeTransitionEnum } from './marquee.types';
 
@@ -24,7 +23,6 @@ const DSMarqueeDefaultParams = {
   styleUrl: 'marquee.scss',
 })
 export class DSSlideMsg {
-  CSSClassList: CssClassList;
   blockName = 'ds-marquee';
   params: DSMarqueeParams = DSMarqueeDefaultParams;
   messageContainer: HTMLDivElement;
@@ -33,7 +31,8 @@ export class DSSlideMsg {
 
   @Element() container: HTMLDivElement;
 
-  @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   /** Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll. */
   @Prop() speed: string | number = 10;
   /** Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`. */
@@ -60,11 +59,6 @@ export class DSSlideMsg {
     };
   }
 
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList(this.blockName, mods);
-  }
-
   constructor() {
     this.containerMouseInHandler = this.containerMouseInHandler.bind(this);
     this.containerMouseOutHandler = this.containerMouseOutHandler.bind(this);
@@ -72,7 +66,6 @@ export class DSSlideMsg {
   }
 
   connectedCallback() {
-    this.CSSClassList = toClassList(this.blockName, this.mods);
     this.params = {
       ...DSMarqueeDefaultParams,
       transition: this.transition as DSMarqueeTransitionEnum,
@@ -183,7 +176,7 @@ export class DSSlideMsg {
     return (
       <Host
         class={{
-          ...this.CSSClassList,
+          ...toClassList(this.blockName, this.mods),
           '--playing': this.isPlaying,
           '--paused': !this.isPlaying,
           [`--transition-${this.params.transition}`]: true,

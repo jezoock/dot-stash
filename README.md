@@ -151,6 +151,8 @@ Components with a `mods` property turn each modifier into a `--<modifier>` class
 
 The stylesheet then targets `.ds-block.--content.--top-header`. The same conversion is available in JavaScript as `ds.props.toClassList('ds-card', 'large,dark')`.
 
+A string `mods` is reflected to the `mods` attribute. An array set in JavaScript is not (Stencil only reflects primitive values): the attribute then keeps its previous value, so read the `mods` property rather than the attribute.
+
 ### Breakpoints shared with JavaScript
 
 `scss/index.scss` applies `@include ds-theme()` to `body::before`: the breakpoints (and the primary base color) are written as JSON in the pseudo-element's `content`, which is hidden. The SCSS map stays the single source of truth:

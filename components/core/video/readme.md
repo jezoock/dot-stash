@@ -7,15 +7,15 @@
 
 ## Properties
 
-| Property      | Attribute     | Description | Type                 | Default     |
-| ------------- | ------------- | ----------- | -------------------- | ----------- |
-| `autoplay`    | `autoplay`    |             | `boolean`            | `false`     |
-| `controls`    | `controls`    |             | `boolean`            | `false`     |
-| `loop`        | `loop`        |             | `boolean`            | `false`     |
-| `mods`        | --            |             | `string[]`           | `[]`        |
-| `playsinline` | `playsinline` |             | `boolean`            | `false`     |
-| `poster`      | `poster`      |             | `string`             | `undefined` |
-| `sources`     | `sources`     |             | `string \| string[]` | `[]`        |
+| Property      | Attribute     | Description                                                                                        | Type                 | Default     |
+| ------------- | ------------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `autoplay`    | `autoplay`    |                                                                                                    | `boolean`            | `false`     |
+| `controls`    | `controls`    |                                                                                                    | `boolean`            | `false`     |
+| `loop`        | `loop`        |                                                                                                    | `boolean`            | `false`     |
+| `mods`        | `mods`        | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
+| `playsinline` | `playsinline` |                                                                                                    | `boolean`            | `false`     |
+| `poster`      | `poster`      |                                                                                                    | `string`             | `undefined` |
+| `sources`     | `sources`     |                                                                                                    | `string \| string[]` | `[]`        |
 
 
 ## Methods

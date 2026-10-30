@@ -1,6 +1,5 @@
 import { Component, Event, EventEmitter, h, Host, Prop, Method, Element, Watch } from '@stencil/core';
-import { toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { toClassList } from '../../utils/props';
 import { PanelType } from './panel.types';
 
 @Component({
@@ -8,20 +7,14 @@ import { PanelType } from './panel.types';
   styleUrl: 'panel.scss',
 })
 export class DSPanel {
-  CSSClassList: CssClassList;
-
   @Element() container: HTMLDsPanelElement;
 
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop() minHeight = '0';
   @Prop({ mutable: true, reflect: true }) expanded = false;
   @Prop({ mutable: true, reflect: true }) index: number;
   @Prop({ mutable: true, reflect: true }) type: PanelType = 'tab';
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-panel', toArray(mods));
-  }
 
   @Watch('expanded')
   expandedChangeHandler(expanded: boolean) {
@@ -66,10 +59,6 @@ export class DSPanel {
     this.titleClickHandler = this.titleClickHandler.bind(this);
   }
 
-  componentWillLoad() {
-    this.CSSClassList = toClassList('ds-panel', toArray(this.mods));
-  }
-
   setExpanded(mustShow?: boolean) {
     const expanded = typeof mustShow === 'boolean' ? mustShow : !this.expanded;
     this.expanded = expanded;
@@ -89,7 +78,7 @@ export class DSPanel {
     return (
       <Host
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-panel', this.mods),
           [`--${this.type}`]: true,
         }}
       >

@@ -52,7 +52,7 @@ export namespace Components {
         "getContext": () => Promise<"block" | "article" | "section" | "form" | "modal">;
         "modal": boolean;
         /**
-          * List of modifiers
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods": string | string[];
         /**
@@ -69,6 +69,9 @@ export namespace Components {
         "close": () => Promise<void>;
         "customLabel": string;
         "mode": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "multiple": boolean;
         "name": string;
@@ -102,6 +105,9 @@ export namespace Components {
         "cols": string | number;
         "dataUseRsp": boolean;
         "hGap": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "type": string | DSGridType;
         "vAlign": string | DSGridAlignment;
@@ -116,6 +122,9 @@ export namespace Components {
     interface DsHeading {
         "block": boolean;
         "imagePosition": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "section": boolean;
         "useContext": boolean;
@@ -133,6 +142,9 @@ export namespace Components {
     interface DsMarquee {
         "bgColor": string;
         "color": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "pauseOnHover": string | boolean;
         /**
@@ -157,6 +169,9 @@ export namespace Components {
     }
     interface DsNav {
         "currentActiveItemId": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
     }
     interface DsNavItem {
@@ -172,6 +187,9 @@ export namespace Components {
         "hide": () => Promise<void>;
         "index": number;
         "minHeight": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "setIndex": (index: number) => Promise<void>;
         "setType": (type: PanelType) => Promise<void>;
@@ -186,6 +204,9 @@ export namespace Components {
          */
         "hidePanel": (_index?: number) => Promise<void>;
         "isActive": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "showPanel": (index: number) => Promise<void>;
         "soloContent": boolean;
@@ -226,6 +247,9 @@ export namespace Components {
         "defaultValue": string;
         "disabled": boolean;
         "getValue": () => Promise<{ value: string; label: string; }>;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "name": string;
     }
@@ -237,6 +261,9 @@ export namespace Components {
          */
         "hide": () => Promise<void>;
         "isShown": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         /**
           * Show the sidebar (nothing happens when it is already shown)
@@ -252,6 +279,9 @@ export namespace Components {
     interface DsSlider {
         "goTo": (itemIndex: number) => Promise<void>;
         "initialize": () => Promise<void>;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "next": (step?: number, startPosition?: number) => Promise<void>;
         "params": DSSliderParams | string;
@@ -274,6 +304,9 @@ export namespace Components {
     }
     interface DsText {
         "inline": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "sub": boolean;
         "sup": boolean;
@@ -284,6 +317,9 @@ export namespace Components {
         "article": boolean;
         "block": boolean;
         "form": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "page": boolean;
         "section": boolean;
@@ -292,6 +328,9 @@ export namespace Components {
     }
     interface DsTitleBar {
         "ctx": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
     }
     /**
@@ -314,6 +353,9 @@ export namespace Components {
           * The messages, one toast each: an array, or a comma-separated string.
          */
         "messages": string | string[];
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         /**
           * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
@@ -328,6 +370,9 @@ export namespace Components {
     interface DsToggle {
         "checked": boolean;
         "disabled": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "name": string;
         "setChecked": (checked: boolean) => Promise<void>;
@@ -349,6 +394,9 @@ export namespace Components {
          */
         "count": number[] | string;
         "disabled": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         "name": string;
         "type": string;
@@ -372,6 +420,9 @@ export namespace Components {
           * Used for applying modifier on main container
          */
         "mode": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         /**
           * @type {string} Tooltip position (top, left, right or bottom)
@@ -391,6 +442,9 @@ export namespace Components {
           * A disabled trigger does not call the action.
          */
         "disabled": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods": string | string[];
         /**
           * Event of the trigger that calls the action.
@@ -406,7 +460,10 @@ export namespace Components {
         "autoplay": boolean;
         "controls": boolean;
         "loop": boolean;
-        "mods": string[];
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
+        "mods": string | string[];
         "mute": () => Promise<void>;
         "pause": () => Promise<void>;
         "play": () => Promise<void>;
@@ -909,7 +966,7 @@ declare namespace LocalJSX {
         "form"?: boolean;
         "modal"?: boolean;
         /**
-          * List of modifiers
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods"?: string | string[];
         /**
@@ -925,6 +982,9 @@ declare namespace LocalJSX {
     interface DsCombo {
         "customLabel"?: string;
         "mode"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "multiple"?: boolean;
         "name"?: string;
@@ -955,6 +1015,9 @@ declare namespace LocalJSX {
         "cols"?: string | number;
         "dataUseRsp"?: boolean;
         "hGap"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "type"?: string | DSGridType;
         "vAlign"?: string | DSGridAlignment;
@@ -967,6 +1030,9 @@ declare namespace LocalJSX {
     interface DsHeading {
         "block"?: boolean;
         "imagePosition"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "section"?: boolean;
         "useContext"?: boolean;
@@ -983,6 +1049,9 @@ declare namespace LocalJSX {
     interface DsMarquee {
         "bgColor"?: string;
         "color"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "pauseOnHover"?: string | boolean;
         /**
@@ -1004,6 +1073,9 @@ declare namespace LocalJSX {
     }
     interface DsNav {
         "currentActiveItemId"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
     }
     interface DsNavItem {
@@ -1019,6 +1091,9 @@ declare namespace LocalJSX {
         "expanded"?: boolean;
         "index"?: number;
         "minHeight"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "onPanelHidden"?: (event: DsPanelCustomEvent<any>) => void;
         "onPanelHide"?: (event: DsPanelCustomEvent<any>) => void;
@@ -1028,6 +1103,9 @@ declare namespace LocalJSX {
     }
     interface DsPanelGroup {
         "isActive"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "soloContent"?: boolean;
         "type"?: PanelType;
@@ -1054,6 +1132,9 @@ declare namespace LocalJSX {
     interface DsSelect {
         "defaultValue"?: string;
         "disabled"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "name"?: string;
         "onValueChange"?: (event: DsSelectCustomEvent<any>) => void;
@@ -1062,6 +1143,9 @@ declare namespace LocalJSX {
         "ctx"?: boolean;
         "hPos"?: 'left' | 'right';
         "isShown"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "onSidebarHidden"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarHide"?: (event: DsSidebarCustomEvent<any>) => void;
@@ -1070,6 +1154,9 @@ declare namespace LocalJSX {
         "vPos"?: 'top' | 'bottom';
     }
     interface DsSlider {
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "onSliderEvent"?: (event: DsSliderCustomEvent<{ slide: string; direction: number; currentIndex?: number }>) => void;
         "params"?: DSSliderParams | string;
@@ -1085,6 +1172,9 @@ declare namespace LocalJSX {
     }
     interface DsText {
         "inline"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "sub"?: boolean;
         "sup"?: boolean;
@@ -1095,6 +1185,9 @@ declare namespace LocalJSX {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "page"?: boolean;
         "section"?: boolean;
@@ -1103,6 +1196,9 @@ declare namespace LocalJSX {
     }
     interface DsTitleBar {
         "ctx"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
     }
     /**
@@ -1120,6 +1216,9 @@ declare namespace LocalJSX {
           * The messages, one toast each: an array, or a comma-separated string.
          */
         "messages"?: string | string[];
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "onToasterHidden"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterHide"?: (event: DsToasterCustomEvent<any>) => void;
@@ -1137,6 +1236,9 @@ declare namespace LocalJSX {
     interface DsToggle {
         "checked"?: boolean;
         "disabled"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "name"?: string;
         "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
@@ -1152,6 +1254,9 @@ declare namespace LocalJSX {
          */
         "count"?: number[] | string;
         "disabled"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         "name"?: string;
         "onToggleValueChange"?: (event: DsToggleGroupCustomEvent<any>) => void;
@@ -1176,6 +1281,9 @@ declare namespace LocalJSX {
           * Used for applying modifier on main container
          */
         "mode"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         /**
           * @type {string} Tooltip position (top, left, right or bottom)
@@ -1195,6 +1303,9 @@ declare namespace LocalJSX {
           * A disabled trigger does not call the action.
          */
         "disabled"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
         "mods"?: string | string[];
         /**
           * Event of the trigger that calls the action.
@@ -1210,7 +1321,10 @@ declare namespace LocalJSX {
         "autoplay"?: boolean;
         "controls"?: boolean;
         "loop"?: boolean;
-        "mods"?: string[];
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+         */
+        "mods"?: string | string[];
         "playsinline"?: boolean;
         "poster"?: string;
         "sources"?: string | string[];

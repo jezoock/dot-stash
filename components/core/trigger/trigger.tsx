@@ -1,6 +1,5 @@
-import { Element, Prop, Component, Host, h, Watch } from '@stencil/core';
-import { fromJSON, toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { Element, Prop, Component, Host, h } from '@stencil/core';
+import { fromJSON, toClassList } from '../../utils/props';
 
 type TargetComponent = undefined | typeof window | typeof document | Element;
 
@@ -14,7 +13,6 @@ type TargetComponent = undefined | typeof window | typeof document | Element;
 })
 export class DSTrigger {
   targetComponent: TargetComponent;
-  CSSClassList: CssClassList;
 
   @Element() hostContainer: HTMLElement;
 
@@ -27,21 +25,13 @@ export class DSTrigger {
   /** The target: a CSS selector, `window` or `document`. */
   @Prop() target: string;
   @Prop() type: 'button' | 'control' | 'link' = 'control';
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList(`ds-${this.type}`, toArray(mods));
-  }
 
   //#region LYFECYCLE CALLBACKS
 
   constructor() {
     this.eventHandler = this.eventHandler.bind(this);
-  }
-
-  componentWillLoad() {
-    this.CSSClassList = toClassList(`ds-${this.type}`, toArray(this.mods));
   }
 
   connectedCallback() {
@@ -85,7 +75,7 @@ export class DSTrigger {
 
   render() {
     return (
-      <Host class={this.CSSClassList}>
+      <Host class={toClassList(`ds-${this.type}`, this.mods)}>
         <slot />
       </Host>
     );

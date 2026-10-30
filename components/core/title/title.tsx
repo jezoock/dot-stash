@@ -1,14 +1,12 @@
-import { Component, h, Prop, Watch, Host } from '@stencil/core';
-import { toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { Component, h, Prop, Host } from '@stencil/core';
+import { toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-title',
   styleUrl: 'title.scss',
 })
 export class DSTitle {
-  CSSClassList: CssClassList;
-
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ reflect: true }) article: boolean;
   @Prop({ reflect: true }) form: boolean;
@@ -18,18 +16,9 @@ export class DSTitle {
   @Prop({ reflect: true }) sub: boolean;
   @Prop({ reflect: true }) sup: boolean;
 
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-title', toArray(mods));
-  }
-
-  componentWillLoad() {
-    this.CSSClassList = toClassList('ds-title', toArray(this.mods));
-  }
-
   render() {
     return (
-      <Host class={this.CSSClassList}>
+      <Host class={toClassList('ds-title', this.mods)}>
         <slot />
       </Host>
     );

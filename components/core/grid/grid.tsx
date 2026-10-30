@@ -1,6 +1,5 @@
 import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core';
 import { toClassList, toNumber } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
 import { DSGridAlignment, DSGridItemStyles, DSGridParams, DSGridType } from './grid.types';
 
 @Component({
@@ -8,13 +7,13 @@ import { DSGridAlignment, DSGridItemStyles, DSGridParams, DSGridType } from './g
   styleUrl: 'grid.scss',
 })
 export class DSGrid {
-  CSSClassList: CssClassList;
   options: DSGridParams;
 
   @Element() container: HTMLDivElement;
 
   @Prop({ reflect: true }) dataUseRsp = true;
-  @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) type: string | DSGridType = 'fixed';
   @Prop({ mutable: true, reflect: true }) cols: string | number = 1;
   @Prop({ mutable: true, reflect: true }) hGap = '0';
@@ -29,8 +28,7 @@ export class DSGrid {
   }
 
   @Watch('mods')
-  modsChangeHandler(newMods: string | string[]) {
-    this.CSSClassList = toClassList('ds-grid', newMods);
+  modsChangeHandler() {
     this.processChildren();
   }
 
@@ -77,7 +75,6 @@ export class DSGrid {
   }
 
   componentWillLoad() {
-    this.CSSClassList = toClassList('ds-grid', this.mods);
     const { type: typeFromProps, hGap, vGap, align: alignFromProps, vAlign: vAlignFromProps, cols: colsFromProps } = this;
     const cols = toNumber(colsFromProps);
     const type = typeFromProps as DSGridType;
@@ -142,7 +139,7 @@ export class DSGrid {
     return (
       <div
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-grid', this.mods),
           [`--${this.options.type}`]: true,
           [`--align-${this.options.align}`]: true,
           [`--v-align-${this.options.vAlign}`]: true,

@@ -1,5 +1,4 @@
-import { Component, Element, h, Host, Prop, Method, Event, EventEmitter, Watch } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { Component, Element, h, Host, Prop, Method, Event, EventEmitter } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 import SIDEBAR_POSITION from '../../utils/interfaces/sidebar-position';
 
@@ -10,24 +9,14 @@ import SIDEBAR_POSITION from '../../utils/interfaces/sidebar-position';
 export class DSSidebar {
   //#region PROPS
 
-  CSSClassList: CssClassList;
-
   @Element() container: HTMLDsSidebarElement;
 
   @Prop({ reflect: true }) ctx = true;
   @Prop({ mutable: true, reflect: true }) isShown = false;
   @Prop({ reflect: true }) hPos: 'left' | 'right' = SIDEBAR_POSITION.LEFT;
   @Prop({ reflect: true }) vPos: 'top' | 'bottom' = SIDEBAR_POSITION.TOP;
-  @Prop({ reflect: true }) mods: string | string[] = '';
-
-  //#endregion
-
-  //#region WATCHERS
-
-  @Watch('mods')
-  modsChangeHandler(newMods: string | string[]) {
-    this.computeCSSClasslist(newMods);
-  }
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
 
   //#endregion
 
@@ -81,10 +70,6 @@ export class DSSidebar {
 
   //#region TOOLS
 
-  computeCSSClasslist(modifiers: string | string[]) {
-    this.CSSClassList = toClassList('ds-sidebar', modifiers);
-  }
-
   containerRefresh() {
     const windowHeight = window.innerHeight;
     const containerOffset = this.container.offsetTop;
@@ -99,10 +84,6 @@ export class DSSidebar {
 
   constructor() {
     this.animationEndHandler = this.animationEndHandler.bind(this);
-  }
-
-  componentWillLoad() {
-    this.computeCSSClasslist(this.mods);
   }
 
   disconnectedCallback() {
@@ -128,7 +109,7 @@ export class DSSidebar {
     return (
       <Host
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-sidebar', this.mods),
           '--shown': this.isShown,
           '--hidden': !this.isShown,
           [`--h-pos-${this.hPos}`]: true,

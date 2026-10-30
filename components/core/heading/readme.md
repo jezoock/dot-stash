@@ -7,13 +7,13 @@
 
 ## Properties
 
-| Property        | Attribute        | Description | Type                 | Default          |
-| --------------- | ---------------- | ----------- | -------------------- | ---------------- |
-| `block`         | `block`          |             | `boolean`            | `undefined`      |
-| `imagePosition` | `image-position` |             | `string`             | `'block-before'` |
-| `mods`          | `mods`           |             | `string \| string[]` | `[]`             |
-| `section`       | `section`        |             | `boolean`            | `undefined`      |
-| `useContext`    | `use-context`    |             | `boolean`            | `undefined`      |
+| Property        | Attribute        | Description                                                                                        | Type                 | Default          |
+| --------------- | ---------------- | -------------------------------------------------------------------------------------------------- | -------------------- | ---------------- |
+| `block`         | `block`          |                                                                                                    | `boolean`            | `undefined`      |
+| `imagePosition` | `image-position` |                                                                                                    | `string`             | `'block-before'` |
+| `mods`          | `mods`           | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`             |
+| `section`       | `section`        |                                                                                                    | `boolean`            | `undefined`      |
+| `useContext`    | `use-context`    |                                                                                                    | `boolean`            | `undefined`      |
 
 
 ## Dependencies

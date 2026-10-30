@@ -1,6 +1,5 @@
-import { Component, h, Prop, Watch, Element, Host } from '@stencil/core';
-import { toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { Component, h, Prop, Element, Host } from '@stencil/core';
+import { toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-heading',
@@ -8,7 +7,6 @@ import CssClassList from '../../utils/interfaces/css-class-list';
 })
 export class DSHeading {
   contextName = 'header';
-  CSSClassList: CssClassList;
   titleProps: {
     block?: boolean;
     page?: boolean;
@@ -22,15 +20,11 @@ export class DSHeading {
   @Element() container: HTMLElement;
 
   @Prop() useContext: boolean;
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ reflect: true, mutable: true }) section: boolean;
   @Prop({ reflect: true, mutable: true }) block: boolean;
   @Prop({ reflect: true, mutable: true }) imagePosition: string = 'block-before';
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-heading', toArray(mods));
-  }
 
   connectedCallback() {
     this.hasImage = this.container.querySelector("[slot='image']") !== null;
@@ -39,7 +33,6 @@ export class DSHeading {
   }
 
   componentWillLoad() {
-    this.CSSClassList = toClassList('ds-heading', toArray(this.mods));
     const { section, block } = this;
     this.titleProps = {
       section,
@@ -51,7 +44,7 @@ export class DSHeading {
     return (
       <Host
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-heading', this.mods),
           [`--${this.imagePosition}`]: true,
         }}
       >

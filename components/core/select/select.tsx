@@ -1,13 +1,10 @@
-import { Component, h, Method, Prop, State, Event, Host, Element, EventEmitter, Watch } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
-import { toArray, toClassList } from '../../utils/props';
+import { Component, h, Method, Prop, State, Event, Host, Element, EventEmitter } from '@stencil/core';
+import { toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-select',
 })
 export class DSSelect {
-  CSSClassList: CssClassList;
-
   @Element() hostContainer: HTMLElement;
 
   @State() value: string = '';
@@ -16,13 +13,9 @@ export class DSSelect {
 
   @Prop() name: string;
   @Prop({ reflect: true }) disabled: boolean;
-  @Prop({ reflect: true, mutable: true }) mods: string | string[] = [];
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ reflect: true, mutable: true }) defaultValue: string;
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-select', mods);
-  }
 
   @Event() valueChange: EventEmitter;
 
@@ -70,7 +63,6 @@ export class DSSelect {
   }
 
   componentWillLoad() {
-    this.CSSClassList = toClassList('ds-select', toArray(this.mods));
     if (this.defaultValue) {
       this.value = this.defaultValue;
     }
@@ -80,7 +72,7 @@ export class DSSelect {
     return (
       <Host
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-select', this.mods),
           '--opened': this.opened,
           '--disabled': this.disabled,
         }}

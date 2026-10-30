@@ -7,16 +7,16 @@
 
 ## Properties
 
-| Property  | Attribute | Description                                                 | Type                 | Default     |
-| --------- | --------- | ----------------------------------------------------------- | -------------------- | ----------- |
-| `article` | `article` |                                                             | `boolean`            | `undefined` |
-| `block`   | `block`   |                                                             | `boolean`            | `undefined` |
-| `form`    | `form`    |                                                             | `boolean`            | `undefined` |
-| `modal`   | `modal`   |                                                             | `boolean`            | `undefined` |
-| `mods`    | `mods`    | List of modifiers                                           | `string \| string[]` | `[]`        |
-| `name`    | `name`    | Use to derivate the main class name                         | `string`             | `undefined` |
-| `section` | `section` |                                                             | `boolean`            | `undefined` |
-| `type`    | `type`    | Block type classname ( also used to build block classname ) | `string`             | `undefined` |
+| Property  | Attribute | Description                                                                                        | Type                 | Default     |
+| --------- | --------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `article` | `article` |                                                                                                    | `boolean`            | `undefined` |
+| `block`   | `block`   |                                                                                                    | `boolean`            | `undefined` |
+| `form`    | `form`    |                                                                                                    | `boolean`            | `undefined` |
+| `modal`   | `modal`   |                                                                                                    | `boolean`            | `undefined` |
+| `mods`    | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
+| `name`    | `name`    | Use to derivate the main class name                                                                | `string`             | `undefined` |
+| `section` | `section` |                                                                                                    | `boolean`            | `undefined` |
+| `type`    | `type`    | Block type classname ( also used to build block classname )                                        | `string`             | `undefined` |
 
 
 ## Methods

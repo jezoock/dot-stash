@@ -1,6 +1,5 @@
-import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
 import { DSToggleValue } from './toggle.types';
 
 /** The properties `setProps()` can write. */
@@ -17,24 +16,14 @@ const DS_TOGGLE_PROPS = ['mods', 'value', 'name', 'type', 'disabled', 'checked']
 export class DSToggle {
   @Element() hostContainer: HTMLDsToggleElement;
 
-  @Prop({ mutable: true }) mods: string | string[] = [];
+  // Mutable: setProps() writes it.
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) value: DSToggleValue;
   @Prop({ mutable: true, reflect: true }) name: string;
   @Prop({ mutable: true, reflect: true }) type: 'radio' | 'icon' | 'checkbox' | 'switch' | string = 'switch';
   @Prop({ reflect: true, mutable: true }) disabled: boolean;
   @Prop({ reflect: true, mutable: true }) checked: boolean;
-
-  CSSClassList: CssClassList;
-
-  @Watch('mods')
-  modsWatcher(newMods) {
-    this.CSSClassList = toClassList('ds-toggle', [...toArray(newMods ?? []), this.type]);
-  }
-
-  @Watch('type')
-  typeWatcher() {
-    this.CSSClassList = toClassList('ds-toggle', [...toArray(this.mods ?? []), this.type]);
-  }
 
   @Event() toggle: EventEmitter;
 
@@ -67,10 +56,6 @@ export class DSToggle {
     });
   }
 
-  componentWillLoad() {
-    this.CSSClassList = toClassList('ds-toggle', [...toArray(this.mods ?? []), this.type]);
-  }
-
   toggleClickHandler = () => {
     const { checked: previousChecked, value, name } = this;
 
@@ -86,12 +71,7 @@ export class DSToggle {
 
   render() {
     return (
-      <Host
-        class={{
-          ...this.CSSClassList,
-        }}
-        onClick={this.toggleClickHandler}
-      >
+      <Host class={toClassList('ds-toggle', [...toArray(this.mods ?? []), this.type])} onClick={this.toggleClickHandler}>
         <slot />
       </Host>
     );

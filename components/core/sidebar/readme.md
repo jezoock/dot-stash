@@ -7,13 +7,13 @@
 
 ## Properties
 
-| Property  | Attribute  | Description | Type                 | Default                 |
-| --------- | ---------- | ----------- | -------------------- | ----------------------- |
-| `ctx`     | `ctx`      |             | `boolean`            | `true`                  |
-| `hPos`    | `h-pos`    |             | `"left" \| "right"`  | `SIDEBAR_POSITION.LEFT` |
-| `isShown` | `is-shown` |             | `boolean`            | `false`                 |
-| `mods`    | `mods`     |             | `string \| string[]` | `''`                    |
-| `vPos`    | `v-pos`    |             | `"bottom" \| "top"`  | `SIDEBAR_POSITION.TOP`  |
+| Property  | Attribute  | Description                                                                                        | Type                 | Default                 |
+| --------- | ---------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------------------- |
+| `ctx`     | `ctx`      |                                                                                                    | `boolean`            | `true`                  |
+| `hPos`    | `h-pos`    |                                                                                                    | `"left" \| "right"`  | `SIDEBAR_POSITION.LEFT` |
+| `isShown` | `is-shown` |                                                                                                    | `boolean`            | `false`                 |
+| `mods`    | `mods`     | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`                    |
+| `vPos`    | `v-pos`    |                                                                                                    | `"bottom" \| "top"`  | `SIDEBAR_POSITION.TOP`  |
 
 
 ## Events

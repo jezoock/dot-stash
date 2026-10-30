@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                 | Default     |
-| -------- | --------- | ----------- | -------------------- | ----------- |
-| `ctx`    | `ctx`     |             | `boolean`            | `undefined` |
-| `mods`   | `mods`    |             | `string \| string[]` | `[]`        |
+| Property | Attribute | Description                                                                                        | Type                 | Default     |
+| -------- | --------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `ctx`    | `ctx`     |                                                                                                    | `boolean`            | `undefined` |
+| `mods`   | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
 
 
 ## Dependencies

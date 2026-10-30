@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property              | Attribute                | Description | Type                 | Default     |
-| --------------------- | ------------------------ | ----------- | -------------------- | ----------- |
-| `currentActiveItemId` | `current-active-item-id` |             | `string`             | `undefined` |
-| `mods`                | `mods`                   |             | `string \| string[]` | `undefined` |
+| Property              | Attribute                | Description                                                                                        | Type                 | Default     |
+| --------------------- | ------------------------ | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `currentActiveItemId` | `current-active-item-id` |                                                                                                    | `string`             | `undefined` |
+| `mods`                | `mods`                   | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
 
 
 ----------------------------------------------

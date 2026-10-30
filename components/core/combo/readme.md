@@ -7,18 +7,18 @@
 
 ## Properties
 
-| Property         | Attribute      | Description | Type                 | Default                                                         |
-| ---------------- | -------------- | ----------- | -------------------- | --------------------------------------------------------------- |
-| `customLabel`    | `custom-label` |             | `string`             | `''`                                                            |
-| `mode`           | `mode`         |             | `string`             | `''`                                                            |
-| `mods`           | `mods`         |             | `string \| string[]` | `[]`                                                            |
-| `multiple`       | `multiple`     |             | `boolean`            | `false`                                                         |
-| `name`           | `name`         |             | `string`             | `undefined`                                                     |
-| `options`        | `options`      |             | `any`                | `undefined`                                                     |
-| `overlay`        | `overlay`      |             | `boolean`            | `false`                                                         |
-| `position`       | `position`     |             | `string`             | `'left'`                                                        |
-| `selected`       | --             |             | `DSOption`           | `{     id: '',     index: -1,     name: '',     value: '',   }` |
-| `selectedOption` | --             |             | `DSOption[]`         | `[]`                                                            |
+| Property         | Attribute      | Description                                                                                        | Type                 | Default                                                         |
+| ---------------- | -------------- | -------------------------------------------------------------------------------------------------- | -------------------- | --------------------------------------------------------------- |
+| `customLabel`    | `custom-label` |                                                                                                    | `string`             | `''`                                                            |
+| `mode`           | `mode`         |                                                                                                    | `string`             | `''`                                                            |
+| `mods`           | `mods`         | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`                                                            |
+| `multiple`       | `multiple`     |                                                                                                    | `boolean`            | `false`                                                         |
+| `name`           | `name`         |                                                                                                    | `string`             | `undefined`                                                     |
+| `options`        | `options`      |                                                                                                    | `any`                | `undefined`                                                     |
+| `overlay`        | `overlay`      |                                                                                                    | `boolean`            | `false`                                                         |
+| `position`       | `position`     |                                                                                                    | `string`             | `'left'`                                                        |
+| `selected`       | --             |                                                                                                    | `DSOption`           | `{     id: '',     index: -1,     name: '',     value: '',   }` |
+| `selectedOption` | --             |                                                                                                    | `DSOption[]`         | `[]`                                                            |
 
 
 ## Events

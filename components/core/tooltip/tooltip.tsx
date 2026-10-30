@@ -1,6 +1,5 @@
-import { Component, Element, h, Listen, Prop, State, Watch } from '@stencil/core';
+import { Component, Element, h, Listen, Prop, State } from '@stencil/core';
 import { TooltipPosition } from './tooltip-position.enum';
-import CssClassList from '../../utils/interfaces/css-class-list';
 import { toClassList } from '../../utils/props';
 /**
  * Simple icon tooltip component
@@ -35,18 +34,13 @@ export class DSTooltip {
   @Prop({ mutable: true, reflect: true, attribute: 'disabled' }) isDisabled = false;
   @Prop({ mutable: true }) hasArrow = true;
   @Prop({ mutable: true }) isActive = true;
-  @Prop({ mutable: true, reflect: true }) mods: string | string[] = '';
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true }) containerSelector = '';
 
   @State() isShown = false;
 
   private isTouchMobile: boolean = 'ontouchstart' in window;
-  CSSClassList: CssClassList;
-
-  @Watch('mods')
-  modsChangeHandler() {
-    this.computeCSSClasslist();
-  }
 
   @Listen('request_tooltipShow_event')
   request_tooltipShow_eventHandler() {
@@ -62,20 +56,8 @@ export class DSTooltip {
     this.toggle(mustShow);
   }
 
-  //#region TOOLS
-
-  computeCSSClasslist() {
-    this.CSSClassList = toClassList('ds-tooltip', this.mods);
-  }
-
-  //#endregion
-
   public constructor() {
     this.tooltipHandler = this.tooltipHandler.bind(this);
-  }
-
-  protected componentWillLoad() {
-    this.computeCSSClasslist();
   }
 
   componentDidRender() {
@@ -126,7 +108,7 @@ export class DSTooltip {
     return (
       <div
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-tooltip', this.mods),
           '--is-shown': this.isShown,
           '--icon': !!this.icon,
           [`--${this.icon}`]: this.icon !== '',

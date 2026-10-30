@@ -1,6 +1,5 @@
-import { Component, Element, Fragment, h, Host, Prop, State, Watch, Method } from '@stencil/core';
+import { Component, Element, Fragment, h, Host, Prop, State, Method } from '@stencil/core';
 import { isTrue, toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
 import debounce from '../../utils/debounce';
 
 type VideoFormat = 'mp4' | 'mov' | 'wmv' | 'webm' | 'avi' | 'flv' | 'mks' | 'mts';
@@ -19,7 +18,8 @@ const allowedVideoFormat: VideoFormat[] = ['mp4', 'mov', 'wmv', 'webm', 'avi', '
 export class DSVideo {
   @Element() container: HTMLDivElement;
 
-  @Prop({ mutable: true, reflect: true }) mods: string[] = [];
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) sources: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) poster: string;
   @Prop({ mutable: true, reflect: true }) autoplay = false;
@@ -32,20 +32,10 @@ export class DSVideo {
   @State() isMuted = false;
 
   isReady = false;
-  CSSClassList: CssClassList;
   useControls = false;
   playOnload = false;
   playOnLoop = false;
   videoSources: VideoSources;
-
-  //#region PROP WATCHERS
-
-  @Watch('mods')
-  dsmodsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-video', toArray(mods));
-  }
-
-  //#endregion
 
   //#region METHODS
 
@@ -101,7 +91,6 @@ export class DSVideo {
   }
 
   componentWillLoad() {
-    this.CSSClassList = toClassList('ds-video', toArray(this.mods));
     this.useControls = isTrue(this.controls);
     this.playOnload = isTrue(this.autoplay);
     this.playOnLoop = isTrue(this.loop);
@@ -183,7 +172,7 @@ export class DSVideo {
     return (
       <Host
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-video', this.mods),
           [`--playing`]: this.isPlaying,
           [`--paused`]: this.isPaused,
           [`--muted`]: this.isMuted,

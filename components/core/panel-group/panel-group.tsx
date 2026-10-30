@@ -1,6 +1,5 @@
 import { Component, Element, h, Host, Listen, Prop, Watch, Method } from '@stencil/core';
-import CssClassList from '../../utils/interfaces/css-class-list';
-import { toArray, toClassList } from '../../utils/props';
+import { toClassList } from '../../utils/props';
 import { PanelType } from '../panel/panel.types';
 
 @Component({
@@ -8,12 +7,12 @@ import { PanelType } from '../panel/panel.types';
   styleUrl: 'panel-group.scss',
 })
 export class DSPanelGroup {
-  CSSClassList: CssClassList;
   activeItemIndex = 0;
 
   @Element() container: HTMLElement;
 
   @Prop({ reflect: true, mutable: true }) type: PanelType = 'tab';
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ attribute: 'active', reflect: true }) isActive = true;
   @Prop({ reflect: true }) soloContent = false;
@@ -24,11 +23,6 @@ export class DSPanelGroup {
     if (this.isActive) {
       items.forEach(item => item.setType(type));
     }
-  }
-
-  @Watch('mods')
-  modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = toClassList('ds-panel-group', toArray(mods));
   }
 
   @Listen('panelShow')
@@ -59,10 +53,6 @@ export class DSPanelGroup {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- keeps the public signature until hiding is implemented
   async hidePanel(_index?: number) {}
 
-  componentWillLoad() {
-    this.CSSClassList = toClassList('ds-panel-group', toArray(this.mods));
-  }
-
   async componentDidLoad() {
     const { type } = this;
     const items = await this.getItems();
@@ -83,7 +73,7 @@ export class DSPanelGroup {
 
   render() {
     return (
-      <Host class={this.CSSClassList}>
+      <Host class={toClassList('ds-panel-group', this.mods)}>
         <slot />
       </Host>
     );

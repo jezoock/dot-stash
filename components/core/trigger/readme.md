@@ -12,14 +12,14 @@ Calls a method of a target element on an event: `<ds-trigger target="#slider" ac
 
 ## Properties
 
-| Property   | Attribute  | Description                                                                           | Type                              | Default     |
-| ---------- | ---------- | ------------------------------------------------------------------------------------- | --------------------------------- | ----------- |
-| `action`   | `action`   | Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`). | `string`                          | `undefined` |
-| `disabled` | `disabled` | A disabled trigger does not call the action.                                          | `boolean`                         | `false`     |
-| `mods`     | `mods`     |                                                                                       | `string \| string[]`              | `[]`        |
-| `on`       | `on`       | Event of the trigger that calls the action.                                           | `string`                          | `'click'`   |
-| `target`   | `target`   | The target: a CSS selector, `window` or `document`.                                   | `string`                          | `undefined` |
-| `type`     | `type`     |                                                                                       | `"button" \| "control" \| "link"` | `'control'` |
+| Property   | Attribute  | Description                                                                                        | Type                              | Default     |
+| ---------- | ---------- | -------------------------------------------------------------------------------------------------- | --------------------------------- | ----------- |
+| `action`   | `action`   | Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`).              | `string`                          | `undefined` |
+| `disabled` | `disabled` | A disabled trigger does not call the action.                                                       | `boolean`                         | `false`     |
+| `mods`     | `mods`     | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]`              | `[]`        |
+| `on`       | `on`       | Event of the trigger that calls the action.                                                        | `string`                          | `'click'`   |
+| `target`   | `target`   | The target: a CSS selector, `window` or `document`.                                                | `string`                          | `undefined` |
+| `type`     | `type`     |                                                                                                    | `"button" \| "control" \| "link"` | `'control'` |
 
 
 ## Dependencies

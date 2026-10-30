@@ -1,7 +1,6 @@
 import { Component, h, Prop, State, Event, EventEmitter, Watch, Method } from '@stencil/core';
 import uuid from '../../utils/uuid';
-import { toArray, toClassList } from '../../utils/props';
-import CssClassList from '../../utils/interfaces/css-class-list';
+import { toClassList } from '../../utils/props';
 import { DSOption } from './combo.types';
 
 @Component({
@@ -9,8 +8,6 @@ import { DSOption } from './combo.types';
   styleUrl: 'combo.scss',
 })
 export class DSCombo {
-  CSSClassList: CssClassList;
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stencil derives the attribute handling from the prop type; a precise type would change it
   @Prop({ mutable: true, reflect: true }) options: any;
   @Prop() name: string;
@@ -33,16 +30,8 @@ export class DSCombo {
 
   @Event() optionSelected: EventEmitter;
 
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
-  @Watch('mods')
-  modsChangeHandler() {
-    this.processClassList();
-  }
-
-  processClassList = () => {
-    const modifiers = toArray(this.mods);
-    this.CSSClassList = toClassList('ds-combo', modifiers);
-  };
 
   @Watch('options')
   optionsChangeHandler(options) {
@@ -83,7 +72,6 @@ export class DSCombo {
 
   componentWillLoad() {
     this.optionsHandler(this.options);
-    this.processClassList();
   }
 
   optionsHandler(options, selected = null) {
@@ -174,7 +162,7 @@ export class DSCombo {
       <div
         id={'ds-combo-' + (this.name || document.querySelectorAll('ds-combo').length.toString())}
         class={{
-          ...this.CSSClassList,
+          ...toClassList('ds-combo', this.mods),
           '--open': this.showCombo,
           [`ds-combo-${this.uid}`]: true,
           [`--position-${this.position}`]: true,
