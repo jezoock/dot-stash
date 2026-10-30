@@ -44,6 +44,8 @@ npm run build:all
 
 One gulp task has no npm script: `npx gulp generateImages` optimizes the files in `images/` and writes them, plus a WebP copy of each, to `dist/images/`.
 
+CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check` and `lint` on every push and pull request. The lint step is non-blocking until the existing lint errors are fixed.
+
 ## Project structure
 
 ```

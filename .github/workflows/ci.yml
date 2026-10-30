@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build, format and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          # No end-to-end tests yet, so the Chromium download is not needed.
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Build
+        run: npm run build:all
+
+      - name: Check build output
+        run: |
+          missing=0
+          for file in dist/index.js dist/index.cjs.js dist/types/index.d.ts dist/collection/collection-manifest.json dist/dot-stash/dot-stash.esm.js loader/index.js dist/css/style.css; do
+            if [ ! -s "$file" ]; then
+              echo "::error::Missing or empty build output: $file"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Check formatting
+        run: npm run format:check
+
+      # Non-blocking until the existing lint errors are fixed.
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
