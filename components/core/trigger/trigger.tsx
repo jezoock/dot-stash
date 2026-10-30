@@ -4,6 +4,10 @@ import CssClassList from '../../utils/interfaces/css-class-list';
 
 type TargetComponent = undefined | typeof window | typeof document | Element;
 
+/**
+ * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+ * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+ */
 @Component({
   tag: 'ds-trigger',
   styleUrl: 'trigger.scss',
@@ -14,9 +18,13 @@ export class DSTrigger {
 
   @Element() hostContainer: HTMLElement;
 
+  /** A disabled trigger does not call the action. */
   @Prop({ reflect: true }) disabled = false;
+  /** Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`). */
   @Prop({ reflect: true }) action: string;
-  @Prop({ reflect: true }) on: string;
+  /** Event of the trigger that calls the action. */
+  @Prop({ reflect: true }) on = 'click';
+  /** The target: a CSS selector, `window` or `document`. */
   @Prop() target: string;
   @Prop() type: 'button' | 'control' | 'link' = 'control';
   @Prop({ reflect: true }) mods: string | string[] = [];
@@ -67,7 +75,7 @@ export class DSTrigger {
   //#region HANDLERS
 
   eventHandler() {
-    if (this.targetComponent) {
+    if (this.targetComponent && !this.disabled) {
       const [action, args] = this.action.split(/:(.*)/g);
       this.targetComponent[action](...fromJSON(args || []));
     }

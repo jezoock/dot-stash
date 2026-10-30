@@ -378,11 +378,27 @@ export namespace Components {
          */
         "position": TooltipPosition;
     }
+    /**
+     * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+     * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     */
     interface DsTrigger {
+        /**
+          * Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`).
+         */
         "action": string;
+        /**
+          * A disabled trigger does not call the action.
+         */
         "disabled": boolean;
         "mods": string | string[];
+        /**
+          * Event of the trigger that calls the action.
+         */
         "on": string;
+        /**
+          * The target: a CSS selector, `window` or `document`.
+         */
         "target": string;
         "type": 'button' | 'control' | 'link';
     }
@@ -816,6 +832,10 @@ declare global {
         prototype: HTMLDsTooltipElement;
         new (): HTMLDsTooltipElement;
     };
+    /**
+     * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+     * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     */
     interface HTMLDsTriggerElement extends Components.DsTrigger, HTMLStencilElement {
     }
     var HTMLDsTriggerElement: {
@@ -1162,11 +1182,27 @@ declare namespace LocalJSX {
          */
         "position"?: TooltipPosition;
     }
+    /**
+     * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+     * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     */
     interface DsTrigger {
+        /**
+          * Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`).
+         */
         "action"?: string;
+        /**
+          * A disabled trigger does not call the action.
+         */
         "disabled"?: boolean;
         "mods"?: string | string[];
+        /**
+          * Event of the trigger that calls the action.
+         */
         "on"?: string;
+        /**
+          * The target: a CSS selector, `window` or `document`.
+         */
         "target"?: string;
         "type"?: 'button' | 'control' | 'link';
     }
@@ -1277,6 +1313,10 @@ declare module "@stencil/core" {
              * Simple icon tooltip component
              */
             "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
+            /**
+             * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+             * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+             */
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
         }
