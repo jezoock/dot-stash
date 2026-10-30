@@ -233,18 +233,18 @@ export namespace Components {
         "ctx": boolean;
         "hPos": 'left' | 'right';
         /**
-          * Hide the sidebar
+          * Hide the sidebar (nothing happens when it is already hidden)
          */
         "hide": () => Promise<void>;
         "isShown": boolean;
         "mods": string | string[];
         /**
-          * Show the sidebar
+          * Show the sidebar (nothing happens when it is already shown)
          */
         "show": () => Promise<void>;
         /**
           * Toggle the sidebar display
-          * @param mustShow Used to specify wether the sidebar must be shown or hidden
+          * @param mustShow Used to specify wether the sidebar must be shown or hidden; without it, the display is switched
          */
         "toggle": (mustShow?: boolean) => Promise<void>;
         "vPos": 'top' | 'bottom';

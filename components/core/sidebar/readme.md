@@ -30,7 +30,7 @@
 
 ### `hide() => Promise<void>`
 
-Hide the sidebar
+Hide the sidebar (nothing happens when it is already hidden)
 
 #### Returns
 
@@ -40,7 +40,7 @@ Type: `Promise<void>`
 
 ### `show() => Promise<void>`
 
-Show the sidebar
+Show the sidebar (nothing happens when it is already shown)
 
 #### Returns
 
@@ -54,9 +54,9 @@ Toggle the sidebar display
 
 #### Parameters
 
-| Name       | Type      | Description                                                |
-| ---------- | --------- | ---------------------------------------------------------- |
-| `mustShow` | `boolean` | Used to specify wether the sidebar must be shown or hidden |
+| Name       | Type      | Description                                                                                     |
+| ---------- | --------- | ----------------------------------------------------------------------------------------------- |
+| `mustShow` | `boolean` | Used to specify wether the sidebar must be shown or hidden; without it, the display is switched |
 
 #### Returns
 
