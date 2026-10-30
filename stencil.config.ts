@@ -1,4 +1,4 @@
-import { StencilConfig } from '@stencil/core/internal';
+import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
 
 export const config: Config = {
@@ -9,57 +9,23 @@ export const config: Config = {
     appendChildSlotFix: true,
     cloneNodeFix: true,
   },
-  /* bundles: [
-    {
-      components: [
-        'ds-page', 
-        'ds-heading', 
-        'ds-app-menu', 
-        'ds-nav', 
-        'ds-nav-item', 
-        'ds-product-block', 
-        'ds-account-block',
-        'ds-cart-block',
-        'ds-grid',
-        'ds-grid-item',
-        'ds-marquee',
-        'ds-trigger',
-        'ds-title',
-        'ds-text',
-        'ds-block',
-        'ds-rsp',
-        'ds-back-to-top-button',
-        'ds-slider',
-        'ds-slider-item',
-      ]
-    },
-  ], */
   plugins: [
-    sass({
-      includePaths: ['components/**/*.scss'],
-      /* injectGlobalPaths: [
-        'src/scss/variables/breakpoint.scss',
-        'src/scss/variables/palette.scss',
-        'src/scss/variables/typography.scss',
-        'src/scss/variables/spacing.scss',
-        'src/scss/tools/breakpoints.scss',
-        'src/scss/tools/typography.scss',
-        'src/scss/tools/colors.scss',
-        'src/scss/tools/theme.scss',
-      ] */
-    })
+    sass()
   ],
   outputTargets: [
     {
-      'type': 'www'
+      type: 'www',
+      // No generated service worker: Workbox would load its runtime from a third-party CDN.
+      serviceWorker: null
     },
     {
       type: 'dist',
-      dir: '../assets/components'
-      /* 
-      copy: [
-        { src: '../dist', dest: '../../../assets' }
-      ] */
+      dir: 'dist',
+      // Matches the "loader/" entry of package.json "files".
+      esmLoaderPath: '../loader',
+      // The gulp theme tasks write dist/css, dist/js and dist/images:
+      // do not let Stencil empty dist/ before each build.
+      empty: false
     }
   ],
 };

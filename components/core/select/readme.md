@@ -35,19 +35,6 @@ Type: `Promise<{ value: string; label: string; }>`
 
 
 
-## Dependencies
-
-### Used by
-
- - [pronto-field](../../pronto/pronto-content/form)
-
-### Graph
-```mermaid
-graph TD;
-  pronto-field --> ds-select
-  style ds-select fill:#f9f,stroke:#333,stroke-width:4px
-```
-
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

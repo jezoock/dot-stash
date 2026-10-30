@@ -134,12 +134,12 @@ Type: `Promise<number>`
 
 ### Used by
 
- - [ds-page](../../pronto/page)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-page --> ds-rsp
+  ds-main --> ds-rsp
   style ds-rsp fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

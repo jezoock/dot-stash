@@ -5,69 +5,120 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
 import { DSOption } from "./core/combo/combo";
 import { DSOption as DSOption1 } from "./core/dropdown/dropdown";
 import { DSGridAlignment, DSGridType } from "./core/grid/grid";
 import { DSGridItemStyles } from "./core/grid/grid";
-import { MediaPosition, MediaProps, MediaType, MediaUrlType } from "./pronto-content/configurator/types";
-import { DSOption as DSOption2 } from "./core/dropdown/dropdown";
-import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./core/map/map.type";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-import { AppLocale } from "../toSort-propal/page/page";
 import { PanelType } from "./core/panel/panel";
 import { PanelType as PanelType1 } from "./core/panel/panel";
-import { ProductBlockParams } from "./pronto/product-block/product-block";
-import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 import { DSSliderParams } from "./core/slider/slider";
 import { AnyHTMLElement } from "@stencil/core/internal";
-import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "../toSort-propal/toaster/toaster-positions.enum";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
+export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "../typescript/interfaces/sass-styles";
 export { DSOption } from "./core/combo/combo";
 export { DSOption as DSOption1 } from "./core/dropdown/dropdown";
 export { DSGridAlignment, DSGridType } from "./core/grid/grid";
 export { DSGridItemStyles } from "./core/grid/grid";
-export { MediaPosition, MediaProps, MediaType, MediaUrlType } from "./pronto-content/configurator/types";
-export { DSOption as DSOption2 } from "./core/dropdown/dropdown";
-export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./core/map/map.type";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-export { AppLocale } from "../toSort-propal/page/page";
 export { PanelType } from "./core/panel/panel";
 export { PanelType as PanelType1 } from "./core/panel/panel";
-export { ProductBlockParams } from "./pronto/product-block/product-block";
-export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
 export { DSSliderParams } from "./core/slider/slider";
 export { AnyHTMLElement } from "@stencil/core/internal";
-export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "../toSort-propal/toaster/toaster-positions.enum";
+export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
-    interface DsAccountBlock {
-        "dsIsDropdownEnabled": boolean;
-    }
-    interface DsAddress {
-    }
+    /**
+     * A simple component to load ajax content
+     * Version: 1.0
+     */
     interface DsAjax {
+        /**
+          * Event that will trigger the loading of the ajax content
+         */
         "on": 'load' | 'click';
+        /**
+          * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
+         */
+        "suffix": string;
+        /**
+          * Where to display the content, can be the component itself or an element specified by a css selector
+         */
         "target": 'self' | string;
     }
     interface DsApp {
-        "backToTop": () => Promise<void>;
-    }
-    interface DsAppMenu {
-    }
-    interface DsAuth {
-    }
-    interface DsBackToTopButton {
-        "offset": string | number;
-        "scrollBehavior": "smooth" | "instant" | "auto";
-    }
-    interface DsBanner {
-        "dsUrl": string;
+        "breakpointsFromProp": Record<string, number>;
+        /**
+          * Ajax
+         */
+        "buildQuery": (queryParams: Record<string, unknown>) => Promise<string>;
+        "debounceDelay": number;
+        "get": (url: string, queryParams?: Record<string, unknown>) => Promise<unknown>;
+        /**
+          * Get the current breakpoint
+          * @param rawBreakpoints JSON Object containings all breakpoints
+          * @returns current breakpoint ( label & limits )
+         */
+        "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
+        "getBreakpoints": () => Promise<Breakpoints>;
+        "getCurrentBreakpoint": () => Promise<Breakpoint>;
+        "getData": () => Promise<{ breakpoints: Breakpoints; }>;
+        "getParamsForBreakpoint": <T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T; }) => Promise<T>;
+        "getStylesJSON": () => Promise<SassStyles>;
+        "getSubscribers": () => Promise<Element[]>;
+        "loadScript": (scriptUrl: string, scriptId: string) => Promise<unknown>;
+        "post": (url: string, payload?: string | Record<string, string> | string[][] | URLSearchParams) => Promise<any>;
+        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
+        /**
+          * Generate an css class ready object
+          * @param mainClass one or many classes to add to the object
+          * @param mods one or many string which will be converted to modifier classes to add to the object
+          * @returns Record<string, boolean>
+         */
+        "propGetClassList": (mainClass: string | string[], mods?: string | string[]) => Promise<Record<string, boolean>>;
+        /**
+          * Convert an HTML property to a boolean
+          * @param prop
+          * @returns boolean
+         */
+        "propToBool": (prop: string | boolean) => Promise<boolean>;
+        /**
+          * Convert an HTML property to a float
+          * @param prop
+          * @returns number
+         */
+        "propToFloat": (prop: string | number) => Promise<number>;
+        /**
+          * Convert an HTML property to JSON
+          * @param prop
+          * @returns string[]
+         */
+        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
+        /**
+          * Convert an HTML property to a number
+          * @param prop
+          * @returns number
+         */
+        "propToNumber": (prop: string | number) => Promise<number>;
+        /**
+          * Convert an HTML property ( coma separated string ) to an array
+          * @param prop
+          * @returns string[]
+         */
+        "propToStringArray": <T = string>(prop: string | T[]) => Promise<T[]>;
+        "propertyName": string;
+        "removeQuotes": (quotedString: string) => Promise<string>;
+        "subscribe": (target: Element) => Promise<number>;
+        "subscriberSelector": string;
     }
     interface DsBlock {
         "article": boolean;
         "block": boolean;
         "form": boolean;
-        "getContext": () => Promise<"block" | "article" | "section" | "form">;
+        "getContext": () => Promise<"block" | "article" | "section" | "form" | "modal">;
+        "modal": boolean;
         /**
           * List of modifiers
          */
@@ -81,53 +132,6 @@ export namespace Components {
           * Block type classname ( also used to build block classname )
          */
         "type": string;
-    }
-    interface DsBlockBuilder {
-        "name": string;
-        "settings": string | any;
-    }
-    interface DsBreadcrumb {
-    }
-    interface DsButtonConfigurator {
-        "defaultValue": any;
-        "getConfig": (extraProps: any) => Promise<{ config: any; markup: string; }>;
-        "inputId": string;
-        "value": any;
-    }
-    interface DsCart {
-        "updateUrl": string;
-    }
-    interface DsCartBlock {
-        "dsCartUrl": string;
-        "dsProductsCount": number | string;
-        "dsRefreshUrl": string;
-    }
-    interface DsCategoryList {
-        "showImage": boolean;
-    }
-    interface DsCategorySearch {
-        "controllerUrl": string;
-    }
-    interface DsCheckoutPage {
-        "mods": string | string[];
-        "showBackButton": boolean;
-    }
-    interface DsCheckoutPath {
-        "dsCurrentStep": string | number;
-    }
-    interface DsCmsImage {
-        "filemanagerUrl": string;
-        "name": string;
-        "setUrl": (url: string) => Promise<void>;
-    }
-    interface DsCmsSearch {
-        "route": string;
-        "value": string;
-    }
-    interface DsCmsVideo {
-        "filemanagerUrl": string;
-        "name": string;
-        "setUrl": (url: string) => Promise<void>;
     }
     interface DsCombo {
         "close": () => Promise<void>;
@@ -144,20 +148,6 @@ export namespace Components {
         "selectedOption": DSOption[];
         "toggle": (forceDisplay?: boolean) => Promise<void>;
     }
-    interface DsContactBlock {
-        "dsAddress": string;
-        "dsEmail": string;
-        "dsFax": string;
-        "dsPhone": string;
-    }
-    interface DsContactForm {
-    }
-    interface DsContentBlock {
-        "imagePos": 'none' | 'before' | 'center' | 'after';
-    }
-    interface DsCustomerPage {
-        "dsMods": string | string[];
-    }
     interface DsDropdown {
         "close": () => Promise<void>;
         "customLabel": string;
@@ -173,35 +163,6 @@ export namespace Components {
     interface DsDropdownItem {
         "name": string;
         "value": any;
-    }
-    interface DsFaq {
-    }
-    interface DsFeatureConfigurator {
-        "featureId": string;
-        "isMain": boolean;
-        "settings": any;
-    }
-    interface DsFeaturesConfigurator {
-        "name": string;
-        "settings": string | any;
-        "showActions": boolean;
-    }
-    interface DsFilemanager {
-        "mediaIndex": string;
-        "name": string;
-        "setUrl": (url: string) => Promise<void>;
-        "type": 'image' | 'video';
-        "url": string;
-    }
-    interface DsFilters {
-    }
-    interface DsFooter {
-    }
-    interface DsGiftcard {
-    }
-    interface DsGradeStar {
-        "dsCount": string | number;
-        "dsGrade": string | number;
     }
     interface DsGrid {
         "align": string | DSGridAlignment;
@@ -227,123 +188,11 @@ export namespace Components {
         "section": boolean;
         "useContext": boolean;
     }
-    interface DsHtml {
-        "hide": () => Promise<void>;
-        "name": string;
-        "show": () => Promise<void>;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "value": any;
-    }
-    interface DsHtmlEditor {
-        "content": string;
-        "name": string;
-    }
     interface DsIcon {
         "type": string;
     }
-    interface DsInfoWindow {
-        /**
-          * AriaLabel to assign to the InfoWindow.
-         */
-        "ariaLabel": string;
-        /**
-          * Disable panning the map to make the InfoWindow fully visible when it opens.
-         */
-        "disableAutoPan": boolean;
-        "getParams": () => Promise<google.maps.InfoWindowOptions>;
-        /**
-          * Maximum width of the InfoWindow, regardless of content&#39;s width. This
-         */
-        "maxWidth": number;
-        /**
-          * Minimum width of the InfoWindow, regardless of the content&#39;s width.
-         */
-        "minWidth": number;
-        /**
-          * The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
-         */
-        "pixelOffset": google.maps.Size;
-        /**
-          * The LatLng at which to display this InfoWindow.
-         */
-        "position": google.maps.LatLng|google.maps.LatLngLiteral;
-        /**
-          * All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-         */
-        "zIndex": number;
-    }
-    interface DsInputDate {
-        "value": string;
-    }
-    interface DsInputModal {
-        "MediaPositions": MediaPosition[];
-        "associatedRoute": string;
-        "defaultType": any;
-        "hide": () => Promise<void>;
-        "name": string;
-        "setMediaUrlType": (MediaUrlType: MediaUrlType) => Promise<void>;
-        "setPath": (path: string) => Promise<void>;
-        "setPosition": (position: MediaPosition) => Promise<void>;
-        "setType": (type: MediaType) => Promise<void>;
-        "show": () => Promise<void>;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "value": any;
-    }
-    interface DsInputNumber {
-        "ariaLabel": string;
-        "defaultValue": number | string;
-        "max": number | string;
-        "min": number | string;
-        "name": string;
-        "setValue": (value: number) => Promise<void>;
-    }
-    interface DsJson {
-        "data": any;
-    }
-    interface DsLang {
-        "dsIsSelected": boolean;
-        "dsIsoCode": string;
-    }
-    interface DsLangSelector {
-        "currentLang": string;
-        "languagesFromProp": DSOption2[] | string;
-    }
-    interface DsLinksList {
-    }
-    interface DsLogin {
-    }
-    interface DsMainConfigurator {
-    }
-    interface DsMap {
-        "addInfoWindow": (infoWindowComponent: HTMLDsInfoWindowElement, marker: google.maps.Marker) => Promise<void>;
-        "addMapStyle": (name: string, styles: google.maps.MapTypeStyle[]) => Promise<void>;
-        "addMarkers": (markers: MapMarkerOptions[]) => Promise<any[]>;
-        "apiKey": string;
-        "clusturize": () => Promise<void>;
-        "fitMarkers": () => Promise<void>;
-        "getTilt": () => Promise<number>;
-        "getZoom": () => Promise<number>;
-        "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
-        "locations": Location[];
-        "params": GMapsParams;
-        "setMapStyles": (name: string) => Promise<void>;
-        "setTilt": (tilt?: number) => Promise<void>;
-        "setZoom": (zoomLevel: number) => Promise<void>;
-        "zoomIn": (scale?: number) => Promise<void>;
-        "zoomOut": (scale?: number) => Promise<void>;
-    }
-    interface DsMapLocation {
-        "lat": number;
-        "lng": number;
-        "name": string;
-    }
-    interface DsMapMarker {
-        "icon": string | google.maps.Icon | google.maps.Symbol;
-        "label": string | google.maps.MarkerLabel;
-        "lat": number;
-        "lng": number;
-        "name": string;
-        "params": string | MarkerOptionsFromProps;
+    interface DsMain {
+        "getData": (key: string) => Promise<Record<string, any>>;
     }
     interface DsMarquee {
         "bgColor": string;
@@ -354,45 +203,12 @@ export namespace Components {
         "start": () => Promise<void>;
         "transition": string | DSMarqueeTransitionEnum;
     }
-    interface DsMarqueeConfigurator {
-        "inputId": string;
-        "settings": any;
-    }
-    interface DsMedia {
-        "associatedRoute": string;
-        "getConfig": (extraProps: Record<string, unknown>) => Promise<{ config: any; markup: string; }>;
-        "hide": () => Promise<void>;
-        "mediaPositions": MediaPosition[];
-        "name": string;
-        "setAttributes": (attributes: any) => Promise<void>;
-        "setPath": (newPath: string, imageIndex?: number) => Promise<void>;
-        "setPosition": (position: MediaPosition) => Promise<void>;
-        "setType": (type: MediaType) => Promise<void>;
-        "setUrlType": (urlType: MediaUrlType) => Promise<void>;
-        "show": () => Promise<void>;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "value": any;
-    }
-    interface DsMessage {
-        "bgColor": string;
-        "color": string;
-        "speed": number;
-    }
     interface DsModal {
-        "closeButtonMods": string[];
-        "darkBackground": boolean;
-        "isClosingDisabled": boolean;
-        "isFooterDisabled": boolean;
-        "isHeaderDisabled": boolean;
-        "isLayoutDisabled": boolean;
-        "isSubtitleDisabled": boolean;
         "lightboxClass": any;
         "lightboxClassObject": any;
         "overlay": boolean;
-        "redirectToSmoodOnClose": boolean;
         "setContent": (content: string) => Promise<void>;
         "shown": boolean;
-        "useSnack": boolean;
     }
     interface DsNav {
         "currentActiveItemId": string;
@@ -406,22 +222,6 @@ export namespace Components {
         "itemId": string;
         "type": string;
     }
-    interface DsNewsletter {
-        "dsDisplayedBy": string;
-        "dsInputValue": string;
-        "dsPlaceholder": string;
-        "dsSubscribeUrl": string;
-    }
-    interface DsPage {
-        "addToCart": (id: string, attributeId: string, attributeGroupId: string, customizationId: string) => Promise<void>;
-        "cartUrl": string;
-        "disableScroll": () => Promise<void>;
-        "enableScroll": () => Promise<void>;
-        "goTo": (url: string) => Promise<void>;
-        "locale": AppLocale;
-        "mods": string | string[];
-        "token": string;
-    }
     interface DsPanel {
         "expanded": boolean;
         "hide": () => Promise<void>;
@@ -434,11 +234,6 @@ export namespace Components {
         "toggle": (mustShow?: boolean) => Promise<void>;
         "type": PanelType;
     }
-    interface DsPanelConfigurator {
-        "isMain": boolean;
-        "panelId": string;
-        "settings": any;
-    }
     interface DsPanelGroup {
         "getItems": () => Promise<HTMLDsPanelElement[]>;
         "hidePanel": (index?: number) => Promise<void>;
@@ -448,60 +243,9 @@ export namespace Components {
         "soloContent": boolean;
         "type": PanelType1;
     }
-    interface DsPanelsConfigurator {
-        "name": string;
-        "settings": string | any;
-        "showActions": boolean;
-    }
-    interface DsPassword {
-        "defaultValue": string;
-        "mods": string | string[];
-        "name": string;
-        "pattern": string;
-        "type": 'text' | 'password';
-    }
-    interface DsPostList {
-        "dsMods": string | string[];
-    }
-    interface DsProduct {
-        "isLoading": boolean;
-        "productId": string;
-    }
-    interface DsProductBlock {
-        "params": string | ProductBlockParams;
-        "size": string;
-    }
-    interface DsProductList {
-        "infiniteScroll": boolean;
-        "infiniteScrollDelay": number;
-        "listUrl": string;
-    }
-    interface DsProductListHeader {
-        "labels": Record<string, string>;
-    }
-    interface DsProductPage {
-    }
-    interface DsProductPageConfigurator {
-        "defaultValue": string;
-        "getConfig": (extraProps?: Record<string, any>) => Promise<{ markup: string; config: Record<string, unknown>; }>;
-        "settings": string | any;
-    }
-    interface DsProductSearch {
-        "route": string;
-        "value": string | string[];
-    }
-    interface DsProductsConfigurator {
-        "associatedRoute": string;
-        "defaultValue": string;
-        "settings": string | any;
-    }
     interface DsRatingList {
         "dsAverage": string|number;
         "dsRatings": string|any[];
-    }
-    interface DsReassurance {
-    }
-    interface DsRegister {
     }
     interface DsRsp {
         "breakpointsFromProp": Record<string, number>;
@@ -517,21 +261,10 @@ export namespace Components {
         "getData": () => Promise<{ breakpoints: Breakpoints; }>;
         "getParamsForBreakpoint": (currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>;
         "getSubscribers": () => Promise<Element[]>;
-        "processBreakpoints": (breakpoints: RawBreakpoint1) => Promise<Breakpoints1>;
+        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
         "propertyName": string;
         "subscribe": (target: Element) => Promise<number>;
         "subscriberSelector": string;
-    }
-    interface DsSearch {
-        "placeholder": string;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "url": string;
-        "value": string;
-    }
-    interface DsSearchBar {
-        "dsPlaceholder": string;
-        "dsSearchString": string;
-        "dsSearchUrl": string;
     }
     interface DsSelect {
         "defaultValue": string;
@@ -583,28 +316,13 @@ export namespace Components {
         "dsCurrentItemIndex": number;
         "dsItemCount": number;
     }
-    interface DsSocialLink {
-        "dsNetworks": any[]|string;
-    }
-    interface DsStickyCartButton {
-        "offset": string | number;
-        "scrollBehavior": "smooth" | "instant" | "auto";
-    }
-    interface DsTag {
-        "tagId": string;
-    }
     interface DsText {
-        "bold": boolean;
-        "color": string;
-        "content": boolean;
-        "highlight": boolean;
-        "italic": boolean;
-        "main": boolean;
+        "inline": boolean;
         "mods": string | string[];
-        "size": string | number;
         "sub": boolean;
-        "text": boolean;
-        "type": string;
+        "sup": boolean;
+        "type": "p" | "code" | "quote";
+        "weight": "thin" | "light" | "normal" | "bold" | "bolder";
     }
     interface DsTitle {
         "article": boolean;
@@ -615,16 +333,10 @@ export namespace Components {
         "section": boolean;
         "sub": boolean;
         "sup": boolean;
-        "useContext": boolean;
     }
     interface DsTitleBar {
         "ctx": boolean;
         "mods": string | string[];
-    }
-    interface DsTitleConfigurator {
-        "toolbar": string;
-        "validElements": string;
-        "value": string;
     }
     interface DsToaster {
         "closingDelay": number;
@@ -688,11 +400,6 @@ export namespace Components {
         "target": string;
         "type": 'button' | 'control' | 'link';
     }
-    interface DsTxtImgConfigurator {
-        "defaultValue": string;
-        "getConfig": (extraProps: Record<string, unknown>) => Promise<{ config: Record<string, unknown>; markup: string; }>;
-        "settings": string | any;
-    }
     interface DsVideo {
         "autoplay": boolean;
         "controls": boolean;
@@ -707,91 +414,10 @@ export namespace Components {
         "stop": () => Promise<void>;
         "unmute": () => Promise<void>;
     }
-    interface DsVimeo {
-        "loadingDelay": string;
-        "mods": string[];
-        "videoId": string;
-    }
-    interface DsWishlistButton {
-        "dsIsLogged": string;
-        "dsProductAttributeId": string;
-        "dsProductId": string;
-        "dsUrl": string;
-    }
-    interface ProntoContentAdmin {
-        "active": string | boolean;
-        "adminUrl": string;
-        "blockTitle": string;
-        "componentType": string;
-        "controllerUrl": string;
-        "endDate": string;
-        "filemanagerUrl": string;
-        "getConfig": () => Promise<{ adminUrl: string; filemanagerUrl: string; controllerUrl: string; settings: any; }>;
-        "hook": string;
-        "linkedId": string;
-        "modifiers": string;
-        "orderPosition": string;
-        "pageType": string;
-        "settings": any;
-        "startDate": string;
-    }
-    interface ProntoField {
-        "associatedRoute": string;
-        "defaultValue": string;
-        "label": string;
-        "mods": string | string[];
-        "positions": MediaPosition[];
-        "type": string;
-        "values": { label: string; value: string; }[];
-    }
-    interface ProntoFieldset {
-        "defaultValue": any;
-        "depth": number;
-        "fields": any[];
-        "label": string;
-        "name": string;
-    }
-    interface ProntoForm {
-        "fields": any[];
-        "mods": string | string[];
-        "size": "sm" | "md" | "lg" | "xl";
-    }
-    interface ProntoIcon {
-        "type": string;
-    }
-    interface ProntoModal {
-        "associatedRoute": string;
-        "mods": string | string[];
-        "name": string;
-        "overlay": boolean;
-        "type": string;
-        "value": any;
-    }
-    interface ProntoProductList {
-        "associatedRoute": string;
-        "inputProps": any;
-        "value": any[];
-    }
 }
-export interface DsBlockBuilderCustomEvent<T> extends CustomEvent<T> {
+export interface DsAppCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsBlockBuilderElement;
-}
-export interface DsButtonConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsButtonConfiguratorElement;
-}
-export interface DsCheckoutPageCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCheckoutPageElement;
-}
-export interface DsCmsImageCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCmsImageElement;
-}
-export interface DsCmsVideoCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCmsVideoElement;
+    target: HTMLDsAppElement;
 }
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -801,46 +427,6 @@ export interface DsDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsDropdownElement;
 }
-export interface DsFeatureConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFeatureConfiguratorElement;
-}
-export interface DsFeaturesConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFeaturesConfiguratorElement;
-}
-export interface DsFilemanagerCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFilemanagerElement;
-}
-export interface DsHtmlCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsHtmlElement;
-}
-export interface DsHtmlEditorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsHtmlEditorElement;
-}
-export interface DsInputDateCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputDateElement;
-}
-export interface DsInputModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputModalElement;
-}
-export interface DsInputNumberCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputNumberElement;
-}
-export interface DsMarqueeConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsMarqueeConfiguratorElement;
-}
-export interface DsMediaCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsMediaElement;
-}
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
@@ -848,30 +434,6 @@ export interface DsModalCustomEvent<T> extends CustomEvent<T> {
 export interface DsNavItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsNavItemElement;
-}
-export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsPanelElement;
-}
-export interface DsPanelConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsPanelConfiguratorElement;
-}
-export interface DsPanelsConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsPanelsConfiguratorElement;
-}
-export interface DsProductPageConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsProductPageConfiguratorElement;
-}
-export interface DsProductSearchCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsProductSearchElement;
-}
-export interface DsProductsConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsProductsConfiguratorElement;
 }
 export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -897,14 +459,6 @@ export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
 }
-export interface DsTagCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTagElement;
-}
-export interface DsTitleConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTitleConfiguratorElement;
-}
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToasterElement;
@@ -917,216 +471,39 @@ export interface DsToggleGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToggleGroupElement;
 }
-export interface DsTxtImgConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTxtImgConfiguratorElement;
-}
-export interface ProntoContentAdminCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoContentAdminElement;
-}
-export interface ProntoFieldCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoFieldElement;
-}
-export interface ProntoFieldsetCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoFieldsetElement;
-}
-export interface ProntoFormCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoFormElement;
-}
-export interface ProntoModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoModalElement;
-}
-export interface ProntoProductListCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoProductListElement;
-}
 declare global {
-    interface HTMLDsAccountBlockElement extends Components.DsAccountBlock, HTMLStencilElement {
-    }
-    var HTMLDsAccountBlockElement: {
-        prototype: HTMLDsAccountBlockElement;
-        new (): HTMLDsAccountBlockElement;
-    };
-    interface HTMLDsAddressElement extends Components.DsAddress, HTMLStencilElement {
-    }
-    var HTMLDsAddressElement: {
-        prototype: HTMLDsAddressElement;
-        new (): HTMLDsAddressElement;
-    };
+    /**
+     * A simple component to load ajax content
+     * Version: 1.0
+     */
     interface HTMLDsAjaxElement extends Components.DsAjax, HTMLStencilElement {
     }
     var HTMLDsAjaxElement: {
         prototype: HTMLDsAjaxElement;
         new (): HTMLDsAjaxElement;
     };
+    interface HTMLDsAppElementEventMap {
+        "breakpointChange": any;
+    }
     interface HTMLDsAppElement extends Components.DsApp, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAppElementEventMap>(type: K, listener: (this: HTMLDsAppElement, ev: DsAppCustomEvent<HTMLDsAppElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAppElementEventMap>(type: K, listener: (this: HTMLDsAppElement, ev: DsAppCustomEvent<HTMLDsAppElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsAppElement: {
         prototype: HTMLDsAppElement;
         new (): HTMLDsAppElement;
-    };
-    interface HTMLDsAppMenuElement extends Components.DsAppMenu, HTMLStencilElement {
-    }
-    var HTMLDsAppMenuElement: {
-        prototype: HTMLDsAppMenuElement;
-        new (): HTMLDsAppMenuElement;
-    };
-    interface HTMLDsAuthElement extends Components.DsAuth, HTMLStencilElement {
-    }
-    var HTMLDsAuthElement: {
-        prototype: HTMLDsAuthElement;
-        new (): HTMLDsAuthElement;
-    };
-    interface HTMLDsBackToTopButtonElement extends Components.DsBackToTopButton, HTMLStencilElement {
-    }
-    var HTMLDsBackToTopButtonElement: {
-        prototype: HTMLDsBackToTopButtonElement;
-        new (): HTMLDsBackToTopButtonElement;
-    };
-    interface HTMLDsBannerElement extends Components.DsBanner, HTMLStencilElement {
-    }
-    var HTMLDsBannerElement: {
-        prototype: HTMLDsBannerElement;
-        new (): HTMLDsBannerElement;
     };
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
     var HTMLDsBlockElement: {
         prototype: HTMLDsBlockElement;
         new (): HTMLDsBlockElement;
-    };
-    interface HTMLDsBlockBuilderElementEventMap {
-        "saveConfiguration": any;
-        "configChange": any;
-    }
-    interface HTMLDsBlockBuilderElement extends Components.DsBlockBuilder, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsBlockBuilderElementEventMap>(type: K, listener: (this: HTMLDsBlockBuilderElement, ev: DsBlockBuilderCustomEvent<HTMLDsBlockBuilderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsBlockBuilderElementEventMap>(type: K, listener: (this: HTMLDsBlockBuilderElement, ev: DsBlockBuilderCustomEvent<HTMLDsBlockBuilderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsBlockBuilderElement: {
-        prototype: HTMLDsBlockBuilderElement;
-        new (): HTMLDsBlockBuilderElement;
-    };
-    interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
-    }
-    var HTMLDsBreadcrumbElement: {
-        prototype: HTMLDsBreadcrumbElement;
-        new (): HTMLDsBreadcrumbElement;
-    };
-    interface HTMLDsButtonConfiguratorElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsButtonConfiguratorElement extends Components.DsButtonConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsButtonConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsButtonConfiguratorElement, ev: DsButtonConfiguratorCustomEvent<HTMLDsButtonConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsButtonConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsButtonConfiguratorElement, ev: DsButtonConfiguratorCustomEvent<HTMLDsButtonConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsButtonConfiguratorElement: {
-        prototype: HTMLDsButtonConfiguratorElement;
-        new (): HTMLDsButtonConfiguratorElement;
-    };
-    interface HTMLDsCartElement extends Components.DsCart, HTMLStencilElement {
-    }
-    var HTMLDsCartElement: {
-        prototype: HTMLDsCartElement;
-        new (): HTMLDsCartElement;
-    };
-    interface HTMLDsCartBlockElement extends Components.DsCartBlock, HTMLStencilElement {
-    }
-    var HTMLDsCartBlockElement: {
-        prototype: HTMLDsCartBlockElement;
-        new (): HTMLDsCartBlockElement;
-    };
-    interface HTMLDsCategoryListElement extends Components.DsCategoryList, HTMLStencilElement {
-    }
-    var HTMLDsCategoryListElement: {
-        prototype: HTMLDsCategoryListElement;
-        new (): HTMLDsCategoryListElement;
-    };
-    interface HTMLDsCategorySearchElement extends Components.DsCategorySearch, HTMLStencilElement {
-    }
-    var HTMLDsCategorySearchElement: {
-        prototype: HTMLDsCategorySearchElement;
-        new (): HTMLDsCategorySearchElement;
-    };
-    interface HTMLDsCheckoutPageElementEventMap {
-        "panelShow": any;
-    }
-    interface HTMLDsCheckoutPageElement extends Components.DsCheckoutPage, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCheckoutPageElementEventMap>(type: K, listener: (this: HTMLDsCheckoutPageElement, ev: DsCheckoutPageCustomEvent<HTMLDsCheckoutPageElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCheckoutPageElementEventMap>(type: K, listener: (this: HTMLDsCheckoutPageElement, ev: DsCheckoutPageCustomEvent<HTMLDsCheckoutPageElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCheckoutPageElement: {
-        prototype: HTMLDsCheckoutPageElement;
-        new (): HTMLDsCheckoutPageElement;
-    };
-    interface HTMLDsCheckoutPathElement extends Components.DsCheckoutPath, HTMLStencilElement {
-    }
-    var HTMLDsCheckoutPathElement: {
-        prototype: HTMLDsCheckoutPathElement;
-        new (): HTMLDsCheckoutPathElement;
-    };
-    interface HTMLDsCmsImageElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsCmsImageElement extends Components.DsCmsImage, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCmsImageElementEventMap>(type: K, listener: (this: HTMLDsCmsImageElement, ev: DsCmsImageCustomEvent<HTMLDsCmsImageElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCmsImageElementEventMap>(type: K, listener: (this: HTMLDsCmsImageElement, ev: DsCmsImageCustomEvent<HTMLDsCmsImageElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCmsImageElement: {
-        prototype: HTMLDsCmsImageElement;
-        new (): HTMLDsCmsImageElement;
-    };
-    interface HTMLDsCmsSearchElement extends Components.DsCmsSearch, HTMLStencilElement {
-    }
-    var HTMLDsCmsSearchElement: {
-        prototype: HTMLDsCmsSearchElement;
-        new (): HTMLDsCmsSearchElement;
-    };
-    interface HTMLDsCmsVideoElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsCmsVideoElement extends Components.DsCmsVideo, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCmsVideoElementEventMap>(type: K, listener: (this: HTMLDsCmsVideoElement, ev: DsCmsVideoCustomEvent<HTMLDsCmsVideoElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCmsVideoElementEventMap>(type: K, listener: (this: HTMLDsCmsVideoElement, ev: DsCmsVideoCustomEvent<HTMLDsCmsVideoElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCmsVideoElement: {
-        prototype: HTMLDsCmsVideoElement;
-        new (): HTMLDsCmsVideoElement;
     };
     interface HTMLDsComboElementEventMap {
         "optionSelected": any;
@@ -1144,30 +521,6 @@ declare global {
     var HTMLDsComboElement: {
         prototype: HTMLDsComboElement;
         new (): HTMLDsComboElement;
-    };
-    interface HTMLDsContactBlockElement extends Components.DsContactBlock, HTMLStencilElement {
-    }
-    var HTMLDsContactBlockElement: {
-        prototype: HTMLDsContactBlockElement;
-        new (): HTMLDsContactBlockElement;
-    };
-    interface HTMLDsContactFormElement extends Components.DsContactForm, HTMLStencilElement {
-    }
-    var HTMLDsContactFormElement: {
-        prototype: HTMLDsContactFormElement;
-        new (): HTMLDsContactFormElement;
-    };
-    interface HTMLDsContentBlockElement extends Components.DsContentBlock, HTMLStencilElement {
-    }
-    var HTMLDsContentBlockElement: {
-        prototype: HTMLDsContentBlockElement;
-        new (): HTMLDsContentBlockElement;
-    };
-    interface HTMLDsCustomerPageElement extends Components.DsCustomerPage, HTMLStencilElement {
-    }
-    var HTMLDsCustomerPageElement: {
-        prototype: HTMLDsCustomerPageElement;
-        new (): HTMLDsCustomerPageElement;
     };
     interface HTMLDsDropdownElementEventMap {
         "optionSelected": any;
@@ -1192,89 +545,6 @@ declare global {
         prototype: HTMLDsDropdownItemElement;
         new (): HTMLDsDropdownItemElement;
     };
-    interface HTMLDsFaqElement extends Components.DsFaq, HTMLStencilElement {
-    }
-    var HTMLDsFaqElement: {
-        prototype: HTMLDsFaqElement;
-        new (): HTMLDsFaqElement;
-    };
-    interface HTMLDsFeatureConfiguratorElementEventMap {
-        "featureChange": any;
-        "requestDeleteFeature": any;
-    }
-    interface HTMLDsFeatureConfiguratorElement extends Components.DsFeatureConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFeatureConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeatureConfiguratorElement, ev: DsFeatureConfiguratorCustomEvent<HTMLDsFeatureConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFeatureConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeatureConfiguratorElement, ev: DsFeatureConfiguratorCustomEvent<HTMLDsFeatureConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFeatureConfiguratorElement: {
-        prototype: HTMLDsFeatureConfiguratorElement;
-        new (): HTMLDsFeatureConfiguratorElement;
-    };
-    interface HTMLDsFeaturesConfiguratorElementEventMap {
-        "saveConfiguration": any;
-        "configChange": any;
-    }
-    interface HTMLDsFeaturesConfiguratorElement extends Components.DsFeaturesConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFeaturesConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeaturesConfiguratorElement, ev: DsFeaturesConfiguratorCustomEvent<HTMLDsFeaturesConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFeaturesConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeaturesConfiguratorElement, ev: DsFeaturesConfiguratorCustomEvent<HTMLDsFeaturesConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFeaturesConfiguratorElement: {
-        prototype: HTMLDsFeaturesConfiguratorElement;
-        new (): HTMLDsFeaturesConfiguratorElement;
-    };
-    interface HTMLDsFilemanagerElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsFilemanagerElement extends Components.DsFilemanager, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFilemanagerElementEventMap>(type: K, listener: (this: HTMLDsFilemanagerElement, ev: DsFilemanagerCustomEvent<HTMLDsFilemanagerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFilemanagerElementEventMap>(type: K, listener: (this: HTMLDsFilemanagerElement, ev: DsFilemanagerCustomEvent<HTMLDsFilemanagerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFilemanagerElement: {
-        prototype: HTMLDsFilemanagerElement;
-        new (): HTMLDsFilemanagerElement;
-    };
-    interface HTMLDsFiltersElement extends Components.DsFilters, HTMLStencilElement {
-    }
-    var HTMLDsFiltersElement: {
-        prototype: HTMLDsFiltersElement;
-        new (): HTMLDsFiltersElement;
-    };
-    interface HTMLDsFooterElement extends Components.DsFooter, HTMLStencilElement {
-    }
-    var HTMLDsFooterElement: {
-        prototype: HTMLDsFooterElement;
-        new (): HTMLDsFooterElement;
-    };
-    interface HTMLDsGiftcardElement extends Components.DsGiftcard, HTMLStencilElement {
-    }
-    var HTMLDsGiftcardElement: {
-        prototype: HTMLDsGiftcardElement;
-        new (): HTMLDsGiftcardElement;
-    };
-    interface HTMLDsGradeStarElement extends Components.DsGradeStar, HTMLStencilElement {
-    }
-    var HTMLDsGradeStarElement: {
-        prototype: HTMLDsGradeStarElement;
-        new (): HTMLDsGradeStarElement;
-    };
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
     var HTMLDsGridElement: {
@@ -1293,210 +563,23 @@ declare global {
         prototype: HTMLDsHeadingElement;
         new (): HTMLDsHeadingElement;
     };
-    interface HTMLDsHtmlElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsHtmlElement extends Components.DsHtml, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsHtmlElementEventMap>(type: K, listener: (this: HTMLDsHtmlElement, ev: DsHtmlCustomEvent<HTMLDsHtmlElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsHtmlElementEventMap>(type: K, listener: (this: HTMLDsHtmlElement, ev: DsHtmlCustomEvent<HTMLDsHtmlElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsHtmlElement: {
-        prototype: HTMLDsHtmlElement;
-        new (): HTMLDsHtmlElement;
-    };
-    interface HTMLDsHtmlEditorElementEventMap {
-        "valueChange": any;
-        "cancel": any;
-        "save": any;
-    }
-    interface HTMLDsHtmlEditorElement extends Components.DsHtmlEditor, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsHtmlEditorElementEventMap>(type: K, listener: (this: HTMLDsHtmlEditorElement, ev: DsHtmlEditorCustomEvent<HTMLDsHtmlEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsHtmlEditorElementEventMap>(type: K, listener: (this: HTMLDsHtmlEditorElement, ev: DsHtmlEditorCustomEvent<HTMLDsHtmlEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsHtmlEditorElement: {
-        prototype: HTMLDsHtmlEditorElement;
-        new (): HTMLDsHtmlEditorElement;
-    };
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
     var HTMLDsIconElement: {
         prototype: HTMLDsIconElement;
         new (): HTMLDsIconElement;
     };
-    interface HTMLDsInfoWindowElement extends Components.DsInfoWindow, HTMLStencilElement {
+    interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
     }
-    var HTMLDsHeadingElement: {
-        prototype: HTMLDsHeadingElement;
-        new (): HTMLDsHeadingElement;
-    };
-    interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
-    }
-    var HTMLDsInputElement: {
-        prototype: HTMLDsInputElement;
-        new (): HTMLDsInputElement;
-    };
-    interface HTMLDsInputDateElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsInputDateElement extends Components.DsInputDate, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputDateElement: {
-        prototype: HTMLDsInputDateElement;
-        new (): HTMLDsInputDateElement;
-    };
-    interface HTMLDsInputModalElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsInputModalElement extends Components.DsInputModal, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputModalElementEventMap>(type: K, listener: (this: HTMLDsInputModalElement, ev: DsInputModalCustomEvent<HTMLDsInputModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputModalElementEventMap>(type: K, listener: (this: HTMLDsInputModalElement, ev: DsInputModalCustomEvent<HTMLDsInputModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputModalElement: {
-        prototype: HTMLDsInputModalElement;
-        new (): HTMLDsInputModalElement;
-    };
-    interface HTMLDsInputNumberElementEventMap {
-        "quantityChange": any;
-    }
-    interface HTMLDsInputNumberElement extends Components.DsInputNumber, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputNumberElementEventMap>(type: K, listener: (this: HTMLDsInputNumberElement, ev: DsInputNumberCustomEvent<HTMLDsInputNumberElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputNumberElementEventMap>(type: K, listener: (this: HTMLDsInputNumberElement, ev: DsInputNumberCustomEvent<HTMLDsInputNumberElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputNumberElement: {
-        prototype: HTMLDsInputNumberElement;
-        new (): HTMLDsInputNumberElement;
-    };
-    interface HTMLDsJsonElement extends Components.DsJson, HTMLStencilElement {
-    }
-    var HTMLDsJsonElement: {
-        prototype: HTMLDsJsonElement;
-        new (): HTMLDsJsonElement;
-    };
-    interface HTMLDsLangElement extends Components.DsLang, HTMLStencilElement {
-    }
-    var HTMLDsLangElement: {
-        prototype: HTMLDsLangElement;
-        new (): HTMLDsLangElement;
-    };
-    interface HTMLDsLangSelectorElement extends Components.DsLangSelector, HTMLStencilElement {
-    }
-    var HTMLDsLangSelectorElement: {
-        prototype: HTMLDsLangSelectorElement;
-        new (): HTMLDsLangSelectorElement;
-    };
-    interface HTMLDsLinksListElement extends Components.DsLinksList, HTMLStencilElement {
-    }
-    var HTMLDsLinksListElement: {
-        prototype: HTMLDsLinksListElement;
-        new (): HTMLDsLinksListElement;
-    };
-    interface HTMLDsLoginElement extends Components.DsLogin, HTMLStencilElement {
-    }
-    var HTMLDsLoginElement: {
-        prototype: HTMLDsLoginElement;
-        new (): HTMLDsLoginElement;
-    };
-    interface HTMLDsMainConfiguratorElement extends Components.DsMainConfigurator, HTMLStencilElement {
-    }
-    var HTMLDsMainConfiguratorElement: {
-        prototype: HTMLDsMainConfiguratorElement;
-        new (): HTMLDsMainConfiguratorElement;
-    };
-    interface HTMLDsMapElement extends Components.DsMap, HTMLStencilElement {
-    }
-    var HTMLDsMapElement: {
-        prototype: HTMLDsMapElement;
-        new (): HTMLDsMapElement;
-    };
-    interface HTMLDsMapLocationElement extends Components.DsMapLocation, HTMLStencilElement {
-    }
-    var HTMLDsMapLocationElement: {
-        prototype: HTMLDsMapLocationElement;
-        new (): HTMLDsMapLocationElement;
-    };
-    interface HTMLDsMapMarkerElement extends Components.DsMapMarker, HTMLStencilElement {
-    }
-    var HTMLDsMapMarkerElement: {
-        prototype: HTMLDsMapMarkerElement;
-        new (): HTMLDsMapMarkerElement;
+    var HTMLDsMainElement: {
+        prototype: HTMLDsMainElement;
+        new (): HTMLDsMainElement;
     };
     interface HTMLDsMarqueeElement extends Components.DsMarquee, HTMLStencilElement {
     }
     var HTMLDsMarqueeElement: {
         prototype: HTMLDsMarqueeElement;
         new (): HTMLDsMarqueeElement;
-    };
-    interface HTMLDsMarqueeConfiguratorElementEventMap {
-        "saveConfiguration": any;
-    }
-    interface HTMLDsMarqueeConfiguratorElement extends Components.DsMarqueeConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsMarqueeConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsMarqueeConfiguratorElement, ev: DsMarqueeConfiguratorCustomEvent<HTMLDsMarqueeConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsMarqueeConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsMarqueeConfiguratorElement, ev: DsMarqueeConfiguratorCustomEvent<HTMLDsMarqueeConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsMarqueeConfiguratorElement: {
-        prototype: HTMLDsMarqueeConfiguratorElement;
-        new (): HTMLDsMarqueeConfiguratorElement;
-    };
-    interface HTMLDsMediaElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsMediaElement extends Components.DsMedia, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsMediaElementEventMap>(type: K, listener: (this: HTMLDsMediaElement, ev: DsMediaCustomEvent<HTMLDsMediaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsMediaElementEventMap>(type: K, listener: (this: HTMLDsMediaElement, ev: DsMediaCustomEvent<HTMLDsMediaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsMediaElement: {
-        prototype: HTMLDsMediaElement;
-        new (): HTMLDsMediaElement;
-    };
-    interface HTMLDsMessageElement extends Components.DsMessage, HTMLStencilElement {
-    }
-    var HTMLDsMessageElement: {
-        prototype: HTMLDsMessageElement;
-        new (): HTMLDsMessageElement;
     };
     interface HTMLDsModalElementEventMap {
         "modalClose": any;
@@ -1539,18 +622,6 @@ declare global {
         prototype: HTMLDsNavItemElement;
         new (): HTMLDsNavItemElement;
     };
-    interface HTMLDsNewsletterElement extends Components.DsNewsletter, HTMLStencilElement {
-    }
-    var HTMLDsNewsletterElement: {
-        prototype: HTMLDsNewsletterElement;
-        new (): HTMLDsNewsletterElement;
-    };
-    interface HTMLDsPageElement extends Components.DsPage, HTMLStencilElement {
-    }
-    var HTMLDsPageElement: {
-        prototype: HTMLDsPageElement;
-        new (): HTMLDsPageElement;
-    };
     interface HTMLDsPanelElementEventMap {
         "panelShow": any;
         "panelShown": any;
@@ -1571,160 +642,17 @@ declare global {
         prototype: HTMLDsPanelElement;
         new (): HTMLDsPanelElement;
     };
-    interface HTMLDsPanelConfiguratorElementEventMap {
-        "panelChange": any;
-        "requestDeletePanel": any;
-    }
-    interface HTMLDsPanelConfiguratorElement extends Components.DsPanelConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsPanelConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelConfiguratorElement, ev: DsPanelConfiguratorCustomEvent<HTMLDsPanelConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsPanelConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelConfiguratorElement, ev: DsPanelConfiguratorCustomEvent<HTMLDsPanelConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsPanelConfiguratorElement: {
-        prototype: HTMLDsPanelConfiguratorElement;
-        new (): HTMLDsPanelConfiguratorElement;
-    };
     interface HTMLDsPanelGroupElement extends Components.DsPanelGroup, HTMLStencilElement {
     }
     var HTMLDsPanelGroupElement: {
         prototype: HTMLDsPanelGroupElement;
         new (): HTMLDsPanelGroupElement;
     };
-    interface HTMLDsPanelsConfiguratorElementEventMap {
-        "saveConfiguration": any;
-        "configChange": any;
-    }
-    interface HTMLDsPanelsConfiguratorElement extends Components.DsPanelsConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsPanelsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelsConfiguratorElement, ev: DsPanelsConfiguratorCustomEvent<HTMLDsPanelsConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsPanelsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelsConfiguratorElement, ev: DsPanelsConfiguratorCustomEvent<HTMLDsPanelsConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsPanelsConfiguratorElement: {
-        prototype: HTMLDsPanelsConfiguratorElement;
-        new (): HTMLDsPanelsConfiguratorElement;
-    };
-    interface HTMLDsPasswordElement extends Components.DsPassword, HTMLStencilElement {
-    }
-    var HTMLDsPasswordElement: {
-        prototype: HTMLDsPasswordElement;
-        new (): HTMLDsPasswordElement;
-    };
-    interface HTMLDsPostListElement extends Components.DsPostList, HTMLStencilElement {
-    }
-    var HTMLDsPostListElement: {
-        prototype: HTMLDsPostListElement;
-        new (): HTMLDsPostListElement;
-    };
-    interface HTMLDsProductElement extends Components.DsProduct, HTMLStencilElement {
-    }
-    var HTMLDsProductElement: {
-        prototype: HTMLDsProductElement;
-        new (): HTMLDsProductElement;
-    };
-    interface HTMLDsProductBlockElement extends Components.DsProductBlock, HTMLStencilElement {
-    }
-    var HTMLDsProductBlockElement: {
-        prototype: HTMLDsProductBlockElement;
-        new (): HTMLDsProductBlockElement;
-    };
-    interface HTMLDsProductListElement extends Components.DsProductList, HTMLStencilElement {
-    }
-    var HTMLDsProductListElement: {
-        prototype: HTMLDsProductListElement;
-        new (): HTMLDsProductListElement;
-    };
-    interface HTMLDsProductListHeaderElement extends Components.DsProductListHeader, HTMLStencilElement {
-    }
-    var HTMLDsProductListHeaderElement: {
-        prototype: HTMLDsProductListHeaderElement;
-        new (): HTMLDsProductListHeaderElement;
-    };
-    interface HTMLDsProductPageElement extends Components.DsProductPage, HTMLStencilElement {
-    }
-    var HTMLDsProductPageElement: {
-        prototype: HTMLDsProductPageElement;
-        new (): HTMLDsProductPageElement;
-    };
-    interface HTMLDsProductPageConfiguratorElementEventMap {
-        "configChange": any;
-        "saveConfiguration": any;
-        "preview": any;
-    }
-    interface HTMLDsProductPageConfiguratorElement extends Components.DsProductPageConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsProductPageConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductPageConfiguratorElement, ev: DsProductPageConfiguratorCustomEvent<HTMLDsProductPageConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsProductPageConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductPageConfiguratorElement, ev: DsProductPageConfiguratorCustomEvent<HTMLDsProductPageConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsProductPageConfiguratorElement: {
-        prototype: HTMLDsProductPageConfiguratorElement;
-        new (): HTMLDsProductPageConfiguratorElement;
-    };
-    interface HTMLDsProductSearchElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsProductSearchElement extends Components.DsProductSearch, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsProductSearchElementEventMap>(type: K, listener: (this: HTMLDsProductSearchElement, ev: DsProductSearchCustomEvent<HTMLDsProductSearchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsProductSearchElementEventMap>(type: K, listener: (this: HTMLDsProductSearchElement, ev: DsProductSearchCustomEvent<HTMLDsProductSearchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsProductSearchElement: {
-        prototype: HTMLDsProductSearchElement;
-        new (): HTMLDsProductSearchElement;
-    };
-    interface HTMLDsProductsConfiguratorElementEventMap {
-        "configChange": any;
-    }
-    interface HTMLDsProductsConfiguratorElement extends Components.DsProductsConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsProductsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductsConfiguratorElement, ev: DsProductsConfiguratorCustomEvent<HTMLDsProductsConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsProductsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductsConfiguratorElement, ev: DsProductsConfiguratorCustomEvent<HTMLDsProductsConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsProductsConfiguratorElement: {
-        prototype: HTMLDsProductsConfiguratorElement;
-        new (): HTMLDsProductsConfiguratorElement;
-    };
     interface HTMLDsRatingListElement extends Components.DsRatingList, HTMLStencilElement {
     }
     var HTMLDsRatingListElement: {
         prototype: HTMLDsRatingListElement;
         new (): HTMLDsRatingListElement;
-    };
-    interface HTMLDsReassuranceElement extends Components.DsReassurance, HTMLStencilElement {
-    }
-    var HTMLDsReassuranceElement: {
-        prototype: HTMLDsReassuranceElement;
-        new (): HTMLDsReassuranceElement;
-    };
-    interface HTMLDsRegisterElement extends Components.DsRegister, HTMLStencilElement {
-    }
-    var HTMLDsRegisterElement: {
-        prototype: HTMLDsRegisterElement;
-        new (): HTMLDsRegisterElement;
     };
     interface HTMLDsRspElementEventMap {
         "breakpointChange": any;
@@ -1742,18 +670,6 @@ declare global {
     var HTMLDsRspElement: {
         prototype: HTMLDsRspElement;
         new (): HTMLDsRspElement;
-    };
-    interface HTMLDsSearchElement extends Components.DsSearch, HTMLStencilElement {
-    }
-    var HTMLDsSearchElement: {
-        prototype: HTMLDsSearchElement;
-        new (): HTMLDsSearchElement;
-    };
-    interface HTMLDsSearchBarElement extends Components.DsSearchBar, HTMLStencilElement {
-    }
-    var HTMLDsSearchBarElement: {
-        prototype: HTMLDsSearchBarElement;
-        new (): HTMLDsSearchBarElement;
     };
     interface HTMLDsSelectElementEventMap {
         "valueChange": any;
@@ -1832,35 +748,6 @@ declare global {
         prototype: HTMLDsSliderMenuElement;
         new (): HTMLDsSliderMenuElement;
     };
-    interface HTMLDsSocialLinkElement extends Components.DsSocialLink, HTMLStencilElement {
-    }
-    var HTMLDsSocialLinkElement: {
-        prototype: HTMLDsSocialLinkElement;
-        new (): HTMLDsSocialLinkElement;
-    };
-    interface HTMLDsStickyCartButtonElement extends Components.DsStickyCartButton, HTMLStencilElement {
-    }
-    var HTMLDsStickyCartButtonElement: {
-        prototype: HTMLDsStickyCartButtonElement;
-        new (): HTMLDsStickyCartButtonElement;
-    };
-    interface HTMLDsTagElementEventMap {
-        "requestDeleteTag": any;
-    }
-    interface HTMLDsTagElement extends Components.DsTag, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTagElement: {
-        prototype: HTMLDsTagElement;
-        new (): HTMLDsTagElement;
-    };
     interface HTMLDsTextElement extends Components.DsText, HTMLStencilElement {
     }
     var HTMLDsTextElement: {
@@ -1878,23 +765,6 @@ declare global {
     var HTMLDsTitleBarElement: {
         prototype: HTMLDsTitleBarElement;
         new (): HTMLDsTitleBarElement;
-    };
-    interface HTMLDsTitleConfiguratorElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsTitleConfiguratorElement extends Components.DsTitleConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTitleConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTitleConfiguratorElement, ev: DsTitleConfiguratorCustomEvent<HTMLDsTitleConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTitleConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTitleConfiguratorElement, ev: DsTitleConfiguratorCustomEvent<HTMLDsTitleConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTitleConfiguratorElement: {
-        prototype: HTMLDsTitleConfiguratorElement;
-        new (): HTMLDsTitleConfiguratorElement;
     };
     interface HTMLDsToasterElementEventMap {
         "toasterShow": any;
@@ -1965,294 +835,79 @@ declare global {
         prototype: HTMLDsTriggerElement;
         new (): HTMLDsTriggerElement;
     };
-    interface HTMLDsTxtImgConfiguratorElementEventMap {
-        "configChange": any;
-        "saveConfiguration": any;
-    }
-    interface HTMLDsTxtImgConfiguratorElement extends Components.DsTxtImgConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTxtImgConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTxtImgConfiguratorElement, ev: DsTxtImgConfiguratorCustomEvent<HTMLDsTxtImgConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTxtImgConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTxtImgConfiguratorElement, ev: DsTxtImgConfiguratorCustomEvent<HTMLDsTxtImgConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTxtImgConfiguratorElement: {
-        prototype: HTMLDsTxtImgConfiguratorElement;
-        new (): HTMLDsTxtImgConfiguratorElement;
-    };
     interface HTMLDsVideoElement extends Components.DsVideo, HTMLStencilElement {
     }
     var HTMLDsVideoElement: {
         prototype: HTMLDsVideoElement;
         new (): HTMLDsVideoElement;
     };
-    interface HTMLDsVimeoElement extends Components.DsVimeo, HTMLStencilElement {
-    }
-    var HTMLDsVimeoElement: {
-        prototype: HTMLDsVimeoElement;
-        new (): HTMLDsVimeoElement;
-    };
-    interface HTMLDsWishlistButtonElement extends Components.DsWishlistButton, HTMLStencilElement {
-    }
-    var HTMLDsWishlistButtonElement: {
-        prototype: HTMLDsWishlistButtonElement;
-        new (): HTMLDsWishlistButtonElement;
-    };
-    interface HTMLProntoContentAdminElementEventMap {
-        "settingsChange": any;
-        "saveConfiguration": any;
-    }
-    interface HTMLProntoContentAdminElement extends Components.ProntoContentAdmin, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoContentAdminElementEventMap>(type: K, listener: (this: HTMLProntoContentAdminElement, ev: ProntoContentAdminCustomEvent<HTMLProntoContentAdminElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoContentAdminElementEventMap>(type: K, listener: (this: HTMLProntoContentAdminElement, ev: ProntoContentAdminCustomEvent<HTMLProntoContentAdminElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoContentAdminElement: {
-        prototype: HTMLProntoContentAdminElement;
-        new (): HTMLProntoContentAdminElement;
-    };
-    interface HTMLProntoFieldElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoFieldElement extends Components.ProntoField, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoFieldElementEventMap>(type: K, listener: (this: HTMLProntoFieldElement, ev: ProntoFieldCustomEvent<HTMLProntoFieldElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoFieldElementEventMap>(type: K, listener: (this: HTMLProntoFieldElement, ev: ProntoFieldCustomEvent<HTMLProntoFieldElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoFieldElement: {
-        prototype: HTMLProntoFieldElement;
-        new (): HTMLProntoFieldElement;
-    };
-    interface HTMLProntoFieldsetElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoFieldsetElement extends Components.ProntoFieldset, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoFieldsetElementEventMap>(type: K, listener: (this: HTMLProntoFieldsetElement, ev: ProntoFieldsetCustomEvent<HTMLProntoFieldsetElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoFieldsetElementEventMap>(type: K, listener: (this: HTMLProntoFieldsetElement, ev: ProntoFieldsetCustomEvent<HTMLProntoFieldsetElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoFieldsetElement: {
-        prototype: HTMLProntoFieldsetElement;
-        new (): HTMLProntoFieldsetElement;
-    };
-    interface HTMLProntoFormElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoFormElement extends Components.ProntoForm, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoFormElementEventMap>(type: K, listener: (this: HTMLProntoFormElement, ev: ProntoFormCustomEvent<HTMLProntoFormElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoFormElementEventMap>(type: K, listener: (this: HTMLProntoFormElement, ev: ProntoFormCustomEvent<HTMLProntoFormElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoFormElement: {
-        prototype: HTMLProntoFormElement;
-        new (): HTMLProntoFormElement;
-    };
-    interface HTMLProntoIconElement extends Components.ProntoIcon, HTMLStencilElement {
-    }
-    var HTMLProntoIconElement: {
-        prototype: HTMLProntoIconElement;
-        new (): HTMLProntoIconElement;
-    };
-    interface HTMLProntoModalElementEventMap {
-        "modalClose": any;
-        "modalOpen": any;
-    }
-    interface HTMLProntoModalElement extends Components.ProntoModal, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoModalElementEventMap>(type: K, listener: (this: HTMLProntoModalElement, ev: ProntoModalCustomEvent<HTMLProntoModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoModalElementEventMap>(type: K, listener: (this: HTMLProntoModalElement, ev: ProntoModalCustomEvent<HTMLProntoModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoModalElement: {
-        prototype: HTMLProntoModalElement;
-        new (): HTMLProntoModalElement;
-    };
-    interface HTMLProntoProductListElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoProductListElement extends Components.ProntoProductList, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoProductListElementEventMap>(type: K, listener: (this: HTMLProntoProductListElement, ev: ProntoProductListCustomEvent<HTMLProntoProductListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoProductListElementEventMap>(type: K, listener: (this: HTMLProntoProductListElement, ev: ProntoProductListCustomEvent<HTMLProntoProductListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoProductListElement: {
-        prototype: HTMLProntoProductListElement;
-        new (): HTMLProntoProductListElement;
-    };
     interface HTMLElementTagNameMap {
-        "ds-account-block": HTMLDsAccountBlockElement;
-        "ds-address": HTMLDsAddressElement;
         "ds-ajax": HTMLDsAjaxElement;
         "ds-app": HTMLDsAppElement;
-        "ds-app-menu": HTMLDsAppMenuElement;
-        "ds-auth": HTMLDsAuthElement;
-        "ds-back-to-top-button": HTMLDsBackToTopButtonElement;
-        "ds-banner": HTMLDsBannerElement;
         "ds-block": HTMLDsBlockElement;
-        "ds-block-builder": HTMLDsBlockBuilderElement;
-        "ds-breadcrumb": HTMLDsBreadcrumbElement;
-        "ds-button-configurator": HTMLDsButtonConfiguratorElement;
-        "ds-cart": HTMLDsCartElement;
-        "ds-cart-block": HTMLDsCartBlockElement;
-        "ds-category-list": HTMLDsCategoryListElement;
-        "ds-category-search": HTMLDsCategorySearchElement;
-        "ds-checkout-page": HTMLDsCheckoutPageElement;
-        "ds-checkout-path": HTMLDsCheckoutPathElement;
-        "ds-cms-image": HTMLDsCmsImageElement;
-        "ds-cms-search": HTMLDsCmsSearchElement;
-        "ds-cms-video": HTMLDsCmsVideoElement;
         "ds-combo": HTMLDsComboElement;
-        "ds-contact-block": HTMLDsContactBlockElement;
-        "ds-contact-form": HTMLDsContactFormElement;
-        "ds-content-block": HTMLDsContentBlockElement;
-        "ds-customer-page": HTMLDsCustomerPageElement;
         "ds-dropdown": HTMLDsDropdownElement;
         "ds-dropdown-item": HTMLDsDropdownItemElement;
-        "ds-faq": HTMLDsFaqElement;
-        "ds-feature-configurator": HTMLDsFeatureConfiguratorElement;
-        "ds-features-configurator": HTMLDsFeaturesConfiguratorElement;
-        "ds-filemanager": HTMLDsFilemanagerElement;
-        "ds-filters": HTMLDsFiltersElement;
-        "ds-footer": HTMLDsFooterElement;
-        "ds-giftcard": HTMLDsGiftcardElement;
-        "ds-grade-star": HTMLDsGradeStarElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
-        "ds-html": HTMLDsHtmlElement;
-        "ds-html-editor": HTMLDsHtmlEditorElement;
         "ds-icon": HTMLDsIconElement;
-        "ds-info-window": HTMLDsInfoWindowElement;
-        "ds-input-date": HTMLDsInputDateElement;
-        "ds-input-modal": HTMLDsInputModalElement;
-        "ds-input-number": HTMLDsInputNumberElement;
-        "ds-json": HTMLDsJsonElement;
-        "ds-lang": HTMLDsLangElement;
-        "ds-lang-selector": HTMLDsLangSelectorElement;
-        "ds-links-list": HTMLDsLinksListElement;
-        "ds-login": HTMLDsLoginElement;
-        "ds-main-configurator": HTMLDsMainConfiguratorElement;
-        "ds-map": HTMLDsMapElement;
-        "ds-map-location": HTMLDsMapLocationElement;
-        "ds-map-marker": HTMLDsMapMarkerElement;
+        "ds-main": HTMLDsMainElement;
         "ds-marquee": HTMLDsMarqueeElement;
-        "ds-marquee-configurator": HTMLDsMarqueeConfiguratorElement;
-        "ds-media": HTMLDsMediaElement;
-        "ds-message": HTMLDsMessageElement;
         "ds-modal": HTMLDsModalElement;
         "ds-nav": HTMLDsNavElement;
         "ds-nav-item": HTMLDsNavItemElement;
-        "ds-newsletter": HTMLDsNewsletterElement;
-        "ds-page": HTMLDsPageElement;
         "ds-panel": HTMLDsPanelElement;
-        "ds-panel-configurator": HTMLDsPanelConfiguratorElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
-        "ds-panels-configurator": HTMLDsPanelsConfiguratorElement;
-        "ds-password": HTMLDsPasswordElement;
-        "ds-post-list": HTMLDsPostListElement;
-        "ds-product": HTMLDsProductElement;
-        "ds-product-block": HTMLDsProductBlockElement;
-        "ds-product-list": HTMLDsProductListElement;
-        "ds-product-list-header": HTMLDsProductListHeaderElement;
-        "ds-product-page": HTMLDsProductPageElement;
-        "ds-product-page-configurator": HTMLDsProductPageConfiguratorElement;
-        "ds-product-search": HTMLDsProductSearchElement;
-        "ds-products-configurator": HTMLDsProductsConfiguratorElement;
         "ds-rating-list": HTMLDsRatingListElement;
-        "ds-reassurance": HTMLDsReassuranceElement;
-        "ds-register": HTMLDsRegisterElement;
         "ds-rsp": HTMLDsRspElement;
-        "ds-search": HTMLDsSearchElement;
-        "ds-search-bar": HTMLDsSearchBarElement;
         "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
-        "ds-social-link": HTMLDsSocialLinkElement;
-        "ds-sticky-cart-button": HTMLDsStickyCartButtonElement;
-        "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
         "ds-title-bar": HTMLDsTitleBarElement;
-        "ds-title-configurator": HTMLDsTitleConfiguratorElement;
         "ds-toaster": HTMLDsToasterElement;
         "ds-toggle": HTMLDsToggleElement;
         "ds-toggle-group": HTMLDsToggleGroupElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-trigger": HTMLDsTriggerElement;
-        "ds-txt-img-configurator": HTMLDsTxtImgConfiguratorElement;
         "ds-video": HTMLDsVideoElement;
-        "ds-vimeo": HTMLDsVimeoElement;
-        "ds-wishlist-button": HTMLDsWishlistButtonElement;
-        "pronto-content-admin": HTMLProntoContentAdminElement;
-        "pronto-field": HTMLProntoFieldElement;
-        "pronto-fieldset": HTMLProntoFieldsetElement;
-        "pronto-form": HTMLProntoFormElement;
-        "pronto-icon": HTMLProntoIconElement;
-        "pronto-modal": HTMLProntoModalElement;
-        "pronto-product-list": HTMLProntoProductListElement;
     }
 }
 declare namespace LocalJSX {
-    interface DsAccountBlock {
-        "dsIsDropdownEnabled"?: boolean;
-    }
-    interface DsAddress {
-    }
+    /**
+     * A simple component to load ajax content
+     * Version: 1.0
+     */
     interface DsAjax {
+        /**
+          * Event that will trigger the loading of the ajax content
+         */
         "on"?: 'load' | 'click';
+        /**
+          * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
+         */
+        "suffix"?: string;
+        /**
+          * Where to display the content, can be the component itself or an element specified by a css selector
+         */
         "target"?: 'self' | string;
     }
     interface DsApp {
-    }
-    interface DsAppMenu {
-    }
-    interface DsAuth {
-    }
-    interface DsBackToTopButton {
-        "offset"?: string | number;
-        "scrollBehavior"?: "smooth" | "instant" | "auto";
-    }
-    interface DsBanner {
-        "dsUrl"?: string;
+        "breakpointsFromProp"?: Record<string, number>;
+        "debounceDelay"?: number;
+        "onBreakpointChange"?: (event: DsAppCustomEvent<any>) => void;
+        "propertyName"?: string;
+        "subscriberSelector"?: string;
     }
     interface DsBlock {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
+        "modal"?: boolean;
         /**
           * List of modifiers
          */
@@ -2267,56 +922,6 @@ declare namespace LocalJSX {
          */
         "type"?: string;
     }
-    interface DsBlockBuilder {
-        "name"?: string;
-        "onConfigChange"?: (event: DsBlockBuilderCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsBlockBuilderCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
-    interface DsBreadcrumb {
-    }
-    interface DsButtonConfigurator {
-        "defaultValue"?: any;
-        "inputId"?: string;
-        "onValueChange"?: (event: DsButtonConfiguratorCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsCart {
-        "updateUrl"?: string;
-    }
-    interface DsCartBlock {
-        "dsCartUrl"?: string;
-        "dsProductsCount"?: number | string;
-        "dsRefreshUrl"?: string;
-    }
-    interface DsCategoryList {
-        "showImage"?: boolean;
-    }
-    interface DsCategorySearch {
-        "controllerUrl"?: string;
-    }
-    interface DsCheckoutPage {
-        "mods"?: string | string[];
-        "onPanelShow"?: (event: DsCheckoutPageCustomEvent<any>) => void;
-        "showBackButton"?: boolean;
-    }
-    interface DsCheckoutPath {
-        "dsCurrentStep"?: string | number;
-    }
-    interface DsCmsImage {
-        "filemanagerUrl"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: DsCmsImageCustomEvent<any>) => void;
-    }
-    interface DsCmsSearch {
-        "route"?: string;
-        "value"?: string;
-    }
-    interface DsCmsVideo {
-        "filemanagerUrl"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: DsCmsVideoCustomEvent<any>) => void;
-    }
     interface DsCombo {
         "customLabel"?: string;
         "mode"?: string;
@@ -2329,20 +934,6 @@ declare namespace LocalJSX {
         "position"?: string;
         "selected"?: DSOption;
         "selectedOption"?: DSOption[];
-    }
-    interface DsContactBlock {
-        "dsAddress"?: string;
-        "dsEmail"?: string;
-        "dsFax"?: string;
-        "dsPhone"?: string;
-    }
-    interface DsContactForm {
-    }
-    interface DsContentBlock {
-        "imagePos"?: 'none' | 'before' | 'center' | 'after';
-    }
-    interface DsCustomerPage {
-        "dsMods"?: string | string[];
     }
     interface DsDropdown {
         "customLabel"?: string;
@@ -2357,39 +948,6 @@ declare namespace LocalJSX {
     interface DsDropdownItem {
         "name"?: string;
         "value"?: any;
-    }
-    interface DsFaq {
-    }
-    interface DsFeatureConfigurator {
-        "featureId"?: string;
-        "isMain"?: boolean;
-        "onFeatureChange"?: (event: DsFeatureConfiguratorCustomEvent<any>) => void;
-        "onRequestDeleteFeature"?: (event: DsFeatureConfiguratorCustomEvent<any>) => void;
-        "settings"?: any;
-    }
-    interface DsFeaturesConfigurator {
-        "name"?: string;
-        "onConfigChange"?: (event: DsFeaturesConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsFeaturesConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-        "showActions"?: boolean;
-    }
-    interface DsFilemanager {
-        "mediaIndex"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: DsFilemanagerCustomEvent<any>) => void;
-        "type"?: 'image' | 'video';
-        "url"?: string;
-    }
-    interface DsFilters {
-    }
-    interface DsFooter {
-    }
-    interface DsGiftcard {
-    }
-    interface DsGradeStar {
-        "dsCount"?: string | number;
-        "dsGrade"?: string | number;
     }
     interface DsGrid {
         "align"?: string | DSGridAlignment;
@@ -2413,105 +971,10 @@ declare namespace LocalJSX {
         "section"?: boolean;
         "useContext"?: boolean;
     }
-    interface DsHtml {
-        "name"?: string;
-        "onValueChange"?: (event: DsHtmlCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsHtmlEditor {
-        "content"?: string;
-        "name"?: string;
-        "onCancel"?: (event: DsHtmlEditorCustomEvent<any>) => void;
-        "onSave"?: (event: DsHtmlEditorCustomEvent<any>) => void;
-        "onValueChange"?: (event: DsHtmlEditorCustomEvent<any>) => void;
-    }
     interface DsIcon {
         "type"?: string;
     }
-    interface DsInfoWindow {
-        /**
-          * AriaLabel to assign to the InfoWindow.
-         */
-        "ariaLabel"?: string;
-        /**
-          * Disable panning the map to make the InfoWindow fully visible when it opens.
-         */
-        "disableAutoPan"?: boolean;
-        /**
-          * Maximum width of the InfoWindow, regardless of content&#39;s width. This
-         */
-        "maxWidth"?: number;
-        /**
-          * Minimum width of the InfoWindow, regardless of the content&#39;s width.
-         */
-        "minWidth"?: number;
-        /**
-          * The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
-         */
-        "pixelOffset"?: google.maps.Size;
-        /**
-          * The LatLng at which to display this InfoWindow.
-         */
-        "position"?: google.maps.LatLng|google.maps.LatLngLiteral;
-        /**
-          * All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-         */
-        "zIndex"?: number;
-    }
-    interface DsInputDate {
-        "onValueChange"?: (event: DsInputDateCustomEvent<any>) => void;
-        "value"?: string;
-    }
-    interface DsInputModal {
-        "MediaPositions"?: MediaPosition[];
-        "associatedRoute"?: string;
-        "defaultType"?: any;
-        "name"?: string;
-        "onValueChange"?: (event: DsInputModalCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsInputNumber {
-        "ariaLabel"?: string;
-        "defaultValue"?: number | string;
-        "max"?: number | string;
-        "min"?: number | string;
-        "name"?: string;
-        "onQuantityChange"?: (event: DsInputNumberCustomEvent<any>) => void;
-    }
-    interface DsJson {
-        "data"?: any;
-    }
-    interface DsLang {
-        "dsIsSelected"?: boolean;
-        "dsIsoCode"?: string;
-    }
-    interface DsLangSelector {
-        "currentLang"?: string;
-        "languagesFromProp"?: DSOption2[] | string;
-    }
-    interface DsLinksList {
-    }
-    interface DsLogin {
-    }
-    interface DsMainConfigurator {
-    }
-    interface DsMap {
-        "apiKey"?: string;
-        "locations"?: Location[];
-        "params"?: GMapsParams;
-    }
-    interface DsMapLocation {
-        "lat"?: number;
-        "lng"?: number;
-        "name"?: string;
-    }
-    interface DsMapMarker {
-        "icon"?: string | google.maps.Icon | google.maps.Symbol;
-        "label"?: string | google.maps.MarkerLabel;
-        "lat"?: number;
-        "lng"?: number;
-        "name"?: string;
-        "params"?: string | MarkerOptionsFromProps;
+    interface DsMain {
     }
     interface DsMarquee {
         "bgColor"?: string;
@@ -2521,39 +984,13 @@ declare namespace LocalJSX {
         "speed"?: string | number;
         "transition"?: string | DSMarqueeTransitionEnum;
     }
-    interface DsMarqueeConfigurator {
-        "inputId"?: string;
-        "onSaveConfiguration"?: (event: DsMarqueeConfiguratorCustomEvent<any>) => void;
-        "settings"?: any;
-    }
-    interface DsMedia {
-        "associatedRoute"?: string;
-        "mediaPositions"?: MediaPosition[];
-        "name"?: string;
-        "onValueChange"?: (event: DsMediaCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsMessage {
-        "bgColor"?: string;
-        "color"?: string;
-        "speed"?: number;
-    }
     interface DsModal {
-        "closeButtonMods"?: string[];
-        "darkBackground"?: boolean;
-        "isClosingDisabled"?: boolean;
-        "isFooterDisabled"?: boolean;
-        "isHeaderDisabled"?: boolean;
-        "isLayoutDisabled"?: boolean;
-        "isSubtitleDisabled"?: boolean;
         "lightboxClass"?: any;
         "lightboxClassObject"?: any;
         "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
         "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
         "overlay"?: boolean;
-        "redirectToSmoodOnClose"?: boolean;
         "shown"?: boolean;
-        "useSnack"?: boolean;
     }
     interface DsNav {
         "currentActiveItemId"?: string;
@@ -2568,18 +1005,6 @@ declare namespace LocalJSX {
         "onDsMenuItemClick"?: (event: DsNavItemCustomEvent<any>) => void;
         "type"?: string;
     }
-    interface DsNewsletter {
-        "dsDisplayedBy"?: string;
-        "dsInputValue"?: string;
-        "dsPlaceholder"?: string;
-        "dsSubscribeUrl"?: string;
-    }
-    interface DsPage {
-        "cartUrl"?: string;
-        "locale"?: AppLocale;
-        "mods"?: string | string[];
-        "token"?: string;
-    }
     interface DsPanel {
         "expanded"?: boolean;
         "index"?: number;
@@ -2591,79 +1016,15 @@ declare namespace LocalJSX {
         "onPanelShown"?: (event: DsPanelCustomEvent<any>) => void;
         "type"?: PanelType;
     }
-    interface DsPanelConfigurator {
-        "isMain"?: boolean;
-        "onPanelChange"?: (event: DsPanelConfiguratorCustomEvent<any>) => void;
-        "onRequestDeletePanel"?: (event: DsPanelConfiguratorCustomEvent<any>) => void;
-        "panelId"?: string;
-        "settings"?: any;
-    }
     interface DsPanelGroup {
         "isActive"?: boolean;
         "mods"?: string | string[];
         "soloContent"?: boolean;
         "type"?: PanelType1;
     }
-    interface DsPanelsConfigurator {
-        "name"?: string;
-        "onConfigChange"?: (event: DsPanelsConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsPanelsConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-        "showActions"?: boolean;
-    }
-    interface DsPassword {
-        "defaultValue"?: string;
-        "mods"?: string | string[];
-        "name"?: string;
-        "pattern"?: string;
-        "type"?: 'text' | 'password';
-    }
-    interface DsPostList {
-        "dsMods"?: string | string[];
-    }
-    interface DsProduct {
-        "isLoading"?: boolean;
-        "productId"?: string;
-    }
-    interface DsProductBlock {
-        "params"?: string | ProductBlockParams;
-        "size"?: string;
-    }
-    interface DsProductList {
-        "infiniteScroll"?: boolean;
-        "infiniteScrollDelay"?: number;
-        "listUrl"?: string;
-    }
-    interface DsProductListHeader {
-        "labels"?: Record<string, string>;
-    }
-    interface DsProductPage {
-    }
-    interface DsProductPageConfigurator {
-        "defaultValue"?: string;
-        "onConfigChange"?: (event: DsProductPageConfiguratorCustomEvent<any>) => void;
-        "onPreview"?: (event: DsProductPageConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsProductPageConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
-    interface DsProductSearch {
-        "onValueChange"?: (event: DsProductSearchCustomEvent<any>) => void;
-        "route"?: string;
-        "value"?: string | string[];
-    }
-    interface DsProductsConfigurator {
-        "associatedRoute"?: string;
-        "defaultValue"?: string;
-        "onConfigChange"?: (event: DsProductsConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
     interface DsRatingList {
         "dsAverage"?: string|number;
         "dsRatings"?: string|any[];
-    }
-    interface DsReassurance {
-    }
-    interface DsRegister {
     }
     interface DsRsp {
         "breakpointsFromProp"?: Record<string, number>;
@@ -2671,16 +1032,6 @@ declare namespace LocalJSX {
         "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
         "propertyName"?: string;
         "subscriberSelector"?: string;
-    }
-    interface DsSearch {
-        "placeholder"?: string;
-        "url"?: string;
-        "value"?: string;
-    }
-    interface DsSearchBar {
-        "dsPlaceholder"?: string;
-        "dsSearchString"?: string;
-        "dsSearchUrl"?: string;
     }
     interface DsSelect {
         "defaultValue"?: string;
@@ -2714,29 +1065,13 @@ declare namespace LocalJSX {
         "dsItemCount"?: number;
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
-    interface DsSocialLink {
-        "dsNetworks"?: any[]|string;
-    }
-    interface DsStickyCartButton {
-        "offset"?: string | number;
-        "scrollBehavior"?: "smooth" | "instant" | "auto";
-    }
-    interface DsTag {
-        "onRequestDeleteTag"?: (event: DsTagCustomEvent<any>) => void;
-        "tagId"?: string;
-    }
     interface DsText {
-        "bold"?: boolean;
-        "color"?: string;
-        "content"?: boolean;
-        "highlight"?: boolean;
-        "italic"?: boolean;
-        "main"?: boolean;
+        "inline"?: boolean;
         "mods"?: string | string[];
-        "size"?: string | number;
         "sub"?: boolean;
-        "text"?: boolean;
-        "type"?: string;
+        "sup"?: boolean;
+        "type"?: "p" | "code" | "quote";
+        "weight"?: "thin" | "light" | "normal" | "bold" | "bolder";
     }
     interface DsTitle {
         "article"?: boolean;
@@ -2747,17 +1082,10 @@ declare namespace LocalJSX {
         "section"?: boolean;
         "sub"?: boolean;
         "sup"?: boolean;
-        "useContext"?: boolean;
     }
     interface DsTitleBar {
         "ctx"?: boolean;
         "mods"?: string | string[];
-    }
-    interface DsTitleConfigurator {
-        "onValueChange"?: (event: DsTitleConfiguratorCustomEvent<any>) => void;
-        "toolbar"?: string;
-        "validElements"?: string;
-        "value"?: string;
     }
     interface DsToaster {
         "closingDelay"?: number;
@@ -2820,12 +1148,6 @@ declare namespace LocalJSX {
         "target"?: string;
         "type"?: 'button' | 'control' | 'link';
     }
-    interface DsTxtImgConfigurator {
-        "defaultValue"?: string;
-        "onConfigChange"?: (event: DsTxtImgConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsTxtImgConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
     interface DsVideo {
         "autoplay"?: boolean;
         "controls"?: boolean;
@@ -2835,293 +1157,77 @@ declare namespace LocalJSX {
         "poster"?: string;
         "sources"?: string | string[];
     }
-    interface DsVimeo {
-        "loadingDelay"?: string;
-        "mods"?: string[];
-        "videoId"?: string;
-    }
-    interface DsWishlistButton {
-        "dsIsLogged"?: string;
-        "dsProductAttributeId"?: string;
-        "dsProductId"?: string;
-        "dsUrl"?: string;
-    }
-    interface ProntoContentAdmin {
-        "active"?: string | boolean;
-        "adminUrl"?: string;
-        "blockTitle"?: string;
-        "componentType"?: string;
-        "controllerUrl"?: string;
-        "endDate"?: string;
-        "filemanagerUrl"?: string;
-        "hook"?: string;
-        "linkedId"?: string;
-        "modifiers"?: string;
-        "onSaveConfiguration"?: (event: ProntoContentAdminCustomEvent<any>) => void;
-        "onSettingsChange"?: (event: ProntoContentAdminCustomEvent<any>) => void;
-        "orderPosition"?: string;
-        "pageType"?: string;
-        "settings"?: any;
-        "startDate"?: string;
-    }
-    interface ProntoField {
-        "associatedRoute"?: string;
-        "defaultValue"?: string;
-        "label"?: string;
-        "mods"?: string | string[];
-        "onValueChange"?: (event: ProntoFieldCustomEvent<any>) => void;
-        "positions"?: MediaPosition[];
-        "type"?: string;
-        "values"?: { label: string; value: string; }[];
-    }
-    interface ProntoFieldset {
-        "defaultValue"?: any;
-        "depth"?: number;
-        "fields"?: any[];
-        "label"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: ProntoFieldsetCustomEvent<any>) => void;
-    }
-    interface ProntoForm {
-        "fields"?: any[];
-        "mods"?: string | string[];
-        "onValueChange"?: (event: ProntoFormCustomEvent<any>) => void;
-        "size"?: "sm" | "md" | "lg" | "xl";
-    }
-    interface ProntoIcon {
-        "type"?: string;
-    }
-    interface ProntoModal {
-        "associatedRoute"?: string;
-        "mods"?: string | string[];
-        "name"?: string;
-        "onModalClose"?: (event: ProntoModalCustomEvent<any>) => void;
-        "onModalOpen"?: (event: ProntoModalCustomEvent<any>) => void;
-        "overlay"?: boolean;
-        "type"?: string;
-        "value"?: any;
-    }
-    interface ProntoProductList {
-        "associatedRoute"?: string;
-        "inputProps"?: any;
-        "onValueChange"?: (event: ProntoProductListCustomEvent<any>) => void;
-        "value"?: any[];
-    }
     interface IntrinsicElements {
-        "ds-account-block": DsAccountBlock;
-        "ds-address": DsAddress;
         "ds-ajax": DsAjax;
         "ds-app": DsApp;
-        "ds-app-menu": DsAppMenu;
-        "ds-auth": DsAuth;
-        "ds-back-to-top-button": DsBackToTopButton;
-        "ds-banner": DsBanner;
         "ds-block": DsBlock;
-        "ds-block-builder": DsBlockBuilder;
-        "ds-breadcrumb": DsBreadcrumb;
-        "ds-button-configurator": DsButtonConfigurator;
-        "ds-cart": DsCart;
-        "ds-cart-block": DsCartBlock;
-        "ds-category-list": DsCategoryList;
-        "ds-category-search": DsCategorySearch;
-        "ds-checkout-page": DsCheckoutPage;
-        "ds-checkout-path": DsCheckoutPath;
-        "ds-cms-image": DsCmsImage;
-        "ds-cms-search": DsCmsSearch;
-        "ds-cms-video": DsCmsVideo;
         "ds-combo": DsCombo;
-        "ds-contact-block": DsContactBlock;
-        "ds-contact-form": DsContactForm;
-        "ds-content-block": DsContentBlock;
-        "ds-customer-page": DsCustomerPage;
         "ds-dropdown": DsDropdown;
         "ds-dropdown-item": DsDropdownItem;
-        "ds-faq": DsFaq;
-        "ds-feature-configurator": DsFeatureConfigurator;
-        "ds-features-configurator": DsFeaturesConfigurator;
-        "ds-filemanager": DsFilemanager;
-        "ds-filters": DsFilters;
-        "ds-footer": DsFooter;
-        "ds-giftcard": DsGiftcard;
-        "ds-grade-star": DsGradeStar;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-heading": DsHeading;
-        "ds-html": DsHtml;
-        "ds-html-editor": DsHtmlEditor;
         "ds-icon": DsIcon;
-        "ds-info-window": DsInfoWindow;
-        "ds-input-date": DsInputDate;
-        "ds-input-modal": DsInputModal;
-        "ds-input-number": DsInputNumber;
-        "ds-json": DsJson;
-        "ds-lang": DsLang;
-        "ds-lang-selector": DsLangSelector;
-        "ds-links-list": DsLinksList;
-        "ds-login": DsLogin;
-        "ds-main-configurator": DsMainConfigurator;
-        "ds-map": DsMap;
-        "ds-map-location": DsMapLocation;
-        "ds-map-marker": DsMapMarker;
+        "ds-main": DsMain;
         "ds-marquee": DsMarquee;
-        "ds-marquee-configurator": DsMarqueeConfigurator;
-        "ds-media": DsMedia;
-        "ds-message": DsMessage;
         "ds-modal": DsModal;
         "ds-nav": DsNav;
         "ds-nav-item": DsNavItem;
-        "ds-newsletter": DsNewsletter;
-        "ds-page": DsPage;
         "ds-panel": DsPanel;
-        "ds-panel-configurator": DsPanelConfigurator;
         "ds-panel-group": DsPanelGroup;
-        "ds-panels-configurator": DsPanelsConfigurator;
-        "ds-password": DsPassword;
-        "ds-post-list": DsPostList;
-        "ds-product": DsProduct;
-        "ds-product-block": DsProductBlock;
-        "ds-product-list": DsProductList;
-        "ds-product-list-header": DsProductListHeader;
-        "ds-product-page": DsProductPage;
-        "ds-product-page-configurator": DsProductPageConfigurator;
-        "ds-product-search": DsProductSearch;
-        "ds-products-configurator": DsProductsConfigurator;
         "ds-rating-list": DsRatingList;
-        "ds-reassurance": DsReassurance;
-        "ds-register": DsRegister;
         "ds-rsp": DsRsp;
-        "ds-search": DsSearch;
-        "ds-search-bar": DsSearchBar;
         "ds-select": DsSelect;
         "ds-sidebar": DsSidebar;
         "ds-slider": DsSlider;
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": DsSliderMenu;
-        "ds-social-link": DsSocialLink;
-        "ds-sticky-cart-button": DsStickyCartButton;
-        "ds-tag": DsTag;
         "ds-text": DsText;
         "ds-title": DsTitle;
         "ds-title-bar": DsTitleBar;
-        "ds-title-configurator": DsTitleConfigurator;
         "ds-toaster": DsToaster;
         "ds-toggle": DsToggle;
         "ds-toggle-group": DsToggleGroup;
         "ds-tooltip": DsTooltip;
         "ds-trigger": DsTrigger;
-        "ds-txt-img-configurator": DsTxtImgConfigurator;
         "ds-video": DsVideo;
-        "ds-vimeo": DsVimeo;
-        "ds-wishlist-button": DsWishlistButton;
-        "pronto-content-admin": ProntoContentAdmin;
-        "pronto-field": ProntoField;
-        "pronto-fieldset": ProntoFieldset;
-        "pronto-form": ProntoForm;
-        "pronto-icon": ProntoIcon;
-        "pronto-modal": ProntoModal;
-        "pronto-product-list": ProntoProductList;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ds-account-block": LocalJSX.DsAccountBlock & JSXBase.HTMLAttributes<HTMLDsAccountBlockElement>;
-            "ds-address": LocalJSX.DsAddress & JSXBase.HTMLAttributes<HTMLDsAddressElement>;
+            /**
+             * A simple component to load ajax content
+             * Version: 1.0
+             */
             "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
             "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
-            "ds-app-menu": LocalJSX.DsAppMenu & JSXBase.HTMLAttributes<HTMLDsAppMenuElement>;
-            "ds-auth": LocalJSX.DsAuth & JSXBase.HTMLAttributes<HTMLDsAuthElement>;
-            "ds-back-to-top-button": LocalJSX.DsBackToTopButton & JSXBase.HTMLAttributes<HTMLDsBackToTopButtonElement>;
-            "ds-banner": LocalJSX.DsBanner & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
-            "ds-block-builder": LocalJSX.DsBlockBuilder & JSXBase.HTMLAttributes<HTMLDsBlockBuilderElement>;
-            "ds-breadcrumb": LocalJSX.DsBreadcrumb & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
-            "ds-button-configurator": LocalJSX.DsButtonConfigurator & JSXBase.HTMLAttributes<HTMLDsButtonConfiguratorElement>;
-            "ds-cart": LocalJSX.DsCart & JSXBase.HTMLAttributes<HTMLDsCartElement>;
-            "ds-cart-block": LocalJSX.DsCartBlock & JSXBase.HTMLAttributes<HTMLDsCartBlockElement>;
-            "ds-category-list": LocalJSX.DsCategoryList & JSXBase.HTMLAttributes<HTMLDsCategoryListElement>;
-            "ds-category-search": LocalJSX.DsCategorySearch & JSXBase.HTMLAttributes<HTMLDsCategorySearchElement>;
-            "ds-checkout-page": LocalJSX.DsCheckoutPage & JSXBase.HTMLAttributes<HTMLDsCheckoutPageElement>;
-            "ds-checkout-path": LocalJSX.DsCheckoutPath & JSXBase.HTMLAttributes<HTMLDsCheckoutPathElement>;
-            "ds-cms-image": LocalJSX.DsCmsImage & JSXBase.HTMLAttributes<HTMLDsCmsImageElement>;
-            "ds-cms-search": LocalJSX.DsCmsSearch & JSXBase.HTMLAttributes<HTMLDsCmsSearchElement>;
-            "ds-cms-video": LocalJSX.DsCmsVideo & JSXBase.HTMLAttributes<HTMLDsCmsVideoElement>;
             "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
-            "ds-contact-block": LocalJSX.DsContactBlock & JSXBase.HTMLAttributes<HTMLDsContactBlockElement>;
-            "ds-contact-form": LocalJSX.DsContactForm & JSXBase.HTMLAttributes<HTMLDsContactFormElement>;
-            "ds-content-block": LocalJSX.DsContentBlock & JSXBase.HTMLAttributes<HTMLDsContentBlockElement>;
-            "ds-customer-page": LocalJSX.DsCustomerPage & JSXBase.HTMLAttributes<HTMLDsCustomerPageElement>;
             "ds-dropdown": LocalJSX.DsDropdown & JSXBase.HTMLAttributes<HTMLDsDropdownElement>;
             "ds-dropdown-item": LocalJSX.DsDropdownItem & JSXBase.HTMLAttributes<HTMLDsDropdownItemElement>;
-            "ds-faq": LocalJSX.DsFaq & JSXBase.HTMLAttributes<HTMLDsFaqElement>;
-            "ds-feature-configurator": LocalJSX.DsFeatureConfigurator & JSXBase.HTMLAttributes<HTMLDsFeatureConfiguratorElement>;
-            "ds-features-configurator": LocalJSX.DsFeaturesConfigurator & JSXBase.HTMLAttributes<HTMLDsFeaturesConfiguratorElement>;
-            "ds-filemanager": LocalJSX.DsFilemanager & JSXBase.HTMLAttributes<HTMLDsFilemanagerElement>;
-            "ds-filters": LocalJSX.DsFilters & JSXBase.HTMLAttributes<HTMLDsFiltersElement>;
-            "ds-footer": LocalJSX.DsFooter & JSXBase.HTMLAttributes<HTMLDsFooterElement>;
-            "ds-giftcard": LocalJSX.DsGiftcard & JSXBase.HTMLAttributes<HTMLDsGiftcardElement>;
-            "ds-grade-star": LocalJSX.DsGradeStar & JSXBase.HTMLAttributes<HTMLDsGradeStarElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
-            "ds-html": LocalJSX.DsHtml & JSXBase.HTMLAttributes<HTMLDsHtmlElement>;
-            "ds-html-editor": LocalJSX.DsHtmlEditor & JSXBase.HTMLAttributes<HTMLDsHtmlEditorElement>;
             "ds-icon": LocalJSX.DsIcon & JSXBase.HTMLAttributes<HTMLDsIconElement>;
-            "ds-info-window": LocalJSX.DsInfoWindow & JSXBase.HTMLAttributes<HTMLDsInfoWindowElement>;
-            "ds-input-date": LocalJSX.DsInputDate & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
-            "ds-input-modal": LocalJSX.DsInputModal & JSXBase.HTMLAttributes<HTMLDsInputModalElement>;
-            "ds-input-number": LocalJSX.DsInputNumber & JSXBase.HTMLAttributes<HTMLDsInputNumberElement>;
-            "ds-json": LocalJSX.DsJson & JSXBase.HTMLAttributes<HTMLDsJsonElement>;
-            "ds-lang": LocalJSX.DsLang & JSXBase.HTMLAttributes<HTMLDsLangElement>;
-            "ds-lang-selector": LocalJSX.DsLangSelector & JSXBase.HTMLAttributes<HTMLDsLangSelectorElement>;
-            "ds-links-list": LocalJSX.DsLinksList & JSXBase.HTMLAttributes<HTMLDsLinksListElement>;
-            "ds-login": LocalJSX.DsLogin & JSXBase.HTMLAttributes<HTMLDsLoginElement>;
-            "ds-main-configurator": LocalJSX.DsMainConfigurator & JSXBase.HTMLAttributes<HTMLDsMainConfiguratorElement>;
-            "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
-            "ds-map-location": LocalJSX.DsMapLocation & JSXBase.HTMLAttributes<HTMLDsMapLocationElement>;
-            "ds-map-marker": LocalJSX.DsMapMarker & JSXBase.HTMLAttributes<HTMLDsMapMarkerElement>;
+            "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             "ds-marquee": LocalJSX.DsMarquee & JSXBase.HTMLAttributes<HTMLDsMarqueeElement>;
-            "ds-marquee-configurator": LocalJSX.DsMarqueeConfigurator & JSXBase.HTMLAttributes<HTMLDsMarqueeConfiguratorElement>;
-            "ds-media": LocalJSX.DsMedia & JSXBase.HTMLAttributes<HTMLDsMediaElement>;
-            "ds-message": LocalJSX.DsMessage & JSXBase.HTMLAttributes<HTMLDsMessageElement>;
             "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-nav": LocalJSX.DsNav & JSXBase.HTMLAttributes<HTMLDsNavElement>;
             "ds-nav-item": LocalJSX.DsNavItem & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
-            "ds-newsletter": LocalJSX.DsNewsletter & JSXBase.HTMLAttributes<HTMLDsNewsletterElement>;
-            "ds-page": LocalJSX.DsPage & JSXBase.HTMLAttributes<HTMLDsPageElement>;
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
-            "ds-panel-configurator": LocalJSX.DsPanelConfigurator & JSXBase.HTMLAttributes<HTMLDsPanelConfiguratorElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
-            "ds-panels-configurator": LocalJSX.DsPanelsConfigurator & JSXBase.HTMLAttributes<HTMLDsPanelsConfiguratorElement>;
-            "ds-password": LocalJSX.DsPassword & JSXBase.HTMLAttributes<HTMLDsPasswordElement>;
-            "ds-post-list": LocalJSX.DsPostList & JSXBase.HTMLAttributes<HTMLDsPostListElement>;
-            "ds-product": LocalJSX.DsProduct & JSXBase.HTMLAttributes<HTMLDsProductElement>;
-            "ds-product-block": LocalJSX.DsProductBlock & JSXBase.HTMLAttributes<HTMLDsProductBlockElement>;
-            "ds-product-list": LocalJSX.DsProductList & JSXBase.HTMLAttributes<HTMLDsProductListElement>;
-            "ds-product-list-header": LocalJSX.DsProductListHeader & JSXBase.HTMLAttributes<HTMLDsProductListHeaderElement>;
-            "ds-product-page": LocalJSX.DsProductPage & JSXBase.HTMLAttributes<HTMLDsProductPageElement>;
-            "ds-product-page-configurator": LocalJSX.DsProductPageConfigurator & JSXBase.HTMLAttributes<HTMLDsProductPageConfiguratorElement>;
-            "ds-product-search": LocalJSX.DsProductSearch & JSXBase.HTMLAttributes<HTMLDsProductSearchElement>;
-            "ds-products-configurator": LocalJSX.DsProductsConfigurator & JSXBase.HTMLAttributes<HTMLDsProductsConfiguratorElement>;
             "ds-rating-list": LocalJSX.DsRatingList & JSXBase.HTMLAttributes<HTMLDsRatingListElement>;
-            "ds-reassurance": LocalJSX.DsReassurance & JSXBase.HTMLAttributes<HTMLDsReassuranceElement>;
-            "ds-register": LocalJSX.DsRegister & JSXBase.HTMLAttributes<HTMLDsRegisterElement>;
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
-            "ds-search": LocalJSX.DsSearch & JSXBase.HTMLAttributes<HTMLDsSearchElement>;
-            "ds-search-bar": LocalJSX.DsSearchBar & JSXBase.HTMLAttributes<HTMLDsSearchBarElement>;
             "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
-            "ds-social-link": LocalJSX.DsSocialLink & JSXBase.HTMLAttributes<HTMLDsSocialLinkElement>;
-            "ds-sticky-cart-button": LocalJSX.DsStickyCartButton & JSXBase.HTMLAttributes<HTMLDsStickyCartButtonElement>;
-            "ds-tag": LocalJSX.DsTag & JSXBase.HTMLAttributes<HTMLDsTagElement>;
             "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-title-bar": LocalJSX.DsTitleBar & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
-            "ds-title-configurator": LocalJSX.DsTitleConfigurator & JSXBase.HTMLAttributes<HTMLDsTitleConfiguratorElement>;
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
             "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
@@ -3130,17 +1236,7 @@ declare module "@stencil/core" {
              */
             "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
-            "ds-txt-img-configurator": LocalJSX.DsTxtImgConfigurator & JSXBase.HTMLAttributes<HTMLDsTxtImgConfiguratorElement>;
             "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
-            "ds-vimeo": LocalJSX.DsVimeo & JSXBase.HTMLAttributes<HTMLDsVimeoElement>;
-            "ds-wishlist-button": LocalJSX.DsWishlistButton & JSXBase.HTMLAttributes<HTMLDsWishlistButtonElement>;
-            "pronto-content-admin": LocalJSX.ProntoContentAdmin & JSXBase.HTMLAttributes<HTMLProntoContentAdminElement>;
-            "pronto-field": LocalJSX.ProntoField & JSXBase.HTMLAttributes<HTMLProntoFieldElement>;
-            "pronto-fieldset": LocalJSX.ProntoFieldset & JSXBase.HTMLAttributes<HTMLProntoFieldsetElement>;
-            "pronto-form": LocalJSX.ProntoForm & JSXBase.HTMLAttributes<HTMLProntoFormElement>;
-            "pronto-icon": LocalJSX.ProntoIcon & JSXBase.HTMLAttributes<HTMLProntoIconElement>;
-            "pronto-modal": LocalJSX.ProntoModal & JSXBase.HTMLAttributes<HTMLProntoModalElement>;
-            "pronto-product-list": LocalJSX.ProntoProductList & JSXBase.HTMLAttributes<HTMLProntoProductListElement>;
         }
     }
 }

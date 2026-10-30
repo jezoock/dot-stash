@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State, Watch } from "@stencil/core";
+import { Component, Element, Event, EventEmitter, h, Host, Listen, Method, Prop, State, Watch } from "@stencil/core";
 import throttle from "../../../typescript/throttle";
 
 @Component({

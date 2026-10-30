@@ -95,16 +95,12 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [ds-block-builder](../../pronto/pronto-content/configurator/block-builder)
- - [ds-media](../../pronto/pronto-content/configurator/media)
- - [pronto-field](../../pronto/pronto-content/form)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-block-builder --> ds-toggle
-  ds-media --> ds-toggle
-  pronto-field --> ds-toggle
+  ds-main --> ds-toggle
   style ds-toggle fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

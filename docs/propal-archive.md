@@ -69,17 +69,11 @@ Propal. **Drop**: Propal business logic, or only meaningful with an external app
 | `cart-2` | Near-duplicate of `cart` (10 files differ, all 15 tags clash) | Same as `cart` | `cart` | **Drop** |
 | `shopping-bag` | No source code: only generated readmes and 3 SCSS files | — | None | **Drop** |
 
-### Follow-ups (not changed here)
+### Follow-ups
 
-- **`components/components.d.ts`** imports `AppLocale` from `../toSort-propal/page/page` and the toaster enums from
-  `../toSort-propal/toaster/…` (the real file is `components/core/toaster/`), and still types the removed tags.
-  A build regenerates it with no `toSort-propal` reference and the correct toaster path. Task 3.
-- **`stencil.config.ts`**: the commented-out `bundles` list names `ds-page`, `ds-app-menu`, `ds-cart-block`,
-  `ds-back-to-top-button` (and `ds-product-block`, `ds-account-block`, which do not exist either). Task 3.
-- **Generated readmes** still list removed components under "Used by": `components/core/responsive/readme.md`
-  (`ds-page`), `components/core/text/readme.md` and `components/core/title/readme.md` (`ds-product-list-header`),
-  `components/core/trigger/readme.md` (`ds-app-menu`, `ds-back-to-top-button`, `ds-search`).
-  `stencil build --docs` regenerates them. Task 3.
 - **`components/core/rating-list/rating-list.scss`** styles `ds-grade-star`. Task 24, if `grade-star` is recovered.
 - **Theme SCSS**: `.ds-form` (`scss/components/form/form.scss`) has no matching component (Propal's `ds-form` is
   an empty stub). Review with Task 24.
+
+`components/components.d.ts`, the generated readmes and `stencil.config.ts` no longer reference the removed
+components (Task 3).

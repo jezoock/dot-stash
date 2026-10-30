@@ -101,12 +101,12 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [ds-message](../message)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-message --> ds-panel
+  ds-main --> ds-panel
   style ds-panel fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

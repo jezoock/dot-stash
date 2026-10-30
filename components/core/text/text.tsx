@@ -8,7 +8,7 @@ import CssClassList from '../../types/css-class-list.interface';
 })
 export class DSText {
   @Prop() mods: string | string[] = "default";
-	@Prop() type: "code" | "quote" = "p";
+	@Prop() type: "p" | "code" | "quote" = "p";
 	@Prop() inline: boolean;
 	@Prop() sup: boolean;
 	@Prop() sub: boolean;

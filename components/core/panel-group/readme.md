@@ -64,12 +64,12 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [ds-message](../message)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-message --> ds-panel-group
+  ds-main --> ds-panel-group
   style ds-panel-group fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

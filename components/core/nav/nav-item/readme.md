@@ -28,7 +28,7 @@
 
 ### Depends on
 
-- [ds-trigger](../../../core/trigger)
+- [ds-trigger](../../trigger)
 
 ### Graph
 ```mermaid

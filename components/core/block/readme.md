@@ -12,6 +12,7 @@
 | `article` | `article` |                                                             | `boolean`            | `undefined` |
 | `block`   | `block`   |                                                             | `boolean`            | `undefined` |
 | `form`    | `form`    |                                                             | `boolean`            | `undefined` |
+| `modal`   | `modal`   |                                                             | `boolean`            | `undefined` |
 | `mods`    | `mods`    | List of modifiers                                           | `string \| string[]` | `[]`        |
 | `name`    | `name`    | Use to derivate the main class name                         | `string`             | `undefined` |
 | `section` | `section` |                                                             | `boolean`            | `undefined` |
@@ -20,13 +21,13 @@
 
 ## Methods
 
-### `getContext() => Promise<"block" | "article" | "section" | "form">`
+### `getContext() => Promise<"block" | "article" | "section" | "form" | "modal">`
 
 
 
 #### Returns
 
-Type: `Promise<"block" | "article" | "section" | "form">`
+Type: `Promise<"block" | "article" | "section" | "form" | "modal">`
 
 
 
@@ -35,16 +36,12 @@ Type: `Promise<"block" | "article" | "section" | "form">`
 
 ### Used by
 
- - [ds-features-configurator](../../pronto/pronto-content/configurator/features)
- - [ds-panels-configurator](../../pronto/pronto-content/configurator/panels)
- - [pronto-content-admin](../../pronto/pronto-content)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-features-configurator --> ds-block
-  ds-panels-configurator --> ds-block
-  pronto-content-admin --> ds-block
+  ds-main --> ds-block
   style ds-block fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

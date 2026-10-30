@@ -175,9 +175,13 @@ Type: `Promise<void>`
 
 ## Dependencies
 
+### Used by
+
+ - [ds-main](../../demo)
+
 ### Depends on
 
-- [ds-trigger](../../core/trigger)
+- [ds-trigger](../trigger)
 - [ds-slider-menu](slider-menu)
 
 ### Graph
@@ -185,6 +189,7 @@ Type: `Promise<void>`
 graph TD;
   ds-slider --> ds-trigger
   ds-slider --> ds-slider-menu
+  ds-main --> ds-slider
   style ds-slider fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

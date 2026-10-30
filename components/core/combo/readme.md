@@ -67,19 +67,6 @@ Type: `Promise<void>`
 
 
 
-## Dependencies
-
-### Used by
-
- - [ds-lang-selector](../../pronto/lang-selector)
-
-### Graph
-```mermaid
-graph TD;
-  ds-lang-selector --> ds-combo
-  style ds-combo fill:#f9f,stroke:#333,stroke-width:4px
-```
-
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

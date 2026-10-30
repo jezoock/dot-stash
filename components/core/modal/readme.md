@@ -23,6 +23,25 @@
 | `modalOpen`  |             | `CustomEvent<any>` |
 
 
+## Methods
+
+### `setContent(content: string) => Promise<void>`
+
+
+
+#### Parameters
+
+| Name      | Type     | Description |
+| --------- | -------- | ----------- |
+| `content` | `string` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

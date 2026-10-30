@@ -16,12 +16,12 @@
 
 ### Used by
 
- - [pronto-content-admin](../../pronto/pronto-content)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid
 graph TD;
-  pronto-content-admin --> ds-icon
+  ds-main --> ds-icon
   style ds-icon fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

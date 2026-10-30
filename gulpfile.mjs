@@ -10,7 +10,6 @@ import DotstashConfig from "./dot-stash.config.mjs";
 import ts from "gulp-typescript";
 import imagemin from 'gulp-imagemin';
 import webp from "gulp-webp";
-import newer from "gulp-newer";
 
 const browserSync = BrowserSync.create();
 const sass = gulpSass(dartSass);
@@ -87,13 +86,6 @@ export const generateImages = () => {
     .pipe(gulp.dest(`${paths.destination.root}/${paths.destination.images}`))
 }
 
-export const copyComponents = () => {
-  return gulp.src(paths.source.components)
-    .pipe(newer(`${paths.destination.root}/${paths.destination.components}`))
-    .pipe(gulp.dest(`${paths.destination.root}/${paths.destination.components}`))
-    .pipe(browserSync.stream());
-}
-
 const server = () => {
   browserSync.init({
     ...settings.server,
@@ -109,10 +101,6 @@ const server = () => {
   const scriptsWatcher = gulp.watch( settings.typescript.watch.map(pattern => `${paths.source.root}/${pattern}`));
   scriptsWatcher.on("change", generateScripts);
   
-  /* gulp.watch( settings.components.watch.map(pattern => `${paths.source.root}/${pattern}`), copyComponents); */
-  /* const componentsWatcher = gulp.watch( settings.components.watch.map(pattern => `${paths.source.root}/${pattern}`), copyComponents); */
-  // componentsWatcher.on("change", copyComponents);
-
   /* const imagesWatcher = gulp.watch( settings.images.watch.map(pattern => `${paths.source.root}/${pattern}`));
   imagesWatcher.on("change", generateImages); */
 }

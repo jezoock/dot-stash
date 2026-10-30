@@ -239,7 +239,7 @@ Type: `Promise<number>`
 
 number
 
-### `propToJSON<T = string | unknown[] | Record<string, unknown>>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>`
+### `propToJSON<T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>`
 
 Convert an HTML property to JSON
 
@@ -325,7 +325,7 @@ Type: `Promise<number>`
 
 ### Used by
 
- - [ds-main](../..)
+ - [ds-main](../../demo)
 
 ### Graph
 ```mermaid

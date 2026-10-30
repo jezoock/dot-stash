@@ -4,22 +4,20 @@ const DotstashConfig = {
       root: ".",
       css: "scss",
       images: "images",
-      components: "dist/dot-stash/*.*",
       scripts: "typescript",
     },
     destination: {
-      root: "../assets",
+      root: "dist",
       css: "css",
       images: "images",
-      components: "dot-stash",
       scripts: "js",
     },
   },
   gulp: {
     server: {
-      proxy: "localhost",
-      ws: true,
-      files: ["**/*.php", "**/*.twig", "**/*.html", "**/*.htm", "dist/*.*"]
+      server: { baseDir: "." },
+      watchOptions: { ignored: ["**/node_modules/**"] },
+      files: ["**/*.html", "**/*.htm", "www/build/*.*"]
     },
     scss: {
       autoprefix: false,
@@ -38,9 +36,6 @@ const DotstashConfig = {
     },
     typescript : {
       watch: ["./typescript/**/*.ts"],
-    },
-    components : {
-      watch: ["./dist/**/*.*"],
     }
   }
 }
