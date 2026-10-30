@@ -3,6 +3,9 @@ import CssClassList from '../../utils/interfaces/css-class-list';
 import { fromJSON, toArray, toClassList } from '../../utils/props';
 import { DSToggleValue } from '../toggle/toggle.types';
 
+/**
+ * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+ */
 @Component({
   tag: 'ds-toggle-group',
 })
@@ -12,6 +15,11 @@ export class DSToggleGroup {
   @Prop({ reflect: true }) name: string;
   @Prop({ reflect: true }) type: string;
   @Prop({ reflect: true }) disabled: boolean;
+  /**
+   * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`).
+   * `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer
+   * than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+   */
   @Prop() count: number[] | string = [1, 1];
   @Prop() mods: string | string[] = [];
 
@@ -43,48 +51,54 @@ export class DSToggleGroup {
     this.valuesCount = fromJSON(this.count);
   }
 
-  toggleHandler(toggle, isChecked: boolean, toggleValue) {
-    const {
-      value: currentValue,
-      valuesCount: [min],
-    } = this;
-    let newValue;
+  /** Updates the value after a toggle was checked or unchecked; a click that breaks the `count` limits is undone. */
+  toggleHandler(toggle: HTMLDsToggleElement, isChecked: boolean, toggleValue: DSToggleValue) {
+    const { value: currentValue } = this;
+    const [min = 0, max = 0] = this.valuesCount ?? [];
+    const maxCount = max > 0 ? max : Infinity;
+    const isSelected = currentValue.includes(toggleValue);
+    let newValue = currentValue;
 
-    if (min === 1) {
-      if (isChecked && !currentValue.includes(toggleValue)) {
+    if (isChecked) {
+      if (maxCount === 1) {
         newValue = [toggleValue];
+        Array.from(this.host.querySelectorAll('ds-toggle'))
+          .filter(otherToggle => otherToggle !== toggle && otherToggle.checked)
+          .forEach(otherToggle => otherToggle.setChecked(false));
+      } else if (!isSelected) {
+        if (currentValue.length < maxCount) {
+          newValue = [...currentValue, toggleValue];
+        } else {
+          toggle.setChecked(false);
+        }
       }
-
-      this.host.querySelectorAll('ds-toggle[checked]').forEach(toggle => {
-        (toggle as HTMLDsToggleElement).setChecked(false);
-      });
-      toggle.setChecked(true);
-    } else {
-      if (isChecked && !currentValue.includes(toggleValue)) {
-        newValue = [...currentValue, toggleValue];
-      } else {
+    } else if (isSelected) {
+      if (currentValue.length > min) {
         newValue = currentValue.filter(value => value !== toggleValue);
+      } else {
+        toggle.setChecked(true);
       }
     }
 
-    this.value = newValue;
+    const hasChanged = newValue.length !== currentValue.length || newValue.some((value, index) => value !== currentValue[index]);
 
-    this.toggleValueChange.emit({ value: newValue });
+    if (hasChanged) {
+      this.value = newValue;
+      this.toggleValueChange.emit({ value: newValue });
+    }
   }
 
   async registerToggle(toggle: HTMLDsToggleElement) {
     const { checked: isChecked, value } = toggle;
-    const { value: groupValue, values, type, mods, name } = this;
+    const { type, mods, name } = this;
 
-    if (isChecked) {
-      groupValue.push(value);
-      this.value = groupValue;
+    if (isChecked && !this.value.includes(value)) {
+      this.value = [...this.value, value];
     }
-    values.push(value);
+    this.values = [...this.values, value];
 
-    this.values = values;
-
-    toggle.setProps({ name, mods, type });
+    // Only what the group defines: otherwise the toggles keep their own props.
+    toggle.setProps({ name, type, mods: toArray(mods ?? []).length ? mods : undefined });
   }
 
   getContextValue() {

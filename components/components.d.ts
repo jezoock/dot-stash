@@ -340,7 +340,13 @@ export namespace Components {
         "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "value": DSToggleValue;
     }
+    /**
+     * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+     */
     interface DsToggleGroup {
+        /**
+          * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+         */
         "count": number[] | string;
         "disabled": boolean;
         "mods": string | string[];
@@ -784,6 +790,9 @@ declare global {
     interface HTMLDsToggleGroupElementEventMap {
         "toggleValueChange": any;
     }
+    /**
+     * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+     */
     interface HTMLDsToggleGroupElement extends Components.DsToggleGroup, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleGroupElement, ev: DsToggleGroupCustomEvent<HTMLDsToggleGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1114,7 +1123,13 @@ declare namespace LocalJSX {
         "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "value"?: DSToggleValue;
     }
+    /**
+     * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+     */
     interface DsToggleGroup {
+        /**
+          * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+         */
         "count"?: number[] | string;
         "disabled"?: boolean;
         "mods"?: string | string[];
@@ -1254,6 +1269,9 @@ declare module "@stencil/core" {
              * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
              */
             "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            /**
+             * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+             */
             "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
              * Simple icon tooltip component
