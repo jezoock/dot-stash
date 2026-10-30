@@ -1,4 +1,5 @@
 import { Component, Method, h, Host, Prop, Watch, State, Element } from '@stencil/core';
+import { touchSupport } from '../../utils/env';
 import { isTrue, toClassList, toNumber } from '../../utils/props';
 import { DSMarqueeTransitionEnum } from './marquee.types';
 
@@ -37,6 +38,7 @@ export class DSSlideMsg {
   @Prop() speed: string | number = 10;
   /** Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`. */
   @Prop() transition: string | DSMarqueeTransitionEnum = DSMarqueeDefaultParams.transition;
+  /** Pauses the scrolling while the mouse is over the messages; not on touch screens (`touchSupport()`). */
   @Prop() pauseOnHover: string | boolean = false;
   @Prop() color: string;
   @Prop() bgColor: string;
@@ -154,20 +156,22 @@ export class DSSlideMsg {
     }
   }
 
+  // Pause on hover: not on touch screens, where a tap also fires mouseover (and mouseout only on the next tap elsewhere).
+
   containerMouseMoveHandler() {
-    if (!window.ontouchstart) {
+    if (!touchSupport()) {
       this.pause();
     }
   }
 
   containerMouseInHandler() {
-    if (!window.ontouchstart) {
+    if (!touchSupport()) {
       this.pause();
     }
   }
 
   containerMouseOutHandler() {
-    if (!window.ontouchstart) {
+    if (!touchSupport()) {
       this.play();
     }
   }

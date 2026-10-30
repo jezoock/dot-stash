@@ -220,6 +220,9 @@ export namespace Components {
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods": string | string[];
+        /**
+          * Pauses the scrolling while the mouse is over the messages; not on touch screens (`touchSupport()`).
+         */
         "pauseOnHover": string | boolean;
         /**
           * Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.
@@ -1239,6 +1242,9 @@ declare namespace LocalJSX {
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods"?: string | string[];
+        /**
+          * Pauses the scrolling while the mouse is over the messages; not on touch screens (`touchSupport()`).
+         */
         "pauseOnHover"?: string | boolean;
         /**
           * Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.

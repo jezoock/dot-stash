@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { newSpecPage } from '@stencil/core/testing';
 import { DSSlideMsg } from './marquee';
 
@@ -87,6 +89,18 @@ describe('ds-marquee', () => {
     expect(page.root).toHaveClass('--playing');
   });
 
+  it('does not pause on hover on a touch screen, where a tap fires mouseover', async () => {
+    const page = await render('<ds-marquee pause-on-hover="true"><span>News</span></ds-marquee>');
+    // Browsers with touch events have an ontouchstart property, null until a handler is set (newSpecPage resets the window).
+    (window as { ontouchstart?: unknown }).ontouchstart = null;
+
+    page.root.dispatchEvent(new MouseEvent('mouseover'));
+    await page.waitForChanges();
+
+    expect(page.root).toHaveClass('--playing');
+    delete (window as { ontouchstart?: unknown }).ontouchstart;
+  });
+
   it('reads a speed set as a string', async () => {
     const page = await render('<ds-marquee><span>News</span></ds-marquee>');
 
@@ -94,5 +108,16 @@ describe('ds-marquee', () => {
     await page.waitForChanges();
 
     expect(page.root).toHaveClass('--no-scroll');
+  });
+
+  // The spec DOM has no layout and no component styles: the stylesheet is read instead (checked in Chromium too).
+  it('makes every message inline-block in its own stylesheet, so that it scrolls without the theme', () => {
+    const stylesheet = readFileSync(join(__dirname, 'marquee.scss'), 'utf8');
+    // `&__content { … & > * { … } }`: the children of .ds-marquee__content, whatever their class.
+    const contentBlock = stylesheet.slice(stylesheet.indexOf('&__content {'));
+    const messagesRule = contentBlock.match(/& > \* \{([^}]*)\}/);
+
+    expect(messagesRule?.[1]).toContain('display: inline-block');
+    expect(stylesheet).not.toContain('.ds-marquee-message');
   });
 });
