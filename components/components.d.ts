@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { DSBlockContext } from "./core/block/block.types";
 import { DSButtonType } from "./core/button/button.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
@@ -15,6 +16,7 @@ import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
+export { DSBlockContext } from "./core/block/block.types";
 export { DSButtonType } from "./core/button/button.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
@@ -45,11 +47,16 @@ export namespace Components {
          */
         "target": 'self' | string;
     }
+    /**
+     * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+     * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+     * (`ds-home-hero__header`, `__body`, `__footer`).
+     */
     interface DsBlock {
         "article": boolean;
         "block": boolean;
         "form": boolean;
-        "getContext": () => Promise<"block" | "article" | "section" | "form" | "modal">;
+        "getContext": () => Promise<DSBlockContext>;
         "modal": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
@@ -601,6 +608,11 @@ declare global {
         prototype: HTMLDsAjaxElement;
         new (): HTMLDsAjaxElement;
     };
+    /**
+     * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+     * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+     * (`ds-home-hero__header`, `__body`, `__footer`).
+     */
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
     var HTMLDsBlockElement: {
@@ -1022,6 +1034,11 @@ declare namespace LocalJSX {
          */
         "target"?: 'self' | string;
     }
+    /**
+     * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+     * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+     * (`ds-home-hero__header`, `__body`, `__footer`).
+     */
     interface DsBlock {
         "article"?: boolean;
         "block"?: boolean;
@@ -1498,6 +1515,11 @@ declare module "@stencil/core" {
              * Version: 1.0
              */
             "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
+            /**
+             * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+             * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+             * (`ds-home-hero__header`, `__body`, `__footer`).
+             */
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             /**
              * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the

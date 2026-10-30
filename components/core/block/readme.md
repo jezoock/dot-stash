@@ -5,6 +5,12 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+(`ds-home-hero__header`, `__body`, `__footer`).
+
 ## Properties
 
 | Property  | Attribute | Description                                                                                        | Type                 | Default     |
@@ -21,13 +27,13 @@
 
 ## Methods
 
-### `getContext() => Promise<"block" | "article" | "section" | "form" | "modal">`
+### `getContext() => Promise<DSBlockContext>`
 
 
 
 #### Returns
 
-Type: `Promise<"block" | "article" | "section" | "form" | "modal">`
+Type: `Promise<DSBlockContext>`
 
 
 

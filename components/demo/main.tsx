@@ -101,9 +101,8 @@ export class DSMainTest {
           next
         </ds-trigger>
 
-        {/* The headings are in the body of the blocks: ds-block renders its header slot only after a later re-render. */}
         <ds-block>
-          <ds-heading>
+          <ds-heading slot="header">
             <h1>Titre</h1>
             <h2 slot="sub-title">Sous-titre</h2>
             <p slot="description">Texte d'introduction</p>
@@ -111,7 +110,7 @@ export class DSMainTest {
 
           <div>Contenu</div>
 
-          <footer>Footer</footer>
+          <footer slot="footer">Footer</footer>
         </ds-block>
 
         <section class="ds-homepage__history">
@@ -201,7 +200,7 @@ export class DSMainTest {
 
         <section class="ds-components-demo__combos">
           <ds-block section name="demo-combos">
-            <ds-heading>
+            <ds-heading slot="header">
               <h2>Combos</h2>
             </ds-heading>
 
@@ -226,7 +225,7 @@ export class DSMainTest {
 
         <ds-rsp>
           <ds-block section name="demo-buttons" id="demo-buttons">
-            <ds-heading>
+            <ds-heading slot="header">
               <h2>Boutons</h2>
             </ds-heading>
 

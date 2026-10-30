@@ -1,4 +1,5 @@
 import { newSpecPage } from '@stencil/core/testing';
+import { DSBlock } from '../core/block/block';
 import { DSButton } from '../core/button/button';
 import { DSCombo } from '../core/combo/combo';
 import { DSMainTest } from './main';
@@ -28,11 +29,20 @@ describe('ds-main', () => {
     const page = await newSpecPage({ components: [DSMainTest], html: '<ds-main></ds-main>' });
 
     expect(page.root.querySelector('ds-header')).toBeNull();
-    expect(Array.from(page.root.querySelectorAll('ds-block > ds-heading')).map(heading => heading.textContent)).toEqual([
+    expect(Array.from(page.root.querySelectorAll('ds-block > ds-heading[slot="header"]')).map(heading => heading.textContent)).toEqual([
       "TitreSous-titreTexte d'introduction",
       'Combos',
       'Boutons',
     ]);
+  });
+
+  it('puts the block headings and footers in the header and footer wrappers of ds-block', async () => {
+    const page = await newSpecPage({ components: [DSMainTest, DSBlock], html: '<ds-main></ds-main>' });
+    const parentClass = (selector: string) => Array.from(page.root.querySelectorAll(selector)).map(element => element.parentElement.className);
+
+    expect(parentClass('ds-heading[slot="header"]')).toEqual(['ds-block__header', 'ds-demo-combos-section__header', 'ds-demo-buttons-section__header']);
+    expect(parentClass('ds-title-bar[slot="header"]')).toEqual(['ds-homepage-history-section__header']);
+    expect(parentClass('footer[slot="footer"]')).toEqual(['ds-block__footer', 'ds-homepage-history-section__footer']);
   });
 
   it('renders a single and a multiple combo, and buttons: disabled, link, submit', async () => {
