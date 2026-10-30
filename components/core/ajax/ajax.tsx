@@ -2,7 +2,8 @@ import { Component, h, Element, Host, Prop, State } from '@stencil/core';
 import { get as ajaxGet } from '../../utils/ajax';
 
 /**
- * A simple component to load ajax content
+ * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+ * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
  * Version: 1.0
  */
 
@@ -17,9 +18,9 @@ export class DSAjax {
   url: string;
 
   /**
-   * Event that will trigger the loading of the ajax content
+   * Event that will trigger the loading of the ajax content: `click` (default) or `load`
    */
-  @Prop({ reflect: true }) on: 'load' | 'click';
+  @Prop({ reflect: true }) on: 'load' | 'click' = 'click';
 
   /**
    * Where to display the content, can be the component itself
@@ -60,21 +61,51 @@ export class DSAjax {
     }
   }
 
+  disconnectedCallback() {
+    this.hostContainer.removeEventListener(this.on, this.eventHandler);
+  }
+
   //#endregion
 
   //#region HANDLERS
 
+  /** The URL to request: the link URL, plus the suffix query parameter when there is one. */
+  getRequestUrl(): string {
+    if (!this.suffix) {
+      return this.url;
+    }
+    return `${this.url}${this.url.includes('?') ? '&' : '?'}${this.suffix}`;
+  }
+
   async eventHandler(event?: Event) {
     event?.preventDefault();
 
-    if (this.target === 'self') {
-      this.isLoading = true;
+    const targetElement = this.target === 'self' ? this.hostContainer : document.querySelector<HTMLElement>(this.target);
 
-      const queryParam = this.url.indexOf('?') > -1 ? '&' : '?' + this.suffix;
-      const markup = await ajaxGet<string>(this.url + queryParam);
-      const content = new DOMParser().parseFromString(markup, 'text/html');
+    if (!targetElement) {
+      console.error(`[ds-ajax] no target element matches "${this.target}"`);
+      return;
+    }
 
-      this.hostContainer.innerHTML = content.querySelector('.ds-ajax-content').innerHTML;
+    this.isLoading = true;
+
+    try {
+      const markup = await ajaxGet<string>(this.getRequestUrl(), undefined, { responseType: 'text' });
+      const content = new DOMParser().parseFromString(markup, 'text/html').querySelector('.ds-ajax-content');
+
+      if (content) {
+        targetElement.innerHTML = content.innerHTML;
+
+        if (targetElement === this.hostContainer) {
+          // The link is replaced: stop intercepting the clicks on the loaded content.
+          this.hostContainer.removeEventListener(this.on, this.eventHandler);
+        }
+      } else {
+        console.error(`[ds-ajax] the response of ${this.url} has no .ds-ajax-content element`);
+      }
+    } catch (error) {
+      console.error(`[ds-ajax] loading ${this.url} failed`, error);
+    } finally {
       this.isLoading = false;
     }
   }

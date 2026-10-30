@@ -27,12 +27,13 @@ export { DSToggleValue } from "./core/toggle/toggle.types";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
     /**
-     * A simple component to load ajax content
+     * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+     * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
      * Version: 1.0
      */
     interface DsAjax {
         /**
-          * Event that will trigger the loading of the ajax content
+          * Event that will trigger the loading of the ajax content: `click` (default) or `load`
          */
         "on": 'load' | 'click';
         /**
@@ -428,7 +429,8 @@ export interface DsToggleGroupCustomEvent<T> extends CustomEvent<T> {
 }
 declare global {
     /**
-     * A simple component to load ajax content
+     * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+     * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
      * Version: 1.0
      */
     interface HTMLDsAjaxElement extends Components.DsAjax, HTMLStencilElement {
@@ -826,12 +828,13 @@ declare global {
 }
 declare namespace LocalJSX {
     /**
-     * A simple component to load ajax content
+     * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+     * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
      * Version: 1.0
      */
     interface DsAjax {
         /**
-          * Event that will trigger the loading of the ajax content
+          * Event that will trigger the loading of the ajax content: `click` (default) or `load`
          */
         "on"?: 'load' | 'click';
         /**
@@ -1159,7 +1162,8 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             /**
-             * A simple component to load ajax content
+             * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+             * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
              * Version: 1.0
              */
             "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
