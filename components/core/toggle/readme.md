@@ -5,6 +5,11 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+
 ## Properties
 
 | Property   | Attribute  | Description | Type                          | Default     |
@@ -60,7 +65,7 @@ Type: `Promise<void>`
 
 ### `setProps(properties: Record<string, unknown>) => Promise<void>`
 
-
+Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored.
 
 #### Parameters
 

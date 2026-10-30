@@ -321,6 +321,10 @@ export namespace Components {
         "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
     }
+    /**
+     * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+     * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     */
     interface DsToggle {
         "checked": boolean;
         "disabled": boolean;
@@ -328,6 +332,9 @@ export namespace Components {
         "name": string;
         "setChecked": (checked: boolean) => Promise<void>;
         "setName": (name: string) => Promise<void>;
+        /**
+          * Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored.
+         */
         "setProps": (properties: Record<string, unknown>) => Promise<void>;
         "setType": (type: "radio" | "icon" | "checkbox" | "switch" | string) => Promise<void>;
         "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
@@ -756,6 +763,10 @@ declare global {
     interface HTMLDsToggleElementEventMap {
         "toggle": any;
     }
+    /**
+     * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+     * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     */
     interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1090,6 +1101,10 @@ declare namespace LocalJSX {
          */
         "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
     }
+    /**
+     * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+     * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     */
     interface DsToggle {
         "checked"?: boolean;
         "disabled"?: boolean;
@@ -1234,6 +1249,10 @@ declare module "@stencil/core" {
              * at the end of that transition.
              */
             "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
+            /**
+             * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+             * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+             */
             "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**

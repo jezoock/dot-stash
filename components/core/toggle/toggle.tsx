@@ -3,6 +3,13 @@ import { toArray, toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { DSToggleValue } from './toggle.types';
 
+/** The properties `setProps()` can write. */
+const DS_TOGGLE_PROPS = ['mods', 'value', 'name', 'type', 'disabled', 'checked'];
+
+/**
+ * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+ * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+ */
 @Component({
   tag: 'ds-toggle',
   styleUrl: 'toggle.scss',
@@ -21,7 +28,12 @@ export class DSToggle {
 
   @Watch('mods')
   modsWatcher(newMods) {
-    this.CSSClassList = toClassList('ds-toggle', [...toArray(newMods), this.type]);
+    this.CSSClassList = toClassList('ds-toggle', [...toArray(newMods ?? []), this.type]);
+  }
+
+  @Watch('type')
+  typeWatcher() {
+    this.CSSClassList = toClassList('ds-toggle', [...toArray(this.mods ?? []), this.type]);
   }
 
   @Event() toggle: EventEmitter;
@@ -45,23 +57,31 @@ export class DSToggle {
     }
   }
 
+  /** Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored. */
   @Method()
   async setProps(properties: Record<string, unknown>) {
-    Object.entries(properties).map(([key, value]) => this[key] && value && (this[key] = value));
+    Object.entries(properties).forEach(([key, value]) => {
+      if (DS_TOGGLE_PROPS.includes(key) && value !== undefined) {
+        this[key] = value;
+      }
+    });
   }
 
   componentWillLoad() {
-    this.CSSClassList = toClassList('ds-toggle', [...toArray(this.mods), this.type]);
+    this.CSSClassList = toClassList('ds-toggle', [...toArray(this.mods ?? []), this.type]);
   }
 
   toggleClickHandler = () => {
     const { checked: previousChecked, value, name } = this;
 
-    if (!this.disabled && !previousChecked) {
-      const checked = !previousChecked;
-      this.checked = checked;
-      this.toggle.emit({ name, value, checked });
+    // A radio is only checked by a click; the other types toggle.
+    if (this.disabled || (this.type === 'radio' && previousChecked)) {
+      return;
     }
+
+    const checked = !previousChecked;
+    this.checked = checked;
+    this.toggle.emit({ name, value, checked });
   };
 
   render() {
