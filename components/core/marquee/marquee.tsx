@@ -1,13 +1,7 @@
 import { Component, Method, h, Host, Prop, Watch, State, Element } from '@stencil/core';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { isTrue, toClassList, toNumber } from '../../utils/props';
-
-export enum DSMarqueeTransitionEnum {
-  SLIDE_TOP_TO_BOTTOM = 'slide-ttb',
-  SLIDE_BOTTOM_TO_TOP = 'slide-btt',
-  SLIDE_LEFT_TO_RIGHT = 'slide-ltr',
-  SLIDE_RIGHT_TO_LEFT = 'slide-rtl',
-}
+import { DSMarqueeTransitionEnum } from './marquee.types';
 
 interface DSMarqueeParams {
   transition: DSMarqueeTransitionEnum;

@@ -1,8 +1,7 @@
 import { Component, Event, EventEmitter, h, Host, Prop, Method, Element, Watch } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
-
-export type PanelType = 'tab' | 'collapsible';
+import { PanelType } from './panel.types';
 
 @Component({
   tag: 'ds-panel',

@@ -2,16 +2,7 @@ import { Component, h, Prop, State, Event, EventEmitter, Watch, Method } from '@
 import uuid from '../../utils/uuid';
 import { toArray, toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
-
-export interface DSOption {
-  index?: number;
-  id?: string;
-  value?: string;
-  name?: string;
-  disabled?: boolean;
-  selected?: boolean;
-  image?: string;
-}
+import { DSOption } from './combo.types';
 
 @Component({
   tag: 'ds-combo',

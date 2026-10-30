@@ -1,7 +1,7 @@
 import { Component, Element, h, Host, Listen, Prop, Watch, Method } from '@stencil/core';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { toArray, toClassList } from '../../utils/props';
-import { PanelType } from '../panel/panel';
+import { PanelType } from '../panel/panel.types';
 
 @Component({
   tag: 'ds-panel-group',

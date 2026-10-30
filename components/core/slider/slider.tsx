@@ -2,15 +2,9 @@ import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
 import { fromJSON, toClassList } from '../../utils/props';
+import { DSSliderParams } from './slider.types';
 
 let sliderId = 0;
-
-export interface DSSliderSelectors {
-  sliderContainer: string;
-  menu: string;
-  list: string;
-  items: string;
-}
 
 const defaultSliderSelectors = {
   sliderContainer: '.ds-slider',
@@ -18,28 +12,6 @@ const defaultSliderSelectors = {
   list: '.ds-slider__list:not(ds-slider-item .ds-slider__list)',
   items: 'ds-slider-item:not(ds-slider-item ds-slider-item)',
 };
-
-export interface DSSliderParams {
-  orientation?: 'hrt' | 'vtc';
-  direction?: number;
-  index?: number;
-  loop?: boolean;
-  autoplay?: boolean;
-  autoHeight?: boolean;
-  step?: number;
-  duration?: number;
-  forceItemDspCount?: number;
-  minItemDspCount?: number;
-  menu?: HTMLElement;
-  xOffset?: number;
-  yOffset?: number;
-  forceHeight?: boolean;
-  autoWidth?: boolean;
-  selectors?: DSSliderSelectors;
-  isActive?: boolean;
-  controls?: boolean;
-  draggable?: boolean;
-}
 
 const DSSliderDefaults: DSSliderParams = {
   orientation: 'hrt',

@@ -1,15 +1,6 @@
 import { Component, h, Prop, State, Event, EventEmitter, Element, Method } from '@stencil/core';
 import uuid from '../../utils/uuid';
-
-export interface DSOption {
-  index: number;
-  id?: string;
-  value: string;
-  name?: string;
-  disabled?: boolean;
-  selected?: boolean;
-  image?: string;
-}
+import { DSOption } from './dropdown.types';
 
 @Component({
   tag: 'ds-dropdown',

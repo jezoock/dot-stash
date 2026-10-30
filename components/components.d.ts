@@ -5,26 +5,22 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { DSOption } from "./core/combo/combo";
-import { DSOption as DSOption1 } from "./core/dropdown/dropdown";
-import { DSGridAlignment, DSGridType } from "./core/grid/grid";
-import { DSGridItemStyles } from "./core/grid/grid";
-import { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-import { PanelType } from "./core/panel/panel";
-import { PanelType as PanelType1 } from "./core/panel/panel";
+import { DSOption } from "./core/combo/combo.types";
+import { DSOption as DSOption1 } from "./core/dropdown/dropdown.types";
+import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
+import { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
+import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
-import { DSSliderParams } from "./core/slider/slider";
+import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
-export { DSOption } from "./core/combo/combo";
-export { DSOption as DSOption1 } from "./core/dropdown/dropdown";
-export { DSGridAlignment, DSGridType } from "./core/grid/grid";
-export { DSGridItemStyles } from "./core/grid/grid";
-export { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-export { PanelType } from "./core/panel/panel";
-export { PanelType as PanelType1 } from "./core/panel/panel";
+export { DSOption } from "./core/combo/combo.types";
+export { DSOption as DSOption1 } from "./core/dropdown/dropdown.types";
+export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
+export { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
+export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
-export { DSSliderParams } from "./core/slider/slider";
+export { DSSliderParams } from "./core/slider/slider.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
@@ -174,7 +170,7 @@ export namespace Components {
         "mods": string | string[];
         "showPanel": (index: number) => Promise<void>;
         "soloContent": boolean;
-        "type": PanelType1;
+        "type": PanelType;
     }
     interface DsRatingList {
         "dsAverage": string | number;
@@ -924,7 +920,7 @@ declare namespace LocalJSX {
         "isActive"?: boolean;
         "mods"?: string | string[];
         "soloContent"?: boolean;
-        "type"?: PanelType1;
+        "type"?: PanelType;
     }
     interface DsRatingList {
         "dsAverage"?: string | number;

@@ -1,27 +1,7 @@
 import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core';
 import { toClassList, toNumber } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
-
-export type DSGridAlignment = 'start' | 'center' | 'end';
-export type DSGridType = 'fixed' | 'fluid';
-
-export interface DSGridItemStyles {
-  width?: string;
-  paddingBlockStart?: string;
-  paddingInlineEnd?: string;
-  paddingBlockEnd?: string;
-  paddingInlineStart?: string;
-}
-
-export interface DSGridParams {
-  type: DSGridType;
-  cols: number;
-  hGap: string;
-  vGap: string;
-  align: DSGridAlignment;
-  vAlign: DSGridAlignment;
-  cellRatio?: number;
-}
+import { DSGridAlignment, DSGridItemStyles, DSGridParams, DSGridType } from './grid.types';
 
 @Component({
   tag: 'ds-grid',

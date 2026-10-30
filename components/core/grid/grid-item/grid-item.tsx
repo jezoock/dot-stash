@@ -1,6 +1,6 @@
 import { Component, Element, h, Host, Prop, Watch, Method } from '@stencil/core';
 import { toNumber } from '../../../utils/props';
-import { DSGridItemStyles } from '../grid';
+import { DSGridItemStyles } from '../grid.types';
 
 @Component({
   tag: 'ds-grid-item',
