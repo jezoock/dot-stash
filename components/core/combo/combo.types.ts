@@ -6,4 +6,5 @@ export interface DSOption {
   disabled?: boolean;
   selected?: boolean;
   image?: string;
+  url?: string;
 }

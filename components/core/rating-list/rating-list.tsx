@@ -7,7 +7,7 @@ import { fromJSON, toNumber } from '../../utils/props';
 })
 export class DSRatingList {
   @Prop({ mutable: true, reflect: true }) dsAverage: string | number;
-  @Prop({ mutable: true, reflect: true }) dsRatings: string | any[];
+  @Prop({ mutable: true, reflect: true }) dsRatings: string | number[];
 
   componentWillLoad() {
     this.dsAverage = toNumber(this.dsAverage) as number;
@@ -20,7 +20,7 @@ export class DSRatingList {
     return (
       <div class="ds-rating-list">
         <ul class="ds-rating-list__jauges">
-          {(this.dsRatings as any[]).map(
+          {(this.dsRatings as number[]).map(
             (rating, index) =>
               this.dsRatings.length && (
                 <li class="ds-rating-list__item">

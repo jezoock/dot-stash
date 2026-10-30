@@ -27,7 +27,7 @@ export class DSNav {
     this.setActiveMenuItem();
   }
 
-  getItems(itemLevel: number): any {
+  getItems(itemLevel: number): NodeListOf<Element> | Element[] {
     const depth = typeof itemLevel === 'number' ? `='${Math.abs(itemLevel)}'` : '';
     const items = this.container.querySelectorAll(`ds-nav-item[ds-depth${depth}]`);
     return items.length ? items : [];

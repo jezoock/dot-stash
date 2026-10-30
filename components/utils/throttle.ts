@@ -1,14 +1,14 @@
 const throttle = (func, wait, leading = false, trailing = false, context?) => {
   let ctx, args, result;
   let timeout = null;
-  let previous: any = 0;
+  let previous = 0;
   const later = function () {
-    previous = new Date();
+    previous = Date.now();
     timeout = null;
     result = func.apply(ctx, args);
   };
   return function (...rest) {
-    const now: any = new Date();
+    const now = Date.now();
     if (!previous && !leading) {
       previous = now;
     }

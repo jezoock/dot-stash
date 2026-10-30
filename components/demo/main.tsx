@@ -5,7 +5,7 @@ import { Component, h, Method } from '@stencil/core';
   styleUrl: './global.scss',
 })
 export class DSMainTest {
-  data: Record<string, any> = {
+  data: Record<string, unknown> = {
     mockup: {
       data: {
         name: 'bob',
@@ -23,10 +23,10 @@ export class DSMainTest {
   @Method()
   async getData(key: string) {
     const keys = key.split('.');
-    let pointer = this.data;
+    let pointer: unknown = this.data;
 
     keys.forEach(key => {
-      pointer = pointer[key];
+      pointer = (pointer as Record<string, unknown>)[key];
     });
     const data = pointer;
     return data;

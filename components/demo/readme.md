@@ -7,7 +7,7 @@
 
 ## Methods
 
-### `getData(key: string) => Promise<Record<string, any>>`
+### `getData(key: string) => Promise<unknown>`
 
 
 
@@ -19,7 +19,7 @@
 
 #### Returns
 
-Type: `Promise<Record<string, any>>`
+Type: `Promise<unknown>`
 
 
 

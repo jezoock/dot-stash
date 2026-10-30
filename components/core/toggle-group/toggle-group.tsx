@@ -1,6 +1,7 @@
 import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
 import CssClassList from '../../utils/interfaces/css-class-list';
 import { fromJSON, toArray, toClassList } from '../../utils/props';
+import { DSToggleValue } from '../toggle/toggle.types';
 
 @Component({
   tag: 'ds-toggle-group',
@@ -14,10 +15,10 @@ export class DSToggleGroup {
   @Prop() count: number[] | string = [1, 1];
   @Prop() mods: string | string[] = [];
 
-  @State() value: any[] = [];
+  @State() value: DSToggleValue[] = [];
 
   CSSClassList: CssClassList;
-  values: any[] = [];
+  values: DSToggleValue[] = [];
 
   @Watch('mods')
   modsWatcher(newMods) {

@@ -77,15 +77,15 @@ Type: `Promise<void>`
 
 
 
-### `pointerDownHandler(event: PointerEvent) => Promise<void>`
+### `pointerDownHandler(event: TouchEvent) => Promise<void>`
 
 
 
 #### Parameters
 
-| Name    | Type           | Description |
-| ------- | -------------- | ----------- |
-| `event` | `PointerEvent` |             |
+| Name    | Type         | Description |
+| ------- | ------------ | ----------- |
+| `event` | `TouchEvent` |             |
 
 #### Returns
 
@@ -103,15 +103,15 @@ Type: `Promise<void>`
 
 
 
-### `pointerUpHandler(event: PointerEvent) => Promise<void>`
+### `pointerUpHandler(event: TouchEvent) => Promise<void>`
 
 
 
 #### Parameters
 
-| Name    | Type           | Description |
-| ------- | -------------- | ----------- |
-| `event` | `PointerEvent` |             |
+| Name    | Type         | Description |
+| ------- | ------------ | ----------- |
+| `event` | `TouchEvent` |             |
 
 #### Returns
 

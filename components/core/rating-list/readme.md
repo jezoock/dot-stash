@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property    | Attribute    | Description | Type               | Default     |
-| ----------- | ------------ | ----------- | ------------------ | ----------- |
-| `dsAverage` | `ds-average` |             | `number \| string` | `undefined` |
-| `dsRatings` | `ds-ratings` |             | `any[] \| string`  | `undefined` |
+| Property    | Attribute    | Description | Type                 | Default     |
+| ----------- | ------------ | ----------- | -------------------- | ----------- |
+| `dsAverage` | `ds-average` |             | `number \| string`   | `undefined` |
+| `dsRatings` | `ds-ratings` |             | `number[] \| string` | `undefined` |
 
 
 ----------------------------------------------

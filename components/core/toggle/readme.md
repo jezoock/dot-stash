@@ -7,14 +7,14 @@
 
 ## Properties
 
-| Property   | Attribute  | Description | Type                 | Default     |
-| ---------- | ---------- | ----------- | -------------------- | ----------- |
-| `checked`  | `checked`  |             | `boolean`            | `undefined` |
-| `disabled` | `disabled` |             | `boolean`            | `undefined` |
-| `mods`     | `mods`     |             | `string \| string[]` | `[]`        |
-| `name`     | `name`     |             | `string`             | `undefined` |
-| `type`     | `type`     |             | `string`             | `'switch'`  |
-| `value`    | `value`    |             | `any`                | `undefined` |
+| Property   | Attribute  | Description | Type                          | Default     |
+| ---------- | ---------- | ----------- | ----------------------------- | ----------- |
+| `checked`  | `checked`  |             | `boolean`                     | `undefined` |
+| `disabled` | `disabled` |             | `boolean`                     | `undefined` |
+| `mods`     | `mods`     |             | `string \| string[]`          | `[]`        |
+| `name`     | `name`     |             | `string`                      | `undefined` |
+| `type`     | `type`     |             | `string`                      | `'switch'`  |
+| `value`    | `value`    |             | `boolean \| number \| string` | `undefined` |
 
 
 ## Events

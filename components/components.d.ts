@@ -13,6 +13,7 @@ import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
+import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { DSOption } from "./core/combo/combo.types";
 export { DSOption as DSOption1 } from "./core/dropdown/dropdown.types";
@@ -22,6 +23,7 @@ export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 export { DSSliderParams } from "./core/slider/slider.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
+export { DSToggleValue } from "./core/toggle/toggle.types";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
     /**
@@ -91,7 +93,7 @@ export namespace Components {
     }
     interface DsDropdownItem {
         "name": string;
-        "value": any;
+        "value": string | number | boolean;
     }
     interface DsGrid {
         "align": string | DSGridAlignment;
@@ -121,7 +123,7 @@ export namespace Components {
         "type": string;
     }
     interface DsMain {
-        "getData": (key: string) => Promise<Record<string, any>>;
+        "getData": (key: string) => Promise<unknown>;
     }
     interface DsMarquee {
         "bgColor": string;
@@ -177,7 +179,7 @@ export namespace Components {
     }
     interface DsRatingList {
         "dsAverage": string | number;
-        "dsRatings": string | any[];
+        "dsRatings": string | number[];
     }
     interface DsRsp {
         "breakpointsFromProp": Record<string, number>;
@@ -232,9 +234,9 @@ export namespace Components {
         "next": (step?: number, startPosition?: number) => Promise<void>;
         "params": DSSliderParams | string;
         "play": () => Promise<void>;
-        "pointerDownHandler": (event: PointerEvent) => Promise<void>;
+        "pointerDownHandler": (event: TouchEvent) => Promise<void>;
         "pointerMoveHandler": () => Promise<void>;
-        "pointerUpHandler": (event: PointerEvent) => Promise<void>;
+        "pointerUpHandler": (event: TouchEvent) => Promise<void>;
         "prev": (step?: number, startPosition?: number) => Promise<void>;
         "refresh": (reset?: boolean) => Promise<void>;
         "reset": () => Promise<void>;
@@ -290,7 +292,7 @@ export namespace Components {
         "setProps": (properties: Record<string, unknown>) => Promise<void>;
         "setType": (type: "radio" | "icon" | "checkbox" | "switch" | string) => Promise<void>;
         "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
-        "value": any;
+        "value": DSToggleValue;
     }
     interface DsToggleGroup {
         "count": number[] | string;
@@ -850,7 +852,7 @@ declare namespace LocalJSX {
     }
     interface DsDropdownItem {
         "name"?: string;
-        "value"?: any;
+        "value"?: string | number | boolean;
     }
     interface DsGrid {
         "align"?: string | DSGridAlignment;
@@ -927,7 +929,7 @@ declare namespace LocalJSX {
     }
     interface DsRatingList {
         "dsAverage"?: string | number;
-        "dsRatings"?: string | any[];
+        "dsRatings"?: string | number[];
     }
     interface DsRsp {
         "breakpointsFromProp"?: Record<string, number>;
@@ -1008,7 +1010,7 @@ declare namespace LocalJSX {
         "name"?: string;
         "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
         "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
-        "value"?: any;
+        "value"?: DSToggleValue;
     }
     interface DsToggleGroup {
         "count"?: number[] | string;

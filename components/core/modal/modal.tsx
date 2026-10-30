@@ -10,7 +10,9 @@ export class DSModal {
 
   @Prop({ mutable: true, reflect: true }) shown = false;
   @Prop() overlay = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stencil derives the attribute handling from the prop type; a precise type would change it
   @Prop({ mutable: true }) lightboxClass: any = { '--dialog': true };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stencil derives the attribute handling from the prop type; a precise type would change it
   @Prop() lightboxClassObject: any;
 
   @State() isReady = false;

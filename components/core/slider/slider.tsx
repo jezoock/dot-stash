@@ -315,10 +315,8 @@ export class DSSlider {
   }
 
   @Method()
-  async pointerDownHandler(event: PointerEvent): Promise<void> {
-    const {
-      touches: [{ clientX: xStart }],
-    } = event as any;
+  async pointerDownHandler(event: TouchEvent): Promise<void> {
+    const { clientX: xStart } = event.touches[0];
     this.isDragging = true;
     this.xStart = xStart;
     this.startDrag = +new Date();
@@ -328,12 +326,10 @@ export class DSSlider {
   async pointerMoveHandler(): Promise<void> {}
 
   @Method()
-  async pointerUpHandler(event: PointerEvent): Promise<void> {
+  async pointerUpHandler(event: TouchEvent): Promise<void> {
     const dragTime = +new Date() - this.startDrag;
 
-    const {
-      changedTouches: [{ clientX: xEnd }],
-    } = event as any;
+    const { clientX: xEnd } = event.changedTouches[0];
     const translation = this.xStart - xEnd;
 
     if (this.isDragging) {
@@ -356,7 +352,7 @@ export class DSSlider {
     const {
       currentItem: { index },
     } = this;
-    let step = index - itemIndex;
+    const step = index - itemIndex;
     let move = Math.abs(step);
     if (step !== 0) {
       if (step >= this.listLen) {
@@ -395,8 +391,8 @@ export class DSSlider {
         from.transform = 'translate3d(0, 0, 0)';
         to.transform = `translate3d( 0, -${this.itemHeight * step}px, 0 )`;
       } else {
-        let distance = this.itemWidth * step;
-        let nextItemWidth = this.itemWidth * step;
+        const distance = this.itemWidth * step;
+        const nextItemWidth = this.itemWidth * step;
         from.transform = `translate3d(-${startPosition}px, 0, 0)`;
         from.width = `${this.listDim + nextItemWidth}px`;
         to.transform = `translate3d( -${distance}px, 0, 0 )`;
@@ -438,8 +434,8 @@ export class DSSlider {
         from.height = `${this.listDim + this.itemHeight * step}px`;
         from.transform = `translate3d( 0, -${this.itemHeight * step}px, 0 )`;
       } else {
-        let distance = this.itemWidth * step - startPosition;
-        let prevItemWidth = this.itemWidth * step;
+        const distance = this.itemWidth * step - startPosition;
+        const prevItemWidth = this.itemWidth * step;
 
         from.width = `${this.listDim + prevItemWidth}px`;
         from.transform = `translate3d( -${distance}px, 0, 0 )`;

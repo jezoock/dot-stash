@@ -1,6 +1,7 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
+import { DSToggleValue } from './toggle.types';
 
 @Component({
   tag: 'ds-toggle',
@@ -10,7 +11,7 @@ export class DSToggle {
   @Element() hostContainer: HTMLDsToggleElement;
 
   @Prop({ mutable: true }) mods: string | string[] = [];
-  @Prop({ mutable: true, reflect: true }) value: any;
+  @Prop({ mutable: true, reflect: true }) value: DSToggleValue;
   @Prop({ mutable: true, reflect: true }) name: string;
   @Prop({ mutable: true, reflect: true }) type: 'radio' | 'icon' | 'checkbox' | 'switch' | string = 'switch';
   @Prop({ reflect: true, mutable: true }) disabled: boolean;

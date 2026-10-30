@@ -2,13 +2,16 @@ import { Component, h, Prop, Watch, Host, Element, Method } from '@stencil/core'
 import { toClassList } from '../../utils/props';
 import CssClassList from '../../utils/interfaces/css-class-list';
 
-enum DsBlockTypeToTag {
-  PAGE = 'Host',
-  SECTION = 'section',
-  BLOCK = 'div',
-  CONTENT = 'div',
-  FORM = 'div',
-}
+// A const object rather than an enum: several block types map to the same tag.
+const DsBlockTypeToTag = {
+  PAGE: 'Host',
+  SECTION: 'section',
+  BLOCK: 'div',
+  CONTENT: 'div',
+  FORM: 'div',
+} as const;
+
+type DsBlockTypeToTag = (typeof DsBlockTypeToTag)[keyof typeof DsBlockTypeToTag];
 
 @Component({
   tag: 'ds-block',

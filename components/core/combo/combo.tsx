@@ -11,6 +11,7 @@ import { DSOption } from './combo.types';
 export class DSCombo {
   CSSClassList: CssClassList;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stencil derives the attribute handling from the prop type; a precise type would change it
   @Prop({ mutable: true, reflect: true }) options: any;
   @Prop() name: string;
   @Prop({ mutable: true, reflect: true }) mode = '';
@@ -28,7 +29,7 @@ export class DSCombo {
 
   @State() uid = uuid();
   @State() showCombo = false;
-  @State() optionsArray: any[] = [];
+  @State() optionsArray: DSOption[] = [];
 
   @Event() optionSelected: EventEmitter;
 
@@ -171,7 +172,7 @@ export class DSCombo {
   render() {
     return (
       <div
-        id={'ds-combo-' + (this.name || [...(document.querySelectorAll('ds-combo') as any)].length.toString())}
+        id={'ds-combo-' + (this.name || document.querySelectorAll('ds-combo').length.toString())}
         class={{
           ...this.CSSClassList,
           '--open': this.showCombo,

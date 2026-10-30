@@ -5,7 +5,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
 })
 export class DSDropdownItem {
   @Prop() name: string;
-  @Prop() value: any;
+  @Prop() value: string | number | boolean;
 
   render() {
     return (

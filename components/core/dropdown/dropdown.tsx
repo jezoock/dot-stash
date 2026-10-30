@@ -81,7 +81,7 @@ export class DSDropdown {
   render() {
     return (
       <div
-        id={'ds-dropdown-' + (this.name || [...(document.querySelectorAll('ds-dropdown') as any)].length.toString())}
+        id={'ds-dropdown-' + (this.name || document.querySelectorAll('ds-dropdown').length.toString())}
         class={{
           'ds-dropdown': true,
           '--open': this.showCombo,
