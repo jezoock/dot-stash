@@ -39,10 +39,11 @@ export class DSModal {
     this[`modal${this.shown ? 'Open' : 'Close'}`].emit();
   }
 
+  /** `detail.show` (boolean) shows or hides the modal; without it, the event toggles it. */
   @Listen('request_toggleModal_event')
-  request_toggleModal_eventHandler(event) {
-    const { show } = event.details;
-    this.toggle(show);
+  request_toggleModal_eventHandler(event: CustomEvent<{ show?: boolean } | undefined>) {
+    const show = event.detail?.show;
+    this.toggle(typeof show === 'boolean' ? show : !this.shown);
   }
 
   @Listen('request_showModal_event')
@@ -67,6 +68,14 @@ export class DSModal {
     this.modalMouseUpHandler = this.modalMouseUpHandler.bind(this);
   }
 
+  componentWillLoad() {
+    // The shown watcher does not run for the initial value: a modal rendered open is set up here (no modalOpen event).
+    if (this.shown) {
+      document.querySelector('body').classList.add('ds-js--modal-open');
+      this.modalInit();
+    }
+  }
+
   disconnectedCallback() {
     this.modalCloseHandler();
   }
@@ -76,7 +85,7 @@ export class DSModal {
   }
 
   /**
-   * Toggle modal display
+   * Shows or hides the modal. The `shown` watcher emits `modalOpen` or `modalClose`, once per change.
    *
    * @param {boolean} mustShow: Wether to show or hide modal
    */
@@ -85,21 +94,17 @@ export class DSModal {
   }
 
   /**
-   * Request modal show
+   * Shows the modal.
    */
   show(): void {
     this.toggle(true);
   }
 
   /**
-   * Request modal hide
+   * Hides the modal (Escape key, mouse down outside the dialog).
    */
   hide(): void {
-    if (this.modalClose) {
-      this.modalClose.emit();
-    } else {
-      this.toggle(false);
-    }
+    this.toggle(false);
   }
 
   /**
