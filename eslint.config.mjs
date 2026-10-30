@@ -21,6 +21,13 @@ export default defineConfig(
     },
   },
   {
+    // Unit tests, run by Jest through `stencil test --spec`.
+    files: ['**/*.spec.{ts,tsx}'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.jest },
+    },
+  },
+  {
     files: ['*.mjs', 'stencil.config.ts'],
     languageOptions: {
       globals: globals.node,

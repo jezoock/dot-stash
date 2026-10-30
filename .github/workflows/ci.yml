@@ -31,7 +31,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
         env:
-          # No end-to-end tests yet, so the Chromium download is not needed.
+          # The spec tests run without a browser and the end-to-end tests are not run in CI,
+          # so the Chromium download is not needed.
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Build
@@ -53,3 +54,6 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Test
+        run: npm test

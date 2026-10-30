@@ -32,8 +32,9 @@ npm run build:all
 | `npm start`            | Stencil development build in watch mode, with the Stencil dev server (serves `www/`, page `components/index.html`).                                                                                         |
 | `npm run dev`          | One-off Stencil development build (no server, no watch).                                                                                                                                                    |
 | `npm run serve:theme`  | Theme live preview (gulp default task, BrowserSync). Serves the repository root (`index.html`), recompiles the theme when a file in `scss/` changes and a page stylesheet when `scss/pages/*.scss` changes. |
-| `npm test`             | Stencil spec and end-to-end tests (Jest, Puppeteer). No test files exist yet.                                                                                                                               |
+| `npm test`             | Unit tests: Stencil spec tests (`stencil test --spec`, Jest), without a browser. See [Tests](#tests).                                                                                                       |
 | `npm run test.watch`   | Same as `npm test`, in watch mode.                                                                                                                                                                          |
+| `npm run test:e2e`     | Stencil end-to-end tests (`stencil test --e2e`, Puppeteer and Chromium). No end-to-end test exists yet, and CI does not run them.                                                                           |
 | `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                                  |
 | `npm run lint`         | ESLint on `components/` (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                                                                                    |
 | `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                   |
@@ -44,7 +45,7 @@ npm run build:all
 
 One gulp task has no npm script: `npx gulp generateImages` optimizes the files in `images/` and writes them, plus a WebP copy of each, to `dist/images/`.
 
-CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check` and `lint` on every push and pull request. Every step is blocking: a build, formatting or lint error fails the run.
+CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check`, `lint` and `npm test` on every push and pull request. Every step is blocking: a build, formatting, lint or test error fails the run.
 
 ## Project structure
 
@@ -224,6 +225,28 @@ The helpers are split into modules, each exported as a namespace:
 | `context`    | `get`, `DsComponentContext`                                                                                                                         |
 
 `ds` groups the same modules in one object (`ds.props.toClassList(...)`, `ds.ajax.get(...)`), and `ds.tools` keeps the DOM helpers and the Sass bridge under their former key (`ds.tools.scrollTo`, `ds.tools.getStylesJSON`…). Inside the library, components import the functions from their module (`import { toClassList } from '../../utils/props'`), so each bundle only contains the helpers it uses.
+
+## Tests
+
+Unit tests are Stencil spec tests: Stencil's test runner drives Jest 27 (the `jest` and `jest-cli` dev dependencies) in Stencil's simulated DOM, without a browser:
+
+- A spec file sits next to its source: `components/utils/props.spec.ts`, `components/core/toggle/toggle.spec.tsx`.
+- Utility modules are tested with plain Jest (`describe`, `it`, `expect`, `jest.fn()`).
+- Components are rendered with `newSpecPage` from `@stencil/core/testing`:
+
+```tsx
+import { newSpecPage } from '@stencil/core/testing';
+import { DSToggle } from './toggle';
+
+it('toggles a checkbox', async () => {
+  const page = await newSpecPage({ components: [DSToggle], html: '<ds-toggle type="checkbox"></ds-toggle>' });
+  page.root.click();
+  await page.waitForChanges();
+  expect(page.root.checked).toBe(true);
+});
+```
+
+`npm test` runs them once, `npm run test.watch` on every change. Spec files are not part of the build output (`dist/`, `www/`, `loader/`). End-to-end tests (`*.e2e.ts`, `npm run test:e2e`) need Puppeteer's Chromium, so `npm ci` must run without `PUPPETEER_SKIP_DOWNLOAD`.
 
 ## Archived code
 
