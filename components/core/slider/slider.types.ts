@@ -16,7 +16,8 @@ export interface DSSliderParams {
   duration?: number;
   forceItemDspCount?: number;
   minItemDspCount?: number;
-  menu?: HTMLElement;
+  /** Renders a ds-slider-menu (the menu element itself is found with selectors.menu). */
+  menu?: boolean;
   xOffset?: number;
   yOffset?: number;
   forceHeight?: boolean;
