@@ -11,17 +11,11 @@ export const DsComponentContext: DsComponentContextType[] = ["block", 'article',
 
 const _ds = {
   app: {
-    component: null,
-
     getConfig: (keys: string[]): Record<string, unknown> => {
       const pairs = {};
       keys.map( key => pairs[key] = config[key] )
       return pairs;
     },
-    
-    addToCart: async (id: string, attributeId: string, attributeGroupId: string, customizationId: string) => {
-      _ds.app.component.addToCart(id, attributeId, attributeGroupId, customizationId);
-    }
   },
 
   context: {
@@ -256,12 +250,6 @@ const _ds = {
         }; */
     },
 
-    getAppComponent: () => {
-      if (typeof _ds.app.component === "undefined") {
-        _ds.app.component = document.querySelector("ds-page") || [];
-      }
-      return _ds.app.component;
-    },
     getStylesJSON: (): SassStyles => {
       let style = '{}';
     
@@ -415,7 +403,5 @@ const _ds = {
     } */
   }
 }
-
-_ds.app.component = _ds.app.component = document.querySelector("ds-page");
 
 export default _ds;

@@ -1,5 +1,4 @@
 import { Component, h, Method } from '@stencil/core/internal';
-/* import { mapStyles } from './map-styles'; */
 
 @Component({
   tag: 'ds-main',
@@ -47,35 +46,6 @@ export class DSMainTest {
           <ds-toggle type="checkbox"></ds-toggle>
           <ds-toggle type="switch"></ds-toggle>
         </ds-block>
-         {/* <ds-title section sub>test</ds-title>
-        <ds-map
-          api-key="YOUR_GOOGLE_MAPS_API_KEY"
-          params={{
-            useCluster: false,
-            mapStyles: [{ name: "newStyles", styles: mapStyles }]
-          }}
-        >
-          <ds-map-marker lat={-39.397} lng={155.644} label="JEz" name="Test 9" />
-          <ds-map-marker lat={-34.397} lng={150.644} name="Test 7">
-            <ds-info-window>
-              <div class="bob">
-                <ds-title mods="main" slot="header"><span>test</span></ds-title>
-                <h2>dsfjhsdfjs</h2>
-                <p>sdfjkhsdfjksdkjfjksdf</p>
-              </div>
-            </ds-info-window>
-          </ds-map-marker>
-          <ds-location lat={-39.397} lng={155.644} name="Test 9" />
-          <div slot="controls">
-
-          <ds-control action='setZoom:[5, { "name": "bob"}, [1,2,3]]'>test</ds-control>
-          <ds-control action='setZoom:[5]'>test</ds-control>
-          <ds-control action="setZoom:[10]">test</ds-control>
-          <ds-control action="zoomIn">test</ds-control>
-          <ds-control action="zoomOut">test</ds-control>
-          <ds-control action="fitMarkers">test</ds-control>
-          </div>
-        </ds-map>  */}
 
         {/* <ds-sidebar position='right'>
           sdfhlsdfklsdfk

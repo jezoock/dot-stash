@@ -59,6 +59,6 @@
   @if ($display != null) {
     display: $display;
   }
-  font-family: "pronto";
+  font-family: "ds-icons";
   @include ds-icon-content($type);
 }

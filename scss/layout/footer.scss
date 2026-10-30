@@ -7,7 +7,7 @@
     margin: 0 auto;
     display: block;
   }
-  
+
   @include break-p(null, md) {
     padding: 75px 0 0 0;
 
@@ -15,121 +15,12 @@
       padding: 0 2rem;
     }
   }
-  
+
   @include break-p(md) {
     padding: 75px 0 0 0;
 
     & ds-grid {
       padding: 0 1rem 45px 1rem;
-    }
-  }
-
-  & .appstore,
-  & .playstore {
-    display: block;
-    padding: 0 0 0.5rem 0;
-
-    & img {
-      width: 100%;
-      max-width: 140px;
-    }
-  }
-}
-
-.ds-content-section {
-  &.--footerbefore {
-    display: block;
-  }
-}
-
-.ds-hook-content {
-  &.--footer {
-    display: flex;
-
-    @include break-p(null, md) {
-      flex-wrap: wrap;
-
-      & .--social {
-        order: 1;
-      }
-
-      & .--a-propos {
-        order: 2;
-        width: 100%;
-      }
-
-      & .--infos-pratiques {
-        order: 3;
-        width: 100%;
-      }
-
-      & .--app {
-        order: 4;
-      }
-    }
-  }
-}
-
-.ds-content-section {
-  &.--footerafter {
-    display: block;
-  }
-}
-
-.ds-link-group-block {
-  text-transform: uppercase;
-
-  & .ds-title {
-    font-weight: bold;
-  }
-}
-
-@include break-p(null, md) {
-  .ds-link-group-block {
-    width: 100%;
-  }
-
-  .ds-content-section {
-    &.--footerbefore {
-      padding: 0 0 4rem 0;    
-      max-width: 100%;  
-    }
-  }
-}
-
-@include break-p(md, xxl) {
-  .ds-link-group-block {
-    width: 33%;
-  }
-
-  .ds-content-section {
-    &.--footerbefore {
-      padding: 0 0 4rem 0;    
-      max-width: 100%;  
-
-      & .ds-content-section {
-        &__body {
-          display: flex;
-          justify-content: flex-start;
-          column-gap: 2rem;
-        }
-      }
-    }
-  }
-}
-
-@include break-p(md) {
-  .ds-link-group-block {
-    padding: 0 40px 0 0;
-
-    &:nth-last-child(1) {
-      padding: 0;
-    }
-  }
-
-  .ds-content-section {
-    &.--footerbefore {
-      /* max-width: 350px; */
     }
   }
 }
@@ -146,29 +37,6 @@
 
   &:hover {
     color: #fff;
-  }
-}
-
-.ds-contact-block {
-  flex-grow: 1;
-}
-
-.ds-link-group-block,
-.ds-contact-block {
-  @include break-p(null, md) {
-    &__header {
-      padding: 0 0 0.25rem 0;
-    }
-    
-    &__body {
-      padding: 0 0 2rem 0;
-    }
-  }
-  
-  @include break-p(md) {
-    &__header {
-      padding: 0 0 1rem 0;
-    }
   }
 }
 
@@ -195,23 +63,5 @@
         }
       }
     }
-  }
-}
-
-#content-footermessage {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-
-  & .--app {
-    order: 1;
-    padding: 3rem 0;
-  }
-  
-
-  & .--footer {
-    order: 2;
-    width: 100%;
-    background-color: ds-color(gray, darkest);
   }
 }
