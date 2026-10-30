@@ -78,9 +78,6 @@ const server = () => {
 
   const pageStylesWatcher = gulp.watch(settings.scss.pages.watch.map(pattern => `${paths.source.root}/${pattern}`));
   pageStylesWatcher.on('change', generatePagesCSS);
-
-  /* const imagesWatcher = gulp.watch( settings.images.watch.map(pattern => `${paths.source.root}/${pattern}`));
-  imagesWatcher.on("change", generateImages); */
 };
 
 export default server;

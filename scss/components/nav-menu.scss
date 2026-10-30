@@ -99,7 +99,6 @@
       &:not(:last-child()) {
         border-bottom: 1px solid ds-color(gray, light);
       }
-      /* padding: 0.75rem 0; */
       & img {
         width: 100%;
       }
@@ -203,7 +202,6 @@
         }
 
         &__sub-nav {
-          /* transform: translateX(100%); */
           top: -0.5rem;
           left: 100%;
         }
