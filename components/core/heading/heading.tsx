@@ -1,6 +1,6 @@
 import { Component, h, Prop, Watch, Element, Host } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toArray, toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 @Component({
   tag: 'ds-heading',
@@ -29,7 +29,7 @@ export class DSHeading {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-heading', _ds.props.toArray(mods));
+    this.CSSClassList = toClassList('ds-heading', toArray(mods));
   }
 
   connectedCallback() {
@@ -39,7 +39,7 @@ export class DSHeading {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-heading', _ds.props.toArray(this.mods));
+    this.CSSClassList = toClassList('ds-heading', toArray(this.mods));
     const { section, block } = this;
     this.titleProps = {
       section,

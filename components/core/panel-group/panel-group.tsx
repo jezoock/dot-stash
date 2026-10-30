@@ -1,6 +1,6 @@
 import { Component, Element, h, Host, Listen, Prop, Watch, Method } from '@stencil/core';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { toArray, toClassList } from '../../utils/props';
 import { PanelType } from '../panel/panel';
 
 @Component({
@@ -28,7 +28,7 @@ export class DSPanelGroup {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-panel-group', _ds.props.toArray(mods));
+    this.CSSClassList = toClassList('ds-panel-group', toArray(mods));
   }
 
   @Listen('panelShow')
@@ -58,7 +58,7 @@ export class DSPanelGroup {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-panel-group', _ds.props.toArray(this.mods));
+    this.CSSClassList = toClassList('ds-panel-group', toArray(this.mods));
   }
 
   async componentDidLoad() {

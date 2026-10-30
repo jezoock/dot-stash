@@ -1,8 +1,8 @@
 import { Component, Element, h, Listen, Prop, State, Watch } from '@stencil/core';
 import { AnyHTMLElement } from '@stencil/core/internal';
 import { TooltipPosition } from './tooltip-position.enum';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { toClassList } from '../../utils/props';
 /**
  * Simple icon tooltip component
  *
@@ -66,7 +66,7 @@ export class DSTooltip {
   //#region TOOLS
 
   computeCSSClasslist() {
-    this.CSSClassList = _ds.props.toClassList('ds-tooltip', this.mods);
+    this.CSSClassList = toClassList('ds-tooltip', this.mods);
   }
 
   //#endregion

@@ -1,6 +1,6 @@
 import { Component, Element, h, Listen, Prop, Watch } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 @Component({
   tag: 'ds-nav',
@@ -16,7 +16,7 @@ export class DSNav {
 
   @Watch('mods')
   modsChangeHandler(newMods) {
-    this.CSSClassList = _ds.props.toClassList('ds-nav', newMods);
+    this.CSSClassList = toClassList('ds-nav', newMods);
   }
 
   @Listen('DSMenuItemClick')
@@ -25,7 +25,7 @@ export class DSNav {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-nav', this.mods);
+    this.CSSClassList = toClassList('ds-nav', this.mods);
   }
 
   componentDidLoad() {

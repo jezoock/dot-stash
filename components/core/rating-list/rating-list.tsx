@@ -1,5 +1,5 @@
 import { Component, h, Prop } from '@stencil/core';
-import _ds from '../../utils/dot-stash';
+import { fromJSON, toNumber } from '../../utils/props';
 
 @Component({
   tag: 'ds-rating-list',
@@ -10,8 +10,8 @@ export class DSRatingList {
   @Prop({ mutable: true, reflect: true }) dsRatings: string | any[];
 
   componentWillLoad() {
-    this.dsAverage = _ds.props.toNumber(this.dsAverage) as number;
-    const ratings = _ds.props.fromJSON(this.dsRatings as string);
+    this.dsAverage = toNumber(this.dsAverage) as number;
+    const ratings = fromJSON(this.dsRatings as string);
     ratings.splice(-1, 1);
     this.dsRatings = ratings;
   }

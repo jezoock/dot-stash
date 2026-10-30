@@ -1,6 +1,6 @@
 import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toClassList, toNumber } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 export type DSGridAlignment = 'start' | 'center' | 'end';
 export type DSGridType = 'fixed' | 'fluid';
@@ -50,7 +50,7 @@ export class DSGrid {
 
   @Watch('mods')
   modsChangeHandler(newMods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-grid', newMods);
+    this.CSSClassList = toClassList('ds-grid', newMods);
     this.processChildren();
   }
 
@@ -62,7 +62,7 @@ export class DSGrid {
 
   @Watch('cols')
   colsWatcher(cols: string | number) {
-    this.options = { ...this.options, cols: _ds.props.toNumber(cols) };
+    this.options = { ...this.options, cols: toNumber(cols) };
     this.processChildren();
   }
 
@@ -92,20 +92,20 @@ export class DSGrid {
 
   @Watch('cellRatio')
   cellRatioWatcher(cellRatio: string | number) {
-    this.options = { ...this.options, cellRatio: _ds.props.toNumber(cellRatio) };
+    this.options = { ...this.options, cellRatio: toNumber(cellRatio) };
     this.processChildren();
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-grid', this.mods);
+    this.CSSClassList = toClassList('ds-grid', this.mods);
     const { type: typeFromProps, hGap, vGap, align: alignFromProps, vAlign: vAlignFromProps, cols: colsFromProps } = this;
-    const cols = _ds.props.toNumber(colsFromProps);
+    const cols = toNumber(colsFromProps);
     const type = typeFromProps as DSGridType;
     const align = alignFromProps as DSGridAlignment;
     const vAlign = vAlignFromProps as DSGridAlignment;
     const options: DSGridParams = { type, hGap, vGap, align, vAlign, cols };
     if (this.cellRatio) {
-      options.cellRatio = _ds.props.toNumber(this.cellRatio);
+      options.cellRatio = toNumber(this.cellRatio);
     }
     this.options = options;
   }

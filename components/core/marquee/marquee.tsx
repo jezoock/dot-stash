@@ -1,6 +1,6 @@
 import { Component, Method, h, Host, Prop, Watch, State, Element } from '@stencil/core';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { isTrue, toClassList, toNumber } from '../../utils/props';
 
 export enum DSMarqueeTransitionEnum {
   SLIDE_TOP_TO_BOTTOM = 'slide-ttb',
@@ -60,7 +60,7 @@ export class DSSlideMsg {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
+    this.CSSClassList = toClassList(this.blockName, mods);
   }
 
   constructor() {
@@ -70,12 +70,12 @@ export class DSSlideMsg {
   }
 
   connectedCallback() {
-    this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);
+    this.CSSClassList = toClassList(this.blockName, this.mods);
     this.params = {
       ...DSMarqueeDefaultParams,
       transition: this.transition as DSMarqueeTransitionEnum,
-      speed: _ds.props.toNumber(this.speed),
-      pauseOnHover: _ds.props.isTrue(this.pauseOnHover),
+      speed: toNumber(this.speed),
+      pauseOnHover: isTrue(this.pauseOnHover),
     };
   }
 

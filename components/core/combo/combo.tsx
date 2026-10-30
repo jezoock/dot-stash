@@ -1,7 +1,7 @@
 import { Component, h, Prop, State, Event, EventEmitter, Watch, Method } from '@stencil/core';
 import uuid from '../../utils/uuid';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toArray, toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 export interface DSOption {
   index?: number;
@@ -48,8 +48,8 @@ export class DSCombo {
   }
 
   processClassList = () => {
-    const modifiers = _ds.props.toArray(this.mods);
-    this.CSSClassList = _ds.props.toClassList('ds-combo', modifiers);
+    const modifiers = toArray(this.mods);
+    this.CSSClassList = toClassList('ds-combo', modifiers);
   };
 
   @Watch('options')

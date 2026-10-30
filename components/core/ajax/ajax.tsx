@@ -1,5 +1,5 @@
 import { Component, h, Element, Host, Prop, State } from '@stencil/core';
-import _ds from '../../utils/dot-stash';
+import { get as ajaxGet } from '../../utils/ajax';
 
 /**
  * A simple component to load ajax content
@@ -71,7 +71,7 @@ export class DSAjax {
       this.isLoading = true;
 
       const queryParam = this.url.indexOf('?') > -1 ? '&' : '?' + this.suffix;
-      const markup = await _ds.ajax.get<string>(this.url + queryParam);
+      const markup = await ajaxGet<string>(this.url + queryParam);
       const content = new DOMParser().parseFromString(markup, 'text/html');
 
       this.hostContainer.innerHTML = content.querySelector('.ds-ajax-content').innerHTML;

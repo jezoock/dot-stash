@@ -1,5 +1,5 @@
 import { Component, Event, EventEmitter, h, Prop, Element, State, Fragment } from '@stencil/core/internal';
-import _ds from '../../../utils/dot-stash';
+import { isTrue, toNumber } from '../../../utils/props';
 
 @Component({
   tag: 'ds-nav-item',
@@ -25,10 +25,10 @@ export class DSNavMenuItem {
   }
 
   componentWillLoad() {
-    this.isActive = _ds.props.isTrue(this.isActive);
-    this.hasChildren = _ds.props.isTrue(this.hasChildren);
-    this.isAnimated = _ds.props.isTrue(this.isAnimated);
-    this.depth = _ds.props.toNumber(this.depth);
+    this.isActive = isTrue(this.isActive);
+    this.hasChildren = isTrue(this.hasChildren);
+    this.isAnimated = isTrue(this.isAnimated);
+    this.depth = toNumber(this.depth);
   }
 
   toggleSubNav(mustShow = false): void {

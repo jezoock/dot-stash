@@ -1,7 +1,8 @@
 import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method, State } from '@stencil/core/internal';
 import { AnyHTMLElement } from '@stencil/core/internal';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
+import { fromJSON, toClassList } from '../../utils/props';
 
 let sliderId = 0;
 
@@ -116,7 +117,7 @@ export class DSSlider {
     if (newParams) {
       const { isActive: previousIsActive } = this.options;
       const { isActive } = newParams;
-      this.options = { ...this.options, ..._ds.props.fromJSON(newParams) };
+      this.options = { ...this.options, ...fromJSON(newParams) };
 
       if (typeof isActive !== 'undefined' && previousIsActive !== isActive) {
         if (isActive) {
@@ -130,7 +131,7 @@ export class DSSlider {
 
   @Watch('mods')
   modsChangeHandler(newMods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-slider', newMods);
+    this.CSSClassList = toClassList('ds-slider', newMods);
   }
 
   @Event() sliderEvent: EventEmitter<{ slide: string; direction: number; currentIndex?: number }>;
@@ -159,9 +160,9 @@ export class DSSlider {
   }
 
   componentWillLoad() {
-    const optionsFromProps = _ds.props.fromJSON(this.params);
+    const optionsFromProps = fromJSON(this.params);
     this.options = { ...DSSliderDefaults, ...optionsFromProps, selectors: { ...DSSliderDefaults.selectors, ...optionsFromProps.selectors } };
-    this.CSSClassList = _ds.props.toClassList('ds-slider', this.mods);
+    this.CSSClassList = toClassList('ds-slider', this.mods);
   }
 
   componentDidLoad() {
@@ -202,7 +203,7 @@ export class DSSlider {
 
       if (this.isScrollable) {
         if (this.options.autoHeight && this.options.orientation === 'hrt') {
-          _ds.css.set({ height: `${this.itemHeight}px` } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
+          setCss({ height: `${this.itemHeight}px` } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
         }
         this.step = this.options.step;
         if (this.options.menu) {
@@ -231,7 +232,7 @@ export class DSSlider {
       this.itemWidth = 0;
       this.itemHeight = 0;
 
-      this.options.xOffset = _ds.css.toNumber('marginLeft', this.list);
+      this.options.xOffset = cssToNumber('marginLeft', this.list);
       this.dspDim = this.sliderContener[`offset${this.options.orientation === 'vtc' ? 'Height' : 'Width'}`];
 
       /* console.log("available space", this.dspDim, this.items, ); */
@@ -257,7 +258,7 @@ export class DSSlider {
           listWidth += offsetWidth;
           listHeight += offsetHeight;
 
-          _ds.css.set(
+          setCss(
             {
               /* width: `${offsetWidth}px`, */
               maxWidth: `${offsetWidth}px`,
@@ -289,7 +290,7 @@ export class DSSlider {
           : this.itemHeight;
 
       if (this.options.autoWidth) {
-        _ds.css.set({ height: `${itemHeight}px`, width: `${this.itemWidth}px` }, this.items);
+        setCss({ height: `${itemHeight}px`, width: `${this.itemWidth}px` }, this.items);
         this.listDim = this.listLen * this[this.options.orientation === 'vtc' ? 'itemHeight' : 'itemWidth'];
       } else {
         this.listDim = this.options.orientation === 'vtc' ? listHeight : listWidth;
@@ -311,7 +312,7 @@ export class DSSlider {
       this.list.classList.add(this.options.orientation);
 
       if (this.options.orientation === 'vtc') {
-        _ds.css.set(
+        setCss(
           {
             width: `${this.itemWidth}px`,
             height: `${this.listDim}px`,
@@ -319,14 +320,14 @@ export class DSSlider {
           [this.list],
         );
 
-        _ds.css.set(
+        setCss(
           {
             width: `${this.itemWidth}px`,
           },
           [this.sliderContener],
         );
       } else {
-        _ds.css.set(
+        setCss(
           {
             width: `${this.listDim < this.dspDim ? this.dspDim : this.listDim}px`,
             height: `${this.itemHeight}px`,
@@ -334,7 +335,7 @@ export class DSSlider {
           [this.list],
         );
 
-        _ds.css.set(
+        setCss(
           {
             height: `${this.itemHeight}px`,
           },
@@ -359,7 +360,7 @@ export class DSSlider {
         this.continue();
       }
 
-      _ds.css.set({ opacity: '1' } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
+      setCss({ opacity: '1' } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
 
       this.list.addEventListener('transitionend', this.slideTransitionEndHandler, { passive: true });
       if (this.options.draggable) {
@@ -389,7 +390,7 @@ export class DSSlider {
       if (dragTime > this.swipeDelay) {
         const distance = currentX - this.xStart;
         const transformation = `translate3d( ${distance}px, 0, 0 )`;
-        _ds.css.set({ "transform": transformation}, [this.list]);
+        setCss({ "transform": transformation}, [this.list]);
       }
     } */
   }
@@ -419,7 +420,7 @@ export class DSSlider {
         setTimeout( () => {
           this.softCleanup = true;
           this.list.classList.add("--sliding");
-          _ds.css.set( { transform }, [this.list])
+          setCss( { transform }, [this.list])
         }, 50);
       } */
     }
@@ -494,11 +495,11 @@ export class DSSlider {
         this.list.appendChild(newElem);
       }
 
-      _ds.css.set(from, [this.list]);
+      setCss(from, [this.list]);
 
       this.step = step;
       this.getList().classList.add('--sliding');
-      setTimeout(() => _ds.css.set(to, [this.list]), 50);
+      setTimeout(() => setCss(to, [this.list]), 50);
     }
   }
 
@@ -554,13 +555,13 @@ export class DSSlider {
 
       this.items = this.getListItems();
 
-      _ds.css.set(from, [this.list]);
+      setCss(from, [this.list]);
 
       this.step = step;
 
       setTimeout(() => {
         this.list.classList.add('--sliding');
-        _ds.css.set(to, [this.list]);
+        setCss(to, [this.list]);
       }, 50);
     }
   }
@@ -579,7 +580,7 @@ export class DSSlider {
     this.list.classList.remove('--sliding');
     this.isTransitionStarted = false;
     //this.list.removeEventListener( 'transitionend', this.slideTransitionEndHandler );
-    _ds.css.set(
+    setCss(
       {
         transform: 'translate3d(0,0,0)',
         width: this.options.orientation === 'hrt' ? `${this.listDim}px` : `${this.itemHeight}px`,

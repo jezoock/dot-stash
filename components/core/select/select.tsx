@@ -1,6 +1,6 @@
 import { Component, h, Method, Prop, State, Event, Host, Element, EventEmitter, Watch } from '@stencil/core';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { toArray, toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-select',
@@ -21,7 +21,7 @@ export class DSSelect {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-select', mods);
+    this.CSSClassList = toClassList('ds-select', mods);
   }
 
   @Event() valueChange: EventEmitter;
@@ -71,7 +71,7 @@ export class DSSelect {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-select', _ds.props.toArray(this.mods));
+    this.CSSClassList = toClassList('ds-select', toArray(this.mods));
     if (this.defaultValue) {
       this.value = this.defaultValue;
     }

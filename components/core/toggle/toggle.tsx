@@ -1,6 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toArray, toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 /* type ToogleType = "radio" | "icon" | "checkbox" | "switch" | string; */
 
@@ -22,7 +22,7 @@ export class DSToggle {
 
   @Watch('mods')
   modsWatcher(newMods) {
-    this.CSSClassList = _ds.props.toClassList('ds-toggle', [..._ds.props.toArray(newMods), this.type]);
+    this.CSSClassList = toClassList('ds-toggle', [...toArray(newMods), this.type]);
   }
 
   @Event() toggle: EventEmitter;
@@ -52,7 +52,7 @@ export class DSToggle {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-toggle', [..._ds.props.toArray(this.mods), this.type]);
+    this.CSSClassList = toClassList('ds-toggle', [...toArray(this.mods), this.type]);
   }
 
   toggleClickHandler = () => {

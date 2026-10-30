@@ -1,7 +1,8 @@
 import { Component, Event, EventEmitter, h, Host } from '@stencil/core/internal';
 import { Method, Prop } from '@stencil/core/internal';
 import debounce from '../../utils/debounce';
-import _ds from '../../utils/dot-stash';
+import { fromJSON } from '../../utils/props';
+import { getBreakpoint, getParamsForBreakpoint, getStylesJSON, processBreakpoints } from '../../utils/responsive';
 import { Breakpoint, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
 
 @Component({
@@ -33,25 +34,16 @@ export class DSRsp {
     return Array.from(document.querySelectorAll('[data-use-rsp]'));
   }
 
+  // The breakpoint methods below delegate to the pure functions of utils/responsive.
+
   @Method()
   async processBreakpoints(breakpoints: RawBreakpoint): Promise<Breakpoints> {
-    const newBreakpoints = Object.entries(breakpoints);
-    const [firstBreakpointLabel, firstBreakpointValue] = newBreakpoints.shift();
-    const processedBreakpoints: Breakpoints = { [firstBreakpointLabel]: [0, firstBreakpointValue] };
-    let previousBreakpoint = '';
-    newBreakpoints.map(([breakpointLabel, breakpointValue], index) => {
-      processedBreakpoints[breakpointLabel] = [breakpointValue];
-      if (index > 0) {
-        processedBreakpoints[previousBreakpoint].push((breakpointValue as number) - 1);
-      }
-      previousBreakpoint = breakpointLabel;
-    });
-    return processedBreakpoints;
+    return processBreakpoints(breakpoints);
   }
 
   @Method()
   async getBreakpoints(): Promise<Breakpoints> {
-    const { breakpoints } = _ds.tools.getStylesJSON();
+    const { breakpoints } = getStylesJSON();
     return this.processBreakpoints(breakpoints);
   }
 
@@ -67,88 +59,12 @@ export class DSRsp {
    */
   @Method()
   async getBreakpoint(rawBreakpoints: { [label: string]: number[] }): Promise<Breakpoint> {
-    const currentBreakpoint: Breakpoint = {
-      label: '',
-      limits: [],
-    };
-
-    const windowWidth = window.innerWidth;
-    const breakpoints = Object.entries(rawBreakpoints);
-
-    if (breakpoints?.length > 0) {
-      /* const [minBreakPointLabel, [minBreakpointValue]] = breakpoints.shift(); */
-      const [maxBreakPointLabel, [maxBreakpointValue]] = breakpoints.pop();
-
-      /* if (windowWidth < minBreakpointValue) {
-
-        currentBreakpoint.label = minBreakPointLabel;
-        currentBreakpoint.limits = [0, minBreakpointValue];
-
-      } else  */ if (windowWidth >= maxBreakpointValue) {
-        currentBreakpoint.label = maxBreakPointLabel;
-        currentBreakpoint.limits = [maxBreakpointValue, windowWidth];
-      } else {
-        for (let index = 0; index < breakpoints.length; index++) {
-          const loopBreakpoint = breakpoints[index];
-          const [label, [min, max]] = loopBreakpoint;
-
-          if (windowWidth < max) {
-            currentBreakpoint.label = label;
-            currentBreakpoint.limits = [min, max];
-            break;
-          }
-        }
-      }
-    }
-
-    return currentBreakpoint;
+    return getBreakpoint(rawBreakpoints);
   }
 
   @Method()
   async getParamsForBreakpoint(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown> }) {
-    let currentBreakpointParams: Record<string, unknown>;
-    const {
-      label,
-      limits: [, max],
-    } = currentBreakpoint;
-
-    if (params[label]) {
-      currentBreakpointParams = params[label];
-    } else {
-      /* const labels = Object.keys(params);
-      const paramsBreakpointLimits = labels.map(breakpointLabel => ({limit: this.breakpoints[breakpointLabel][1], label: breakpointLabel})); */
-
-      Object.keys(params).map(breakpointLabel => {
-        if (this.breakpoints[breakpointLabel][1] < max) {
-          currentBreakpointParams = params[breakpointLabel];
-        }
-      });
-
-      /* for (const breakpointLabel in params) {
-        const [,breakpointMax] = this.breakpoints[breakpointLabel]
-        paramsBreakpointLimits.push([breakpointMax, breakpointLabel]);
-      } */
-
-      /* paramsBreakpointLimits.map( ({limit, label}) => {
-        if (limit < max) {
-          currentBreakpointParams = params[label];
-        }
-      }) */
-    }
-
-    return currentBreakpointParams;
-
-    /* for (const breakpointLabel in params) {
-      if (label === breakpointLabel) {
-        return params[breakpointLabel];
-      }
-      const [,paramsMax] = this.breakpoints[breakpointLabel];
-      if (paramsMax > max) {
-        return currentBreakpointParams || params[breakpointLabel];
-      } else {
-        currentBreakpointParams = params[breakpointLabel];
-      }
-    } */
+    return getParamsForBreakpoint(currentBreakpoint, params, this.breakpoints);
   }
 
   @Event() breakpointChange: EventEmitter;
@@ -159,7 +75,7 @@ export class DSRsp {
   }
 
   async componentWillLoad() {
-    this.breakpoints = this.breakpointsFromProp ? _ds.props.fromJSON(this.breakpointsFromProp) : await this.getBreakpoints();
+    this.breakpoints = this.breakpointsFromProp ? fromJSON(this.breakpointsFromProp) : await this.getBreakpoints();
   }
 
   componentDidLoad() {
@@ -176,7 +92,7 @@ export class DSRsp {
 
   initSubscribers = () => {
     this.waitingSubscribers.forEach(subscriber => {
-      const paramsFormProps = _ds.props.fromJSON(subscriber.getAttribute('data-rsp'));
+      const paramsFormProps = fromJSON(subscriber.getAttribute('data-rsp'));
       const minBreakpointParams: { xxs?: Record<string, unknown> } = {};
 
       if (paramsFormProps && !paramsFormProps.xxs) {
@@ -236,7 +152,7 @@ export class DSRsp {
     /* console.log(event.target); */
 
     const attributeValue = (element as Element).getAttribute(this.propertyName);
-    const params: { [breakpointLabel: string]: Record<string, unknown> } = _ds.props.fromJSON(attributeValue) || {};
+    const params: { [breakpointLabel: string]: Record<string, unknown> } = fromJSON(attributeValue) || {};
 
     // Calculate limits from parameters
     const breakpointParams = await this.getParamsForBreakpoint(current, params);

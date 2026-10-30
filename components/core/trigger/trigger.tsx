@@ -1,6 +1,6 @@
 import { Element, Prop, Component, Host, h, Watch } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { fromJSON, toArray, toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 type TargetComponent = undefined | typeof window | typeof document | Element;
 
@@ -23,7 +23,7 @@ export class DSTrigger {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList(`ds-${this.type}`, _ds.props.toArray(mods));
+    this.CSSClassList = toClassList(`ds-${this.type}`, toArray(mods));
   }
 
   //#region LYFECYCLE CALLBACKS
@@ -33,7 +33,7 @@ export class DSTrigger {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList(`ds-${this.type}`, _ds.props.toArray(this.mods));
+    this.CSSClassList = toClassList(`ds-${this.type}`, toArray(this.mods));
   }
 
   connectedCallback() {
@@ -69,7 +69,7 @@ export class DSTrigger {
   eventHandler() {
     if (this.targetComponent) {
       const [action, args] = this.action.split(/:(.*)/g);
-      this.targetComponent[action](..._ds.props.fromJSON(args || []));
+      this.targetComponent[action](...fromJSON(args || []));
     }
   }
 

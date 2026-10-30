@@ -1,5 +1,5 @@
 import { Component, Element, h, Host, Prop, Watch, Method } from '@stencil/core/internal';
-import _ds from '../../../utils/dot-stash';
+import { toNumber } from '../../../utils/props';
 import { DSGridItemStyles } from '../grid';
 
 @Component({
@@ -17,7 +17,7 @@ export class DSGridItem {
   @Watch('ratioFromProps')
   ratioPropsWatcher(ratio: number) {
     this.useRatio = true;
-    this.ratio = _ds.props.toNumber(ratio);
+    this.ratio = toNumber(ratio);
   }
 
   @Method()
@@ -34,7 +34,7 @@ export class DSGridItem {
 
   componentWillLoad() {
     if (this.ratioFromProps) {
-      const ratio = _ds.props.toNumber(this.ratioFromProps);
+      const ratio = toNumber(this.ratioFromProps);
       if (ratio > 0) {
         this.useRatio = true;
         this.ratio = ratio * 100;

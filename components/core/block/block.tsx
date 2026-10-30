@@ -1,6 +1,6 @@
 import { Component, h, Prop, Watch, Host, Element, Method } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 enum DsBlockTypeToTag {
   PAGE = 'Host',
@@ -47,7 +47,7 @@ export class DSBlock {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList(this.blockName, mods);
+    this.CSSClassList = toClassList(this.blockName, mods);
   }
 
   @Method()
@@ -63,7 +63,7 @@ export class DSBlock {
       blockName = `${blockName}-${this.name}`;
     }
     this.blockName = `${blockName}-${blockType}`;
-    this.CSSClassList = _ds.props.toClassList(this.blockName, this.mods);
+    this.CSSClassList = toClassList(this.blockName, this.mods);
     this.context = blockContext;
 
     this.hasHeader = this.hostContainer.querySelector("[slot='header']") !== null;

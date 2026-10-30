@@ -1,6 +1,6 @@
 import { Component, Event, EventEmitter, h, Host, Prop, Method, Element, Watch } from '@stencil/core';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toArray, toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 export type PanelType = 'tab' | 'collapsible';
 
@@ -21,7 +21,7 @@ export class DSPanel {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-panel', _ds.props.toArray(mods));
+    this.CSSClassList = toClassList('ds-panel', toArray(mods));
   }
 
   @Watch('expanded')
@@ -68,7 +68,7 @@ export class DSPanel {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-panel', _ds.props.toArray(this.mods));
+    this.CSSClassList = toClassList('ds-panel', toArray(this.mods));
   }
 
   setExpanded(mustShow?: boolean) {

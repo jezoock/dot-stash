@@ -1,6 +1,6 @@
 import { Prop, Component, h, Watch, Host } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 
 @Component({
   tag: 'ds-text',
@@ -17,11 +17,11 @@ export class DSText {
 
   @Watch('mods')
   modsChangeHandler(newMods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-text', newMods);
+    this.CSSClassList = toClassList('ds-text', newMods);
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-text', this.mods);
+    this.CSSClassList = toClassList('ds-text', this.mods);
   }
 
   render() {

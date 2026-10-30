@@ -1,6 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { fromJSON, toArray, toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-toggle-group',
@@ -21,7 +21,7 @@ export class DSToggleGroup {
 
   @Watch('mods')
   modsWatcher(newMods) {
-    this.CSSClassList = _ds.props.toClassList('ds-toggle-group', _ds.props.toArray(newMods));
+    this.CSSClassList = toClassList('ds-toggle-group', toArray(newMods));
   }
 
   @Event() toggleValueChange: EventEmitter;
@@ -38,8 +38,8 @@ export class DSToggleGroup {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-toggle-group', _ds.props.toArray(this.mods));
-    this.valuesCount = _ds.props.fromJSON(this.count);
+    this.CSSClassList = toClassList('ds-toggle-group', toArray(this.mods));
+    this.valuesCount = fromJSON(this.count);
     /* console.log(this.valuesCount) */
   }
 

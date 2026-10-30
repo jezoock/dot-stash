@@ -1,6 +1,6 @@
 import { Component, h, Watch, Method, State, Prop, Event, EventEmitter } from '@stencil/core';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { toArray, toClassList } from '../../utils/props';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
 
 @Component({
@@ -24,7 +24,7 @@ export class DSToaster {
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-title', _ds.props.toArray(mods));
+    this.CSSClassList = toClassList('ds-title', toArray(mods));
   }
 
   @Event() toasterShow: EventEmitter;
@@ -62,7 +62,7 @@ export class DSToaster {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-toaster', _ds.props.toArray(this.mods));
+    this.CSSClassList = toClassList('ds-toaster', toArray(this.mods));
   }
 
   //#region HANDLERS
@@ -92,7 +92,7 @@ export class DSToaster {
         onClick={this.hide}
       >
         <div class={`ds-toaster__container`}>
-          {_ds.props.toArray(this.messages).map(message => (
+          {toArray(this.messages).map(message => (
             <ds-toast onClick={this.toastClickHandler}>{message}</ds-toast>
           ))}
         </div>

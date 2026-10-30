@@ -1,7 +1,7 @@
 import { Component, Element, h, Host, Prop, Method, Event, EventEmitter, Watch } from '@stencil/core';
-import CssClassList from '../../types/css-class-list.interface';
-import _ds from '../../utils/dot-stash';
-import SIDEBAR_POSITION from '../../types/sidebar-position.enum';
+import CssClassList from '../../utils/interfaces/css-class-list';
+import { toClassList } from '../../utils/props';
+import SIDEBAR_POSITION from '../../utils/interfaces/sidebar-position';
 
 @Component({
   tag: 'ds-sidebar',
@@ -78,7 +78,7 @@ export class DSSidebar {
   //#region TOOLS
 
   computeCSSClasslist(modifiers: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-sidebar', modifiers);
+    this.CSSClassList = toClassList('ds-sidebar', modifiers);
   }
 
   containerRefresh() {

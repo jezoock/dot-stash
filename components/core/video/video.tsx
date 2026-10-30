@@ -1,7 +1,7 @@
 import { Component, Element, h, Host, Prop, State, Watch, Method } from '@stencil/core/internal';
 import { Fragment } from '@stencil/core/internal';
-import _ds from '../../utils/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { isTrue, toArray, toClassList } from '../../utils/props';
+import CssClassList from '../../utils/interfaces/css-class-list';
 import debounce from '../../utils/debounce';
 
 type VideoFormat = 'mp4' | 'mov' | 'wmv' | 'webm' | 'avi' | 'flv' | 'mks' | 'mts';
@@ -43,7 +43,7 @@ export class DSVideo {
 
   @Watch('mods')
   dsmodsChangeHandler(mods: string | string[]) {
-    this.CSSClassList = _ds.props.toClassList('ds-video', _ds.props.toArray(mods));
+    this.CSSClassList = toClassList('ds-video', toArray(mods));
   }
 
   //#endregion
@@ -103,12 +103,12 @@ export class DSVideo {
   }
 
   componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList('ds-video', _ds.props.toArray(this.mods));
-    this.useControls = _ds.props.isTrue(this.controls);
-    this.playOnload = _ds.props.isTrue(this.autoplay);
-    this.playOnLoop = _ds.props.isTrue(this.loop);
+    this.CSSClassList = toClassList('ds-video', toArray(this.mods));
+    this.useControls = isTrue(this.controls);
+    this.playOnload = isTrue(this.autoplay);
+    this.playOnLoop = isTrue(this.loop);
 
-    const videoSources = _ds.props.toArray(this.sources).map(videoSource => ({ path: videoSource, fileFormat: this.getVideoFileFormat(videoSource) }));
+    const videoSources = toArray(this.sources).map(videoSource => ({ path: videoSource, fileFormat: this.getVideoFileFormat(videoSource) }));
     this.videoSources = videoSources;
 
     if (this.playOnload && !this.isOnScreen()) {
