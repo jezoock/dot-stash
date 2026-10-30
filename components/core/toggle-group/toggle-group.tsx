@@ -90,8 +90,9 @@ export class DSToggleGroup {
     }
     this.values = [...this.values, value];
 
-    // Only what the group defines: otherwise the toggles keep their own props.
-    toggle.setProps({ name, type, mods: toArray(mods ?? []).length ? mods : undefined });
+    // Only what the group defines: otherwise the toggles keep their own props. A toggle's own type wins over the group's.
+    toggle.setType(type);
+    toggle.setProps({ name, mods: toArray(mods ?? []).length ? mods : undefined });
   }
 
   getContextValue() {

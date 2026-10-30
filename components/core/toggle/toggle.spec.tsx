@@ -86,4 +86,45 @@ describe('ds-toggle', () => {
     expect(page.root).toHaveClasses(['ds-toggle', '--small', '--radio']);
     expect(page.root).not.toHaveClass('--switch');
   });
+
+  /** The `--<type>` class the toggle renders. */
+  const renderedType = (toggle: HTMLElement) => ['radio', 'checkbox', 'switch', 'icon'].filter(type => toggle.classList.contains(`--${type}`));
+
+  it('renders a switch by default, without a type attribute', async () => {
+    const { page } = await render('<ds-toggle></ds-toggle>');
+
+    expect(renderedType(page.root)).toEqual(['switch']);
+    expect(page.root.type).toBeUndefined();
+    expect(page.root.hasAttribute('type')).toBe(false);
+  });
+
+  it("uses its parent's type (setType) when it has none, and behaves as that type", async () => {
+    const { page, events } = await render('<ds-toggle value="a"></ds-toggle>');
+
+    await page.root.setType('radio');
+    await page.waitForChanges();
+    expect(renderedType(page.root)).toEqual(['radio']);
+
+    // A radio cannot be unchecked by a click.
+    await click(page, 2);
+    expect(page.root.checked).toBe(true);
+    expect(events).toHaveLength(1);
+
+    await page.root.setType(undefined);
+    await page.waitForChanges();
+    expect(renderedType(page.root)).toEqual(['switch']);
+  });
+
+  it("keeps its own type over its parent's, and gets the parent's back without one", async () => {
+    const { page } = await render('<ds-toggle type="checkbox"></ds-toggle>');
+
+    await page.root.setType('radio');
+    await page.waitForChanges();
+    expect(renderedType(page.root)).toEqual(['checkbox']);
+    expect(page.root.type).toBe('checkbox');
+
+    page.root.removeAttribute('type');
+    await page.waitForChanges();
+    expect(renderedType(page.root)).toEqual(['radio']);
+  });
 });

@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, State } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
 import { DSToggleValue } from './toggle.types';
 
@@ -21,22 +21,36 @@ export class DSToggle {
   @Prop({ mutable: true, reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) value: DSToggleValue;
   @Prop({ mutable: true, reflect: true }) name: string;
-  @Prop({ mutable: true, reflect: true }) type: 'radio' | 'icon' | 'checkbox' | 'switch' | string = 'switch';
+  /**
+   * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()`
+   * (`ds-toggle-group`), else `switch`: its own type always wins.
+   */
+  @Prop({ mutable: true, reflect: true }) type?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
   @Prop({ reflect: true, mutable: true }) disabled: boolean;
   @Prop({ reflect: true, mutable: true }) checked: boolean;
 
+  /** The type set by a parent with `setType()`, used when the toggle has no `type` of its own. */
+  @State() parentType: string;
+
   @Event() toggle: EventEmitter;
+
+  /** The type the toggle renders (`--<type>` class) and behaves as: its own `type`, else its parent's, else `switch`. */
+  get effectiveType(): string {
+    return this.type || this.parentType || 'switch';
+  }
 
   @Method()
   async setChecked(checked: boolean) {
     this.checked = checked;
   }
 
+  /**
+   * Sets the type given by a parent (`ds-toggle-group` calls it): the toggle uses it while it has no `type` of
+   * its own. `undefined` removes it.
+   */
   @Method()
   async setType(type: 'radio' | 'icon' | 'checkbox' | 'switch' | string) {
-    if (typeof this.type === 'undefined') {
-      this.type = type;
-    }
+    this.parentType = type;
   }
 
   @Method()
@@ -60,7 +74,7 @@ export class DSToggle {
     const { checked: previousChecked, value, name } = this;
 
     // A radio is only checked by a click; the other types toggle.
-    if (this.disabled || (this.type === 'radio' && previousChecked)) {
+    if (this.disabled || (this.effectiveType === 'radio' && previousChecked)) {
       return;
     }
 
@@ -71,7 +85,7 @@ export class DSToggle {
 
   render() {
     return (
-      <Host class={toClassList('ds-toggle', [...toArray(this.mods ?? []), this.type])} onClick={this.toggleClickHandler}>
+      <Host class={toClassList('ds-toggle', [...toArray(this.mods ?? []), this.effectiveType])} onClick={this.toggleClickHandler}>
         <slot />
       </Host>
     );

@@ -12,14 +12,14 @@ and checks or unchecks the other types; each change emits `toggle` with `{ name,
 
 ## Properties
 
-| Property   | Attribute  | Description                                                                                        | Type                          | Default     |
-| ---------- | ---------- | -------------------------------------------------------------------------------------------------- | ----------------------------- | ----------- |
-| `checked`  | `checked`  |                                                                                                    | `boolean`                     | `undefined` |
-| `disabled` | `disabled` |                                                                                                    | `boolean`                     | `undefined` |
-| `mods`     | `mods`     | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]`          | `[]`        |
-| `name`     | `name`     |                                                                                                    | `string`                      | `undefined` |
-| `type`     | `type`     |                                                                                                    | `string`                      | `'switch'`  |
-| `value`    | `value`    |                                                                                                    | `boolean \| number \| string` | `undefined` |
+| Property   | Attribute  | Description                                                                                                                                                                   | Type                          | Default     |
+| ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | ----------- |
+| `checked`  | `checked`  |                                                                                                                                                                               | `boolean`                     | `undefined` |
+| `disabled` | `disabled` |                                                                                                                                                                               | `boolean`                     | `undefined` |
+| `mods`     | `mods`     | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.                                                                            | `string \| string[]`          | `[]`        |
+| `name`     | `name`     |                                                                                                                                                                               | `string`                      | `undefined` |
+| `type`     | `type`     | `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins. | `string`                      | `undefined` |
+| `value`    | `value`    |                                                                                                                                                                               | `boolean \| number \| string` | `undefined` |
 
 
 ## Events
@@ -81,7 +81,8 @@ Type: `Promise<void>`
 
 ### `setType(type: "radio" | "icon" | "checkbox" | "switch" | string) => Promise<void>`
 
-
+Sets the type given by a parent (`ds-toggle-group` calls it): the toggle uses it while it has no `type` of
+its own. `undefined` removes it.
 
 #### Parameters
 

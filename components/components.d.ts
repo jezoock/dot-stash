@@ -467,8 +467,14 @@ export namespace Components {
           * Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored.
          */
         "setProps": (properties: Record<string, unknown>) => Promise<void>;
+        /**
+          * Sets the type given by a parent (`ds-toggle-group` calls it): the toggle uses it while it has no `type` of its own. `undefined` removes it.
+         */
         "setType": (type: "radio" | "icon" | "checkbox" | "switch" | string) => Promise<void>;
-        "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        /**
+          * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins.
+         */
+        "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "value": DSToggleValue;
     }
     /**
@@ -1443,6 +1449,9 @@ declare namespace LocalJSX {
         "mods"?: string | string[];
         "name"?: string;
         "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
+        /**
+          * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins.
+         */
         "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "value"?: DSToggleValue;
     }

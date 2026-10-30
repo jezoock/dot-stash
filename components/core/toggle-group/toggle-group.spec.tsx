@@ -1,4 +1,4 @@
-import { newSpecPage } from '@stencil/core/testing';
+import { newSpecPage, SpecPage } from '@stencil/core/testing';
 import { DSToggle } from '../toggle/toggle';
 import { DSToggleGroup } from './toggle-group';
 
@@ -91,14 +91,27 @@ describe('ds-toggle-group', () => {
     expect(changes).toEqual([['a'], ['a', 'b'], ['b']]);
   });
 
+  /** The `--<type>` class each toggle renders. */
+  const renderedTypes = (page: SpecPage) =>
+    Array.from(page.root.querySelectorAll('ds-toggle')).map(toggle => ['radio', 'checkbox', 'switch', 'icon'].find(type => toggle.classList.contains(`--${type}`)));
+
   it('passes its name and type to the toggles, which keep their own otherwise', async () => {
     const { page } = await render('name="size" type="checkbox"');
     const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
 
     expect(toggles.map(toggle => toggle.name)).toEqual(['size', 'size', 'size']);
-    expect(toggles.map(toggle => toggle.type)).toEqual(['checkbox', 'checkbox', 'checkbox']);
+    expect(renderedTypes(page)).toEqual(['checkbox', 'checkbox', 'checkbox']);
 
     const { page: untyped } = await render('');
-    expect(Array.from(untyped.root.querySelectorAll('ds-toggle')).map(toggle => toggle.type)).toEqual(['switch', 'switch', 'switch']);
+    expect(renderedTypes(untyped)).toEqual(['switch', 'switch', 'switch']);
+  });
+
+  it("a toggle's own type wins over the group's", async () => {
+    const page = await newSpecPage({
+      components: [DSToggleGroup, DSToggle],
+      html: '<ds-toggle-group type="checkbox"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" type="radio"></ds-toggle></ds-toggle-group>',
+    });
+
+    expect(renderedTypes(page)).toEqual(['checkbox', 'radio']);
   });
 });
