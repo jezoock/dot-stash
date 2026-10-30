@@ -51,7 +51,5 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      # Non-blocking until the existing lint errors are fixed.
       - name: Lint
         run: npm run lint
-        continue-on-error: true

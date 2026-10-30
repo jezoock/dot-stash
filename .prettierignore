@@ -10,5 +10,3 @@ package-lock.json
 components/components.d.ts
 components/**/readme.md
 
-# Hand-written documentation
-docs/

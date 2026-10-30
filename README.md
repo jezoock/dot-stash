@@ -37,20 +37,21 @@ npm run build:all
 | `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                                  |
 | `npm run lint`         | ESLint on `components/` (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                                                                                    |
 | `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                   |
-| `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `scss`, `json` and `html` files (`.prettierignore` excludes build output and generated files).                                                                    |
+| `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files).    |
 | `npm run format:check` | Checks the same files without writing.                                                                                                                                                                      |
 
 `serve:theme` only recompiles on change: run `npm run build:css` once first, and `npm start` or `npm run dev` to get the components in `www/build/`.
 
 One gulp task has no npm script: `npx gulp generateImages` optimizes the files in `images/` and writes them, plus a WebP copy of each, to `dist/images/`.
 
-CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check` and `lint` on every push and pull request. The lint step is non-blocking until the existing lint errors are fixed.
+CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check` and `lint` on every push and pull request. Every step is blocking: a build, formatting or lint error fails the run.
 
 ## Project structure
 
 ```
 components/
-  core/            ds-* components, one folder each (.tsx, optional structural .scss, generated readme.md)
+  core/            ds-* components, one folder each (.tsx, optional structural .scss, type and enum
+                   modules, generated readme.md)
   utils/           shared TypeScript: utility modules (props, css, dom, ajax, responsive, env, form,
                    context), the `ds` object grouping them (dot-stash.ts), debounce, throttle, uuid,
                    and shared types and enums (interfaces/)
