@@ -5,7 +5,6 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "./utils/interfaces/sass-styles";
 import { DSOption } from "./core/combo/combo";
 import { DSOption as DSOption1 } from "./core/dropdown/dropdown";
 import { DSGridAlignment, DSGridType } from "./core/grid/grid";
@@ -13,11 +12,11 @@ import { DSGridItemStyles } from "./core/grid/grid";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
 import { PanelType } from "./core/panel/panel";
 import { PanelType as PanelType1 } from "./core/panel/panel";
+import { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 import { DSSliderParams } from "./core/slider/slider";
 import { AnyHTMLElement } from "@stencil/core/internal";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
-export { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from "./utils/interfaces/sass-styles";
 export { DSOption } from "./core/combo/combo";
 export { DSOption as DSOption1 } from "./core/dropdown/dropdown";
 export { DSGridAlignment, DSGridType } from "./core/grid/grid";
@@ -25,6 +24,7 @@ export { DSGridItemStyles } from "./core/grid/grid";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
 export { PanelType } from "./core/panel/panel";
 export { PanelType as PanelType1 } from "./core/panel/panel";
+export { Breakpoint, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
 export { DSSliderParams } from "./core/slider/slider";
 export { AnyHTMLElement } from "@stencil/core/internal";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
@@ -47,71 +47,6 @@ export namespace Components {
           * Where to display the content, can be the component itself or an element specified by a css selector
          */
         "target": 'self' | string;
-    }
-    interface DsApp {
-        "breakpointsFromProp": Record<string, number>;
-        /**
-          * Ajax
-         */
-        "buildQuery": (queryParams: Record<string, unknown>) => Promise<string>;
-        "debounceDelay": number;
-        "get": (url: string, queryParams?: Record<string, unknown>) => Promise<unknown>;
-        /**
-          * Get the current breakpoint
-          * @param rawBreakpoints JSON Object containings all breakpoints
-          * @returns current breakpoint ( label & limits )
-         */
-        "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
-        "getBreakpoints": () => Promise<Breakpoints>;
-        "getCurrentBreakpoint": () => Promise<Breakpoint>;
-        "getData": () => Promise<{ breakpoints: Breakpoints; }>;
-        "getParamsForBreakpoint": <T>(currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: T; }) => Promise<T>;
-        "getStylesJSON": () => Promise<SassStyles>;
-        "getSubscribers": () => Promise<Element[]>;
-        "loadScript": (scriptUrl: string, scriptId: string) => Promise<unknown>;
-        "post": (url: string, payload?: string | Record<string, string> | string[][] | URLSearchParams) => Promise<any>;
-        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
-        /**
-          * Generate an css class ready object
-          * @param mainClass one or many classes to add to the object
-          * @param mods one or many string which will be converted to modifier classes to add to the object
-          * @returns Record<string, boolean>
-         */
-        "propGetClassList": (mainClass: string | string[], mods?: string | string[]) => Promise<Record<string, boolean>>;
-        /**
-          * Convert an HTML property to a boolean
-          * @param prop
-          * @returns boolean
-         */
-        "propToBool": (prop: string | boolean) => Promise<boolean>;
-        /**
-          * Convert an HTML property to a float
-          * @param prop
-          * @returns number
-         */
-        "propToFloat": (prop: string | number) => Promise<number>;
-        /**
-          * Convert an HTML property to JSON
-          * @param prop
-          * @returns string[]
-         */
-        "propToJSON": <T = string | Record<string, unknown> | unknown[]>(prop: T, rootKey?: string) => Promise<Record<string, unknown>>;
-        /**
-          * Convert an HTML property to a number
-          * @param prop
-          * @returns number
-         */
-        "propToNumber": (prop: string | number) => Promise<number>;
-        /**
-          * Convert an HTML property ( coma separated string ) to an array
-          * @param prop
-          * @returns string[]
-         */
-        "propToStringArray": <T = string>(prop: string | T[]) => Promise<T[]>;
-        "propertyName": string;
-        "removeQuotes": (quotedString: string) => Promise<string>;
-        "subscribe": (target: Element) => Promise<number>;
-        "subscriberSelector": string;
     }
     interface DsBlock {
         "article": boolean;
@@ -415,10 +350,6 @@ export namespace Components {
         "unmute": () => Promise<void>;
     }
 }
-export interface DsAppCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsAppElement;
-}
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
@@ -481,23 +412,6 @@ declare global {
     var HTMLDsAjaxElement: {
         prototype: HTMLDsAjaxElement;
         new (): HTMLDsAjaxElement;
-    };
-    interface HTMLDsAppElementEventMap {
-        "breakpointChange": any;
-    }
-    interface HTMLDsAppElement extends Components.DsApp, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsAppElementEventMap>(type: K, listener: (this: HTMLDsAppElement, ev: DsAppCustomEvent<HTMLDsAppElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsAppElementEventMap>(type: K, listener: (this: HTMLDsAppElement, ev: DsAppCustomEvent<HTMLDsAppElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsAppElement: {
-        prototype: HTMLDsAppElement;
-        new (): HTMLDsAppElement;
     };
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
@@ -843,7 +757,6 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ds-ajax": HTMLDsAjaxElement;
-        "ds-app": HTMLDsAppElement;
         "ds-block": HTMLDsBlockElement;
         "ds-combo": HTMLDsComboElement;
         "ds-dropdown": HTMLDsDropdownElement;
@@ -895,13 +808,6 @@ declare namespace LocalJSX {
           * Where to display the content, can be the component itself or an element specified by a css selector
          */
         "target"?: 'self' | string;
-    }
-    interface DsApp {
-        "breakpointsFromProp"?: Record<string, number>;
-        "debounceDelay"?: number;
-        "onBreakpointChange"?: (event: DsAppCustomEvent<any>) => void;
-        "propertyName"?: string;
-        "subscriberSelector"?: string;
     }
     interface DsBlock {
         "article"?: boolean;
@@ -1159,7 +1065,6 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "ds-ajax": DsAjax;
-        "ds-app": DsApp;
         "ds-block": DsBlock;
         "ds-combo": DsCombo;
         "ds-dropdown": DsDropdown;
@@ -1202,7 +1107,6 @@ declare module "@stencil/core" {
              * Version: 1.0
              */
             "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
-            "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
             "ds-dropdown": LocalJSX.DsDropdown & JSXBase.HTMLAttributes<HTMLDsDropdownElement>;

@@ -39,8 +39,6 @@ export class DSMainTest {
   render() {
     return (
       <div class="ds-components-demo">
-        <ds-app></ds-app>
-
         <ds-block>
           <ds-toggle type="radio"></ds-toggle>
           <ds-toggle type="checkbox"></ds-toggle>

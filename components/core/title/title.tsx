@@ -17,7 +17,6 @@ export class DSTitle {
   @Prop({ reflect: true }) block: boolean;
   @Prop({ reflect: true }) sub: boolean;
   @Prop({ reflect: true }) sup: boolean;
-  /*@Prop() useContext: boolean;*/
 
   @Watch('mods')
   modsChangeHandler(mods: string | string[]) {
@@ -31,23 +30,6 @@ export class DSTitle {
   /* getContext() {
 		return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form"; 
 	} */
-
-  /*async connectedCallback() {
-		let { useContext } = this;
-		if (typeof useContext === 'undefined') {
-			const { useContext: useContextFromConfig } = _ds.app.getConfig([ 'useContext' ]);
-			useContext = Boolean(useContextFromConfig);
-		}
-		if (useContext) {
-			const contextContainer = this.container.closest("ds-block");
-			if (contextContainer) {
-				const context = await contextContainer.getContext();
-				if (typeof this[context] === "undefined") {
-					this[context] = true;
-				}
-			}
-		}
-	}*/
 
   render() {
     return (

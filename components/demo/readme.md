@@ -28,7 +28,6 @@ Type: `Promise<Record<string, any>>`
 
 ### Depends on
 
-- [ds-app](../core/ds)
 - [ds-block](../core/block)
 - [ds-toggle](../core/toggle)
 - [ds-slider](../core/slider)
@@ -46,7 +45,6 @@ Type: `Promise<Record<string, any>>`
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-app
   ds-main --> ds-block
   ds-main --> ds-toggle
   ds-main --> ds-slider
