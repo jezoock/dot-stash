@@ -5,8 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { DSOption } from "./core/combo/combo.types";
-import { DSOption as DSOption1 } from "./core/dropdown/dropdown.types";
+import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 import { PanelType } from "./core/panel/panel.types";
@@ -15,8 +14,7 @@ import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
-export { DSOption } from "./core/combo/combo.types";
-export { DSOption as DSOption1 } from "./core/dropdown/dropdown.types";
+export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 export { PanelType } from "./core/panel/panel.types";
@@ -65,39 +63,66 @@ export namespace Components {
          */
         "type": string;
     }
+    /**
+     * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+     * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+     * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+     * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+     * `ds-trigger`). A click outside the component closes the list.
+     */
     interface DsCombo {
+        /**
+          * Closes the list.
+         */
         "close": () => Promise<void>;
+        /**
+          * Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).
+         */
         "customLabel": string;
+        /**
+          * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
+         */
         "mode": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods": string | string[];
+        /**
+          * Several options can be selected: a click toggles an option and keeps the list open.
+         */
         "multiple": boolean;
+        /**
+          * Name of the combo: sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+         */
         "name": string;
+        /**
+          * Opens the list.
+         */
         "open": () => Promise<void>;
-        "options": any;
+        /**
+          * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
+         */
+        "options": string | DSOption[];
+        /**
+          * Renders a full-page overlay behind the open list: a click on it closes the list.
+         */
         "overlay": boolean;
-        "position": string;
-        "selected": DSOption;
-        "selectedOption": DSOption[];
+        /**
+          * Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).
+         */
+        "position": DSComboPosition;
+        /**
+          * Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing).
+         */
+        "selected": string | DSComboSelection;
+        /**
+          * The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.
+         */
+        "selectedOptions": DSOption[];
+        /**
+          * Opens the list if it is closed and closes it if it is open, or opens (`true`) or closes (`false`) it.
+         */
         "toggle": (forceDisplay?: boolean) => Promise<void>;
-    }
-    interface DsDropdown {
-        "close": () => Promise<void>;
-        "customLabel": string;
-        "multiple": boolean;
-        "name": string;
-        "open": () => Promise<void>;
-        "overlay": boolean;
-        "position": string;
-        "selected": DSOption1;
-        "selectedOption": DSOption1[];
-        "toggle": (forceDisplay?: boolean) => Promise<void>;
-    }
-    interface DsDropdownItem {
-        "name": string;
-        "value": string | number | boolean;
     }
     interface DsGrid {
         "align": string | DSGridAlignment;
@@ -478,10 +503,6 @@ export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
 }
-export interface DsDropdownCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsDropdownElement;
-}
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsModalElement;
@@ -545,8 +566,15 @@ declare global {
         new (): HTMLDsBlockElement;
     };
     interface HTMLDsComboElementEventMap {
-        "optionSelected": any;
+        "optionSelected": DSComboSelectedEventDetail;
     }
+    /**
+     * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+     * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+     * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+     * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+     * `ds-trigger`). A click outside the component closes the list.
+     */
     interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsComboElementEventMap>(type: K, listener: (this: HTMLDsComboElement, ev: DsComboCustomEvent<HTMLDsComboElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -560,29 +588,6 @@ declare global {
     var HTMLDsComboElement: {
         prototype: HTMLDsComboElement;
         new (): HTMLDsComboElement;
-    };
-    interface HTMLDsDropdownElementEventMap {
-        "optionSelected": any;
-    }
-    interface HTMLDsDropdownElement extends Components.DsDropdown, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsDropdownElementEventMap>(type: K, listener: (this: HTMLDsDropdownElement, ev: DsDropdownCustomEvent<HTMLDsDropdownElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsDropdownElementEventMap>(type: K, listener: (this: HTMLDsDropdownElement, ev: DsDropdownCustomEvent<HTMLDsDropdownElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsDropdownElement: {
-        prototype: HTMLDsDropdownElement;
-        new (): HTMLDsDropdownElement;
-    };
-    interface HTMLDsDropdownItemElement extends Components.DsDropdownItem, HTMLStencilElement {
-    }
-    var HTMLDsDropdownItemElement: {
-        prototype: HTMLDsDropdownItemElement;
-        new (): HTMLDsDropdownItemElement;
     };
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
@@ -909,8 +914,6 @@ declare global {
         "ds-ajax": HTMLDsAjaxElement;
         "ds-block": HTMLDsBlockElement;
         "ds-combo": HTMLDsComboElement;
-        "ds-dropdown": HTMLDsDropdownElement;
-        "ds-dropdown-item": HTMLDsDropdownItemElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
@@ -979,35 +982,58 @@ declare namespace LocalJSX {
          */
         "type"?: string;
     }
+    /**
+     * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+     * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+     * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+     * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+     * `ds-trigger`). A click outside the component closes the list.
+     */
     interface DsCombo {
+        /**
+          * Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).
+         */
         "customLabel"?: string;
+        /**
+          * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
+         */
         "mode"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
          */
         "mods"?: string | string[];
+        /**
+          * Several options can be selected: a click toggles an option and keeps the list open.
+         */
         "multiple"?: boolean;
+        /**
+          * Name of the combo: sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+         */
         "name"?: string;
-        "onOptionSelected"?: (event: DsComboCustomEvent<any>) => void;
-        "options"?: any;
+        /**
+          * Emitted when the user selects an option (or toggles it, in a multiple combo). See `DSComboSelectedEventDetail`.
+         */
+        "onOptionSelected"?: (event: DsComboCustomEvent<DSComboSelectedEventDetail>) => void;
+        /**
+          * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
+         */
+        "options"?: string | DSOption[];
+        /**
+          * Renders a full-page overlay behind the open list: a click on it closes the list.
+         */
         "overlay"?: boolean;
-        "position"?: string;
-        "selected"?: DSOption;
-        "selectedOption"?: DSOption[];
-    }
-    interface DsDropdown {
-        "customLabel"?: string;
-        "multiple"?: boolean;
-        "name"?: string;
-        "onOptionSelected"?: (event: DsDropdownCustomEvent<any>) => void;
-        "overlay"?: boolean;
-        "position"?: string;
-        "selected"?: DSOption1;
-        "selectedOption"?: DSOption1[];
-    }
-    interface DsDropdownItem {
-        "name"?: string;
-        "value"?: string | number | boolean;
+        /**
+          * Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).
+         */
+        "position"?: DSComboPosition;
+        /**
+          * Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing).
+         */
+        "selected"?: string | DSComboSelection;
+        /**
+          * The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.
+         */
+        "selectedOptions"?: DSOption[];
     }
     interface DsGrid {
         "align"?: string | DSGridAlignment;
@@ -1333,8 +1359,6 @@ declare namespace LocalJSX {
         "ds-ajax": DsAjax;
         "ds-block": DsBlock;
         "ds-combo": DsCombo;
-        "ds-dropdown": DsDropdown;
-        "ds-dropdown-item": DsDropdownItem;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-heading": DsHeading;
@@ -1375,9 +1399,14 @@ declare module "@stencil/core" {
              */
             "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
+            /**
+             * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+             * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+             * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+             * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+             * `ds-trigger`). A click outside the component closes the list.
+             */
             "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
-            "ds-dropdown": LocalJSX.DsDropdown & JSXBase.HTMLAttributes<HTMLDsDropdownElement>;
-            "ds-dropdown-item": LocalJSX.DsDropdownItem & JSXBase.HTMLAttributes<HTMLDsDropdownItemElement>;
             "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;

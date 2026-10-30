@@ -2,6 +2,7 @@
   cursor: pointer;
   display: inline-block;
   vertical-align: inherit;
+  position: relative;
 
   &__selected-option {
     white-space: nowrap;
@@ -18,7 +19,9 @@
     top: 0.5rem;
     z-index: 100;
     overflow-x: hidden;
-    width: 100%;
+    // At least as wide as the toggle button, and as wide as the options (they do not wrap).
+    min-width: 100%;
+    width: max-content;
     > * {
       user-select: none;
       -moz-user-select: none;
@@ -28,28 +31,31 @@
     }
   }
 
+  // Above the toggle button: the list hangs from a menu placed at the top of the component.
   &.--position-top {
-    &__option-list {
-      bottom: 0;
-    }
-  }
-
-  &.--position-right {
-    &__option-list {
+    & > menu {
+      position: absolute;
       left: 0;
-    }
-  }
-
-  &.--position-bottom {
-    &__option-list {
-      top: 0;
-    }
-  }
-
-  &.--position-left {
-    &__option-list {
       right: 0;
+      bottom: 100%;
     }
+
+    & .ds-combo__option-list {
+      top: auto;
+      bottom: 0.5rem;
+    }
+  }
+
+  &.--position-right .ds-combo__option-list {
+    left: 0;
+  }
+
+  &.--position-bottom .ds-combo__option-list {
+    top: 0;
+  }
+
+  &.--position-left .ds-combo__option-list {
+    right: 0;
   }
 
   &__option {
@@ -119,4 +125,25 @@
       }
     }
   }
+
+  // The list of an image combo stays in the DOM while closed (its images load): after the --image rules, which set its display.
+  & .ds-combo__option-list.--hidden {
+    display: none;
+  }
+}
+
+// The toggle is a native button: reset its browser styles. :where() keeps the specificity at 0, so the theme skin always wins.
+:where(.ds-combo__selected-option) {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  cursor: inherit;
 }

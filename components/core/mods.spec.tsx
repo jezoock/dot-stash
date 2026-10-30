@@ -27,7 +27,7 @@ type ClassTarget = 'host' | 'root';
 // [tag, component, main class, class target, other props the component needs to render]
 const components: [string, unknown, string, ClassTarget, Record<string, string>?][] = [
   ['ds-block', DSBlock, 'ds-block', 'host'],
-  ['ds-combo', DSCombo, 'ds-combo', 'root', { options: '[]' }],
+  ['ds-combo', DSCombo, 'ds-combo', 'root'],
   ['ds-grid', DSGrid, 'ds-grid', 'root'],
   ['ds-heading', DSHeading, 'ds-heading', 'host'],
   ['ds-marquee', DSSlideMsg, 'ds-marquee', 'host'],
