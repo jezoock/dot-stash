@@ -173,12 +173,12 @@ export class DSMainTest {
                 class="ds-buttton-list__item"
                 width={1}
                 data-use-rsp
-                data-rsp={{
+                data-rsp={JSON.stringify({
                   xs: { width: 2 },
                   sm: { width: 3 },
                   md: { width: 4 },
                   lg: { width: 5 },
-                }}
+                })}
               >
                 <ds-button mods={['solid', 'primary', 'sm']}>Click me !</ds-button>
               </ds-grid-item>
