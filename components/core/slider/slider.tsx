@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Prop, Watch, Listen, Method, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, forceUpdate, h, Prop, Watch, Listen, Method, State } from '@stencil/core';
 import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
 import { fromJSON, toClassList } from '../../utils/props';
 import { DSSliderParams } from './slider.types';
@@ -44,7 +44,11 @@ export class DSSlider {
 
   @State() isTransitionStarted = false;
 
-  @State() isReady = false;
+  /**
+   * Whether initialize() has measured the slider. Not a @State: initialize() runs in componentDidLoad, where a state
+   * change makes Stencil warn; it requests the render that shows the measured state itself (see initialize()).
+   */
+  isReady = false;
   softCleanup = false;
 
   currentItem: { obj: HTMLDsSliderItemElement; index: number; dTime?: number | null } = {
@@ -157,6 +161,9 @@ export class DSSlider {
       }
 
       this.isReady = true;
+      // The render depends on what refresh() measured in the rendered DOM (the prev/next triggers need isScrollable,
+      // the --scrollable and --isReady classes, the menu's item count): one render to show it, as before.
+      forceUpdate(this);
     }
   }
 
