@@ -22,7 +22,7 @@ export const generateThemeCSS = () => {
     previouslyGeneratedFiles = previouslyGeneratedFiles.pipe(clean({ force: true }));
   }
 
-  let newlyGeneratedFiles = gulp.src(settings.scss.theme.sourceFiles).pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError));
+  let newlyGeneratedFiles = gulp.src(settings.scss.theme.sourceFiles).pipe(sass({ style: 'compressed' }).on('error', sass.logError));
 
   if (settings.scss.autoprefix) {
     newlyGeneratedFiles = newlyGeneratedFiles.pipe(autoprefixer({ browsers: settings.scss.autoprefixerTargetBrowsers }));
@@ -44,8 +44,8 @@ export const generatePagesCSS = scssFile => {
     })
     .pipe(
       sass({
-        outputStyle: 'compressed',
-        includePaths: [settings.scss.pages.sourceFiles],
+        style: 'compressed',
+        loadPaths: [settings.scss.pages.sourceFiles],
       }),
     );
 

@@ -1,7 +1,11 @@
+@use 'sass:string';
+
+// The color(…) values below are not defined (to be fixed): string.unquote() keeps them as they were output,
+// as plain CSS, now that Sass has a color() function of its own.
 .ds-rating {
   &.--average {
-    border-top: 1px solid color(color-2, base);
-    border-bottom: 1px solid color(color-2, base);
+    border-top: 1px solid string.unquote('color(color-2, base)');
+    border-bottom: 1px solid string.unquote('color(color-2, base)');
     padding: 0.75rem 0;
     margin: 1rem 0;
     &.--no-review {
@@ -34,24 +38,24 @@
         font-size: 2rem;
         width: 12.5%;
 
-        color: color(color-2, base);
+        color: string.unquote('color(color-2, base)');
         &:after {
           font-size: 2rem;
-          color: color(color-2, base);
+          color: string.unquote('color(color-2, base)');
           line-height: 2.75rem;
         }
       }
       &__jauge {
         width: 75%;
-        border: 1px solid color(color-2, base);
+        border: 1px solid string.unquote('color(color-2, base)');
         height: 34px;
         & > div {
           height: 2rem;
-          background-color: color(color-2, base);
+          background-color: string.unquote('color(color-2, base)');
         }
       }
       &__count {
-        color: color(color-2, base);
+        color: string.unquote('color(color-2, base)');
         font-size: 1.25rem;
       }
     }
@@ -71,7 +75,7 @@
       font-size: 1.5rem;
     }
     & > div {
-      color: color(color-2, base);
+      color: string.unquote('color(color-2, base)');
       font-size: 2.5rem;
       font-weight: bold;
       padding: 0 0 2.5rem 0;

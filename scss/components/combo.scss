@@ -1,3 +1,7 @@
+@use 'sass:string';
+
+// The color(…) values below are not defined (to be fixed): string.unquote() keeps them as they were output,
+// as plain CSS, now that Sass has a color() function of its own.
 .ds-combo {
   &__selected-option {
     line-height: 1.5rem;
@@ -97,7 +101,7 @@
   }
 
   &.--default {
-    border: 1px solid color(gray, light);
+    border: 1px solid string.unquote('color(gray, light)');
     border-radius: 2px;
     min-width: 200px;
     line-height: 2rem;
@@ -113,11 +117,11 @@
           top: 3.25rem;
           right: -1px;
           padding: 0.5rem;
-          border: 1px solid color(gray, light);
+          border: 1px solid string.unquote('color(gray, light)');
         }
       }
       &.--open {
-        border-color: color(color-1, base);
+        border-color: string.unquote('color(color-1, base)');
       }
     }
   }
@@ -131,7 +135,7 @@
         }
       }
       &__selected-option {
-        color: color(color-1, base);
+        color: string.unquote('color(color-1, base)');
       }
     }
   }
