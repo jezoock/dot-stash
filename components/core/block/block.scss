@@ -4,13 +4,14 @@
   padding: 0;
   margin: 0;
 
+  // An empty wrapper is hidden. The slots are `header` and `footer` (block.tsx).
   &__header {
-    &:not(:has([slot='block-header'])) {
+    &:not(:has([slot='header'])) {
       display: none;
     }
   }
   &__footer {
-    &:not(:has([slot='block-footer'])) {
+    &:not(:has([slot='footer'])) {
       display: none;
     }
   }

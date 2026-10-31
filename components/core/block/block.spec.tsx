@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { newSpecPage } from '@stencil/core/testing';
 import { DSBlock } from './block';
 
@@ -88,5 +90,14 @@ describe('ds-block', () => {
 
     expect(structure(page.root).wrappers).toEqual(['ds-outer-block__body']);
     expect(structure(inner).wrappers).toEqual(['ds-inner-block__header', 'ds-inner-block__body', 'ds-inner-block__footer']);
+  });
+
+  // The spec DOM has no styles: the stylesheet is read instead (checked in Chromium too).
+  it('only hides a header or footer wrapper without its slot, named as block.tsx names it', () => {
+    const stylesheet = readFileSync(join(__dirname, 'block.scss'), 'utf8');
+
+    expect(stylesheet).toContain(":not(:has([slot='header']))");
+    expect(stylesheet).toContain(":not(:has([slot='footer']))");
+    expect(stylesheet).not.toMatch(/block-header|block-footer/);
   });
 });
