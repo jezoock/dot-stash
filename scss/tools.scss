@@ -1,5 +1,5 @@
-@import './tools/breakpoints.scss';
-@import './tools/colors.scss';
-@import './tools/misc.scss';
-@import './tools/theme.scss';
-@import './tools/typography.scss';
+@forward './tools/breakpoints.scss';
+@forward './tools/colors.scss';
+@forward './tools/misc.scss';
+@forward './tools/theme.scss';
+@forward './tools/typography.scss';

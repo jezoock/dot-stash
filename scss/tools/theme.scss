@@ -1,3 +1,6 @@
+@use './breakpoints.scss' as *;
+@use './colors.scss' as *;
+
 @function ds-get-theme() {
   $themeBreakpoints: '"breakpoints": #{ds-breakpoints-to-json()}';
   $themeColors: '"palettes": {"primary": { "base": "#{ds-color(primary, base)}"} }';

@@ -1,14 +1,17 @@
+@use 'sass:map';
+@use '../variables.scss' as *;
+
 @function ds-colorset-style($prop: null, $type: null, $variant: null) {
   @if ($prop != null) {
-    $requestedStyle: map-get(map-get($colorset, 'default'), $prop);
-    $typeDefaultStyle: map-get(map-get(map-get($colorset, $type), 'default'), $prop);
+    $requestedStyle: map.get(map.get($colorset, 'default'), $prop);
+    $typeDefaultStyle: map.get(map.get(map.get($colorset, $type), 'default'), $prop);
 
     @if ($typeDefaultStyle != null) {
       $requestedStyle: $typeDefaultStyle;
     }
 
     @if ($variant != null) {
-      $variantStyle: map-get(map-get(map-get($colorset, $type), $variant), $prop);
+      $variantStyle: map.get(map.get(map.get($colorset, $type), $variant), $prop);
 
       @if ($variantStyle != null) {
         $requestedStyle: $variantStyle;
@@ -20,7 +23,7 @@
 }
 
 @function ds-color($type: 'primary', $variant: 'default') {
-  @return map-get(map-get($colors, $type), $variant);
+  @return map.get(map.get($colors, $type), $variant);
 }
 
 @function ds-colorset-text($type: 'primary', $variant: 'default') {
@@ -72,7 +75,7 @@ $orientationToDirection: (
 );
 
 @function gradient($color-name, $attr) {
-  @return map-get(map-get($gradients, $color-name), $attr);
+  @return map.get(map.get($gradients, $color-name), $attr);
 }
 
 @mixin gradient($gradient, $orientation, $type: linear) {
@@ -86,6 +89,6 @@ $orientationToDirection: (
     background: gradient($gradient, fallback);
     background: -moz-#{$type}-gradient($orientation, gradient($gradient, from), gradient($gradient, to));
     background: -webkit-#{$type}-gradient($orientation, gradient($gradient, from), gradient($gradient, to));
-    background: #{$type}-gradient(map-get($orientationToDirection, $orientation), gradient($gradient, from), gradient($gradient, to));
+    background: #{$type}-gradient(map.get($orientationToDirection, $orientation), gradient($gradient, from), gradient($gradient, to));
   }
 }

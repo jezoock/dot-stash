@@ -1,4 +1,5 @@
 @use 'sass:string';
+@use '../tools.scss' as *;
 
 // The color(…) values below are not defined (to be fixed): string.unquote() keeps them as they were output,
 // as plain CSS, now that Sass has a color() function of its own.

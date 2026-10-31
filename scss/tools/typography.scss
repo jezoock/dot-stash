@@ -1,16 +1,19 @@
+@use 'sass:map';
+@use '../variables.scss' as *;
+
 // *** Functions *** //
 
 @function ds-font-style($prop: null, $type: null, $variant: null) {
   @if ($prop != null) {
-    $requestedStyle: map-get(map-get($font-styles, 'default'), $prop);
-    $typeDefaultStyle: map-get(map-get(map-get($font-styles, $type), 'default'), $prop);
+    $requestedStyle: map.get(map.get($font-styles, 'default'), $prop);
+    $typeDefaultStyle: map.get(map.get(map.get($font-styles, $type), 'default'), $prop);
 
     @if ($typeDefaultStyle != null) {
       $requestedStyle: $typeDefaultStyle;
     }
 
     @if ($variant != null) {
-      $variantStyle: map-get(map-get(map-get($font-styles, $type), $variant), $prop);
+      $variantStyle: map.get(map.get(map.get($font-styles, $type), $variant), $prop);
 
       @if ($variantStyle != null) {
         $requestedStyle: $variantStyle;
@@ -52,7 +55,7 @@
 }
 
 @mixin ds-icon-content($type: null) {
-  content: map-get($icons, $type);
+  content: map.get($icons, $type);
 }
 
 @mixin ds-icon($type: null, $display: null) {

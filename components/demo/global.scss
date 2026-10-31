@@ -1,4 +1,4 @@
-@import '../../scss/theme.scss';
+@use '../../scss/theme.scss' as *;
 
 body {
   margin: 0;

@@ -1,10 +1,10 @@
-$grid-xxs: 360;
-$grid-xs: 576;
-$grid-sm: 768;
-$grid-md: 992;
-$grid-lg: 1200;
-$grid-xl: 1400;
-$grid-xxl: 1600;
+$grid-xxs: 360 !default;
+$grid-xs: 576 !default;
+$grid-sm: 768 !default;
+$grid-md: 992 !default;
+$grid-lg: 1200 !default;
+$grid-xl: 1400 !default;
+$grid-xxl: 1600 !default;
 
 $breakpoints: (
   xxs: $grid-xxs,
@@ -14,4 +14,4 @@ $breakpoints: (
   lg: $grid-lg,
   xl: $grid-xl,
   xxl: $grid-xxl,
-);
+) !default;

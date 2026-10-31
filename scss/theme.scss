@@ -1,5 +1,5 @@
-@import './fonts.scss';
-@import './variables.scss';
-@import './tools.scss';
-@import './layout.scss';
-@import './components.scss';
+@use './fonts.scss';
+@forward './variables.scss';
+@forward './tools.scss';
+@use './layout.scss';
+@use './components.scss';

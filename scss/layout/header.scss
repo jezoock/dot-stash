@@ -1,3 +1,5 @@
+@use '../tools.scss' as *;
+
 .ds-header {
   &__before {
     background-color: ds-color(primary, 'base');

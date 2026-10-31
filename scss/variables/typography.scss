@@ -1,14 +1,16 @@
+@use 'sass:map';
+
 // *** FONT SIZES *** //
 
-$font-size-100: 0.875rem;
-$font-size-200: 1rem;
-$font-size-300: 1.125rem;
-$font-size-400: 1.5rem;
-$font-size-500: 1.625rem;
-$font-size-600: 1.75rem;
-$font-size-700: 2.125rem;
-$font-size-800: 2.25rem;
-$font-size-900: 2.5rem;
+$font-size-100: 0.875rem !default;
+$font-size-200: 1rem !default;
+$font-size-300: 1.125rem !default;
+$font-size-400: 1.5rem !default;
+$font-size-500: 1.625rem !default;
+$font-size-600: 1.75rem !default;
+$font-size-700: 2.125rem !default;
+$font-size-800: 2.25rem !default;
+$font-size-900: 2.5rem !default;
 
 $font-sizes: (
   100: $font-size-100,
@@ -20,26 +22,26 @@ $font-sizes: (
   700: $font-size-700,
   800: $font-size-800,
   900: $font-size-900,
-);
+) !default;
 
 // *** FOTN FAMILIES *** //
 
 $font-family-0:
-  '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"';
-$font-family-1: 'Garamond';
-$font-family-2: 'Now';
+  '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"' !default;
+$font-family-1: 'Garamond' !default;
+$font-family-2: 'Now' !default;
 
 $font-families: (
   'default': $font-family-0,
   'Garamond': $font-family-1,
   'Now': $font-family-2,
-);
+) !default;
 
 // *** FONT STYLES *** //
 $font-styles: (
   default: (
-    family: map-get($font-families, 'Now'),
-    size: map-get($font-sizes, 200),
+    family: map.get($font-families, 'Now'),
+    size: map.get($font-sizes, 200),
     weight: 500,
     decoration: none,
   ),
@@ -55,74 +57,74 @@ $font-styles: (
   text: (
     default: (),
     paragraph: (
-      size: map-get($font-sizes, 100),
+      size: map.get($font-sizes, 100),
     ),
     span: (
-      size: map-get($font-sizes, 100),
+      size: map.get($font-sizes, 100),
     ),
     note: (
-      size: map-get($font-sizes, 100),
+      size: map.get($font-sizes, 100),
     ),
     quote: (
-      size: map-get($font-sizes, 100),
+      size: map.get($font-sizes, 100),
     ),
     code: (
-      size: map-get($font-sizes, 100),
+      size: map.get($font-sizes, 100),
     ),
     pre: (
-      size: map-get($font-sizes, 100),
+      size: map.get($font-sizes, 100),
     ),
   ),
   title: (
     page-main: (
-      size: map-get($font-sizes, 800),
+      size: map.get($font-sizes, 800),
       weight: 900,
     ),
     page-sub: (
-      size: map-get($font-sizes, 700),
+      size: map.get($font-sizes, 700),
       weight: 700,
     ),
     section-main: (
-      size: map-get($font-sizes, 600),
+      size: map.get($font-sizes, 600),
       weight: 700,
     ),
     section-sub: (
-      size: map-get($font-sizes, 500),
+      size: map.get($font-sizes, 500),
     ),
     block-main: (
-      size: map-get($font-sizes, 400),
+      size: map.get($font-sizes, 400),
       weight: 700,
     ),
     block-sub: (
-      size: map-get($font-sizes, 300),
+      size: map.get($font-sizes, 300),
     ),
   ),
   button: (
     default: (
       family: $font-families('Garamond'),
-      size: map-get($font-sizes, 300),
+      size: map.get($font-sizes, 300),
     ),
   ),
   form: (
     default: (
-      size: map-get($font-sizes, 200),
+      size: map.get($font-sizes, 200),
     ),
     input: (
-      size: map-get($font-sizes, 200),
+      size: map.get($font-sizes, 200),
     ),
     label: (
-      size: map-get($font-sizes, 300),
+      size: map.get($font-sizes, 300),
       weight: 700,
     ),
   ),
   link: (
     default: (
-      size: map-get($font-sizes, 200),
+      size: map.get($font-sizes, 200),
       weight: 500,
       decoration: underline,
     ),
   ),
-);
+) !default;
 
 $icons: (
   basket: '\e800',
@@ -223,4 +225,4 @@ $icons: (
   sliders: '\f1de',
   trash: '\f1f8',
   user-o: '\f2c0',
-);
+) !default;
