@@ -39,6 +39,28 @@ describe('ds-toaster', () => {
     expect(toaster.querySelector('ds-toast')).toBeNull();
   });
 
+  it('displays the last max-displayed-toast messages (3 by default), dropping the oldest first; 0 displays them all', async () => {
+    const { page, toaster } = await render('<ds-toaster messages="1,2,3,4,5"></ds-toaster>');
+    const displayed = () => Array.from(toaster.querySelectorAll('.ds-toaster__message')).map(message => message.textContent);
+
+    expect(displayed()).toEqual(['3', '4', '5']);
+
+    page.root.messages = [...(page.root.messages as string).split(','), '6'];
+    await page.waitForChanges();
+    expect(displayed()).toEqual(['4', '5', '6']);
+
+    page.root.maxDisplayedToast = 1;
+    await page.waitForChanges();
+    expect(displayed()).toEqual(['6']);
+
+    page.root.maxDisplayedToast = 0;
+    await page.waitForChanges();
+    expect(displayed()).toEqual(['1', '2', '3', '4', '5', '6']);
+
+    const { toaster: two } = await render('<ds-toaster messages="a,b,c" max-displayed-toast="2"></ds-toaster>');
+    expect(Array.from(two.querySelectorAll('.ds-toaster__message')).map(message => message.textContent)).toEqual(['b', 'c']);
+  });
+
   it('renders without messages', async () => {
     const { toaster } = await render('<ds-toaster></ds-toaster>');
 

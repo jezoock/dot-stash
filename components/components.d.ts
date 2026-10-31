@@ -434,9 +434,12 @@ export namespace Components {
          */
         "displayToast": () => Promise<void>;
         "hide": () => Promise<void>;
+        /**
+          * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first. `0` displays them all.
+         */
         "maxDisplayedToast": number;
         /**
-          * The messages, one toast each: an array, or a comma-separated string.
+          * The messages, one toast each, from the oldest to the newest: an array, or a comma-separated string.
          */
         "messages": string | string[];
         /**
@@ -1426,9 +1429,12 @@ declare namespace LocalJSX {
           * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
          */
         "closingDelay"?: number;
+        /**
+          * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first. `0` displays them all.
+         */
         "maxDisplayedToast"?: number;
         /**
-          * The messages, one toast each: an array, or a comma-separated string.
+          * The messages, one toast each, from the oldest to the newest: an array, or a comma-separated string.
          */
         "messages"?: string | string[];
         /**

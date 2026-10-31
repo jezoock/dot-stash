@@ -26,8 +26,12 @@ export class DSToaster {
   ];
   /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
-  /** The messages, one toast each: an array, or a comma-separated string. */
+  /** The messages, one toast each, from the oldest to the newest: an array, or a comma-separated string. */
   @Prop({ mutable: true, reflect: true }) messages: string | string[];
+  /**
+   * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first.
+   * `0` displays them all.
+   */
   @Prop({ reflect: true }) maxDisplayedToast = 3;
   /** Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. */
   @Prop() closingDelay = 3000;
@@ -92,6 +96,14 @@ export class DSToaster {
 
   //#endregion
 
+  /** The messages displayed: the last `maxDisplayedToast` ones (all of them for `0`). */
+  getDisplayedMessages(): string[] {
+    const messages = toArray(this.messages ?? []);
+    const max = Number(this.maxDisplayedToast);
+
+    return max > 0 ? messages.slice(-max) : messages;
+  }
+
   render() {
     const [verticalPosition, horizontalPosition] = toArray(this.position).map(position => position.trim());
 
@@ -110,7 +122,7 @@ export class DSToaster {
         onClick={this.hide}
       >
         <div class="ds-toaster__container">
-          {toArray(this.messages ?? []).map(message => (
+          {this.getDisplayedMessages().map(message => (
             <div class="ds-toaster__toast">
               <div class="ds-toaster__content">
                 <span class="ds-toaster__message">{message}</span>
