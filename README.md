@@ -67,8 +67,10 @@ scss/
   layout/          header, footer, nav
   pages/           per-page stylesheets (empty for now)
   index.scss       theme entry point: base styles and the body::before bridge
-  theme.scss       imports fonts, variables, tools, layout and components
-  pages.scss       imports variables and tools only (no CSS output), for page stylesheets
+  theme.scss       forwards the variables and tools, loads fonts, layout and components
+  variables.scss   forwards the token files of variables/
+  tools.scss       forwards the function and mixin files of tools/
+  pages.scss       forwards the variables and tools only, for page stylesheets
 gulpfile.mjs           theme tasks and live-preview server
 dot-stash.config.mjs   source/destination paths and gulp settings
 stencil.config.ts      Stencil configuration (srcDir: components)
@@ -95,6 +97,10 @@ Stencil runs with `empty: false`, so it does not delete the gulp output in `dist
 
 ## Theming
 
+The SCSS uses the Sass module system (`@use` and `@forward`, no `@import`) and the built-in modules (`sass:map`, `sass:list`, `sass:string`): compile it with Dart Sass, the `sass` or `sass-embedded` package, 1.107 or later (the version in `package-lock.json`, which compiles it without any warning). LibSass and `node-sass` do not support it. gulp (`gulp-sass`) compiles the theme with `sass`, Stencil (`@stencil/sass`) the demo and component stylesheets with `sass-embedded`.
+
+`@use '<path to>/scss/theme.scss' as *;` gives the tokens, functions and mixins without a namespace (`ds-color(...)`, `break-p(...)`, `$breakpoints`) and outputs the theme CSS once. The skins in `scss/components/` and `scss/layout/` start with `@use '../tools.scss' as *;`.
+
 ### Tokens (`scss/variables/`)
 
 - `palette.scss`
@@ -106,6 +112,16 @@ Stencil runs with `empty: false`, so it does not delete the gulp output in `dist
   - `$icons`: icon names mapped to glyph codes of the `ds-icons` font.
 - `breakpoint.scss`: `$breakpoints`, minimum widths in px (`xxs` 360, `xs` 576, `sm` 768, `md` 992, `lg` 1200, `xl` 1400, `xxl` 1600).
 - `spacing.scss`: empty for now.
+
+Every token is declared with `!default`, so a theme entry point can configure them through `theme.scss` (or `pages.scss`) with `@use … with (…)`. The configuration must come with the first `@use` of the module, before anything else loads it (here `index.scss`), and a configured map replaces the whole default map. Derived tokens follow: `$breakpoints` is built from `$grid-*`, `$colorset` from `$colors`.
+
+```scss
+@use '../scss/theme.scss' with (
+  $grid-md: 1024,
+  $font-size-200: 1.0625rem
+);
+@use '../scss/index.scss'; // base styles and body::before, with the configured tokens
+```
 
 `scss/fonts.scss` declares the `@font-face` rules (`ds-icons`, Montserrat, Mulish) with URLs relative to the stylesheet (`../fonts/`, so `dist/fonts/`). The font files are not part of the repository.
 
@@ -175,7 +191,7 @@ A string `mods` is reflected to the `mods` attribute. An array set in JavaScript
 
 ### Page stylesheets
 
-Create `scss/pages/<page>.scss` and start it with `@import '../pages.scss';` to get the variables and tools. While `npm run serve:theme` runs, each change compiles it to `dist/css/pages/<page>.css`. There is no one-shot build for page stylesheets yet.
+Create `scss/pages/<page>.scss` and start it with `@use '../pages.scss' as *;` to get the variables and tools. While `npm run serve:theme` runs, each change compiles it to `dist/css/pages/<page>.css`. There is no one-shot build for page stylesheets yet.
 
 ## Using the components
 
@@ -270,6 +286,8 @@ it('toggles a checkbox', async () => {
   expect(page.root.checked).toBe(true);
 });
 ```
+
+`components/sass.spec.ts` compiles `scss/index.scss`, `scss/pages.scss`, the page stylesheets and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that a theme can configure the tokens.
 
 `npm test` runs them once, `npm run test.watch` on every change. Spec files are not part of the build output (`dist/`, `www/`, `loader/`). End-to-end tests (`*.e2e.ts`, `npm run test:e2e`) need Puppeteer's Chromium, so `npm ci` must run without `PUPPETEER_SKIP_DOWNLOAD`.
 
