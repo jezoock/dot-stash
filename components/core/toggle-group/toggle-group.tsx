@@ -1,9 +1,13 @@
-import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
 import { fromJSON, toArray, toClassList } from '../../utils/props';
 import { DSToggleValue } from '../toggle/toggle.types';
 
 /**
  * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+ * The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
+ * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
+ * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
+ * MutationObserver, in browsers).
  */
 @Component({
   tag: 'ds-toggle-group',
@@ -35,6 +39,22 @@ export class DSToggleGroup {
   }
 
   valuesCount: number[] = [1, 1];
+  /** The registered toggles, with the name and mods they had when they joined, put back when the group's are removed. */
+  ownProps = new WeakMap<HTMLDsToggleElement, { name: string; mods: string | string[] }>();
+  /** Registers the toggles added to the group later (when the browser has MutationObserver). */
+  observer: MutationObserver;
+
+  @Watch('count')
+  countWatcher() {
+    this.valuesCount = fromJSON(this.count);
+  }
+
+  @Watch('name')
+  @Watch('type')
+  @Watch('mods')
+  groupPropsWatcher() {
+    this.getToggles().forEach(toggle => this.applyGroupProps(toggle));
+  }
 
   constructor() {
     this.toggleHandler = this.toggleHandler.bind(this);
@@ -81,18 +101,46 @@ export class DSToggleGroup {
     }
   }
 
-  async registerToggle(toggle: HTMLDsToggleElement) {
+  getToggles(): HTMLDsToggleElement[] {
+    return Array.from(this.host.querySelectorAll('ds-toggle'));
+  }
+
+  /** Adds a toggle to the group, once: its checked value, and the group's props. */
+  registerToggle(toggle: HTMLDsToggleElement) {
+    if (this.ownProps.has(toggle)) {
+      return;
+    }
+
     const { checked: isChecked, value } = toggle;
-    const { type, mods, name } = this;
+    // The attributes for a toggle whose component is not defined yet.
+    this.ownProps.set(toggle, { name: toggle.name ?? toggle.getAttribute('name') ?? undefined, mods: toggle.mods ?? toggle.getAttribute('mods') ?? undefined });
 
     if (isChecked && !this.value.includes(value)) {
       this.value = [...this.value, value];
     }
     this.values = [...this.values, value];
 
-    // Only what the group defines: otherwise the toggles keep their own props. A toggle's own type wins over the group's.
-    toggle.setType(type);
-    toggle.setProps({ name, mods: toArray(mods ?? []).length ? mods : undefined });
+    this.applyGroupProps(toggle);
+  }
+
+  /**
+   * Only what the group defines: its name and mods replace the toggle's, otherwise the toggle has its own back.
+   * Its type only applies to a toggle without a type of its own (setType).
+   */
+  applyGroupProps(toggle: HTMLDsToggleElement) {
+    const own = this.ownProps.get(toggle) ?? { name: undefined, mods: undefined };
+    // null rather than undefined for no name: the reflected attribute is then removed without setting the prop again.
+    const name = this.name ?? own.name ?? null;
+    const mods = toArray(this.mods ?? []).length ? this.mods : (own.mods ?? []);
+
+    toggle.setType(this.type);
+    // Only written when they change: a toggle keeps its own values untouched while the group has none.
+    if ((toggle.name ?? null) !== name) {
+      toggle.name = name;
+    }
+    if (toArray(toggle.mods ?? []).join() !== toArray(mods).join()) {
+      toggle.mods = mods;
+    }
   }
 
   getContextValue() {
@@ -100,7 +148,29 @@ export class DSToggleGroup {
   }
 
   connectedCallback() {
-    Array.from(this.host.querySelectorAll('ds-toggle')).map((toggle: HTMLDsToggleElement) => this.registerToggle(toggle));
+    this.getToggles().forEach(toggle => this.registerToggle(toggle));
+
+    if (typeof MutationObserver !== 'undefined' && !this.observer) {
+      this.observer = new MutationObserver(records => this.addedNodesHandler(records));
+      this.observer.observe(this.host, { childList: true, subtree: true });
+    }
+  }
+
+  disconnectedCallback() {
+    this.observer?.disconnect();
+    this.observer = undefined;
+  }
+
+  /** Registers the toggles added to the group, and those inside added elements. */
+  addedNodesHandler(records: MutationRecord[]) {
+    records.forEach(({ addedNodes }) =>
+      Array.from(addedNodes)
+        .filter((node): node is Element => node.nodeType === 1)
+        .forEach(element => {
+          const toggles = element.matches('ds-toggle') ? [element] : Array.from(element.querySelectorAll('ds-toggle'));
+          toggles.forEach((toggle: HTMLDsToggleElement) => this.registerToggle(toggle));
+        }),
+    );
   }
 
   componentDidLoad() {}

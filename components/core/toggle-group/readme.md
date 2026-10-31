@@ -8,6 +8,10 @@
 ## Overview
 
 Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
+without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
+gives the toggles back the ones they had when they joined. Toggles added later join the group (with
+MutationObserver, in browsers).
 
 ## Properties
 

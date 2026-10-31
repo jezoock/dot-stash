@@ -3,6 +3,11 @@ import { DSToggle } from '../toggle/toggle';
 import { DSToggleGroup } from './toggle-group';
 
 describe('ds-toggle-group', () => {
+  afterEach(() => {
+    delete global.MutationObserver;
+    delete window.MutationObserver;
+  });
+
   const render = async (groupAttributes: string, toggleAttributes = '') => {
     const page = await newSpecPage({
       components: [DSToggleGroup, DSToggle],
@@ -113,5 +118,96 @@ describe('ds-toggle-group', () => {
     });
 
     expect(renderedTypes(page)).toEqual(['checkbox', 'radio']);
+  });
+
+  it('passes on its name, type and mods when they change after the load, and gives the toggles their own back', async () => {
+    const page = await newSpecPage({
+      components: [DSToggleGroup, DSToggle],
+      html: '<ds-toggle-group><ds-toggle value="a"></ds-toggle><ds-toggle value="b" name="own" mods="small" type="radio"></ds-toggle></ds-toggle-group>',
+    });
+    const group = page.root;
+    const toggles = Array.from(group.querySelectorAll('ds-toggle'));
+    // Sorted: Stencil appends the classes it adds.
+    const props = () => toggles.map(toggle => [toggle.name, toggle.className.split(' ').sort().join(' ')]);
+
+    group.name = 'size';
+    group.type = 'checkbox';
+    group.mods = 'large';
+    await page.waitForChanges();
+    expect(props()).toEqual([
+      ['size', '--checkbox --large ds-toggle'],
+      ['size', '--large --radio ds-toggle'],
+    ]);
+
+    group.mods = 'large,dark';
+    group.type = 'icon';
+    await page.waitForChanges();
+    expect(props()).toEqual([
+      ['size', '--dark --icon --large ds-toggle'],
+      ['size', '--dark --large --radio ds-toggle'],
+    ]);
+
+    group.removeAttribute('name');
+    group.removeAttribute('type');
+    group.mods = [];
+    await page.waitForChanges();
+    expect(props()).toEqual([
+      [null, '--switch ds-toggle'],
+      ['own', '--radio --small ds-toggle'],
+    ]);
+  });
+
+  it('registers the toggles added after the load', async () => {
+    const observers: { callback: MutationCallback; observe: jest.Mock; disconnect: jest.Mock }[] = [];
+    class FakeMutationObserver {
+      observe = jest.fn();
+      disconnect = jest.fn();
+      constructor(public callback: MutationCallback) {
+        observers.push(this);
+      }
+    }
+    const page = await newSpecPage({ components: [DSToggleGroup, DSToggle], html: '' });
+    global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
+    await page.setContent('<ds-toggle-group name="size" type="checkbox" mods="large" count="[0, 3]"><ds-toggle value="a"></ds-toggle></ds-toggle-group>');
+    const group = page.root;
+    const [observer] = observers;
+    expect(observer.observe).toHaveBeenCalledWith(group, { childList: true, subtree: true });
+    const changes: unknown[] = [];
+    group.addEventListener('toggleValueChange', (event: CustomEvent) => changes.push(event.detail.value));
+
+    const wrapper = page.doc.createElement('div');
+    wrapper.innerHTML = '<ds-toggle value="b" checked></ds-toggle><ds-toggle value="c"></ds-toggle>';
+    group.appendChild(wrapper);
+    await page.waitForChanges();
+    observer.callback([{ addedNodes: [wrapper] } as unknown as MutationRecord], observer as unknown as MutationObserver);
+    // Added again (moved): registered once.
+    observer.callback([{ addedNodes: [wrapper.firstElementChild] } as unknown as MutationRecord], observer as unknown as MutationObserver);
+    await page.waitForChanges();
+
+    // Selected by value: the slot patch of Stencil inserts the appended wrapper at the place of the slot.
+    const [b, c] = ['b', 'c'].map(value => group.querySelector<HTMLDsToggleElement>(`ds-toggle[value="${value}"]`));
+    expect([b, c].map(toggle => [toggle.name, toggle.className])).toEqual([
+      ['size', 'ds-toggle --large --checkbox'],
+      ['size', 'ds-toggle --large --checkbox'],
+    ]);
+    expect(page.rootInstance.value).toEqual(['b']);
+
+    c.click();
+    await page.waitForChanges();
+    expect(changes).toEqual([['b', 'c']]);
+
+    group.remove();
+    expect(observer.disconnect).toHaveBeenCalled();
+  });
+
+  it('applies a count changed after the load', async () => {
+    const { page, click, value } = await render('type="checkbox"');
+
+    page.root.count = '[0, 3]';
+    await page.waitForChanges();
+    await click('a');
+    await click('b');
+
+    expect(value()).toEqual(['a', 'b']);
   });
 });
