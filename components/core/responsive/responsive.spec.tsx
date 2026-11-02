@@ -3,8 +3,20 @@ import { DSGrid } from '../grid/grid';
 import { DSGridItem } from '../grid/grid-item/grid-item';
 import { DSRsp } from './responsive';
 
-/** What Chromium returns for the `content` of `body::before` with the compiled theme. */
-const THEME_CONTENT = String.raw`"{ \"breakpoints\": {\"xxs\": 360,\"xs\": 576,\"sm\": 768,\"md\": 992,\"lg\": 1200,\"xl\": 1400,\"xxl\": 1600}, \"palettes\": {\"primary\": { \"base\": \"#e4be90\"} } }"`;
+/** The breakpoint custom properties of the compiled themes, on :root. */
+const THEME_TOKENS: Record<string, string> = {
+  '--ds-bp-xxs': '360px',
+  '--ds-bp-xs': '576px',
+  '--ds-bp-sm': '768px',
+  '--ds-bp-md': '992px',
+  '--ds-bp-lg': '1200px',
+  '--ds-bp-xl': '1400px',
+  '--ds-bp-xxl': '1600px',
+  '--ds-bp-labels': 'xxs xs sm md lg xl xxl',
+};
+
+/** No theme stylesheet: no custom property. */
+const NO_THEME: Record<string, string> = {};
 
 const wait = (ms = 20) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -19,16 +31,19 @@ const resizeTo = async (width: number) => {
 };
 
 describe('ds-rsp', () => {
-  let themeContent: string;
+  /** The custom properties the stubbed getComputedStyle returns: the mock DOM computes no style. */
+  let themeTokens: Record<string, string>;
   let warnSpy: jest.SpyInstance;
   let addEventListenerSpy: jest.SpyInstance;
   let removeEventListenerSpy: jest.SpyInstance;
+
+  const stubTheme = () => jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ getPropertyValue: (name: string) => themeTokens[name] ?? '' }) as CSSStyleDeclaration);
 
   /** newSpecPage resets the window: the spies are installed once the page exists, then the content is rendered. */
   const render = async (html: string, components: unknown[] = []) => {
     const page = await newSpecPage({ components: [DSRsp, ...components], html: '' });
 
-    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ content: themeContent }) as CSSStyleDeclaration);
+    stubTheme();
     warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     addEventListenerSpy = jest.spyOn(window, 'addEventListener');
     removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
@@ -39,7 +54,7 @@ describe('ds-rsp', () => {
   };
 
   beforeEach(() => {
-    themeContent = THEME_CONTENT;
+    themeTokens = THEME_TOKENS;
   });
 
   afterEach(() => {
@@ -118,7 +133,7 @@ describe('ds-rsp', () => {
   });
 
   it('does not crash without the theme stylesheet: it warns and dispatches no breakpoint event', async () => {
-    themeContent = 'none';
+    themeTokens = NO_THEME;
     const page = await render(`<div id="item" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
     const item = page.body.querySelector('#item');
     const onBreakpointChange = jest.fn();
@@ -135,7 +150,7 @@ describe('ds-rsp', () => {
   });
 
   it('uses the breakpoints property (label: minimum width) instead of the theme ones', async () => {
-    themeContent = 'none';
+    themeTokens = NO_THEME;
     const page = await render(
       `<ds-rsp debounce-delay="0" breakpoints='{"small": 0, "large": 900}'></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"large": {"width": 5}}'></div>`,
     );
@@ -189,7 +204,7 @@ describe('ds-rsp', () => {
 
   it('emits breakpointChange when it starts, with the breakpoints', async () => {
     const page = await newSpecPage({ components: [DSRsp], html: '' });
-    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ content: themeContent }) as CSSStyleDeclaration);
+    stubTheme();
     setWidth(1000);
     const details = [];
     page.doc.addEventListener('breakpointChange', (event: CustomEvent) => details.push(event.detail));
@@ -275,7 +290,7 @@ describe('ds-rsp', () => {
       }
     }
     const page = await newSpecPage({ components: [DSRsp], html: '' });
-    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ content: themeContent }) as CSSStyleDeclaration);
+    stubTheme();
     global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
     setWidth(1000);
     await page.setContent(`<ds-rsp debounce-delay="0" subscriber-selector=".rsp"></ds-rsp>`);
@@ -308,5 +323,184 @@ describe('ds-rsp', () => {
     page.root.remove();
     await page.waitForChanges();
     expect(observer.disconnect).toHaveBeenCalled();
+  });
+  describe('refresh()', () => {
+    /** The breakpointChange events emitted by ds-rsp: [current label, current limits, previous label]. */
+    const recordEvents = (page: { doc: Document }) => {
+      const events: [string, number[], string][] = [];
+      page.doc.addEventListener('breakpointChange', (event: CustomEvent) => {
+        if ((event.target as Element).tagName === 'DS-RSP') {
+          events.push([event.detail.current.label, event.detail.current.limits, event.detail.previous?.label]);
+        }
+      });
+      return events;
+    };
+
+    it('starts when the theme stylesheet loads after it: refresh() then initialises everything', async () => {
+      themeTokens = NO_THEME;
+      const page = await render(`<ds-rsp debounce-delay="0"></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
+      const item = page.body.querySelector('#item');
+      const late = page.doc.createElement('div');
+      late.setAttribute('data-rsp', '{"lg": {"width": 5}}');
+      page.body.appendChild(late);
+      await page.root.subscribe(late);
+      const events = recordEvents(page);
+
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(item.hasAttribute('data-rsp-init')).toBe(false);
+      expect(resizeListeners(addEventListenerSpy)).toHaveLength(0);
+
+      themeTokens = THEME_TOKENS;
+      await page.root.refresh();
+
+      expect(events).toEqual([['md', [992, 1199], undefined]]);
+      expect(item['width']).toBe(3);
+      expect(item.getAttribute('data-rsp-init')).toBe('true');
+      expect(late.getAttribute('data-rsp-init')).toBe('true');
+      expect(await page.root.getData()).toEqual({ breakpoints: await page.root.getBreakpoints() });
+
+      await resizeTo(1300);
+      expect(late['width']).toBe(5);
+      await resizeTo(400);
+      expect(item['width']).toBe('1');
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('is called by ds-rsp when a stylesheet <link> loads, not on other loads', async () => {
+      themeTokens = NO_THEME;
+      const page = await render(`<ds-rsp></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
+      const item = page.body.querySelector('#item');
+      // The load event does not bubble: ds-rsp listens to it on the document, in the capture phase, which the mock DOM does
+      // not have. Here it bubbles up to the document instead.
+      const load = (element: Element) => element.dispatchEvent(new Event('load', { bubbles: true }));
+      themeTokens = THEME_TOKENS;
+
+      const image = page.doc.createElement('img');
+      page.body.appendChild(image);
+      load(image);
+      const icon = page.doc.createElement('link');
+      icon.setAttribute('rel', 'icon');
+      page.doc.head.appendChild(icon);
+      load(icon);
+      expect(item.hasAttribute('data-rsp-init')).toBe(false);
+
+      const stylesheet = page.doc.createElement('link');
+      stylesheet.setAttribute('rel', 'stylesheet');
+      page.doc.head.appendChild(stylesheet);
+      load(stylesheet);
+
+      expect(item['width']).toBe(3);
+      expect(item.getAttribute('data-rsp-init')).toBe('true');
+
+      // Removed from the document, it no longer listens.
+      page.root.remove();
+      await page.waitForChanges();
+      const refresh = jest.spyOn(DSRsp.prototype, 'update');
+      load(stylesheet);
+      expect(refresh).not.toHaveBeenCalled();
+    });
+
+    it('sets the params again without any event when nothing changed', async () => {
+      const page = await render(`<ds-rsp debounce-delay="0"></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
+      const item = page.body.querySelector('#item');
+      const onItemChange = jest.fn();
+      item.addEventListener('breakpointChange', onItemChange);
+      const events = recordEvents(page);
+      item['width'] = 99;
+
+      await page.root.refresh();
+
+      expect(item['width']).toBe(3);
+      expect(events).toEqual([]);
+      expect(onItemChange).not.toHaveBeenCalled();
+    });
+
+    it('applies new theme breakpoints, and emits breakpointChange only when the label or the limits of the current one changed', async () => {
+      const page = await render(`<ds-rsp debounce-delay="0"></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"sm": {"width": 3}, "md": {"width": 4}}'></div>`);
+      const item = page.body.querySelector('#item');
+      const events = recordEvents(page);
+
+      // At 1000 px: md [992, 1199]. Only xxl changes: md stays the same.
+      themeTokens = { ...THEME_TOKENS, '--ds-bp-xxl': '1700px' };
+      await page.root.refresh();
+      expect(events).toEqual([]);
+      expect((await page.root.getData()).breakpoints.xxl).toEqual([1700]);
+
+      // md starts at 900 px: same label, other limits.
+      themeTokens = { ...THEME_TOKENS, '--ds-bp-md': '900px' };
+      await page.root.refresh();
+      expect(events).toEqual([['md', [900, 1199], 'md']]);
+
+      // md starts at 1024 px: 1000 px is sm.
+      themeTokens = { ...THEME_TOKENS, '--ds-bp-md': '1024px' };
+      await page.root.refresh();
+      expect(events.slice(1)).toEqual([['sm', [768, 1023], 'md']]);
+      expect(item['width']).toBe(3);
+    });
+
+    it('keeps its breakpoints when it finds none (theme stylesheet removed), warns once, and goes on when the theme is back', async () => {
+      const page = await render(`<ds-rsp debounce-delay="0"></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"lg": {"width": 5}}'></div>`);
+      const item = page.body.querySelector('#item');
+      const events = recordEvents(page);
+
+      themeTokens = NO_THEME;
+      await page.root.refresh();
+      await page.root.refresh();
+
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('[ds-rsp] refresh'));
+      expect((await page.root.getData()).breakpoints.md).toEqual([992, 1199]);
+      await resizeTo(1300);
+      expect(item['width']).toBe(5);
+
+      themeTokens = THEME_TOKENS;
+      await page.root.refresh();
+      expect(events).toEqual([['lg', [1200, 1399], 'md']]);
+
+      // Found again: a next removal warns again.
+      themeTokens = NO_THEME;
+      await page.root.refresh();
+      expect(warnSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('uses the breakpoints property rather than the theme, and applies a new value', async () => {
+      const page = await render(
+        `<ds-rsp debounce-delay="0" breakpoints='{"small": 0, "large": 900}'></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"large": {"width": 5}}'></div>`,
+      );
+      const item = page.body.querySelector('#item');
+      const events = recordEvents(page);
+
+      await page.root.refresh();
+      expect(events).toEqual([]);
+      expect(item['width']).toBe(5);
+
+      page.root.setAttribute('breakpoints', '{"small": 0, "large": 1200}');
+      await page.waitForChanges();
+
+      expect(events).toEqual([['small', [0, 1199], 'large']]);
+      expect(item['width']).toBe('1');
+    });
+
+    it('ignores an invalid breakpoints property with a warning', async () => {
+      themeTokens = NO_THEME;
+      await render(`<ds-rsp breakpoints="{small: 0}"></ds-rsp>`);
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('the breakpoints property is not valid JSON'));
+      expect(resizeListeners(addEventListenerSpy)).toHaveLength(0);
+    });
+
+    it('does nothing once removed from the document', async () => {
+      themeTokens = NO_THEME;
+      const page = await render(`<ds-rsp></ds-rsp><div id="item" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
+      const rsp = page.root;
+      rsp.remove();
+      await page.waitForChanges();
+
+      themeTokens = THEME_TOKENS;
+      await rsp.refresh();
+
+      expect(page.body.querySelector('#item').hasAttribute('data-rsp-init')).toBe(false);
+      expect(resizeListeners(addEventListenerSpy)).toHaveLength(0);
+    });
   });
 });

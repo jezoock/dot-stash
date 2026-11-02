@@ -11,7 +11,7 @@ import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 import { PanelType } from "./core/panel/panel.types";
-import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
+import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
@@ -22,7 +22,7 @@ export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 export { PanelType } from "./core/panel/panel.types";
-export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/sass-styles";
+export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { DSSliderParams } from "./core/slider/slider.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
@@ -302,11 +302,13 @@ export namespace Components {
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
      * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
-     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+     * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+     * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
      */
     interface DsRsp {
         /**
-          * Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`.
+          * Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
          */
         "breakpointsFromProp": string | RawBreakpoint;
         "debounceDelay": number;
@@ -316,6 +318,9 @@ export namespace Components {
           * @returns current breakpoint ( label & limits )
          */
         "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
+        /**
+          * The theme breakpoints (`tokens.getBreakpoints()`), as limits: `{ xxs: [0, 575], …, xxl: [1600] }`; `{}` without the theme.
+         */
         "getBreakpoints": () => Promise<Breakpoints>;
         "getCurrentBreakpoint": () => Promise<Breakpoint>;
         "getData": () => Promise<{ breakpoints: Breakpoints; }>;
@@ -323,6 +328,10 @@ export namespace Components {
         "getSubscribers": () => Promise<Element[]>;
         "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
         "propertyName": string;
+        /**
+          * Reads the breakpoints again (from the `breakpoints` property, else from the theme custom properties) and applies them: subscribes the matching elements not subscribed yet, sets the params of the current breakpoint on every subscriber again, and emits `breakpointChange` only when the label or the limits of the current breakpoint changed. Without breakpoints until then (theme stylesheet loaded after ds-rsp), it starts, as when the theme is there at load. When it finds none, it keeps the current ones (if any) and logs a warning, once until it finds some again.  ds-rsp calls it when a stylesheet `<link>` of the document loads (a theme added, or its `href` changed). Call it after changing the theme otherwise: a `<style>` element, a constructed stylesheet, a `media` attribute changed after the load… Before ds-rsp has loaded, it does nothing: ds-rsp reads the breakpoints when it loads.
+         */
+        "refresh": () => Promise<void>;
         /**
           * Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once (before, when ds-rsp starts).
          */
@@ -823,7 +832,9 @@ declare global {
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
      * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
-     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+     * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+     * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
      */
     interface HTMLDsRspElement extends Components.DsRsp, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsRspElementEventMap>(type: K, listener: (this: HTMLDsRspElement, ev: DsRspCustomEvent<HTMLDsRspElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1332,11 +1343,13 @@ declare namespace LocalJSX {
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
      * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
-     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+     * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+     * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
      */
     interface DsRsp {
         /**
-          * Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`.
+          * Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
          */
         "breakpointsFromProp"?: string | RawBreakpoint;
         "debounceDelay"?: number;
@@ -1659,7 +1672,9 @@ declare module "@stencil/core" {
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
              * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
-             * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+             * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+             * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+             * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
              */
             "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
             "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;

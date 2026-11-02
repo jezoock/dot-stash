@@ -9,13 +9,12 @@ export interface Breakpoints {
   [label: string]: number[];
 }
 
-/** Breakpoints as written by Sass: label: minimum width in px (`{ xxs: 360, xs: 576, … }`). */
+/**
+ * Breakpoints as the theme declares them: label: minimum width in px (`{ xxs: 360, xs: 576, … }`),
+ * as `tokens.getBreakpoints()` reads them from the `--ds-bp-labels` and `--ds-bp-<label>` custom properties.
+ */
 export interface RawBreakpoint {
   [label: string]: number;
-}
-
-export interface SassStyles {
-  breakpoints: RawBreakpoint;
 }
 
 /** The detail of the `breakpointChange` events of `ds-rsp`. */

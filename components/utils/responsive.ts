@@ -1,66 +1,25 @@
-import { Breakpoint, Breakpoints, RawBreakpoint, SassStyles } from './interfaces/sass-styles';
+import { Breakpoint, Breakpoints, RawBreakpoint } from './interfaces/breakpoints';
+import { getToken } from './tokens';
 
 /**
- * Responsive helpers, and the bridge that reads the theme values written by Sass
- * (`@include ds-theme()`) as JSON in the `content` of `body::before`.
+ * Responsive helpers. The theme breakpoints come from its custom properties: `tokens.getBreakpoints()`.
  */
 
-/** CSS string escapes: `\"`, `\\`, `\'`, and hexadecimal code points such as `\a ` (a line feed). */
-const CSS_ESCAPE = /\\(?:([0-9a-fA-F]{1,6})[ \t\n\r\f]?|([\s\S]))/g;
-
-/**
- * Turns a CSS string, as `getComputedStyle(...).content` returns it (`"{ \"a\": \"x y\" }"`),
- * back into its text (`{ "a": "x y" }`): strips the surrounding quotes and decodes the CSS escapes.
- * The whitespace inside is kept. A value that is not a quoted string is returned trimmed.
- */
-export const removeQuotes = (quotedString: string): string => {
-  if (typeof quotedString !== 'string') {
-    return quotedString;
-  }
-
-  const value = quotedString.trim();
-  const quote = value[0];
-
-  if (value.length < 2 || (quote !== '"' && quote !== "'") || value[value.length - 1] !== quote) {
-    return value;
-  }
-
-  return value.slice(1, -1).replace(CSS_ESCAPE, (_, codePoint: string, character: string) => {
-    if (codePoint) {
-      const code = parseInt(codePoint, 16);
-      // As in CSS, NULL, surrogates and out-of-range values give the replacement character.
-      return code === 0 || code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff) ? '�' : String.fromCodePoint(code);
-    }
-    // An escaped line break continues the string on the next line.
-    return character === '\n' ? '' : character;
-  });
+/** The minimum width of a theme breakpoint (`--ds-bp-<label>`, in px), or `fallback` without the theme. */
+const themeWidth = (label: string, fallback: number): number => {
+  const width = parseFloat(getToken(`bp-${label}`));
+  return Number.isFinite(width) ? width : fallback;
 };
 
-/**
- * Reads the theme JSON from the `content` of `body::before` (written by `@include ds-theme()`).
- * Returns `{}` when the theme stylesheet is not loaded, and also, with a warning, when the content is not JSON.
- */
-export const getStylesJSON = (): SassStyles => {
-  const content = window?.getComputedStyle?.(document.body, '::before')?.content;
-
-  if (!content || content === 'none' || content === 'normal') {
-    return {} as SassStyles;
-  }
-
-  try {
-    return JSON.parse(removeQuotes(content));
-  } catch {
-    console.warn(`[ds] getStylesJSON: the content of body::before is not the theme JSON: ${content}`);
-    return {} as SassStyles;
-  }
-};
-
-export const isMobile = (): boolean => window.innerWidth < 768;
-export const isTablet = (): boolean => window.innerWidth > 767 && window.innerWidth < 992;
-export const isDesktop = (): boolean => window.innerWidth > 991;
+/** Below the `sm` breakpoint of the theme (768 px without the theme). */
+export const isMobile = (): boolean => window.innerWidth < themeWidth('sm', 768);
+/** From the `sm` breakpoint of the theme to below its `md` breakpoint (768 to 991 px without the theme). */
+export const isTablet = (): boolean => window.innerWidth >= themeWidth('sm', 768) && window.innerWidth < themeWidth('md', 992);
+/** From the `md` breakpoint of the theme (992 px without the theme). */
+export const isDesktop = (): boolean => window.innerWidth >= themeWidth('md', 992);
 
 /**
- * Turns the Sass breakpoints (label: minimum width in px) into limits (label: [min, max], both included),
+ * Turns the theme breakpoints (label: minimum width in px, as `tokens.getBreakpoints()` returns them) into limits (label: [min, max], both included),
  * with the mobile-first semantics of the `break-p` Sass mixin:
  * - each label starts at its value and ends at the next value - 1;
  * - the first label also covers the smaller widths: it starts at 0;

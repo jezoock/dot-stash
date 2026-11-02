@@ -1,71 +1,47 @@
-import { getBreakpoint, getParamsForBreakpoint, getStylesJSON, processBreakpoints, removeQuotes } from './responsive';
+import { getBreakpoint, getParamsForBreakpoint, isDesktop, isMobile, isTablet, processBreakpoints } from './responsive';
 
-/** The theme breakpoints (scss/variables/breakpoint.scss). */
+/** The theme breakpoints (scss/engine/variables/_breakpoints.scss), as tokens.getBreakpoints() reads them. */
 const THEME_BREAKPOINTS = { xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 };
 
-/**
- * What Chromium returns for `getComputedStyle(document.body, '::before').content`
- * with the compiled theme (`npm run build:css`, dist/css/style.css).
- */
-const CHROMIUM_CONTENT = String.raw`"{ \"breakpoints\": {\"xxs\": 360,\"xs\": 576,\"sm\": 768,\"md\": 992,\"lg\": 1200,\"xl\": 1400,\"xxl\": 1600}, \"palettes\": {\"primary\": { \"base\": \"#e4be90\"} } }"`;
-
 describe('responsive', () => {
-  describe('removeQuotes', () => {
-    it('turns the Chromium content value into the theme JSON', () => {
-      const json = removeQuotes(CHROMIUM_CONTENT);
-
-      expect(json).toBe('{ "breakpoints": {"xxs": 360,"xs": 576,"sm": 768,"md": 992,"lg": 1200,"xl": 1400,"xxl": 1600}, "palettes": {"primary": { "base": "#e4be90"} } }');
-      expect(JSON.parse(json)).toEqual({ breakpoints: THEME_BREAKPOINTS, palettes: { primary: { base: '#e4be90' } } });
-    });
-
-    it('keeps the whitespace inside string values', () => {
-      expect(JSON.parse(removeQuotes(String.raw`"{\"font\": \"Open Sans\", \"label\": \"a  b\"}"`))).toEqual({ font: 'Open Sans', label: 'a  b' });
-    });
-
-    it('handles single quotes and CSS escapes', () => {
-      expect(removeQuotes(String.raw`'{"a": "it\'s"}'`)).toBe(`{"a": "it's"}`);
-      expect(removeQuotes(String.raw`"back\\slash"`)).toBe(String.raw`back\slash`);
-      expect(removeQuotes(String.raw`"line\a break"`)).toBe('line\nbreak');
-    });
-
-    it('returns an unquoted value as it is', () => {
-      expect(removeQuotes('{}')).toBe('{}');
-    });
-  });
-
-  describe('getStylesJSON', () => {
-    let getComputedStyleSpy: jest.SpyInstance;
-    let warnSpy: jest.SpyInstance;
+  describe('isMobile, isTablet, isDesktop', () => {
+    let tokens: Record<string, string>;
+    let innerWidth: number;
 
     beforeEach(() => {
-      getComputedStyleSpy = jest.spyOn(window, 'getComputedStyle');
-      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+      innerWidth = window.innerWidth;
+      tokens = {};
+      // The theme custom properties: the mock DOM computes no style.
+      jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ getPropertyValue: (name: string) => tokens[name] ?? '' }) as CSSStyleDeclaration);
     });
 
     afterEach(() => {
-      getComputedStyleSpy.mockRestore();
-      warnSpy.mockRestore();
+      (window as { innerWidth: number }).innerWidth = innerWidth;
+      jest.restoreAllMocks();
     });
 
-    it('parses the theme JSON written in body::before', () => {
-      getComputedStyleSpy.mockReturnValue({ content: CHROMIUM_CONTENT } as CSSStyleDeclaration);
+    const at = (width: number) => {
+      (window as { innerWidth: number }).innerWidth = width;
+      return [isMobile(), isTablet(), isDesktop()];
+    };
 
-      expect(getStylesJSON().breakpoints).toEqual(THEME_BREAKPOINTS);
-      expect(getComputedStyleSpy).toHaveBeenCalledWith(document.body, '::before');
+    it.each([
+      [767, [true, false, false]],
+      [768, [false, true, false]],
+      [991, [false, true, false]],
+      [992, [false, false, true]],
+    ])('without the theme, uses 768 and 992 px: width %p', (width, expected) => {
+      expect(at(width)).toEqual(expected);
     });
 
-    it.each(['none', 'normal', '', undefined])('returns {} without the theme (content %p)', content => {
-      getComputedStyleSpy.mockReturnValue({ content } as CSSStyleDeclaration);
-
-      expect(getStylesJSON()).toEqual({});
-      expect(warnSpy).not.toHaveBeenCalled();
-    });
-
-    it('returns {} and warns when the content is not JSON', () => {
-      getComputedStyleSpy.mockReturnValue({ content: '"\\201C"' } as CSSStyleDeclaration);
-
-      expect(getStylesJSON()).toEqual({});
-      expect(warnSpy).toHaveBeenCalledTimes(1);
+    it.each([
+      [599, [true, false, false]],
+      [600, [false, true, false]],
+      [1023, [false, true, false]],
+      [1024, [false, false, true]],
+    ])('uses the sm and md breakpoints of the theme (--ds-bp-sm: 600px, --ds-bp-md: 1024px): width %p', (width, expected) => {
+      tokens = { '--ds-bp-sm': '600px', '--ds-bp-md': ' 1024px' };
+      expect(at(width)).toEqual(expected);
     });
   });
 

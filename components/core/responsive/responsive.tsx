@@ -1,17 +1,29 @@
-import { Component, Event, EventEmitter, h, Host, Method, Prop } from '@stencil/core';
+import { Component, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
 import debounce from '../../utils/debounce';
 import { fromJSON } from '../../utils/props';
-import { getBreakpoint, getParamsForBreakpoint, getStylesJSON, processBreakpoints } from '../../utils/responsive';
-import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from '../../utils/interfaces/sass-styles';
+import { getBreakpoint, getParamsForBreakpoint, processBreakpoints } from '../../utils/responsive';
+import { getBreakpoints as getThemeBreakpoints, getToken } from '../../utils/tokens';
+import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from '../../utils/interfaces/breakpoints';
 
 /** `hGap` → `h-gap`: the attribute of a camelCase property. */
 const toKebabCase = (name: string): string => name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+
+/** Whether two breakpoints have the same label and limits. */
+const isSameBreakpoint = (a: Breakpoint | undefined, b: Breakpoint | undefined): boolean => a?.label === b?.label && String(a?.limits) === String(b?.limits);
+
+/** Whether an event is the `load` event of a stylesheet `<link>`. */
+const isStylesheetLoad = (event: Event): boolean => {
+  const target = event.target as Element;
+  return target?.nodeName?.toLowerCase() === 'link' && /(^|\s)stylesheet(\s|$)/i.test(target.getAttribute?.('rel') ?? '');
+};
 
 /**
  * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
  * attribute the properties their `data-rsp` attribute declares for it (see the README).
  * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
- * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning.
+ * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+ * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+ * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
  */
 @Component({
   tag: 'ds-rsp',
@@ -25,15 +37,28 @@ export class DSRsp {
   resizeHandler: () => void;
   /** Subscribes the matching elements inserted in the document later (when the browser has MutationObserver). */
   observer: MutationObserver;
+  /** Whether componentDidLoad ran. */
+  loaded = false;
+  /** Whether the element is in the document. */
+  connected = false;
+  /** Whether it tracks the breakpoints: it has some, listens to `resize` and has initialised its subscribers. */
+  started = false;
+  /** Whether the "no breakpoints" warning was logged since breakpoints were last found, so that it is logged once. */
+  warnedNoBreakpoints = false;
 
   @Prop() debounceDelay = 500;
   @Prop() subscriberSelector = '[data-use-rsp]:not([data-rsp-init])';
   @Prop() propertyName = 'data-rsp';
   /**
-   * Breakpoints to use instead of the theme ones, as Sass writes them: label: minimum width in px.
-   * As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`.
+   * Breakpoints to use instead of the theme ones: label: minimum width in px.
+   * As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
    */
   @Prop({ attribute: 'breakpoints' }) breakpointsFromProp: string | RawBreakpoint;
+
+  @Watch('breakpointsFromProp')
+  breakpointsFromPropChanged() {
+    this.update();
+  }
 
   /**
    * Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once
@@ -42,6 +67,22 @@ export class DSRsp {
   @Method()
   async subscribe(target: Element): Promise<void> {
     this.addSubscribers([target]);
+  }
+
+  /**
+   * Reads the breakpoints again (from the `breakpoints` property, else from the theme custom properties) and applies them:
+   * subscribes the matching elements not subscribed yet, sets the params of the current breakpoint on every subscriber
+   * again, and emits `breakpointChange` only when the label or the limits of the current breakpoint changed.
+   * Without breakpoints until then (theme stylesheet loaded after ds-rsp), it starts, as when the theme is there at load.
+   * When it finds none, it keeps the current ones (if any) and logs a warning, once until it finds some again.
+   *
+   * ds-rsp calls it when a stylesheet `<link>` of the document loads (a theme added, or its `href` changed). Call it after
+   * changing the theme otherwise: a `<style>` element, a constructed stylesheet, a `media` attribute changed after the load…
+   * Before ds-rsp has loaded, it does nothing: ds-rsp reads the breakpoints when it loads.
+   */
+  @Method()
+  async refresh(): Promise<void> {
+    this.update();
   }
 
   @Method()
@@ -54,17 +95,17 @@ export class DSRsp {
     return Array.from(document.querySelectorAll('[data-use-rsp]'));
   }
 
-  // The breakpoint methods below delegate to the pure functions of utils/responsive.
+  // The breakpoint methods below delegate to the pure functions of utils/responsive and utils/tokens.
 
   @Method()
   async processBreakpoints(breakpoints: RawBreakpoint): Promise<Breakpoints> {
     return processBreakpoints(breakpoints);
   }
 
+  /** The theme breakpoints (`tokens.getBreakpoints()`), as limits: `{ xxs: [0, 575], …, xxl: [1600] }`; `{}` without the theme. */
   @Method()
   async getBreakpoints(): Promise<Breakpoints> {
-    const { breakpoints } = getStylesJSON();
-    return this.processBreakpoints(breakpoints);
+    return processBreakpoints(getThemeBreakpoints());
   }
 
   @Method()
@@ -97,33 +138,107 @@ export class DSRsp {
   constructor() {
     this.notifySubscribers = this.notifySubscribers.bind(this);
     this.breakpointChangeHandler = this.breakpointChangeHandler.bind(this);
+    this.stylesheetLoadHandler = this.stylesheetLoadHandler.bind(this);
   }
 
-  async componentWillLoad() {
-    this.breakpoints = this.breakpointsFromProp ? processBreakpoints(fromJSON(this.breakpointsFromProp)) : await this.getBreakpoints();
-
-    if (!this.hasBreakpoints()) {
-      console.warn(
-        '[ds-rsp] no breakpoints: load the theme stylesheet (it writes them in the content of body::before) or set the breakpoints property. Breakpoint changes are not tracked.',
-      );
+  connectedCallback() {
+    this.connected = true;
+    // componentDidLoad only runs once: start again when the element is moved or put back in the document.
+    if (this.loaded) {
+      this.listenToStylesheets();
+      this.update();
     }
   }
 
   componentDidLoad() {
-    if (this.hasBreakpoints()) {
-      this.resizeHandler = debounce(this.notifySubscribers, this.debounceDelay);
-      this.start();
-    }
-  }
-
-  connectedCallback() {
-    // componentDidLoad only runs once: start again when the element is moved or put back in the document.
-    if (this.resizeHandler) {
-      this.start();
-    }
+    this.loaded = true;
+    this.listenToStylesheets();
+    this.update();
   }
 
   disconnectedCallback() {
+    this.connected = false;
+    document.removeEventListener('load', this.stylesheetLoadHandler, true);
+    this.stop();
+  }
+
+  /** The breakpoints, as limits: from the `breakpoints` property, else from the theme; `{}` without any. */
+  readBreakpoints(): Breakpoints {
+    if (this.breakpointsFromProp) {
+      try {
+        return processBreakpoints(fromJSON(this.breakpointsFromProp) as RawBreakpoint);
+      } catch {
+        console.warn(`[ds-rsp] the breakpoints property is not valid JSON, it is ignored: ${this.breakpointsFromProp}`);
+        return {};
+      }
+    }
+
+    // Checked first, so that ds-rsp logs its own warning instead of the one of getBreakpoints().
+    return getToken('bp-labels') ? processBreakpoints(getThemeBreakpoints()) : {};
+  }
+
+  /** Reads the breakpoints again and applies them (see `refresh()`). */
+  update() {
+    if (!this.loaded || !this.connected) {
+      return;
+    }
+
+    const breakpoints = this.readBreakpoints();
+
+    if (!Object.keys(breakpoints).length) {
+      if (!this.warnedNoBreakpoints) {
+        this.warnedNoBreakpoints = true;
+        console.warn(
+          this.started
+            ? '[ds-rsp] refresh: no breakpoints found (theme stylesheet removed, or not loaded yet): the current ones are kept.'
+            : '[ds-rsp] no breakpoints: load the theme stylesheet (its --ds-bp-labels and --ds-bp-<label> custom properties) or set the breakpoints property. Breakpoint changes are not tracked until refresh() finds some (ds-rsp calls it when a stylesheet <link> loads).',
+        );
+      }
+      return;
+    }
+
+    this.warnedNoBreakpoints = false;
+    this.breakpoints = breakpoints;
+
+    if (!this.started) {
+      this.start();
+      return;
+    }
+
+    this.addSubscribers(Array.from(document.querySelectorAll(this.subscriberSelector)));
+
+    // Without a change, no event: the params are set again on the subscribers here.
+    if (!this.notifySubscribers()) {
+      this.subscribers.forEach(subscriber => this.applyParams(subscriber, this.currentBreakpoint));
+    }
+  }
+
+  /** A stylesheet `<link>` loaded (`load` does not bubble: listened to on the document, in the capture phase). */
+  stylesheetLoadHandler(event: Event) {
+    if (!this.breakpointsFromProp && isStylesheetLoad(event)) {
+      this.update();
+    }
+  }
+
+  listenToStylesheets() {
+    document.addEventListener('load', this.stylesheetLoadHandler, true);
+  }
+
+  /** Collects the subscribers, listens to `resize` and to the insertions in the document, and applies the current breakpoint. */
+  start() {
+    this.started = true;
+    if (!this.resizeHandler) {
+      this.resizeHandler = debounce(this.notifySubscribers, this.debounceDelay);
+    }
+    const subscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
+    this.waitingSubscribers = Array.from(new Set([...this.waitingSubscribers, ...subscribers]));
+    window.addEventListener('resize', this.resizeHandler, false);
+    this.observe();
+    this.notifySubscribers();
+  }
+
+  /** Stops listening, and lets the subscribers go (they keep their current params). */
+  stop() {
     if (this.resizeHandler) {
       window.removeEventListener('resize', this.resizeHandler, false);
     }
@@ -135,19 +250,7 @@ export class DSRsp {
     });
     this.subscribers = [];
     this.currentBreakpoint = undefined;
-  }
-
-  hasBreakpoints(): boolean {
-    return Object.keys(this.breakpoints ?? {}).length > 0;
-  }
-
-  /** Collects the subscribers, listens to `resize` and to the insertions in the document, and applies the current breakpoint. */
-  start() {
-    const subscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
-    this.waitingSubscribers = Array.from(new Set([...this.waitingSubscribers, ...subscribers]));
-    window.addEventListener('resize', this.resizeHandler, false);
-    this.observe();
-    this.notifySubscribers();
+    this.started = false;
   }
 
   observe() {
@@ -252,12 +355,13 @@ export class DSRsp {
     this.waitingSubscribers = [];
   };
 
-  notifySubscribers() {
+  /** Applies the breakpoint of the window width when it changed (label or limits): returns whether it did. */
+  notifySubscribers(): boolean {
     const { currentBreakpoint: previousBreakpoint } = this;
     const newBreakpoint = getBreakpoint(this.breakpoints);
 
-    if (newBreakpoint.label === previousBreakpoint?.label) {
-      return;
+    if (isSameBreakpoint(newBreakpoint, previousBreakpoint)) {
+      return false;
     }
 
     this.currentBreakpoint = newBreakpoint;
@@ -276,6 +380,7 @@ export class DSRsp {
 
     // Then from ds-rsp, for the page: it bubbles.
     this.breakpointChange.emit(detail);
+    return true;
   }
 
   /** Sets on an element the params its `data-rsp` attribute declares for a breakpoint. */
