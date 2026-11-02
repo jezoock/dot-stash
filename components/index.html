@@ -9,6 +9,7 @@
     <link id="ds-theme-stylesheet" rel="stylesheet" href="/css/default.css" />
     <script>
       // Demo theme switcher: loads <theme>.css instead of the first theme, and remembers the choice in localStorage when the browser allows it.
+      // Once the theme stylesheet has loaded, refresh() makes the ds-rsp elements read its breakpoints (--ds-bp-labels, --ds-bp-<label>).
       // Runtime token demo: the color input sets the --ds-color-primary-base custom property on <html> (inline, so it wins over the
       // theme's :root value). The skins read it with var(), and the colorsets that refer to it follow; Reset removes it.
       (() => {
@@ -55,7 +56,18 @@
             primaryInput.value = `#${[r, g, b].map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
           };
           showPrimary();
-          stylesheet.addEventListener('load', showPrimary);
+
+          // ds-rsp also refreshes by itself when a stylesheet <link> loads: the explicit call is what a page does when it changes
+          // the theme otherwise (a <style> element, a constructed stylesheet…). Without a change, refresh() emits no event.
+          const refreshResponsive = () =>
+            customElements
+              .whenDefined('ds-rsp')
+              .then(() => Promise.all(Array.from(document.querySelectorAll('ds-rsp'), rsp => rsp.refresh())))
+              .catch(error => console.error('[demo] ds-rsp refresh() failed', error));
+          stylesheet.addEventListener('load', () => {
+            showPrimary();
+            refreshResponsive();
+          });
           primaryInput.addEventListener('input', () => document.documentElement.style.setProperty(primaryProperty, primaryInput.value));
           document.getElementById('ds-primary-color-reset').addEventListener('click', () => {
             document.documentElement.style.removeProperty(primaryProperty);

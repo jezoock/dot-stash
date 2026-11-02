@@ -53,9 +53,9 @@ CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then
 components/
   core/            ds-* components, one folder each (.tsx, optional structural .scss, type and enum
                    modules, generated readme.md)
-  utils/           shared TypeScript: utility modules (props, css, dom, ajax, responsive, env, form,
-                   context), the `ds` object grouping them (dot-stash.ts), debounce, throttle, uuid,
-                   and shared types and enums (interfaces/)
+  utils/           shared TypeScript: utility modules (props, css, dom, ajax, responsive, tokens, env,
+                   form, context), the `ds` object grouping them (dot-stash.ts), debounce, throttle,
+                   uuid, and shared types and enums (interfaces/)
   demo/            ds-main, the demo component used by the dev pages
   index.ts         package entry point
   index.html       page served by the Stencil dev server, with the theme switcher
@@ -64,7 +64,7 @@ scss/
   engine/          generic toolkit, no CSS output of its own (_index.scss forwards everything)
     variables/     token schema with neutral defaults: breakpoints, palette, typography, icons, spacing
     tools/         functions and mixins: tokens (custom properties), references, colors, typography,
-                   icons, spacing, breakpoints, misc, theme
+                   icons, spacing, breakpoints, misc
   themes/
     default/       neutral theme: _tokens.scss (the engine defaults), _base.scss, layout/,
                    components/, pages/, index.scss (entry point)
@@ -113,7 +113,7 @@ A theme folder holds:
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `_tokens.scss`           | Loads the engine configured for the theme (`@forward '../../engine' with (…)`). The other files of the theme start with `@use '../tokens' as *;` (or `'./tokens'`): they all get the configured tokens. |
 | `index.scss`             | The entry point compiled by gulp: loads the tokens first, then the base styles and skins (the order of the `@use` rules is the order of the CSS output), and ends with `@include tokens.ds-tokens();`.  |
-| `_base.scss`             | Base element styles and the `body::before` bridge (`@include ds-theme()`): JavaScript reads it, a theme must have it.                                                                                   |
+| `_base.scss`             | Base element styles.                                                                                                                                                                                    |
 | `layout/`, `components/` | Skins, one partial per component.                                                                                                                                                                       |
 | `pages/`                 | The page stylesheets of the theme (see [Page stylesheets](#page-stylesheets)).                                                                                                                          |
 
@@ -126,7 +126,7 @@ A theme folder holds:
 
 ### Theme switcher
 
-The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `/dist/css/`, `components/index.html` (`npm start`) from `/css/`, the copy of `dist/css/*.css` the Stencil build makes in `www/css/`. Both have a theme switcher: a `<select>` that replaces the file name of the theme stylesheet (`<link id="ds-theme-stylesheet">`). The choice is remembered in `localStorage` (key `ds-demo-theme`) when the browser allows it. The themes it offers are listed in the script of each page. Below it, a color input changes the primary color token at runtime (see [Changing a token at runtime](#changing-a-token-at-runtime)).
+The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `/dist/css/`, `components/index.html` (`npm start`) from `/css/`, the copy of `dist/css/*.css` the Stencil build makes in `www/css/`. Both have a theme switcher: a `<select>` that replaces the file name of the theme stylesheet (`<link id="ds-theme-stylesheet">`). The choice is remembered in `localStorage` (key `ds-demo-theme`) when the browser allows it. The themes it offers are listed in the script of each page. Once the new stylesheet has loaded (its `load` event), the page calls `refresh()` on the `<ds-rsp>` elements, which read the breakpoints of the new theme (see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript)). Below it, a color input changes the primary color token at runtime (see [Changing a token at runtime](#changing-a-token-at-runtime)).
 
 ### Creating a theme
 
@@ -155,8 +155,8 @@ The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `
 
    A configured map replaces the whole default map: keep its keys, the tools and skins read them. The tokens derived from others follow the configured values: `$breakpoints` is built from `$grid-*`, `$font-families` from `$font-family-*`, and `$colorset` and `$font-styles` refer to `$colors`, `$font-sizes` and `$font-families` with `ds-ref()` (see [References](#references-derived-tokens)). With `!default` after a value (`$grid-md: 1024 !default`, as `legacy` does), a stylesheet can still change it when it loads the theme: `@use 'themes/<name>/tokens' with ($grid-md: 1100); @use 'themes/<name>';`.
 
-3. Edit the base styles and skins, or add some: each partial starts with `@use '../tokens' as *;` and is loaded by `index.scss`. Keep `@include ds-icon-font-face();` and `@include ds-keyframes();` (once, at the root), the `body::before` bridge, and `@include tokens.ds-tokens();` at the end of `index.scss` (the custom properties the skins read).
-4. Add the name to `themes` in `dot-stash.config.mjs` (and to the switcher of the demo pages), then run `npm run build:css`: `dist/css/<name>.css`. `npm test` compiles the new theme, fails on any Sass warning, and checks the theme JSON of its `body::before` and its custom properties.
+3. Edit the base styles and skins, or add some: each partial starts with `@use '../tokens' as *;` and is loaded by `index.scss`. Keep `@include ds-icon-font-face();` and `@include ds-keyframes();` (once, at the root), and `@include tokens.ds-tokens();` at the end of `index.scss`: the custom properties the skins read, and the breakpoints JavaScript reads (`--ds-bp-labels`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript)).
+4. Add the name to `themes` in `dot-stash.config.mjs` (and to the switcher of the demo pages), then run `npm run build:css`: `dist/css/<name>.css`. `npm test` compiles the new theme, fails on any Sass warning, and checks its custom properties, `--ds-bp-labels` included.
 
 The engine can also be configured from outside a theme that does not configure it, before the theme loads it: `@use '<path to>/scss/engine' with ($grid-md: 1024); @use '<path to>/scss/themes/default';`.
 
@@ -185,9 +185,8 @@ The accessors of the tokens return their custom property, `var(--ds-…)` (see [
 - Typography: `ds-font-style($prop, $type, $variant)`, `ds-font-family()`, `ds-font-size()`, `ds-font-weight()`, `ds-font-decoration()` (`$type`, `$variant`), and `@include ds-font-styles($type, $variant)` for the family, size, weight and decoration.
 - Icons: `@include ds-icon($name, $display)` for an icon glyph, `@include ds-icon-content($name)` for the glyph only, and `@include ds-icon-font-face($path: '../fonts')` for the `@font-face` of the `ds-icons` font.
 - Spacing: `ds-spacing($step)`, `ds-radius($name)`.
-- Breakpoints: `@include break-p($min, $max)` writes a media query from `$breakpoints`: `min-width` for `$min`, `max-width` (value - 1) for `$max`, or both. `ds-breakpoint($label)` returns the width of a breakpoint in px (a Sass value: media queries cannot read custom properties).
+- Breakpoints: `@include break-p($min, $max)` writes a media query from `$breakpoints`: `min-width` for `$min`, `max-width` (value - 1) for `$max`, or both. `ds-breakpoint($label)` returns the width of a breakpoint in px (a Sass value: media queries cannot read custom properties). JavaScript reads them from the custom properties, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript).
 - Misc: `@include ds-arrow($size, $direction, $color)`, `@include spin` (it uses the keyframes of `@include ds-keyframes()`, included once at the root of a theme).
-- Theme: `@include ds-theme()`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript).
 
 ```scss
 @use '../tokens' as *;
@@ -234,12 +233,12 @@ Each theme writes its tokens once, as CSS custom properties on `:root`, with `@i
 | `font-style`  | `$font-styles`   | `--ds-font-style-<type>-<variant>-<prop>`, `--ds-font-style-default-<prop>` | `--ds-font-style-title-page-main-weight: 900`                          |
 | `space`       | `$spacings`      | `--ds-space-<step>`                                                         | `--ds-space-4: 1rem`                                                   |
 | `radius`      | `$radii`         | `--ds-radius-<name>`                                                        | `--ds-radius-pill: 999px`                                              |
-| `bp`          | `$breakpoints`   | `--ds-bp-<label>`, in px                                                    | `--ds-bp-md: 992px`                                                    |
+| `bp`          | `$breakpoints`   | `--ds-bp-<label>`, in px, and `--ds-bp-labels`, the list of the labels      | `--ds-bp-md: 992px`, `--ds-bp-labels: xxs xs sm md lg xl xxl`          |
 | `gradient`    | `$gradients`     | `--ds-gradient-<name>-<attr>`                                               | (none: no gradient in the themes)                                      |
 
-`default` writes 164 custom properties, `legacy` 166 (`legacy` has no `status` `warning` color, so no `--ds-color-status-warning`). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
+`default` writes 165 custom properties, `legacy` 167 (`legacy` has no `status` `warning` color, so no `--ds-color-status-warning`). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
 
-The `--ds-bp-*` properties are for JavaScript (`parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ds-bp-md'))`): media queries cannot use custom properties, so `break-p()` and `ds-breakpoint()` use the Sass values, and changing them at runtime changes nothing. The `body::before` theme JSON holds Sass values too.
+The `--ds-bp-*` properties are for JavaScript (`tokens.getBreakpoints()`, `tokens.getToken('bp-md')`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript)): media queries cannot use custom properties, so `break-p()` and `ds-breakpoint()` use the Sass values, and changing the properties at runtime does not change the media queries of the theme.
 
 #### References (derived tokens)
 
@@ -258,7 +257,7 @@ A token can be a reference to another one: `ds-ref(<group>, <keys>…)` in a map
 | `ds-spacing($step)`, `ds-radius($name)`                                                                                           | `ds-spacing-value()`, `ds-radius-value()`                                                                                         |
 | `gradient($name, $attr)`, `@include gradient()`                                                                                   | `gradient-value()`                                                                                                                |
 
-Use the `-value` functions wherever Sass needs the value itself: color functions (`color.change(ds-color-value(gray, white), $alpha: 0.6)`), arithmetic and comparisons (`ds-spacing-value(4) * 2`), media queries, strings such as the theme JSON. `var()` cannot be computed by Sass (`color.change(ds-color(…))` is an error), and the result of a computation is a value: it does not follow the token at runtime.
+Use the `-value` functions wherever Sass needs the value itself: color functions (`color.change(ds-color-value(gray, white), $alpha: 0.6)`), arithmetic and comparisons (`ds-spacing-value(4) * 2`), media queries. `var()` cannot be computed by Sass (`color.change(ds-color(…))` is an error), and the result of a computation is a value: it does not follow the token at runtime.
 
 The colorset and font style accessors resolve the inheritance at build time: `ds-font-family(title, page-sub)` is `var(--ds-font-style-title-default-family)`, the variant that declares it. An unknown token, type or variant, a group of tokens (`ds-token(color, primary)`) or a token without value is a Sass error, with the known keys. `ds-color($type, $variant, $optional: true)` returns `null` for a color that does not exist, so the declaration is left out: `legacy`'s message skin uses it for `ds-color(status, warning)`, which its palette does not have (to be fixed in the palette).
 
@@ -274,9 +273,10 @@ Set the custom property after the theme, globally:
 
 ```js
 document.documentElement.style.setProperty('--ds-color-primary-base', '#0d9488');
+tokens.getToken('color-primary-base'); // '#0d9488': the value in effect, read with getComputedStyle()
 ```
 
-Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the links, the `default` focus outline… What a skin hard-codes (`#fff`, `rgba(0, 0, 0, 0.3)`, font names in `legacy`) and the values Sass computed (`color.change(…)`, the theme JSON) do not, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
+Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the links, the `default` focus outline… What a skin hard-codes (`#fff`, `rgba(0, 0, 0, 0.3)`, font names in `legacy`) and the values Sass computed (`color.change(…)`) do not, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
 
 Or in a scope: `.promo { --ds-color-primary-base: #0d9488; }`. The rules that read `--ds-color-primary-base` inside `.promo` follow, but not the tokens that refer to it: their `var()` was resolved on `:root`, and `.promo` inherits the result. Declare them again in the scope, from Sass with `ds-tokens()` and the groups to declare:
 
@@ -310,16 +310,31 @@ A string `mods` is reflected to the `mods` attribute. An array set in JavaScript
 
 ### Breakpoints shared with JavaScript
 
-Each theme applies `@include ds-theme()` to `body::before` (in its `_base.scss`): the breakpoints (and the primary base color) are written as JSON in the pseudo-element's `content`, which is hidden. The SCSS map stays the single source of truth:
+The SCSS map `$breakpoints` stays the single source of truth. `ds-tokens()` writes each breakpoint as a custom property on `:root`, and the list of their labels:
 
-- `responsive.getStylesJSON()` (also available as `ds.tools.getStylesJSON()`) reads and parses that JSON. It returns `{}` when the theme stylesheet is not loaded.
-- `responsive.processBreakpoints()` turns the map into ranges with the mobile-first semantics of `break-p`: each label starts at its value and ends at the next value - 1, the first label also covers the smaller widths (it starts at 0) and the last one has no maximum. With the theme map: `xxs` 0–575, `xs` 576–767, `sm` 768–991, `md` 992–1199, `lg` 1200–1399, `xl` 1400–1599, `xxl` 1600 and up. `responsive.getBreakpoint()` returns the label and limits (`[min, max]`, or `[min]` for the last label) for a width.
-- `<ds-rsp>` reads the breakpoints (or takes them from its `breakpoints` attribute, written like the Sass map: `breakpoints='{"sm": 0, "lg": 992}'`), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when it starts and each time the breakpoint changes:
+```css
+:root {
+  --ds-bp-xxs: 360px;
+  /* … */
+  --ds-bp-xxl: 1600px;
+  --ds-bp-labels: xxs xs sm md lg xl xxl;
+}
+```
+
+`--ds-bp-labels` is a list of CSS identifiers separated by spaces, from the smallest to the largest width (equal widths in the order of the map). Each label is the end of the name of its property (`--ds-bp-<label>`: the key lower-cased, see [Naming](#naming)). Browsers return a custom property as it is written, but they may trim the whitespace around it or change the whitespace between its tokens, and quoted strings come back with their quotes: so the labels are identifiers, never strings, and a reader splits the value on whitespace. A label that is not an identifier starting with a letter or `_` (`2xl`), a breakpoint named `labels`, or a width that is not in px is a Sass error. Without any breakpoint (an empty map), `--ds-bp-labels` is not written.
+
+- `tokens.getToken(name, element?)` returns the computed value of a token, trimmed: `getToken('bp-md')` or `getToken('--ds-bp-md')` gives `'992px'`; `''` when it is not declared (theme stylesheet not loaded). `element` (`document.documentElement` by default) reads the value in a scope.
+- `tokens.getBreakpoints(element?)` returns the breakpoints, label: width in px, sorted by width: `{ xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 }` with both themes. It reads `--ds-bp-labels`, then each `--ds-bp-<label>` (`992px` or a unitless `992`). A label without a width in px is left out, with one warning that names them; without `--ds-bp-labels` (the theme stylesheet is not loaded yet), it returns `{}` with one warning.
+- `responsive.processBreakpoints()` turns them into ranges with the mobile-first semantics of `break-p`: each label starts at its value and ends at the next value - 1, the first label also covers the smaller widths (it starts at 0) and the last one has no maximum. With the theme map: `xxs` 0–575, `xs` 576–767, `sm` 768–991, `md` 992–1199, `lg` 1200–1399, `xl` 1400–1599, `xxl` 1600 and up. `responsive.getBreakpoint()` returns the label and limits (`[min, max]`, or `[min]` for the last label) for a width.
+- `responsive.isMobile()`, `isTablet()` and `isDesktop()` compare the window width with the `sm` and `md` breakpoints of the theme (`--ds-bp-sm`, `--ds-bp-md`): mobile below `sm`, tablet from `sm` to below `md`, desktop from `md`. Without the theme, 768 and 992 px.
+- `<ds-rsp>` reads the breakpoints with `tokens.getBreakpoints()` (or takes them from its `breakpoints` attribute, label: minimum width in px: `breakpoints='{"sm": 0, "lg": 992}'`), listens to `resize` (debounced by `debounce-delay`, 500 ms by default), and when it starts and each time the breakpoint changes:
   - dispatches a `breakpointChange` event (`detail: { all, current, previous, isGrowing }`, type `BreakpointChangeDetail`) on every element with a `data-use-rsp` attribute. This event does not bubble;
   - sets on these elements the properties declared in their `data-rsp` attribute (a JSON string) for the current breakpoint (or the closest smaller breakpoint that has some). Unknown labels are ignored with a warning; the initial values of the changing properties are kept for the smallest breakpoint. They are read from the element's property (a camelCase property such as `hGap` included), else from its attribute (`h-gap`). Initialised elements get a `data-rsp-init` attribute;
   - then emits the same `breakpointChange` event from `<ds-rsp>` itself. This one bubbles: listen to it on `<ds-rsp>` or on `document`. A subscriber that contains `<ds-rsp>` receives both events and should only handle the one whose `target` is itself, as `ds-grid` does.
   - Elements subscribed after it started, with its `subscribe(element)` method, or inserted in the document (or given a `data-use-rsp` attribute) and matching `subscriber-selector`, get the params of the current breakpoint at once. Insertions are detected with a `MutationObserver`.
-  - Without breakpoints (theme stylesheet not loaded, no `breakpoints` attribute), it logs a warning and does nothing.
+  - Without breakpoints (theme stylesheet not loaded, no `breakpoints` attribute), it logs one warning and tracks nothing: no `resize` listener, no event, the subscribers wait.
+  - Its `refresh()` method reads the breakpoints again (from the `breakpoints` attribute, else from the theme) and applies them: it subscribes the matching elements that are not subscribed yet, sets the params of the current breakpoint on every subscriber again, and emits `breakpointChange` only when the label or the limits of the current breakpoint changed (`previous` is then the former breakpoint, `undefined` when it starts). Without breakpoints until then (theme stylesheet loaded after `<ds-rsp>`), it starts, as when the theme is there at load. When it finds none (theme stylesheet removed, or being replaced), it keeps the current ones and logs a warning, once until it finds some again. A new `breakpoints` attribute value is applied the same way.
+  - `<ds-rsp>` calls `refresh()` by itself when a stylesheet `<link>` of the document loads (it listens to `load` on the document, in the capture phase): a theme stylesheet added after it, or a theme switched by changing the `href` of its `<link>`, as the demo pages do. Call `refresh()` when the theme changes otherwise: a `<style>` element, a constructed stylesheet (`adoptedStyleSheets`), a `media` attribute changed after the load (`media="print" onload="this.media='all'"`), custom properties set from JavaScript.
 
 ```html
 <ds-rsp></ds-rsp>
@@ -327,6 +342,14 @@ Each theme applies `@include ds-theme()` to `body::before` (in its `_base.scss`)
   <ds-grid-item width="1" data-use-rsp data-rsp='{"sm": {"width": 3}, "lg": {"width": 5}}'>…</ds-grid-item>
 </ds-grid>
 ```
+
+```js
+const rsp = document.querySelector('ds-rsp');
+document.head.append(Object.assign(document.createElement('style'), { textContent: themeCss }));
+await rsp.refresh();
+```
+
+**Changed:** The themes used to write the breakpoints, and the primary base color, as JSON in the `content` of `body::before` (the `ds-theme()` mixin, `ds-breakpoints-to-json()`), which `responsive.getStylesJSON()` (`ds.tools.getStylesJSON()`) parsed with `removeQuotes()`. That bridge is gone: use `tokens.getBreakpoints()` and `tokens.getToken('color-primary-base')`; the `SassStyles` type is gone too.
 
 ## Using the components
 
@@ -379,28 +402,30 @@ Each component documents its properties, events, methods and slots in the `readm
 The package entry also exports the shared utilities, with their types:
 
 ```ts
-import { ds, props, responsive, debounce, throttle, uuid, AppStatus, DsComponentContext } from 'dot-stash';
-import type { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint, SassStyles, DsComponentContextType } from 'dot-stash';
+import { ds, props, responsive, tokens, debounce, throttle, uuid, AppStatus, DsComponentContext } from 'dot-stash';
+import type { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint, DsComponentContextType } from 'dot-stash';
 
-const { breakpoints } = responsive.getStylesJSON();
+const breakpoints = tokens.getBreakpoints();
+const primary = tokens.getToken('color-primary-base');
 const classList = props.toClassList('ds-card', 'large,dark');
 const onResize = debounce(() => console.log(window.innerWidth), 200);
 ```
 
 The helpers are split into modules, each exported as a namespace:
 
-| Module       | Functions                                                                                                                                           |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `props`      | `isTrue`, `toNumber`, `toFloat`, `toArray`, `fromJSON`, `toClassList`, `toString`                                                                   |
-| `css`        | `set`, `get`, `toNumber` (inline styles)                                                                                                            |
-| `dom`        | `cleanHTML`, `loadScript`, `scrollTo`, `getFileExtension`, `getOffset`                                                                              |
-| `ajax`       | `buildQuery`, `get`, `post` (JSON responses; `get(url, query, { responseType: 'text' })` returns the body as text, e.g. HTML)                       |
-| `responsive` | `getStylesJSON`, `removeQuotes` (Sass bridge), `processBreakpoints`, `getBreakpoint`, `getParamsForBreakpoint`, `isMobile`, `isTablet`, `isDesktop` |
-| `env`        | `touchSupport`                                                                                                                                      |
-| `form`       | `submit`, `reset`                                                                                                                                   |
-| `context`    | `get`, `DsComponentContext`                                                                                                                         |
+| Module       | Functions                                                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `props`      | `isTrue`, `toNumber`, `toFloat`, `toArray`, `fromJSON`, `toClassList`, `toString`                                             |
+| `css`        | `set`, `get`, `toNumber` (inline styles)                                                                                      |
+| `dom`        | `cleanHTML`, `loadScript`, `scrollTo`, `getFileExtension`, `getOffset`                                                        |
+| `ajax`       | `buildQuery`, `get`, `post` (JSON responses; `get(url, query, { responseType: 'text' })` returns the body as text, e.g. HTML) |
+| `tokens`     | `getToken`, `getBreakpoints` (the theme custom properties)                                                                    |
+| `responsive` | `processBreakpoints`, `getBreakpoint`, `getParamsForBreakpoint`, `isMobile`, `isTablet`, `isDesktop`                          |
+| `env`        | `touchSupport`                                                                                                                |
+| `form`       | `submit`, `reset`                                                                                                             |
+| `context`    | `get`, `DsComponentContext`                                                                                                   |
 
-`ds` groups the same modules in one object (`ds.props.toClassList(...)`, `ds.ajax.get(...)`), and `ds.tools` keeps the DOM helpers and the Sass bridge under their former key (`ds.tools.scrollTo`, `ds.tools.getStylesJSON`…). Inside the library, components import the functions from their module (`import { toClassList } from '../../utils/props'`), so each bundle only contains the helpers it uses.
+`ds` groups the same modules in one object (`ds.props.toClassList(...)`, `ds.tokens.getBreakpoints()`), and `ds.tools` keeps the DOM helpers under their former key (`ds.tools.scrollTo`…). Inside the library, components import the functions from their module (`import { toClassList } from '../../utils/props'`), so each bundle only contains the helpers it uses.
 
 ## Tests
 
@@ -422,7 +447,7 @@ it('toggles a checkbox', async () => {
 });
 ```
 
-`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that each theme writes valid theme JSON in `body::before`, and that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`.
+`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that its `--ds-bp-labels` lists its `--ds-bp-*` breakpoints by width (and that no JSON is written in a `content` any more), the errors on breakpoint labels, that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`.
 
 `npm test` runs them once, `npm run test.watch` on every change. Spec files are not part of the build output (`dist/`, `www/`, `loader/`). End-to-end tests (`*.e2e.ts`, `npm run test:e2e`) need Puppeteer's Chromium, so `npm ci` must run without `PUPPETEER_SKIP_DOWNLOAD`.
 
