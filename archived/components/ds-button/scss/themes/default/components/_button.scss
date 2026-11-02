@@ -1,0 +1,108 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '../tokens' as *;
+
+// Size modifiers: font size and padding (on the inner control, or on the host when it has none, as ds-trigger).
+$-sizes: (
+  xs: (
+    font-size: ds-token(font-size, 100),
+    padding: ds-spacing(1) ds-spacing(2),
+  ),
+  sm: (
+    font-size: ds-token(font-size, 100),
+    padding: ds-spacing(2) ds-spacing(3),
+  ),
+  md: (
+    font-size: ds-token(font-size, 200),
+    padding: ds-spacing(2) ds-spacing(4),
+  ),
+  lg: (
+    font-size: ds-token(font-size, 300),
+    padding: ds-spacing(3) ds-spacing(5),
+  ),
+  xl: (
+    font-size: ds-token(font-size, 400),
+    padding: ds-spacing(4) ds-spacing(6),
+  ),
+);
+
+// Style modifiers: colorset type and variant (the hover variant is `<variant>-hover`).
+$-styles: (
+  stl-1: (
+    solid,
+    primary,
+  ),
+  stl-2: (
+    outlined,
+    secondary,
+  ),
+  stl-3: (
+    solid,
+    gray,
+  ),
+);
+
+@mixin -size($size) {
+  font-size: map.get($size, font-size);
+
+  & > .ds-button__control,
+  &:not(:has(> .ds-button__control)) {
+    padding: map.get($size, padding);
+  }
+}
+
+.ds-button {
+  @include ds-font-styles(button);
+  @include -size(map.get($-sizes, md));
+  @include ds-colorset-styles(solid, gray);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: ds-radius(sm);
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-timing-function: ease;
+
+  & > .ds-button__control {
+    display: block;
+    width: 100%;
+  }
+
+  @each $name, $size in $-sizes {
+    &.--#{$name} {
+      @include -size($size);
+    }
+  }
+
+  @each $name, $style in $-styles {
+    $type: list.nth($style, 1);
+    $variant: list.nth($style, 2);
+
+    &.--#{$name} {
+      @include ds-colorset-styles($type, $variant);
+
+      &:not([disabled]):hover {
+        @include ds-colorset-styles($type, #{$variant}-hover);
+      }
+    }
+  }
+
+  &:not([disabled]):not([class*='--stl-']):hover {
+    @include ds-colorset-styles(solid, gray-hover);
+  }
+
+  &.--rounded {
+    border-radius: ds-radius(pill);
+  }
+
+  &.--shadow {
+    box-shadow: 0 2px 6px ds-color(shadow, base);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,57 @@
+@use '../tokens' as *;
+
+.ds-tooltip {
+  width: 100%;
+
+  &__content {
+    width: 100%;
+    text-align: center;
+  }
+
+  & [slot='message'] {
+    background: ds-color(gray, white);
+    padding: ds-spacing(2) ds-spacing(4);
+    border-radius: ds-radius(md);
+    box-shadow: 0 2px 6px ds-color(shadow, medium);
+    font-weight: normal;
+    text-align: center;
+
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate3d(-50%, 0, 0);
+      z-index: -1;
+      height: 0;
+      width: 0;
+      border-right: 10px solid transparent;
+      border-top: 12px solid ds-color(border, light);
+      border-left: 10px solid transparent;
+      border-radius: 0;
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translate3d(-50%, -1px, 0);
+      z-index: 0;
+      height: 0;
+      width: 0;
+      border-right: 10px solid transparent;
+      border-top: 12px solid ds-color(gray, white);
+      border-left: 10px solid transparent;
+      border-radius: 0;
+    }
+  }
+
+  &.--top {
+    & [slot='message'] {
+      bottom: calc(100% + 0.5rem);
+    }
+  }
+}

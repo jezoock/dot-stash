@@ -1,0 +1,214 @@
+@use '../tokens' as *;
+
+.ds-nav {
+  @include break-p(md) {
+    &.--main {
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+      white-space: nowrap;
+    }
+
+    &.--sub {
+      text-align: left;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1050px;
+      width: 100%;
+      margin: auto;
+
+      & ds-nav-item {
+        display: block;
+        width: 33.333%;
+      }
+    }
+  }
+}
+
+.ds-nav-item {
+  position: relative;
+
+  &__link {
+    & > a {
+      text-transform: uppercase;
+      display: block;
+      font-size: ds-token(font-size, 200);
+      color: ds-color(gray, darkest);
+    }
+  }
+
+  @include break-p(null, md) {
+    padding: ds-spacing(3) 0;
+
+    &__expand-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0;
+      z-index: 100;
+
+      & > ds-trigger {
+        display: block;
+        transition: transform ease 0.4s;
+        transform: rotateZ(0deg);
+      }
+    }
+
+    &__sub-nav {
+      transition: height ease 0.4s;
+      height: 0;
+      overflow: hidden;
+    }
+
+    &__link {
+      & > a {
+        font-size: 1.25rem;
+      }
+    }
+
+    &.--open {
+      & > .ds-nav-item {
+        &__expand-button {
+          & > ds-trigger {
+            transform: rotateZ(180deg);
+
+            &:before {
+              @include ds-icon-content(minus);
+            }
+          }
+        }
+      }
+    }
+
+    &.--depth-0 {
+      border-bottom: 1px solid ds-color(gray, light);
+
+      & > .ds-nav-item {
+        &__expand-button {
+          top: 26px;
+        }
+
+        &__link {
+          & > a {
+            padding: ds-spacing(4) 0;
+          }
+        }
+      }
+    }
+
+    // A line between the items of a sub-navigation: the .ds-nav-item element is the only child of its ds-nav-item host.
+    ds-nav-item:not(:last-child) > &.--depth-1 {
+      border-bottom: 1px solid ds-color(gray, light);
+    }
+
+    &.--depth-1 {
+      & img {
+        width: 100%;
+      }
+    }
+  }
+
+  @include break-p(md, null) {
+    &__expand-button {
+      display: none;
+    }
+
+    &__sub-nav {
+      position: fixed;
+      background: ds-color(gray, white);
+      left: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity ease 0.4s;
+      z-index: 10;
+      width: 100%;
+    }
+
+    &:hover {
+      & > .ds-nav-item {
+        &__sub-nav {
+          opacity: 1;
+          pointer-events: unset;
+        }
+      }
+    }
+
+    &.--depth-0 {
+      & > .ds-nav-item {
+        &__link {
+          padding: 0 ds-spacing(3);
+          display: block;
+
+          & > a {
+            padding: ds-spacing(5) ds-spacing(2);
+            line-height: 19px;
+
+            &:hover {
+              color: ds-color(gray, black);
+            }
+          }
+        }
+
+        &__sub-nav {
+          padding: ds-spacing(4) 0;
+
+          // Classes of the page (a host page sets them on an ancestor), below a header with or without its top bar.
+          .--without-top-header & {
+            top: 68px;
+          }
+
+          .--with-top-header & {
+            top: 96px;
+          }
+        }
+      }
+
+      &.--active > .ds-nav-item__link > a {
+        color: ds-color(primary, base);
+      }
+    }
+
+    &.--depth-1,
+    &.--depth-2,
+    &.--depth-3,
+    &.--depth-4 {
+      padding: 0 ds-spacing(6);
+      box-sizing: border-box;
+      margin: auto;
+      max-width: 360px;
+      width: 100%;
+
+      & > .ds-nav-item {
+        &__link {
+          padding: ds-spacing(2) 0;
+          width: 100%;
+
+          & > a {
+            display: block;
+            width: 100%;
+
+            &:hover {
+              color: ds-color(primary, darker);
+              font-weight: normal;
+            }
+
+            & span {
+              display: block;
+            }
+
+            & img {
+              width: 100%;
+              height: auto;
+            }
+          }
+        }
+
+        &__sub-nav {
+          top: -0.5rem;
+          left: 100%;
+        }
+      }
+    }
+  }
+}

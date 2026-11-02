@@ -1,0 +1,91 @@
+.ds-marquee {
+  position: relative;
+  display: block;
+  // The messages scroll on one line: the host is as high as that line, and clips what overflows it.
+  overflow: hidden;
+
+  &__container {
+    white-space: nowrap;
+    min-width: 100%;
+  }
+
+  &__content {
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    // The messages are in a row: the first one's negative margin scrolls them, and its width (clientWidth,
+    // 0 for an inline element) is the scrolling period (see start() in marquee.tsx).
+    & > * {
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+
+  &.--transition-slide-ttb {
+    & .ds-marquee {
+      &__content {
+        animation-name: slide-ttb;
+      }
+    }
+  }
+
+  &.--transition-slide-btt {
+    & .ds-marquee {
+      &__content {
+        animation-name: slide-btt;
+      }
+    }
+  }
+
+  &.--transition-slide-rtl {
+    & .ds-marquee {
+      &__content {
+        animation-name: slide-rtl;
+      }
+    }
+  }
+
+  &.--transition-slide-ltr {
+    & .ds-marquee {
+      &__content {
+        animation-name: slide-ltr;
+      }
+    }
+  }
+}
+
+@keyframes slide-ttb {
+  0% {
+    transform: translate3d(0, -100%, 0);
+  }
+  100% {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+@keyframes slide-btt {
+  0% {
+    transform: translate3d(0, 100%, 0);
+  }
+  100% {
+    transform: translate3d(0, -100%, 0);
+  }
+}
+
+@keyframes slide-rtl {
+  0% {
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes slide-ltr {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}

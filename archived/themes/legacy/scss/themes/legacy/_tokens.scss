@@ -1,0 +1,355 @@
+@use '../../engine/tools/references' as *;
+
+// The legacy theme tokens: the engine configured with the values of the legacy look.
+// The theme stylesheets load the engine through this module (`@use '../tokens' as *;`), so they all get these values.
+// The values are !default: a theme built on legacy can still change them with `@use '<path>/themes/legacy/tokens' with (…)`.
+// The colorsets and font styles refer to colors, font sizes and families with ds-ref(): they follow them (see ds-tokens()).
+
+// *** COLORS *** //
+// The engine families, plus colors of the legacy skins named after their role: status danger, the shadow shades and the
+// overlay veils (black or white with an alpha), surface and border.
+
+$-colors: (
+  primary: (
+    darker: #905f24,
+    dark: #c79f78,
+    base: #e4be90,
+    light: #ffe0ba,
+  ),
+  secondary: (
+    darker: #6b1909,
+    dark: #c94328,
+    base: #0d0d0d,
+    light: #ff9580,
+  ),
+  gray: (
+    white: #ffffff,
+    lightest: #f2f2f2,
+    lighter: #eeedec,
+    light: #ddd,
+    base: #bbb,
+    dark: #999,
+    darker: #444,
+    darkest: #161c27,
+    black: #000000,
+  ),
+  status: (
+    success: #0a9872,
+    // The warning orange of the site's first palette, between the success green and the error red.
+    warning: #f29100,
+    error: #ea0000,
+    info: #3b86ff,
+    busy: #c8c8c8,
+    disabled: #3d3d3d,
+    discount: #ff7575,
+    new: #005f77,
+    // The text of the site's danger alerts (.message.alert.--danger), brighter than error.
+    danger: #ff0000,
+  ),
+  input: (
+    caret: #5294f2,
+  ),
+  shadow: (
+    base: #00000029,
+    // The drop shadow of the buttons (--shadow), the --left sidebar and the tooltips.
+    medium: rgba(0, 0, 0, 0.3),
+    // The drop shadow of the combo option list.
+    strong: rgba(0, 0, 0, 0.4),
+    // The text shadow of the loading icon (ds-ajax).
+    text: rgba(0, 0, 0, 0.5),
+    // The text shadow of the labels on the images of an image combo.
+    text-strong: rgba(0, 0, 0, 0.8),
+  ),
+  overlay: (
+    // The veil over a loading ds-ajax.
+    base: rgba(255, 255, 255, 0.6),
+    // The veil behind an open combo (overlay).
+    light: rgba(255, 255, 255, 0.4),
+  ),
+  surface: (
+    // The background of the highlighted grids of the site (.ds-grid.--conseil, .ds-grid.--capital).
+    highlight: #dbd5dc,
+  ),
+  border: (
+    // The outline of the tooltip arrow.
+    light: #ccc,
+  ),
+);
+
+// *** COLORSETS *** //
+// White and black are references to the gray white and black of the palette. The gray button (solid gray, gray-hover)
+// keeps colors of its own (#dcdcdc, #ccc, #333): tokens in their own right (--ds-colorset-solid-gray-…).
+
+$-colorset: (
+  default: (
+    text: ds-ref(color, primary, base),
+    border: transparent,
+    background: transparent,
+  ),
+  solid: (
+    default: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    primary: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    primary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, dark),
+      background: ds-ref(color, primary, dark),
+    ),
+    primary-light: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, light),
+      background: ds-ref(color, primary, light),
+    ),
+    primary-light-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    secondary: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, secondary, base),
+    ),
+    secondary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, secondary, dark),
+      background: ds-ref(color, secondary, dark),
+    ),
+    white: (
+      text: ds-ref(color, gray, black),
+      border: ds-ref(color, gray, white),
+      background: ds-ref(color, gray, white),
+    ),
+    white-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, gray, black),
+      background: ds-ref(color, gray, black),
+    ),
+    gray: (
+      text: ds-ref(color, gray, black),
+      border: #dcdcdc,
+      background: #dcdcdc,
+    ),
+    gray-hover: (
+      text: #333,
+      border: #ccc,
+      background: #ccc,
+    ),
+    disabled: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, status, disabled),
+      background: ds-ref(color, status, disabled),
+    ),
+  ),
+  outlined: (
+    default: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: transparent,
+    ),
+    primary: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: transparent,
+    ),
+    primary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    secondary: (
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: transparent,
+    ),
+    secondary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, secondary, base),
+    ),
+    white: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, gray, white),
+      background: transparent,
+    ),
+    white-hover: (
+      text: ds-ref(color, gray, black),
+      border: ds-ref(color, gray, white),
+      background: ds-ref(color, gray, white),
+    ),
+    disabled: (
+      text: ds-ref(color, status, disabled),
+      border: ds-ref(color, status, disabled),
+      background: transparent,
+    ),
+  ),
+  link: (
+    default: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, gray, white),
+    ),
+    primary: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, gray, white),
+    ),
+    secondary: (
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, gray, white),
+    ),
+    disabled: (
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, gray, white),
+    ),
+  ),
+);
+
+// *** TYPOGRAPHY *** //
+
+$-font-sizes: (
+  100: 0.875rem,
+  200: 1rem,
+  300: 1.125rem,
+  400: 1.5rem,
+  500: 1.625rem,
+  600: 1.75rem,
+  700: 2.125rem,
+  800: 2.25rem,
+  900: 2.5rem,
+);
+
+// The fonts of the legacy skins: body (the page, the buttons, the combos and togglers: Montserrat, without fallback, as
+// the site declares it), heading (the titles), text (the paragraphs and lists of the content blocks and ds-text) and
+// caption (the footer link). Montserrat and Mulish are loaded by _fonts.scss.
+$-font-families: (
+  'default': (
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+  ),
+  'Garamond': 'Garamond',
+  'Now': 'Now',
+  body: 'Montserrat',
+  heading: (
+    'Montserrat',
+    sans-serif,
+  ),
+  text: (
+    'Mulish',
+    sans-serif,
+  ),
+  caption: Arial,
+);
+
+$-font-styles: (
+  default: (
+    family: ds-ref(font-family, 'Now'),
+    size: ds-ref(font-size, 200),
+    weight: 500,
+    decoration: none,
+  ),
+  page: (
+    light: (
+      weight: 300,
+    ),
+    default: (),
+    strong: (
+      weight: 700,
+    ),
+  ),
+  text: (
+    default: (),
+    paragraph: (
+      size: ds-ref(font-size, 100),
+    ),
+    span: (
+      size: ds-ref(font-size, 100),
+    ),
+    note: (
+      size: ds-ref(font-size, 100),
+    ),
+    quote: (
+      size: ds-ref(font-size, 100),
+    ),
+    code: (
+      size: ds-ref(font-size, 100),
+    ),
+    pre: (
+      size: ds-ref(font-size, 100),
+    ),
+  ),
+  title: (
+    page-main: (
+      size: ds-ref(font-size, 800),
+      weight: 900,
+    ),
+    page-sub: (
+      size: ds-ref(font-size, 700),
+      weight: 700,
+    ),
+    section-main: (
+      size: ds-ref(font-size, 600),
+      weight: 700,
+    ),
+    section-sub: (
+      size: ds-ref(font-size, 500),
+    ),
+    block-main: (
+      size: ds-ref(font-size, 400),
+      weight: 700,
+    ),
+    block-sub: (
+      size: ds-ref(font-size, 300),
+    ),
+  ),
+  button: (
+    default: (
+      family: ds-ref(font-family, 'Garamond'),
+      size: ds-ref(font-size, 300),
+    ),
+  ),
+  form: (
+    default: (
+      size: ds-ref(font-size, 200),
+    ),
+    input: (
+      size: ds-ref(font-size, 200),
+    ),
+    label: (
+      size: ds-ref(font-size, 300),
+      weight: 700,
+    ),
+  ),
+  link: (
+    default: (
+      size: ds-ref(font-size, 200),
+      weight: 500,
+      decoration: underline,
+    ),
+  ),
+);
+
+@forward '../../engine' with (
+  $colors: $-colors !default,
+  $colorset: $-colorset !default,
+  $font-sizes: $-font-sizes !default,
+  $font-families: $-font-families !default,
+  $font-styles: $-font-styles !default
+);

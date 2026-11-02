@@ -1,0 +1,70 @@
+@use '../tokens' as *;
+
+.ds-footer {
+  background-color: ds-color(gray, darkest);
+  color: ds-color(gray, white);
+
+  & ds-grid {
+    max-width: 1700px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  @include break-p(null, md) {
+    padding: 75px 0 0 0;
+
+    & ds-grid {
+      padding: 0 ds-spacing(6);
+    }
+  }
+
+  @include break-p(md) {
+    padding: 75px 0 0 0;
+
+    & ds-grid {
+      padding: 0 ds-spacing(4) 45px ds-spacing(4);
+    }
+  }
+}
+
+.ds-footer-link {
+  width: 100%;
+  text-align: center;
+  color: ds-color(gray, white);
+  line-height: 50px;
+  background-color: ds-color(primary, base);
+  font-family: ds-token(font-family, caption);
+  font-size: 12px;
+  display: block;
+
+  &:hover {
+    color: ds-color(gray, white);
+  }
+}
+
+.ds-heading {
+  // !important: over the --image-text heading layout of the content blocks (.ds-block.--content .ds-heading.--image-text).
+  &.--footer {
+    justify-content: start !important;
+    align-items: start !important;
+    max-width: 575px;
+    margin: 0 !important;
+
+    & .ds-heading {
+      &__image {
+        width: 100% !important;
+        max-width: 275px !important;
+        padding: 0 0 ds-spacing(5) 0;
+      }
+
+      &__content {
+        width: 100% !important;
+        padding: 0 0 ds-spacing(6) 0 !important;
+
+        & .ds-text {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

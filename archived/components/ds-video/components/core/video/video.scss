@@ -1,0 +1,44 @@
+.ds-video {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  &__player {
+    width: 100%;
+  }
+
+  &__pause-button,
+  &__play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    transition: opacity ease 0.4s;
+    z-index: 10;
+  }
+
+  &__play-button {
+    opacity: 0.2;
+  }
+
+  &__pause-button {
+    opacity: 0;
+  }
+
+  &:hover {
+    .ds-video {
+      &__pause-button,
+      &__play-button {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  // One button of each pair: play or pause (they are at the same place), mute or unmute.
+  &.--playing .ds-video__play-button,
+  &:not(.--playing) .ds-video__pause-button,
+  &.--muted .ds-video__mute-button,
+  &:not(.--muted) .ds-video__unmute-button {
+    display: none;
+  }
+}

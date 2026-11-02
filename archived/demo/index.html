@@ -1,0 +1,113 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>dot-stash</title>
+
+    <!-- The theme stylesheet (dist/css/, compiled by npm run build:css): the theme switcher below changes its file name. -->
+    <link id="ds-theme-stylesheet" rel="stylesheet" href="/dist/css/default.css" />
+    <script>
+      // Demo theme switcher: loads <theme>.css instead of the first theme, and remembers the choice in localStorage when the browser allows it.
+      // Once the theme stylesheet has loaded, refresh() makes the ds-rsp elements read its breakpoints (--ds-bp-labels, --ds-bp-<label>).
+      // Runtime token demo: the color input sets the --ds-color-primary-base custom property on <html> (inline, so it wins over the
+      // theme's :root value). The skins read it with var(), and the colorsets that refer to it follow; Reset removes it.
+      (() => {
+        const themes = ['default', 'legacy'];
+        const storageKey = 'ds-demo-theme';
+        const stylesheet = document.getElementById('ds-theme-stylesheet');
+        const primaryProperty = '--ds-color-primary-base';
+        const setTheme = theme => {
+          stylesheet.href = stylesheet.getAttribute('href').replace(/[^/]+\.css$/, `${theme}.css`);
+        };
+
+        let theme = themes[0];
+        try {
+          const savedTheme = localStorage.getItem(storageKey);
+          theme = themes.includes(savedTheme) ? savedTheme : theme;
+        } catch {
+          // No storage (private mode, blocked cookies): the first theme.
+        }
+        setTheme(theme);
+
+        document.addEventListener('DOMContentLoaded', () => {
+          const select = document.getElementById('ds-theme-select');
+          select.append(...themes.map(name => new Option(name, name, false, name === theme)));
+          select.addEventListener('change', () => {
+            document.documentElement.style.removeProperty(primaryProperty);
+            setTheme(select.value);
+            try {
+              localStorage.setItem(storageKey, select.value);
+            } catch {
+              // Not remembered.
+            }
+          });
+
+          // The input shows the current value of the token (#rrggbb, as <input type="color"> needs).
+          const primaryInput = document.getElementById('ds-primary-color');
+          const showPrimary = () => {
+            const value = getComputedStyle(document.documentElement).getPropertyValue(primaryProperty);
+            if (!value) return; // The theme stylesheet is still loading: shown on its load event.
+            const probe = document.createElement('span');
+            probe.style.color = value;
+            document.body.append(probe);
+            const [r, g, b] = getComputedStyle(probe).color.match(/\d+/g).map(Number);
+            probe.remove();
+            primaryInput.value = `#${[r, g, b].map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
+          };
+          showPrimary();
+
+          // ds-rsp also refreshes by itself when a stylesheet <link> loads: the explicit call is what a page does when it changes
+          // the theme otherwise (a <style> element, a constructed stylesheet…). Without a change, refresh() emits no event.
+          const refreshResponsive = () =>
+            customElements
+              .whenDefined('ds-rsp')
+              .then(() => Promise.all(Array.from(document.querySelectorAll('ds-rsp'), rsp => rsp.refresh())))
+              .catch(error => console.error('[demo] ds-rsp refresh() failed', error));
+          stylesheet.addEventListener('load', () => {
+            showPrimary();
+            refreshResponsive();
+          });
+          primaryInput.addEventListener('input', () => document.documentElement.style.setProperty(primaryProperty, primaryInput.value));
+          document.getElementById('ds-primary-color-reset').addEventListener('click', () => {
+            document.documentElement.style.removeProperty(primaryProperty);
+            showPrimary();
+          });
+        });
+      })();
+    </script>
+    <script type="module" src="/www/build/dot-stash.esm.js"></script>
+    <script nomodule src="/www/build/dot-stash.js"></script>
+  </head>
+
+  <body>
+    <div
+      id="ds-demo-controls"
+      style="
+        position: fixed;
+        top: 0.5rem;
+        right: 0.5rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: #fff;
+        border: 1px solid #ccc;
+        font: 12px sans-serif;
+      "
+    >
+      <label>
+        Theme
+        <select id="ds-theme-select"></select>
+      </label>
+      <!-- Runtime token demo (see the script above): sets --ds-color-primary-base on <html>. -->
+      <label title="Sets the --ds-color-primary-base custom property on the html element">
+        Primary color token (--ds-color-primary-base)
+        <input id="ds-primary-color" type="color" />
+      </label>
+      <button id="ds-primary-color-reset" type="button">Reset the primary color</button>
+    </div>
+    <ds-main></ds-main>
+  </body>
+</html>

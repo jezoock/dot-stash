@@ -1,0 +1,124 @@
+@use '../tokens' as *;
+
+.ds-text {
+  // !important: over the font shorthand and paddings of the toggler texts (.ds-toggler-item .ds-text.--toggler).
+  h3,
+  h5,
+  h6,
+  p {
+    font-family: ds-token(font-family, text) !important;
+    padding: 0 0 10px 0 !important;
+  }
+
+  p,
+  li {
+    line-height: 1.4 !important;
+  }
+
+  ul {
+    padding: 0 0 28px 0;
+  }
+
+  li {
+    font-family: ds-token(font-family, text);
+    padding: 0 0 0 ds-spacing(2);
+    margin: 0 0 0 ds-spacing(3);
+
+    &::marker {
+      content: '*';
+      padding: 0 ds-spacing(1);
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li {
+    & a {
+      text-decoration: underline;
+    }
+  }
+
+  h1,
+  h2,
+  h4 {
+    font-family: ds-token(font-family, heading);
+    text-transform: uppercase;
+  }
+
+  h1 {
+    padding: 0 0 20px 0;
+    font-weight: normal;
+  }
+
+  h2 {
+    letter-spacing: 1.8px;
+    padding: 0 0 10px 0;
+
+    &.--creative {
+      font-weight: normal;
+      padding: 0 0 20px 0;
+    }
+  }
+
+  h3 {
+    font-weight: bold;
+    text-transform: none;
+    letter-spacing: 0.4px;
+  }
+
+  h4 {
+    font-weight: normal;
+    padding: 0 0 20px 0;
+  }
+
+  @include break-p(null, sm) {
+    h1 {
+      font-size: 40px;
+    }
+
+    h2 {
+      font-size: 20px;
+      line-height: 1.2;
+
+      &.--creative {
+        font-size: 40px;
+      }
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+
+    h4 {
+      font-size: 40px;
+    }
+  }
+
+  @include break-p(sm) {
+    h1 {
+      font-size: 50px;
+    }
+
+    h2 {
+      font-size: 24px;
+      line-height: 30px;
+
+      &.--creative {
+        font-size: 50px;
+      }
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+
+    h4 {
+      font-size: 50px;
+    }
+  }
+}

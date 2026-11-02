@@ -1,0 +1,254 @@
+@use '../tokens' as *;
+
+.ds-button {
+  font-family: ds-token(font-family, body);
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0px;
+  transition-duration: 0.4s;
+  transition-property: color, background-color, border-color;
+  transition-timing-function: ease;
+  cursor: pointer;
+
+  & > a,
+  & > button,
+  & > span,
+  & > strong,
+  & > div {
+    cursor: inherit;
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    display: block;
+    width: 100%;
+  }
+
+  &.--rounded {
+    border-radius: ds-radius(circle);
+  }
+
+  &.--rounded,
+  &.--xs,
+  &.--sm,
+  &.--md,
+  &.--lg,
+  &.--xl {
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  &.--xs {
+    font-size: 10px;
+    line-height: 0.75rem;
+
+    &.--rounded {
+      border-radius: 0.75rem;
+    }
+
+    &.--shadow {
+      box-shadow: 0px 1px 3px ds-color(shadow, medium);
+    }
+  }
+
+  &.--sm {
+    font-size: 12px;
+    line-height: 1rem;
+
+    &.--rounded {
+      border-radius: 1.25rem;
+    }
+
+    &.--shadow {
+      box-shadow: 1px 2px 5px ds-color(shadow, medium);
+    }
+  }
+
+  &.--md {
+    letter-spacing: 0.96px;
+
+    &.--shadow {
+      box-shadow: 3px 5px 10px ds-color(shadow, medium);
+    }
+
+    @include break-p(null, md) {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
+
+    @include break-p(md) {
+      font-size: ds-token(font-size, 200);
+      line-height: 1.25rem;
+    }
+  }
+
+  &.--lg {
+    letter-spacing: 1px;
+    text-align: center;
+
+    &.--shadow {
+      box-shadow: 5px 8px 20px ds-color(shadow, medium);
+    }
+
+    @include break-p(null, md) {
+      font-size: ds-token(font-size, 200);
+      line-height: 1.25rem;
+    }
+
+    @include break-p(md) {
+      font-size: 1.25rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  &.--xl {
+    &.--shadow {
+      box-shadow: 5px 8px 20px ds-color(shadow, medium);
+    }
+
+    @include break-p(null, md) {
+      font-size: 15px;
+      line-height: 18px;
+    }
+
+    @include break-p(md) {
+      font-size: 1.25rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  &.--xs {
+    & > a,
+    & > button {
+      padding: ds-spacing(2);
+    }
+  }
+
+  &.--sm {
+  }
+
+  &.--md {
+    & > a,
+    & > button {
+      @include break-p(null, md) {
+        padding: ds-spacing(2) ds-spacing(5);
+      }
+
+      @include break-p(md) {
+        padding: ds-spacing(3) 2.5rem;
+      }
+    }
+  }
+
+  &.--lg {
+    & > a,
+    & > button {
+      @include break-p(null, md) {
+        padding: ds-spacing(3) ds-spacing(4);
+      }
+
+      @include break-p(md) {
+        padding: ds-spacing(4) ds-spacing(5);
+      }
+    }
+  }
+
+  &.--xl {
+    & > a,
+    & > button {
+      @include break-p(null, md) {
+        padding: ds-spacing(4) ds-spacing(5);
+      }
+
+      @include break-p(md) {
+        padding: 1.25rem;
+      }
+    }
+  }
+
+  &:not(:has(a)):not(:has(button)):not(:has(span)):not(:has(strong)):not(:has(div)) {
+    &.--xs {
+      padding: ds-spacing(2);
+    }
+
+    &.--sm {
+    }
+
+    &.--md {
+      @include break-p(null, md) {
+        padding: ds-spacing(2) ds-spacing(5);
+      }
+
+      @include break-p(md) {
+        padding: ds-spacing(3) 2.5rem;
+      }
+    }
+
+    &.--lg {
+      @include break-p(null, md) {
+        padding: ds-spacing(3) ds-spacing(4);
+      }
+
+      @include break-p(md) {
+        padding: ds-spacing(4) ds-spacing(5);
+      }
+    }
+
+    &.--xl {
+      @include break-p(null, md) {
+        padding: ds-spacing(4) ds-spacing(5);
+      }
+
+      @include break-p(md) {
+        padding: 1.25rem;
+      }
+    }
+  }
+
+  &:not([disabled]) {
+    &.--stl-1 {
+      @include ds-colorset-styles(solid, primary);
+
+      &:hover {
+        @include ds-colorset-styles(solid, primary-hover);
+      }
+    }
+
+    &.--stl-2 {
+      @include ds-colorset-styles(outlined, secondary);
+
+      &:hover {
+        @include ds-colorset-styles(outlined, secondary-hover);
+      }
+    }
+
+    &.--stl-3 {
+      @include ds-colorset-styles(solid, gray);
+
+      &:hover {
+        @include ds-colorset-styles(solid, gray-hover);
+      }
+    }
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+
+    &.--stl-1,
+    &.--stl-3 {
+      @include ds-colorset-styles(solid, disabled);
+
+      &:hover {
+        @include ds-colorset-styles(solid, disabled);
+      }
+    }
+
+    &.--stl-2 {
+      @include ds-colorset-styles(outlined, disabled);
+
+      &:hover {
+        @include ds-colorset-styles(outlined, disabled);
+      }
+    }
+  }
+}
