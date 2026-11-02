@@ -1,7 +1,8 @@
 const DotstashConfig = {
   // The themes gulp compiles: scss/themes/<theme>/index.scss → dist/css/<theme>.css,
   // and their page stylesheets scss/themes/<theme>/pages/<page>.scss → dist/css/pages/<theme>/<page>.css.
-  themes: ['default', 'legacy'],
+  // A theme added to scss/themes/ is listed here too (see "Creating a theme" in README.md).
+  themes: ['default'],
   paths: {
     source: {
       root: '.',

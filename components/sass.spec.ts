@@ -69,7 +69,7 @@ describe('Sass stylesheets', () => {
   // The configuration comes with the first load of the module: the theme then gets the configured tokens.
   it.each([
     ['the engine tokens (default theme)', "@use 'engine' with ($grid-md: 1000); @use 'themes/default';"],
-    ['the legacy tokens (a theme built on legacy)', "@use 'themes/legacy/tokens' with ($grid-md: 1000); @use 'themes/legacy';"],
+    ['the tokens of the default theme', "@use 'themes/default/tokens' with ($grid-md: 1000); @use 'themes/default';"],
   ])('lets a theme configure %s with @use … with (…)', (_, source) => {
     const messages: string[] = [];
     const { css } = sass.compileString(source, { loadPaths: [path.join(root, 'scss')], logger: collectingLogger(messages) });
@@ -168,39 +168,21 @@ describe('Sass stylesheets', () => {
       for (const [name, value] of expected) expect([name, resolve(tokens, tokens.get(name))]).toEqual([name, value]);
     });
 
-    it('writes the configured values of the legacy theme, and references for the tokens derived from others', () => {
-      const tokens = tokensOf('legacy');
-
-      expect(tokens.get('--ds-color-primary-base')).toBe('#e4be90');
-      expect(tokens.get('--ds-color-secondary-dark')).toBe('#c94328');
-      expect(tokens.get('--ds-color-status-warning')).toBe('#f29100');
-      expect(tokens.get('--ds-colorset-solid-primary-background')).toBe('var(--ds-color-primary-base)');
-      expect(tokens.get('--ds-colorset-solid-primary-hover-border')).toBe('var(--ds-color-primary-dark)');
-      expect(tokens.get('--ds-colorset-solid-white-text')).toBe('var(--ds-color-gray-black)');
-      expect(tokens.get('--ds-colorset-solid-gray-background')).toBe('#dcdcdc'); // a value of its own
-      expect(tokens.get('--ds-color-shadow-medium')).toBe('rgba(0, 0, 0, 0.3)');
-      expect(tokens.get('--ds-font-family-heading')).toBe('"Montserrat", sans-serif');
-      expect(tokens.get('--ds-font-family-body')).toBe('"Montserrat"');
-      expect(tokens.get('--ds-font-family-default')).toMatch(/^-apple-system, BlinkMacSystemFont, "Segoe UI", /); // names, not strings of quotes
-      expect(tokens.get('--ds-font-family-now')).toBe('"Now"');
-      expect(tokens.get('--ds-font-style-default-family')).toBe('var(--ds-font-family-now)');
-      expect(tokens.get('--ds-font-style-title-page-main-size')).toBe('var(--ds-font-size-800)');
-      expect(tokens.get('--ds-font-style-title-page-main-weight')).toBe('900');
-      expect(tokens.get('--ds-font-size-800')).toBe('2.25rem');
-      expect(tokens.get('--ds-space-4')).toBe('1rem');
-      expect(tokens.get('--ds-radius-pill')).toBe('999px');
-      expect(tokens.get('--ds-bp-md')).toBe('992px');
-    });
-
-    it('writes the neutral values of the default theme', () => {
+    it('writes the neutral values of the default theme, and references for the tokens derived from others', () => {
       const tokens = tokensOf('default');
 
       expect(tokens.get('--ds-color-primary-base')).toBe('#2563eb');
       expect(tokens.get('--ds-color-status-warning')).toBe('#b45309');
       expect(tokens.get('--ds-colorset-solid-primary-text')).toBe('var(--ds-color-gray-white)');
+      expect(tokens.get('--ds-colorset-solid-primary-background')).toBe('var(--ds-color-primary-base)');
       expect(tokens.get('--ds-colorset-solid-disabled-background')).toBe('var(--ds-color-status-disabled)');
+      expect(tokens.get('--ds-font-family-default')).toMatch(/^system-ui, -apple-system, "Segoe UI", /); // names, not strings of quotes
       expect(tokens.get('--ds-font-family-mono')).toMatch(/^ui-monospace, /);
       expect(tokens.get('--ds-font-style-title-default-family')).toBe('var(--ds-font-family-heading)');
+      expect(tokens.get('--ds-font-style-title-page-main-size')).toBe('var(--ds-font-size-800)');
+      expect(tokens.get('--ds-font-size-800')).toBe('2.25rem');
+      expect(tokens.get('--ds-space-4')).toBe('1rem');
+      expect(tokens.get('--ds-bp-md')).toBe('992px');
     });
 
     // JavaScript reads the breakpoints from the custom properties (tokens.getBreakpoints()): --ds-bp-labels lists the labels,
@@ -256,45 +238,12 @@ describe('Sass stylesheets', () => {
       expect([...used].filter(name => !tokens.has(name))).toEqual([]);
     });
 
-    // The legacy skins take their colors and fonts from the tokens (scss/themes/legacy/_tokens.scss), so that they follow them,
-    // at runtime too: no color or font name of their own in the compiled theme, outside :root and @font-face. Allowed:
-    // transparent (rgba(0,0,0,0) once compressed) and the icon font, ds-icons (the glyphs of the engine's icon mixins).
-    it('the legacy skins write no literal color or font name', () => {
-      const css = themeCss.legacy.replace(ruleRegExp(':root', 'g'), '').replace(ruleRegExp('@font-face', 'g'), '');
-      const declarations = [...css.matchAll(/[{;]([\w-]+):((?:[^;{}"']|"[^"]*"|'[^']*')+)/g)].map(([, name, value]) => [name, value.replace(/rgba\(0,0,0,0\)|"ds-icons"/g, '')]);
-      const colorLiteral =
-        /#[0-9a-f]{3,8}(?![\w-])|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(|(?<![\w-])(red|white|black|gr[ae]y|silver|blue|green|yellow|orange|purple|pink|gold)(?![\w-])/i;
-      const fontLiteral = ([name, value]: string[]) => /^font(-family)?$/.test(name) && value !== '' && value !== 'inherit' && !value.includes('var(--ds-font-');
-
-      expect(declarations.length).toBeGreaterThan(500);
-      expect(declarations.filter(([, value]) => colorLiteral.test(value))).toEqual([]);
-      expect(declarations.filter(fontLiteral)).toEqual([]);
-    });
-
-    // Selectors that once matched nothing, compared with the classes the components render: :last-child(), page classes
-    // misspelled (--whih-top-header), descendant selectors for classes of the same element, a missing comma (h1 h2).
-    it('the legacy skins target the classes the components render', () => {
-      const css = themeCss.legacy;
-
-      expect(css).toContain('.ds-combo.--default.--open{');
-      expect(css).toContain('ds-nav-item:not(:last-child)>.ds-nav-item.--depth-1{');
-      expect(css).toContain('.--with-top-header .ds-nav-item.--depth-0>.ds-nav-item__sub-nav{');
-      expect(css).toContain('.--without-top-header .ds-nav-item.--depth-0>.ds-nav-item__sub-nav{');
-      expect(css).toContain('.ds-nav-item.--depth-0.--active>.ds-nav-item__link>a{');
-      expect(css).toContain('.ds-block.--content h1 a,.ds-block.--content h2 a,');
-      expect(css).toContain('.ds-text h1 a,.ds-text h2 a,');
-      expect(css).not.toMatch(/\(\)|--whih|h1 h2|\.ds-combo\.--default \.ds-combo\.--open|>\.ds-nav-item\.--active/);
-    });
-
     // The skins read the primary color through its custom property: its value is only in :root.
-    it.each([
-      ['default', '#2563eb'],
-      ['legacy', '#e4be90'],
-    ])('the %s skins read the primary color with var()', (theme, primary) => {
-      const css = themeCss[theme].replace(ruleRegExp(':root', 'g'), '');
+    it('the default skins read the primary color with var()', () => {
+      const css = themeCss.default.replace(ruleRegExp(':root', 'g'), '');
 
       expect(css).toContain('var(--ds-color-primary-base)');
-      expect(css).not.toContain(primary);
+      expect(css).not.toContain('#2563eb');
     });
 
     it('returns custom properties from the accessors', () => {
@@ -371,17 +320,6 @@ describe('Sass stylesheets', () => {
         ['h', 'rgba(255,255,255,.5)'],
         ['i', '.875rem'],
       ]);
-      expect(values('themes/legacy/tokens')).toEqual([
-        ['a', '#e4be90'],
-        ['b', '#e4be90'],
-        ['c', '#e4be90'],
-        ['d', '2.25rem'],
-        ['e', '500'],
-        ['f', '2rem'],
-        ['g', '.5rem'],
-        ['h', 'rgba(255,255,255,.5)'],
-        ['i', '.875rem'],
-      ]);
     });
 
     it.each([
@@ -419,9 +357,7 @@ describe('Sass stylesheets', () => {
     });
 
     it('leaves the declaration out for an optional color that does not exist', () => {
-      const css = compileString(
-        `@use 'themes/legacy/tokens' as *; a { color: ds-color(status, overdue, $optional: true); border-color: ds-color(status, error, $optional: true); }`,
-      );
+      const css = compileString(`@use 'engine' as *; a { color: ds-color(status, overdue, $optional: true); border-color: ds-color(status, error, $optional: true); }`);
 
       expect(declarationsOf(css, 'a')).toEqual([['border-color', 'var(--ds-color-status-error)']]);
     });
@@ -463,7 +399,7 @@ describe('Sass stylesheets', () => {
     });
 
     it('redeclares the tokens of some groups in a rule, for a scope', () => {
-      const css = compileString(`@use 'themes/legacy/tokens' as *; .promo { --ds-color-primary-base: #c00; @include ds-tokens(colorset); }`);
+      const css = compileString(`@use 'engine' as *; .promo { --ds-color-primary-base: #c00; @include ds-tokens(colorset); }`);
       const declarations = declarationsOf(css, '.promo');
 
       expect(declarations[0]).toEqual(['--ds-color-primary-base', '#c00']);

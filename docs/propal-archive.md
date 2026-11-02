@@ -36,6 +36,9 @@ root (`archived/components/ds-button/components/core/button/button.tsx` was `com
 - `archived/demo/`: the demo, removed from the development branch: `components/demo` (`ds-main`) and the two dev pages
   that rendered it (`index.html`, `components/index.html`), with their theme switcher and runtime color control. The
   dev pages now only load the build and the `default` theme.
+- `archived/themes/legacy/`: the whole `legacy` theme (`scss/themes/legacy/`), removed from the development branch, which
+  now has one theme, `default`. It configures the engine of that commit with its own values and tokens; its font files
+  were never in the repository. The tests that checked it are in `components/sass.spec.ts` of commit `f4ff816`.
 
 ## Propal archive (`toSort-propal/`)
 
