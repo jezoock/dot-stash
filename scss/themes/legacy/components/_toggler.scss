@@ -1,3 +1,4 @@
+@use 'sass:list';
 @use '../tokens' as *;
 
 .ds-toggler {
@@ -9,8 +10,8 @@
       & .ds-toggler-item {
         &__title {
           position: relative;
-          margin: 2.5rem 0 1.5rem 0;
-          padding: 0 4rem 0 0;
+          margin: 2.5rem 0 ds-spacing(5) 0;
+          padding: 0 ds-spacing(8) 0 0;
 
           &:before,
           &:after {
@@ -20,10 +21,10 @@
             position: absolute;
             top: 50%;
             right: 0;
-            font-size: 1.5rem;
+            font-size: ds-token(font-size, 400);
             width: 4rem;
             line-height: 4rem;
-            border-radius: 50%;
+            border-radius: ds-radius(circle);
             text-align: center;
             z-index: 10;
           }
@@ -42,7 +43,7 @@
         }
 
         &__content {
-          margin-bottom: 1rem;
+          margin-bottom: ds-spacing(4);
         }
       }
 
@@ -66,17 +67,17 @@
 
   & .ds-title {
     &.--toggler {
-      font: normal normal 600 25px/30px Montserrat;
+      font: normal normal 600 25px/30px ds-token(font-family, body);
       position: relative;
       text-align: left;
 
       & h3 {
-        background: #fff;
+        background: ds-color(gray, white);
         position: relative;
         z-index: 10;
         text-align: left;
         display: inline;
-        padding: 0 0.5rem 0 0;
+        padding: 0 ds-spacing(2) 0 0;
       }
 
       &:before {
@@ -112,13 +113,13 @@
       display: block;
 
       & h3 {
-        font: normal normal bold 1.125rem/2rem Montserrat;
-        padding: 0.5rem 0 1.5rem 0;
+        font: normal normal bold list.slash(ds-token(font-size, 300), 2rem) ds-token(font-family, body);
+        padding: ds-spacing(2) 0 ds-spacing(5) 0;
       }
 
       & p {
-        font: normal normal normal 15px/20px Montserrat;
-        padding: 0 0 1rem 0;
+        font: normal normal normal 15px/20px ds-token(font-family, body);
+        padding: 0 0 ds-spacing(4) 0;
       }
     }
   }

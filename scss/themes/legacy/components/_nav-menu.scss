@@ -34,13 +34,13 @@
     & > a {
       text-transform: uppercase;
       display: block;
-      font-size: 1rem;
+      font-size: ds-token(font-size, 200);
       color: ds-color(gray, darkest);
     }
   }
 
   @include break-p(null, md) {
-    padding: 0.75rem 0;
+    padding: ds-spacing(3) 0;
 
     &__expand-button {
       position: absolute;
@@ -91,7 +91,7 @@
 
         &__link {
           & > a {
-            padding: 1rem 0;
+            padding: ds-spacing(4) 0;
           }
         }
       }
@@ -114,7 +114,7 @@
 
     &__sub-nav {
       position: fixed;
-      background: #fff;
+      background: ds-color(gray, white);
       left: 0;
       opacity: 0;
       pointer-events: none;
@@ -135,21 +135,21 @@
     &.--depth-0 {
       & > .ds-nav-item {
         &__link {
-          padding: 0 0.75rem;
+          padding: 0 ds-spacing(3);
           display: block;
 
           & > a {
-            padding: 1.5rem 0.5rem;
+            padding: ds-spacing(5) ds-spacing(2);
             line-height: 19px;
 
             &:hover {
-              color: #000;
+              color: ds-color(gray, black);
             }
           }
         }
 
         &__sub-nav {
-          padding: 1rem 0;
+          padding: ds-spacing(4) 0;
 
           .--whihout-top-header & {
             top: 68px;
@@ -172,7 +172,7 @@
     &.--depth-2,
     &.--depth-3,
     &.--depth-4 {
-      padding: 0 2rem;
+      padding: 0 ds-spacing(6);
       box-sizing: border-box;
       margin: auto;
       max-width: 360px;
@@ -180,7 +180,7 @@
 
       & > .ds-nav-item {
         &__link {
-          padding: 0.5rem 0;
+          padding: ds-spacing(2) 0;
           width: 100%;
 
           & > a {

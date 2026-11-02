@@ -1,3 +1,5 @@
+@use '../tokens' as *;
+
 .ds-grid {
   & img {
     vertical-align: top;
@@ -13,10 +15,10 @@
     }
   }
   &.--conseil {
-    background-color: #dbd5dc;
+    background-color: ds-color(surface, highlight);
   }
   &.--capital {
-    background-color: #dbd5dc;
+    background-color: ds-color(surface, highlight);
 
     & .ds-grid {
       &__row {

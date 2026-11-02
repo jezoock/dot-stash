@@ -1,7 +1,7 @@
 @use '../tokens' as *;
 
 .ds-button {
-  font-family: 'Montserrat';
+  font-family: ds-token(font-family, body);
   text-transform: uppercase;
   text-align: center;
   letter-spacing: 0px;
@@ -24,7 +24,7 @@
   }
 
   &.--rounded {
-    border-radius: 50%;
+    border-radius: ds-radius(circle);
   }
 
   &.--rounded,
@@ -46,7 +46,7 @@
     }
 
     &.--shadow {
-      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+      box-shadow: 0px 1px 3px ds-color(shadow, medium);
     }
   }
 
@@ -59,7 +59,7 @@
     }
 
     &.--shadow {
-      box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
+      box-shadow: 1px 2px 5px ds-color(shadow, medium);
     }
   }
 
@@ -67,7 +67,7 @@
     letter-spacing: 0.96px;
 
     &.--shadow {
-      box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 3px 5px 10px ds-color(shadow, medium);
     }
 
     @include break-p(null, md) {
@@ -76,7 +76,7 @@
     }
 
     @include break-p(md) {
-      font-size: 1rem;
+      font-size: ds-token(font-size, 200);
       line-height: 1.25rem;
     }
   }
@@ -86,11 +86,11 @@
     text-align: center;
 
     &.--shadow {
-      box-shadow: 5px 8px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 5px 8px 20px ds-color(shadow, medium);
     }
 
     @include break-p(null, md) {
-      font-size: 1rem;
+      font-size: ds-token(font-size, 200);
       line-height: 1.25rem;
     }
 
@@ -102,7 +102,7 @@
 
   &.--xl {
     &.--shadow {
-      box-shadow: 5px 8px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 5px 8px 20px ds-color(shadow, medium);
     }
 
     @include break-p(null, md) {
@@ -119,7 +119,7 @@
   &.--xs {
     & > a,
     & > button {
-      padding: 0.5rem;
+      padding: ds-spacing(2);
     }
   }
 
@@ -130,11 +130,11 @@
     & > a,
     & > button {
       @include break-p(null, md) {
-        padding: 0.5rem 1.5rem;
+        padding: ds-spacing(2) ds-spacing(5);
       }
 
       @include break-p(md) {
-        padding: 0.75rem 2.5rem;
+        padding: ds-spacing(3) 2.5rem;
       }
     }
   }
@@ -143,11 +143,11 @@
     & > a,
     & > button {
       @include break-p(null, md) {
-        padding: 0.75rem 1rem;
+        padding: ds-spacing(3) ds-spacing(4);
       }
 
       @include break-p(md) {
-        padding: 1rem 1.5rem;
+        padding: ds-spacing(4) ds-spacing(5);
       }
     }
   }
@@ -156,7 +156,7 @@
     & > a,
     & > button {
       @include break-p(null, md) {
-        padding: 1rem 1.5rem;
+        padding: ds-spacing(4) ds-spacing(5);
       }
 
       @include break-p(md) {
@@ -167,7 +167,7 @@
 
   &:not(:has(a)):not(:has(button)):not(:has(span)):not(:has(strong)):not(:has(div)) {
     &.--xs {
-      padding: 0.5rem;
+      padding: ds-spacing(2);
     }
 
     &.--sm {
@@ -175,27 +175,27 @@
 
     &.--md {
       @include break-p(null, md) {
-        padding: 0.5rem 1.5rem;
+        padding: ds-spacing(2) ds-spacing(5);
       }
 
       @include break-p(md) {
-        padding: 0.75rem 2.5rem;
+        padding: ds-spacing(3) 2.5rem;
       }
     }
 
     &.--lg {
       @include break-p(null, md) {
-        padding: 0.75rem 1rem;
+        padding: ds-spacing(3) ds-spacing(4);
       }
 
       @include break-p(md) {
-        padding: 1rem 1.5rem;
+        padding: ds-spacing(4) ds-spacing(5);
       }
     }
 
     &.--xl {
       @include break-p(null, md) {
-        padding: 1rem 1.5rem;
+        padding: ds-spacing(4) ds-spacing(5);
       }
 
       @include break-p(md) {

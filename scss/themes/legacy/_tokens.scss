@@ -6,6 +6,8 @@
 // The colorsets and font styles refer to colors, font sizes and families with ds-ref(): they follow them (see ds-tokens()).
 
 // *** COLORS *** //
+// The engine families, plus colors of the legacy skins named after their role: status danger, the shadow shades and the
+// overlay veils (black or white with an alpha), surface and border.
 
 $-colors: (
   primary: (
@@ -39,16 +41,42 @@ $-colors: (
     disabled: #3d3d3d,
     discount: #ff7575,
     new: #005f77,
+    // The text of the site's danger alerts (.message.alert.--danger), brighter than error.
+    danger: #ff0000,
   ),
   input: (
     caret: #5294f2,
   ),
   shadow: (
     base: #00000029,
+    // The drop shadow of the buttons (--shadow), the --left sidebar and the tooltips.
+    medium: rgba(0, 0, 0, 0.3),
+    // The drop shadow of the combo option list.
+    strong: rgba(0, 0, 0, 0.4),
+    // The text shadow of the loading icon (ds-ajax).
+    text: rgba(0, 0, 0, 0.5),
+    // The text shadow of the labels on the images of an image combo.
+    text-strong: rgba(0, 0, 0, 0.8),
+  ),
+  overlay: (
+    // The veil over a loading ds-ajax.
+    base: rgba(255, 255, 255, 0.6),
+    // The veil behind an open combo (overlay).
+    light: rgba(255, 255, 255, 0.4),
+  ),
+  surface: (
+    // The background of the highlighted grids of the site (.ds-grid.--conseil, .ds-grid.--capital).
+    highlight: #dbd5dc,
+  ),
+  border: (
+    // The outline of the tooltip arrow.
+    light: #ccc,
   ),
 );
 
 // *** COLORSETS *** //
+// White and black are references to the gray white and black of the palette. The gray button (solid gray, gray-hover)
+// keeps colors of its own (#dcdcdc, #ccc, #333): tokens in their own right (--ds-colorset-solid-gray-…).
 
 $-colorset: (
   default: (
@@ -58,52 +86,52 @@ $-colorset: (
   ),
   solid: (
     default: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, primary, base),
       background: ds-ref(color, primary, base),
     ),
     primary: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, primary, base),
       background: ds-ref(color, primary, base),
     ),
     primary-hover: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, primary, dark),
       background: ds-ref(color, primary, dark),
     ),
     primary-light: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, primary, light),
       background: ds-ref(color, primary, light),
     ),
     primary-light-hover: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, primary, base),
       background: ds-ref(color, primary, base),
     ),
     secondary: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, secondary, base),
       background: ds-ref(color, secondary, base),
     ),
     secondary-hover: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, secondary, dark),
       background: ds-ref(color, secondary, dark),
     ),
     white: (
-      text: #000,
-      border: #fff,
-      background: #fff,
+      text: ds-ref(color, gray, black),
+      border: ds-ref(color, gray, white),
+      background: ds-ref(color, gray, white),
     ),
     white-hover: (
-      text: #fff,
-      border: #000,
-      background: #000,
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, gray, black),
+      background: ds-ref(color, gray, black),
     ),
     gray: (
-      text: #000,
+      text: ds-ref(color, gray, black),
       border: #dcdcdc,
       background: #dcdcdc,
     ),
@@ -113,7 +141,7 @@ $-colorset: (
       background: #ccc,
     ),
     disabled: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, status, disabled),
       background: ds-ref(color, status, disabled),
     ),
@@ -130,7 +158,7 @@ $-colorset: (
       background: transparent,
     ),
     primary-hover: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, primary, base),
       background: ds-ref(color, primary, base),
     ),
@@ -140,19 +168,19 @@ $-colorset: (
       background: transparent,
     ),
     secondary-hover: (
-      text: #fff,
+      text: ds-ref(color, gray, white),
       border: ds-ref(color, secondary, base),
       background: ds-ref(color, secondary, base),
     ),
     white: (
-      text: #fff,
-      border: #fff,
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, gray, white),
       background: transparent,
     ),
     white-hover: (
-      text: #000,
-      border: #fff,
-      background: #fff,
+      text: ds-ref(color, gray, black),
+      border: ds-ref(color, gray, white),
+      background: ds-ref(color, gray, white),
     ),
     disabled: (
       text: ds-ref(color, status, disabled),
@@ -164,22 +192,22 @@ $-colorset: (
     default: (
       text: ds-ref(color, primary, base),
       border: ds-ref(color, primary, base),
-      background: #fff,
+      background: ds-ref(color, gray, white),
     ),
     primary: (
       text: ds-ref(color, primary, base),
       border: ds-ref(color, primary, base),
-      background: #fff,
+      background: ds-ref(color, gray, white),
     ),
     secondary: (
       text: ds-ref(color, secondary, base),
       border: ds-ref(color, secondary, base),
-      background: #fff,
+      background: ds-ref(color, gray, white),
     ),
     disabled: (
       text: ds-ref(color, secondary, base),
       border: ds-ref(color, secondary, base),
-      background: #fff,
+      background: ds-ref(color, gray, white),
     ),
   ),
 );
@@ -198,21 +226,34 @@ $-font-sizes: (
   900: 2.5rem,
 );
 
+// The fonts of the legacy skins: body (the page, the buttons, the combos and togglers: Montserrat, without fallback, as
+// the site declares it), heading (the titles), text (the paragraphs and lists of the content blocks and ds-text) and
+// caption (the footer link). Montserrat and Mulish are loaded by _fonts.scss.
 $-font-families: (
   'default': (
-    '-apple-system',
-    'BlinkMacSystemFont',
-    '"Segoe UI"',
-    'Roboto',
-    '"Helvetica Neue"',
-    'Arial',
-    'sans-serif',
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
   ),
   'Garamond': 'Garamond',
   'Now': 'Now',
+  body: 'Montserrat',
+  heading: (
+    'Montserrat',
+    sans-serif,
+  ),
+  text: (
+    'Mulish',
+    sans-serif,
+  ),
+  caption: Arial,
 );
 
 $-font-styles: (

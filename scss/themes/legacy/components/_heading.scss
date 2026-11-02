@@ -1,8 +1,10 @@
+@use '../tokens' as *;
+
 .ds-heading {
   &[section] {
     & .ds-heading {
       &__main-title {
-        padding: 0 0 2rem 0;
+        padding: 0 0 ds-spacing(6) 0;
       }
 
       &__description {

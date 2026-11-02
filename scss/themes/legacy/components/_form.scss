@@ -1,6 +1,8 @@
+@use '../tokens' as *;
+
 .ds-form {
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 ds-spacing(4);
 
   &.--xs {
     max-width: 300px;
@@ -20,6 +22,6 @@
 
   &__footer {
     text-align: center;
-    padding: 3rem 0;
+    padding: ds-spacing(7) 0;
   }
 }

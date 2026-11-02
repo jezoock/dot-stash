@@ -103,7 +103,7 @@ It has two layers:
 - **The engine** (`scss/engine/`): the token schema, with neutral defaults, and the functions and mixins that read the tokens. It outputs no CSS by itself. `@use '<path to>/scss/engine' as *;` gives the tokens, functions and mixins without a namespace (`ds-color(...)`, `break-p(...)`, `$breakpoints`). Each theme writes the tokens once as CSS custom properties (`--ds-color-primary-base`…), and the skins read them with `var()`: see [Design tokens as custom properties](#design-tokens-as-custom-properties).
 - **Themes** (`scss/themes/<theme>/`): a theme configures the engine tokens and writes the CSS (base styles, fonts, component skins). Each one compiles to `dist/css/<theme>.css`.
   - `default`: neutral (blue primary, slate secondary, gray scale, system font stacks). Its base styles and skins take their sizes, colors and fonts from the tokens: start a new theme from it.
-  - `legacy`: the look of the site the library comes from (gold primary, Montserrat and Mulish, uppercase titles, site-specific modifiers such as `.ds-grid.--home` or `.ds-block.--content`). Its skins still hard-code many values.
+  - `legacy`: the look of the site the library comes from (gold primary, Montserrat and Mulish, uppercase titles, site-specific modifiers such as `.ds-grid.--home` or `.ds-block.--content`). Its skins read the legacy tokens too: see [Skins read the tokens](#skins-read-the-tokens).
 
 ### Themes
 
@@ -160,12 +160,43 @@ The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `
 
 The engine can also be configured from outside a theme that does not configure it, before the theme loads it: `@use '<path to>/scss/engine' with ($grid-md: 1024); @use '<path to>/scss/themes/default';`.
 
+### Skins read the tokens
+
+The skins of both themes take their values from the tokens, so that a theme configures them in one place (`_tokens.scss`) and a page can change them at runtime (see [Changing a token at runtime](#changing-a-token-at-runtime)). In a skin:
+
+- **Colors**: `ds-color(<family>, <shade>)` or a colorset (`ds-colorset-styles()`), never a hex value, `rgb()` or a color keyword (`transparent` aside). A color the palette lacks is added to the `$colors` of the theme, in a family and shade named after its role, not after its value: two colors with the same value are different tokens when their roles differ. Shadows and veils are colors too (`rgba()` values in `shadow` and `overlay`). Color math (`color.change()`) takes the `-value` accessors and does not follow the tokens at runtime: prefer a token.
+- **Font families**: `ds-font-family(<type>, <variant>)` (font styles) or `ds-token(font-family, <name>)`, never a font name; the icon font, `'ds-icons'`, is the one exception (the `ds-icon()` mixins write it).
+- **Font sizes, spacing, radii**: `ds-token(font-size, <step>)`, `ds-spacing(<step>)` (margins, paddings, gaps) and `ds-radius(<name>)` where the value is a step of the scale, in the same unit. The other values stay literal: sizes in px or off the scale (`50px` titles, `1.25rem` button text), offsets (`top: 0.5rem`), zeros.
+- **`!important`**: only where the rule must win over a more specific rule of the theme or of a component.
+
+`npm test` checks the compiled `legacy` theme: no color literal and no font name outside `:root` and `@font-face` (allowed: `transparent` and `ds-icons`).
+
+The colors and font families `legacy` adds to the engine schema (`scss/themes/legacy/_tokens.scss`):
+
+| Token                                          | Value                      | Role                                                                                           |
+| ---------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------- |
+| `status` `danger` (`--ds-color-status-danger`) | `#ff0000`                  | text of the site alerts `.message.alert.--danger`                                              |
+| `shadow` `medium`                              | `rgba(0, 0, 0, 0.3)`       | drop shadow of the buttons (`--shadow`), the `--left` sidebar and the tooltips                 |
+| `shadow` `strong`                              | `rgba(0, 0, 0, 0.4)`       | drop shadow of the combo option list                                                           |
+| `shadow` `text`                                | `rgba(0, 0, 0, 0.5)`       | text shadow of the loading icon of `ds-ajax`                                                   |
+| `shadow` `text-strong`                         | `rgba(0, 0, 0, 0.8)`       | text shadow of the labels on the images of an image combo                                      |
+| `overlay` `base`                               | `rgba(255, 255, 255, 0.6)` | veil over a loading `ds-ajax`                                                                  |
+| `overlay` `light`                              | `rgba(255, 255, 255, 0.4)` | veil behind an open combo (`overlay`)                                                          |
+| `surface` `highlight`                          | `#dbd5dc`                  | background of `.ds-grid.--conseil` and `.ds-grid.--capital`                                    |
+| `border` `light`                               | `#ccc`                     | outline of the tooltip arrow                                                                   |
+| font family `body` (`--ds-font-family-body`)   | `'Montserrat'`             | the page, the buttons, the combos, the togglers (no fallback, as the site declares it)         |
+| font family `heading`                          | `'Montserrat', sans-serif` | the titles (`ds-title`, `h1` and `h4` of `.ds-block.--content`, `h1`, `h2`, `h4` of `ds-text`) |
+| font family `text`                             | `'Mulish', sans-serif`     | the paragraphs and lists of `.ds-block.--content` and `ds-text`                                |
+| font family `caption`                          | `Arial`                    | the footer link (`.ds-footer-link`)                                                            |
+
+White and black are the `gray` `white` and `black` of the palette, in the skins and in the colorsets. The font styles of `legacy` (`$font-styles`) still refer to the `Now` and `Garamond` families, which no skin reads.
+
 ### Tokens (`scss/engine/variables/`)
 
 Every token is declared with `!default`. The defaults are neutral; `legacy/_tokens.scss` holds the legacy values.
 
 - `_palette.scss`
-  - `$colors`: color families and their shades: `primary` and `secondary` (`darker`, `dark`, `base`, `light`), `gray` (`white`, `lightest`, `lighter`, `light`, `base`, `dark`, `darker`, `darkest`, `black`), `status` (`success`, `warning`, `error`, `info`, `busy`, `disabled`, `discount`, `new`), `input` (`caret`), `shadow` (`base`).
+  - `$colors`: color families and their shades: `primary` and `secondary` (`darker`, `dark`, `base`, `light`), `gray` (`white`, `lightest`, `lighter`, `light`, `base`, `dark`, `darker`, `darkest`, `black`), `status` (`success`, `warning`, `error`, `info`, `busy`, `disabled`, `discount`, `new`), `input` (`caret`), `shadow` (`base`). A theme can add families and shades of its own: `legacy` adds `status` `danger`, more `shadow` shades, `overlay`, `surface` and `border` (see [Skins read the tokens](#skins-read-the-tokens)).
   - `$colorset`: named sets of `text`, `border` and `background` colors, grouped by type (`solid`, `outlined`, `link`) with variants such as `primary`, `primary-hover`, `secondary`, `white`, `gray` or `disabled`. Its colors are references to `$colors` (`ds-ref(color, primary, base)`) or colors of their own.
   - `$gradients`: named gradients for `gradient()`, `(name: (fallback: …, from: …, to: …))`, empty by default.
 - `_typography.scss`
@@ -236,13 +267,13 @@ Each theme writes its tokens once, as CSS custom properties on `:root`, with `@i
 | `bp`          | `$breakpoints`   | `--ds-bp-<label>`, in px, and `--ds-bp-labels`, the list of the labels      | `--ds-bp-md: 992px`, `--ds-bp-labels: xxs xs sm md lg xl xxl`          |
 | `gradient`    | `$gradients`     | `--ds-gradient-<name>-<attr>`                                               | (none: no gradient in the themes)                                      |
 
-`default` writes 165 custom properties, `legacy` 167 (`legacy` has no `status` `warning` color, so no `--ds-color-status-warning`). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
+`default` writes 165 custom properties, `legacy` 180 (`legacy` has no `status` `warning` color, so no `--ds-color-status-warning`, and adds colors and font families of its own). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
 
 The `--ds-bp-*` properties are for JavaScript (`tokens.getBreakpoints()`, `tokens.getToken('bp-md')`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript)): media queries cannot use custom properties, so `break-p()` and `ds-breakpoint()` use the Sass values, and changing the properties at runtime does not change the media queries of the theme.
 
 #### References (derived tokens)
 
-A token can be a reference to another one: `ds-ref(<group>, <keys>…)` in a map, such as `text: ds-ref(color, primary, base)` in `$colorset`. Its custom property is then `var()` of the other one, `--ds-colorset-default-text: var(--ds-color-primary-base)`, so it follows it, at build time (a configured `$colors`) and at runtime. The default `$colorset` and `$font-styles` refer to `$colors`, `$font-sizes` and `$font-families`; `legacy` does the same for the values it took from its palette and type scale, and keeps its own values (`#fff`, `#dcdcdc`…) for the others, which do not follow.
+A token can be a reference to another one: `ds-ref(<group>, <keys>…)` in a map, such as `text: ds-ref(color, primary, base)` in `$colorset`. Its custom property is then `var()` of the other one, `--ds-colorset-default-text: var(--ds-color-primary-base)`, so it follows it, at build time (a configured `$colors`) and at runtime. The default `$colorset` and `$font-styles` refer to `$colors`, `$font-sizes` and `$font-families`; `legacy` does the same for the values it took from its palette and type scale (white and black are its `gray` `white` and `black`), and keeps its own values for the gray button (`solid` `gray` and `gray-hover`: `#dcdcdc`, `#ccc`, `#333`), which do not follow the palette (their own custom properties still change them at runtime).
 
 `ds-ref()` is in `scss/engine/tools/references`, which reads no token: a theme loads it in its `_tokens.scss` before it configures the engine (`@use '../../engine/tools/references' as *;`, as `legacy` does), and so does a stylesheet that configures the engine with references (`@use '<path to>/scss/engine/tools/references' as *; @use '<path to>/scss/engine' with (…);`). Written where it is not loaded, Sass takes `ds-ref(…)` for a plain CSS function: `ds-tokens()` then fails with an error that says so.
 
@@ -276,7 +307,7 @@ document.documentElement.style.setProperty('--ds-color-primary-base', '#0d9488')
 tokens.getToken('color-primary-base'); // '#0d9488': the value in effect, read with getComputedStyle()
 ```
 
-Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the links, the `default` focus outline… What a skin hard-codes (`#fff`, `rgba(0, 0, 0, 0.3)`, font names in `legacy`) and the values Sass computed (`color.change(…)`) do not, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
+Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the links, the `default` focus outline… The skins of both themes read their colors and fonts from the tokens, so overriding any color or font family token works the same way (`--ds-color-shadow-medium`, `--ds-font-family-heading` in `legacy`…). What a skin computes in Sass (`color.change(…)`, the two white veils of `default`) does not follow, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
 
 Or in a scope: `.promo { --ds-color-primary-base: #0d9488; }`. The rules that read `--ds-color-primary-base` inside `.promo` follow, but not the tokens that refer to it: their `var()` was resolved on `:root`, and `.promo` inherits the result. Declare them again in the scope, from Sass with `ds-tokens()` and the groups to declare:
 

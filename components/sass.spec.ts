@@ -166,7 +166,12 @@ describe('Sass stylesheets', () => {
       expect(tokens.has('--ds-color-status-warning')).toBe(false); // not in the legacy palette
       expect(tokens.get('--ds-colorset-solid-primary-background')).toBe('var(--ds-color-primary-base)');
       expect(tokens.get('--ds-colorset-solid-primary-hover-border')).toBe('var(--ds-color-primary-dark)');
-      expect(tokens.get('--ds-colorset-solid-white-text')).toBe('#000'); // a value of its own
+      expect(tokens.get('--ds-colorset-solid-white-text')).toBe('var(--ds-color-gray-black)');
+      expect(tokens.get('--ds-colorset-solid-gray-background')).toBe('#dcdcdc'); // a value of its own
+      expect(tokens.get('--ds-color-shadow-medium')).toBe('rgba(0, 0, 0, 0.3)');
+      expect(tokens.get('--ds-font-family-heading')).toBe('"Montserrat", sans-serif');
+      expect(tokens.get('--ds-font-family-body')).toBe('"Montserrat"');
+      expect(tokens.get('--ds-font-family-default')).toMatch(/^-apple-system, BlinkMacSystemFont, "Segoe UI", /); // names, not strings of quotes
       expect(tokens.get('--ds-font-family-now')).toBe('"Now"');
       expect(tokens.get('--ds-font-style-default-family')).toBe('var(--ds-font-family-now)');
       expect(tokens.get('--ds-font-style-title-page-main-size')).toBe('var(--ds-font-size-800)');
@@ -239,6 +244,25 @@ describe('Sass stylesheets', () => {
 
       expect(used.size).toBeGreaterThan(10);
       expect([...used].filter(name => !tokens.has(name))).toEqual([]);
+    });
+
+    // The legacy skins take their colors and fonts from the tokens (scss/themes/legacy/_tokens.scss), so that they follow them,
+    // at runtime too: no color or font name of their own in the compiled theme, outside :root and @font-face. Allowed:
+    // transparent (rgba(0,0,0,0) once compressed) and the icon font, ds-icons (the glyphs of the engine's icon mixins).
+    it('the legacy skins write no literal color or font name', () => {
+      const css = themeCss.legacy.replace(ruleRegExp(':root', 'g'), '').replace(ruleRegExp('@font-face', 'g'), '');
+      // Not yet: the undefined color(…) of the combo skin, written as plain CSS (to be fixed).
+      const declarations = [...css.matchAll(/[{;]([\w-]+):((?:[^;{}"']|"[^"]*"|'[^']*')+)/g)].map(([, name, value]) => [
+        name,
+        value.replace(/rgba\(0,0,0,0\)|"ds-icons"|\bcolor\([^)]*\)/g, ''),
+      ]);
+      const colorLiteral =
+        /#[0-9a-f]{3,8}(?![\w-])|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(|(?<![\w-])(red|white|black|gr[ae]y|silver|blue|green|yellow|orange|purple|pink|gold)(?![\w-])/i;
+      const fontLiteral = ([name, value]: string[]) => /^font(-family)?$/.test(name) && value !== '' && value !== 'inherit' && !value.includes('var(--ds-font-');
+
+      expect(declarations.length).toBeGreaterThan(500);
+      expect(declarations.filter(([, value]) => colorLiteral.test(value))).toEqual([]);
+      expect(declarations.filter(fontLiteral)).toEqual([]);
     });
 
     // The skins read the primary color through its custom property: its value is only in :root.

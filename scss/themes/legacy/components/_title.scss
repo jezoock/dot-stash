@@ -1,7 +1,7 @@
 @use '../tokens' as *;
 
 .ds-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: ds-token(font-family, heading);
 
   &[page] {
     font-weight: normal;
