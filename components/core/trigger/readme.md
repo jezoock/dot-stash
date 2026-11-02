@@ -26,14 +26,12 @@ Calls a method of a target element on an event: `<ds-trigger target="#slider" ac
 
 ### Used by
 
- - [ds-main](../../demo)
  - [ds-nav-item](../nav/nav-item)
  - [ds-slider](../slider)
 
 ### Graph
 ```mermaid
 graph TD;
-  ds-main --> ds-trigger
   ds-nav-item --> ds-trigger
   ds-slider --> ds-trigger
   style ds-trigger fill:#f9f,stroke:#333,stroke-width:4px

@@ -1,7 +1,6 @@
 const DotstashConfig = {
   // The themes gulp compiles: scss/themes/<theme>/index.scss → dist/css/<theme>.css,
   // and their page stylesheets scss/themes/<theme>/pages/<page>.scss → dist/css/pages/<theme>/<page>.css.
-  // The first one is the default theme of the demo pages.
   themes: ['default', 'legacy'],
   paths: {
     source: {

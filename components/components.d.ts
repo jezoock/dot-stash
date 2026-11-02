@@ -162,9 +162,6 @@ export namespace Components {
     interface DsIcon {
         "type": string;
     }
-    interface DsMain {
-        "getData": (key: string) => Promise<unknown>;
-    }
     /**
      * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
      * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
@@ -608,12 +605,6 @@ declare global {
         prototype: HTMLDsIconElement;
         new (): HTMLDsIconElement;
     };
-    interface HTMLDsMainElement extends Components.DsMain, HTMLStencilElement {
-    }
-    var HTMLDsMainElement: {
-        prototype: HTMLDsMainElement;
-        new (): HTMLDsMainElement;
-    };
     interface HTMLDsModalElementEventMap {
         "modalClose": any;
         "modalOpen": any;
@@ -903,7 +894,6 @@ declare global {
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
         "ds-icon": HTMLDsIconElement;
-        "ds-main": HTMLDsMainElement;
         "ds-modal": HTMLDsModalElement;
         "ds-nav": HTMLDsNavElement;
         "ds-nav-item": HTMLDsNavItemElement;
@@ -1052,8 +1042,6 @@ declare namespace LocalJSX {
     }
     interface DsIcon {
         "type"?: string;
-    }
-    interface DsMain {
     }
     /**
      * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
@@ -1334,7 +1322,6 @@ declare namespace LocalJSX {
         "ds-grid-item": DsGridItem;
         "ds-heading": DsHeading;
         "ds-icon": DsIcon;
-        "ds-main": DsMain;
         "ds-modal": DsModal;
         "ds-nav": DsNav;
         "ds-nav-item": DsNavItem;
@@ -1384,7 +1371,6 @@ declare module "@stencil/core" {
             "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
             "ds-icon": LocalJSX.DsIcon & JSXBase.HTMLAttributes<HTMLDsIconElement>;
-            "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             /**
              * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
              * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):

@@ -33,6 +33,9 @@ root (`archived/components/ds-button/components/core/button/button.tsx` was `com
   the library: their folders (`.tsx`, types, structural `.scss`, specs, readmes) and their skins of the `default` and
   `legacy` themes. The utilities they used (`props`, `env`, `debounce`) stay in `components/utils`, and the `.ds-button`
   skin stays in the `default` theme: `ds-trigger type="button"` renders that class.
+- `archived/demo/`: the demo, removed from the development branch: `components/demo` (`ds-main`) and the two dev pages
+  that rendered it (`index.html`, `components/index.html`), with their theme switcher and runtime color control. The
+  dev pages now only load the build and the `default` theme.
 
 ## Propal archive (`toSort-propal/`)
 

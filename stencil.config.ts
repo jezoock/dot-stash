@@ -16,7 +16,7 @@ export const config: Config = {
       // No generated service worker: Workbox would load its runtime from a third-party CDN.
       serviceWorker: null,
       // The theme stylesheets compiled by gulp (npm run build:css, run first): dist/css/<theme>.css → www/css/<theme>.css,
-      // for the demo page of www/ (components/index.html).
+      // for the dev page of www/ (components/index.html), served by npm start.
       copy: [{ src: '../dist/css/*.css', dest: 'css' }],
     },
     {

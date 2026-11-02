@@ -158,19 +158,6 @@ Type: `Promise<void>`
 
 
 
-## Dependencies
-
-### Used by
-
- - [ds-main](../../demo)
-
-### Graph
-```mermaid
-graph TD;
-  ds-main --> ds-rsp
-  style ds-rsp fill:#f9f,stroke:#333,stroke-width:4px
-```
-
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

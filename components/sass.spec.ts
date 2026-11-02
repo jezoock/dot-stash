@@ -33,7 +33,7 @@ describe('Sass stylesheets', () => {
     }
   });
 
-  // The themes and their page stylesheets (gulp: dist/css/<theme>.css, dist/css/pages/<theme>/), and the demo and component
+  // The themes and their page stylesheets (gulp: dist/css/<theme>.css, dist/css/pages/<theme>/), and the component
   // stylesheets (Stencil).
   const themes = fs
     .readdirSync(path.join(root, 'scss/themes'), { withFileTypes: true })
