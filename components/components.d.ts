@@ -6,10 +6,8 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSBlockContext } from "./core/block/block.types";
-import { DSButtonType } from "./core/button/button.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
-import { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { DSSliderParams } from "./core/slider/slider.types";
@@ -17,10 +15,8 @@ import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/t
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { DSBlockContext } from "./core/block/block.types";
-export { DSButtonType } from "./core/button/button.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
-export { DSMarqueeTransitionEnum } from "./core/marquee/marquee.types";
 export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { DSSliderParams } from "./core/slider/slider.types";
@@ -71,46 +67,6 @@ export namespace Components {
           * Block type classname ( also used to build block classname )
          */
         "type": string;
-    }
-    /**
-     * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
-     * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
-     * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
-     * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
-     * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
-     * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
-     * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
-     * listeners of the host (such as `onClick` in JSX) or of its ancestors.
-     */
-    interface DsButton {
-        /**
-          * Disables the button or the link, and stops the clicks on the component.
-         */
-        "disabled": boolean;
-        /**
-          * Renders a link (`<a>`) to this URL instead of a button. Read when the component loads to choose between a link and a button: afterwards, it changes the URL of a link, but a button stays a button and a link stays a link.
-         */
-        "href": string;
-        /**
-          * Accessible name of the button or link (its `aria-label`), for a button without text, such as an icon-only button.
-         */
-        "label": string;
-        /**
-          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
-         */
-        "mods": string | string[];
-        /**
-          * `rel` of the link (with `href`).
-         */
-        "rel": string;
-        /**
-          * `target` of the link (with `href`).
-         */
-        "target": string;
-        /**
-          * Type of the native button: `button`, `submit` or `reset` (any other value gives `button`). Not used with `href`.
-         */
-        "type": DSButtonType;
     }
     /**
      * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
@@ -210,34 +166,6 @@ export namespace Components {
         "getData": (key: string) => Promise<unknown>;
     }
     /**
-     * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
-     * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
-     */
-    interface DsMarquee {
-        "bgColor": string;
-        "color": string;
-        /**
-          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
-         */
-        "mods": string | string[];
-        /**
-          * Pauses the scrolling while the mouse is over the messages; not on touch screens (`touchSupport()`).
-         */
-        "pauseOnHover": string | boolean;
-        /**
-          * Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.
-         */
-        "speed": string | number;
-        /**
-          * Starts scrolling the messages to the left, from the beginning (a running animation is replaced). The offset grows by `speed / 10` px every 4 ms: the pace of the former `setInterval(…, 0)`, which browsers run every 4 ms; it is now computed on animation frames, which follow the display and stop in background tabs.
-         */
-        "start": () => Promise<void>;
-        /**
-          * Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`.
-         */
-        "transition": string | DSMarqueeTransitionEnum;
-    }
-    /**
      * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
      * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
      * the class is removed when the last shown modal is hidden or removed from the document.
@@ -293,10 +221,6 @@ export namespace Components {
         "showPanel": (index: number) => Promise<void>;
         "soloContent": boolean;
         "type": PanelType;
-    }
-    interface DsRatingList {
-        "dsAverage": string | number;
-        "dsRatings": string | number[];
     }
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
@@ -564,33 +488,6 @@ export namespace Components {
         "target": string;
         "type": 'button' | 'control' | 'link';
     }
-    /**
-     * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
-     * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
-     */
-    interface DsVideo {
-        "autoplay": boolean;
-        "controls": boolean;
-        "loop": boolean;
-        /**
-          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
-         */
-        "mods": string | string[];
-        "mute": () => Promise<void>;
-        "pause": () => Promise<void>;
-        /**
-          * Plays the video. Resolves at once, without waiting for the player (which can wait for its source for ever): a refusal of the player is reported with `playError`.
-         */
-        "play": () => Promise<void>;
-        "playsinline": boolean;
-        "poster": string;
-        "sources": string | string[];
-        /**
-          * Stops the video: paused, back to the beginning, reloaded. Neither `--playing` nor `--paused`.
-         */
-        "stop": () => Promise<void>;
-        "unmute": () => Promise<void>;
-    }
 }
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -640,10 +537,6 @@ export interface DsToggleGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToggleGroupElement;
 }
-export interface DsVideoCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsVideoElement;
-}
 declare global {
     /**
      * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
@@ -666,22 +559,6 @@ declare global {
     var HTMLDsBlockElement: {
         prototype: HTMLDsBlockElement;
         new (): HTMLDsBlockElement;
-    };
-    /**
-     * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
-     * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
-     * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
-     * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
-     * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
-     * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
-     * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
-     * listeners of the host (such as `onClick` in JSX) or of its ancestors.
-     */
-    interface HTMLDsButtonElement extends Components.DsButton, HTMLStencilElement {
-    }
-    var HTMLDsButtonElement: {
-        prototype: HTMLDsButtonElement;
-        new (): HTMLDsButtonElement;
     };
     interface HTMLDsComboElementEventMap {
         "optionSelected": DSComboSelectedEventDetail;
@@ -736,16 +613,6 @@ declare global {
     var HTMLDsMainElement: {
         prototype: HTMLDsMainElement;
         new (): HTMLDsMainElement;
-    };
-    /**
-     * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
-     * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
-     */
-    interface HTMLDsMarqueeElement extends Components.DsMarquee, HTMLStencilElement {
-    }
-    var HTMLDsMarqueeElement: {
-        prototype: HTMLDsMarqueeElement;
-        new (): HTMLDsMarqueeElement;
     };
     interface HTMLDsModalElementEventMap {
         "modalClose": any;
@@ -818,12 +685,6 @@ declare global {
     var HTMLDsPanelGroupElement: {
         prototype: HTMLDsPanelGroupElement;
         new (): HTMLDsPanelGroupElement;
-    };
-    interface HTMLDsRatingListElement extends Components.DsRatingList, HTMLStencilElement {
-    }
-    var HTMLDsRatingListElement: {
-        prototype: HTMLDsRatingListElement;
-        new (): HTMLDsRatingListElement;
     };
     interface HTMLDsRspElementEventMap {
         "breakpointChange": BreakpointChangeDetail;
@@ -1034,44 +895,20 @@ declare global {
         prototype: HTMLDsTriggerElement;
         new (): HTMLDsTriggerElement;
     };
-    interface HTMLDsVideoElementEventMap {
-        "playError": { error: unknown };
-    }
-    /**
-     * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
-     * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
-     */
-    interface HTMLDsVideoElement extends Components.DsVideo, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsVideoElementEventMap>(type: K, listener: (this: HTMLDsVideoElement, ev: DsVideoCustomEvent<HTMLDsVideoElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsVideoElementEventMap>(type: K, listener: (this: HTMLDsVideoElement, ev: DsVideoCustomEvent<HTMLDsVideoElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsVideoElement: {
-        prototype: HTMLDsVideoElement;
-        new (): HTMLDsVideoElement;
-    };
     interface HTMLElementTagNameMap {
         "ds-ajax": HTMLDsAjaxElement;
         "ds-block": HTMLDsBlockElement;
-        "ds-button": HTMLDsButtonElement;
         "ds-combo": HTMLDsComboElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
         "ds-icon": HTMLDsIconElement;
         "ds-main": HTMLDsMainElement;
-        "ds-marquee": HTMLDsMarqueeElement;
         "ds-modal": HTMLDsModalElement;
         "ds-nav": HTMLDsNavElement;
         "ds-nav-item": HTMLDsNavItemElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
-        "ds-rating-list": HTMLDsRatingListElement;
         "ds-rsp": HTMLDsRspElement;
         "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
@@ -1086,7 +923,6 @@ declare global {
         "ds-toggle-group": HTMLDsToggleGroupElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-trigger": HTMLDsTriggerElement;
-        "ds-video": HTMLDsVideoElement;
     }
 }
 declare namespace LocalJSX {
@@ -1132,46 +968,6 @@ declare namespace LocalJSX {
           * Block type classname ( also used to build block classname )
          */
         "type"?: string;
-    }
-    /**
-     * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
-     * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
-     * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
-     * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
-     * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
-     * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
-     * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
-     * listeners of the host (such as `onClick` in JSX) or of its ancestors.
-     */
-    interface DsButton {
-        /**
-          * Disables the button or the link, and stops the clicks on the component.
-         */
-        "disabled"?: boolean;
-        /**
-          * Renders a link (`<a>`) to this URL instead of a button. Read when the component loads to choose between a link and a button: afterwards, it changes the URL of a link, but a button stays a button and a link stays a link.
-         */
-        "href"?: string;
-        /**
-          * Accessible name of the button or link (its `aria-label`), for a button without text, such as an icon-only button.
-         */
-        "label"?: string;
-        /**
-          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
-         */
-        "mods"?: string | string[];
-        /**
-          * `rel` of the link (with `href`).
-         */
-        "rel"?: string;
-        /**
-          * `target` of the link (with `href`).
-         */
-        "target"?: string;
-        /**
-          * Type of the native button: `button`, `submit` or `reset` (any other value gives `button`). Not used with `href`.
-         */
-        "type"?: DSButtonType;
     }
     /**
      * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
@@ -1260,30 +1056,6 @@ declare namespace LocalJSX {
     interface DsMain {
     }
     /**
-     * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
-     * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
-     */
-    interface DsMarquee {
-        "bgColor"?: string;
-        "color"?: string;
-        /**
-          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
-         */
-        "mods"?: string | string[];
-        /**
-          * Pauses the scrolling while the mouse is over the messages; not on touch screens (`touchSupport()`).
-         */
-        "pauseOnHover"?: string | boolean;
-        /**
-          * Scrolling speed: `speed / 10` px every 4 ms (10 = 250 px/s); `0` does not scroll.
-         */
-        "speed"?: string | number;
-        /**
-          * Transition class (`DSMarqueeTransitionEnum`): `slide-ttb`, `slide-btt`, `slide-ltr` or `slide-rtl`.
-         */
-        "transition"?: string | DSMarqueeTransitionEnum;
-    }
-    /**
      * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
      * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
      * the class is removed when the last shown modal is hidden or removed from the document.
@@ -1334,10 +1106,6 @@ declare namespace LocalJSX {
         "mods"?: string | string[];
         "soloContent"?: boolean;
         "type"?: PanelType;
-    }
-    interface DsRatingList {
-        "dsAverage"?: string | number;
-        "dsRatings"?: string | number[];
     }
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
@@ -1558,43 +1326,20 @@ declare namespace LocalJSX {
         "target"?: string;
         "type"?: 'button' | 'control' | 'link';
     }
-    /**
-     * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
-     * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
-     */
-    interface DsVideo {
-        "autoplay"?: boolean;
-        "controls"?: boolean;
-        "loop"?: boolean;
-        /**
-          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
-         */
-        "mods"?: string | string[];
-        /**
-          * Emitted when the browser refuses to play the video (the promise of the player's `play()` is rejected), for example with a `NotAllowedError` when autoplay is blocked. The component is then back to its state before the call: not playing. Detail: `{ error }`. A `play()` interrupted by `pause()` or `stop()` emits nothing.
-         */
-        "onPlayError"?: (event: DsVideoCustomEvent<{ error: unknown }>) => void;
-        "playsinline"?: boolean;
-        "poster"?: string;
-        "sources"?: string | string[];
-    }
     interface IntrinsicElements {
         "ds-ajax": DsAjax;
         "ds-block": DsBlock;
-        "ds-button": DsButton;
         "ds-combo": DsCombo;
         "ds-grid": DsGrid;
         "ds-grid-item": DsGridItem;
         "ds-heading": DsHeading;
         "ds-icon": DsIcon;
         "ds-main": DsMain;
-        "ds-marquee": DsMarquee;
         "ds-modal": DsModal;
         "ds-nav": DsNav;
         "ds-nav-item": DsNavItem;
         "ds-panel": DsPanel;
         "ds-panel-group": DsPanelGroup;
-        "ds-rating-list": DsRatingList;
         "ds-rsp": DsRsp;
         "ds-select": DsSelect;
         "ds-sidebar": DsSidebar;
@@ -1609,7 +1354,6 @@ declare namespace LocalJSX {
         "ds-toggle-group": DsToggleGroup;
         "ds-tooltip": DsTooltip;
         "ds-trigger": DsTrigger;
-        "ds-video": DsVideo;
     }
 }
 export { LocalJSX as JSX };
@@ -1629,17 +1373,6 @@ declare module "@stencil/core" {
              */
             "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             /**
-             * A button, or a link styled as a button when `href` is set. The host carries the `ds-button` class and the
-             * modifiers (`mods`); it renders a native `<button>` (or `<a>`) holding the `before`, default and `after` slots.
-             * In the light DOM, a `type="submit"` button inside a `<form>` submits it.
-             * `href` chooses between a link and a button when the component loads: Stencil loses the slotted content of an
-             * element it replaces in the light DOM, so the component never swaps one for the other afterwards.
-             * A disabled button does not dispatch clicks: the native button is disabled, a link loses its `href` (and gets
-             * `aria-disabled="true"` and `tabindex="-1"`), and a click on the component is stopped before it reaches the
-             * listeners of the host (such as `onClick` in JSX) or of its ancestors.
-             */
-            "ds-button": LocalJSX.DsButton & JSXBase.HTMLAttributes<HTMLDsButtonElement>;
-            /**
              * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
              * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
              * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
@@ -1653,11 +1386,6 @@ declare module "@stencil/core" {
             "ds-icon": LocalJSX.DsIcon & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             "ds-main": LocalJSX.DsMain & JSXBase.HTMLAttributes<HTMLDsMainElement>;
             /**
-             * Scrolling messages. The `--transition-<DSMarqueeTransitionEnum>` class names the transition
-             * (`slide-rtl` by default); the messages scroll to the left at `speed` (see `start()`).
-             */
-            "ds-marquee": LocalJSX.DsMarquee & JSXBase.HTMLAttributes<HTMLDsMarqueeElement>;
-            /**
              * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
              * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
              * the class is removed when the last shown modal is hidden or removed from the document.
@@ -1667,7 +1395,6 @@ declare module "@stencil/core" {
             "ds-nav-item": LocalJSX.DsNavItem & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
             "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
             "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
-            "ds-rating-list": LocalJSX.DsRatingList & JSXBase.HTMLAttributes<HTMLDsRatingListElement>;
             /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
@@ -1713,11 +1440,6 @@ declare module "@stencil/core" {
              * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
              */
             "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
-            /**
-             * A video player. The host has the `--playing` class while the video plays, `--paused` once paused, neither when
-             * stopped (`stop()`), and `--muted` while muted. When the browser refuses to play, it keeps its former state (see `playError`).
-             */
-            "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
         }
     }
 }

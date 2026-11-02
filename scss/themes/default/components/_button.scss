@@ -2,7 +2,10 @@
 @use 'sass:map';
 @use '../tokens' as *;
 
-// Size modifiers: font size and padding (on the inner control, or on the host when it has none, as ds-trigger).
+// The skin of the .ds-button class, which ds-trigger renders with type="button" (the previous / next buttons of ds-slider,
+// the expand button of ds-nav-item). Modifiers: sizes xs to xl (md by default), colors stl-1 to stl-3, rounded, shadow.
+
+// Size modifiers: font size and padding.
 $-sizes: (
   xs: (
     font-size: ds-token(font-size, 100),
@@ -44,11 +47,7 @@ $-styles: (
 
 @mixin -size($size) {
   font-size: map.get($size, font-size);
-
-  & > .ds-button__control,
-  &:not(:has(> .ds-button__control)) {
-    padding: map.get($size, padding);
-  }
+  padding: map.get($size, padding);
 }
 
 .ds-button {
@@ -64,11 +63,6 @@ $-styles: (
   transition-duration: 0.2s;
   transition-property: color, background-color, border-color, box-shadow;
   transition-timing-function: ease;
-
-  & > .ds-button__control {
-    display: block;
-    width: 100%;
-  }
 
   @each $name, $size in $-sizes {
     &.--#{$name} {

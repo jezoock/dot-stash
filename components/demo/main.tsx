@@ -42,16 +42,11 @@ export class DSMainTest {
   };
 
   @State() comboOutput = '';
-  @State() disabledClicks = 0;
   @State() submits = 0;
 
   optionSelectedHandler = (event: CustomEvent<DSComboSelectedEventDetail>) => {
     const { name, selectedOptions } = event.detail;
     this.comboOutput = `${name} : ${selectedOptions.map(option => option.name).join(', ') || 'aucune sélection'}`;
-  };
-
-  disabledButtonClickHandler = () => {
-    this.disabledClicks++;
   };
 
   formSubmitHandler = (event: Event) => {
@@ -88,10 +83,9 @@ export class DSMainTest {
           <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item>sdfkdfjskdfjkkjsdf</ds-slider-item>
           <ds-slider-item>
-            <ds-button>
-              <strong>test </strong>
-              <span slot="before">sdfkdfjskdfjkkjsdf 0000</span>
-            </ds-button>
+            <ds-trigger type="button">
+              <strong>test</strong>
+            </ds-trigger>
           </ds-slider-item>
         </ds-slider>
         <ds-trigger type="button" mods="lg" target="#bob" action="prev">
@@ -116,19 +110,19 @@ export class DSMainTest {
         <section class="ds-homepage__history">
           <ds-block section name="homepage-history">
             <ds-title-bar slot="header">
-              <ds-button slot="before" mods="sm,stl-3">
+              <ds-trigger type="button" slot="before" mods="sm,stl-3">
+                <ds-icon type="arrow-left" />
                 Retour
-                <ds-icon type="arrow-left" slot="before" />
-              </ds-button>
+              </ds-trigger>
               <ds-heading>
                 <h2>Titre de block</h2>
                 <h3 slot="sub-title">Sous-titre de block</h3>
                 <p slot="description">Description de block de test</p>
               </ds-heading>
-              <ds-button slot="after" mods="sm,stl-3">
-                <ds-icon type="cancel" slot="after" />
+              <ds-trigger type="button" slot="after" mods="sm,stl-3">
                 Fermer
-              </ds-button>
+                <ds-icon type="cancel" />
+              </ds-trigger>
             </ds-title-bar>
 
             <ds-block block>
@@ -231,7 +225,9 @@ export class DSMainTest {
 
             <ds-grid data-use-rsp class="ds-button-list" cols={5} hGap="10px" vGap="1rem" type="fixed">
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['xs', 'stl-1']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['xs', 'stl-1']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item
                 class="ds-button-list__item"
@@ -244,50 +240,49 @@ export class DSMainTest {
                   lg: { width: 5 },
                 })}
               >
-                <ds-button mods={['sm', 'stl-1']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['sm', 'stl-1']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['md', 'stl-1']}>
-                  <span slot="before">Avant · </span>
-                  <span>Click me !</span>
-                  <span slot="after"> · Après</span>
-                </ds-button>
+                <ds-trigger type="button" mods={['md', 'stl-1']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['lg', 'stl-1', 'shadow']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['lg', 'stl-1', 'shadow']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['xl', 'stl-1']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['xl', 'stl-1']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['xs', 'stl-2', 'rounded']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['xs', 'stl-2', 'rounded']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['sm', 'stl-2', 'rounded']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['sm', 'stl-2', 'rounded']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['md', 'stl-2']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['md', 'stl-2']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['lg', 'stl-3']}>Click me !</ds-button>
+                <ds-trigger type="button" mods={['lg', 'stl-3']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
               <ds-grid-item class="ds-button-list__item">
-                <ds-button mods={['xl', 'stl-3', 'shadow']}>Click me !</ds-button>
-              </ds-grid-item>
-              <ds-grid-item class="ds-button-list__item">
-                <ds-button id="demo-button-disabled" mods={['md', 'stl-1']} disabled onClick={this.disabledButtonClickHandler}>
-                  Désactivé ({this.disabledClicks})
-                </ds-button>
-              </ds-grid-item>
-              <ds-grid-item class="ds-button-list__item">
-                <ds-button id="demo-button-link" mods={['md', 'stl-2']} href="#demo-form">
-                  Lien vers le formulaire
-                </ds-button>
-              </ds-grid-item>
-              <ds-grid-item class="ds-button-list__item">
-                <ds-button id="demo-button-link-disabled" mods={['md', 'stl-2']} href="#demo-form" disabled>
-                  Lien désactivé
-                </ds-button>
+                <ds-trigger type="button" mods={['xl', 'stl-3', 'shadow']}>
+                  Click me !
+                </ds-trigger>
               </ds-grid-item>
             </ds-grid>
           </ds-block>
@@ -295,12 +290,10 @@ export class DSMainTest {
 
         <form id="demo-form" class="ds-components-demo__form" onSubmit={this.formSubmitHandler}>
           <input name="message" placeholder="Message" aria-label="Message" />
-          <ds-button id="demo-button-submit" type="submit" mods={['md', 'stl-1']}>
+          <button id="demo-button-submit" type="submit">
             Envoyer
-          </ds-button>
-          <ds-button type="reset" mods={['md', 'stl-3']}>
-            Effacer
-          </ds-button>
+          </button>
+          <button type="reset">Effacer</button>
           <output id="demo-form-output">{this.submits > 0 && `Envoyé ${this.submits} fois`}</output>
         </form>
       </div>

@@ -1,6 +1,5 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { DSBlock } from '../core/block/block';
-import { DSButton } from '../core/button/button';
 import { DSCombo } from '../core/combo/combo';
 import { DSMainTest } from './main';
 
@@ -45,8 +44,8 @@ describe('ds-main', () => {
     expect(parentClass('footer[slot="footer"]')).toEqual(['ds-block__footer', 'ds-homepage-history-section__footer']);
   });
 
-  it('renders a single and a multiple combo, and buttons: disabled, link, submit', async () => {
-    const page = await newSpecPage({ components: [DSMainTest, DSCombo, DSButton], html: '<ds-main></ds-main>' });
+  it('renders a single and a multiple combo, and a form submit button', async () => {
+    const page = await newSpecPage({ components: [DSMainTest, DSCombo], html: '<ds-main></ds-main>' });
     const single = page.root.querySelector('#demo-combo-single') as HTMLDsComboElement;
     const multiple = page.root.querySelector('#demo-combo-multiple') as HTMLDsComboElement;
 
@@ -54,9 +53,6 @@ describe('ds-main', () => {
     expect(single.selectedOptions.map(option => option.name)).toEqual(['Vert']);
     expect(multiple.multiple).toBe(true);
     expect(multiple.selectedOptions.map(option => option.name)).toEqual(['S']);
-    expect(page.root.querySelector('#demo-button-disabled button').hasAttribute('disabled')).toBe(true);
-    expect(page.root.querySelector('#demo-button-link a').getAttribute('href')).toBe('#demo-form');
-    expect(page.root.querySelector('#demo-button-link-disabled a').hasAttribute('href')).toBe(false);
-    expect(page.root.querySelector('form #demo-button-submit button').getAttribute('type')).toBe('submit');
+    expect(page.root.querySelector('form #demo-button-submit').getAttribute('type')).toBe('submit');
   });
 });

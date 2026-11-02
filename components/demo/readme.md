@@ -32,7 +32,6 @@ Type: `Promise<unknown>`
 - [ds-toggle](../core/toggle)
 - [ds-slider](../core/slider)
 - [ds-slider-item](../core/slider/slider-item)
-- [ds-button](../core/button)
 - [ds-trigger](../core/trigger)
 - [ds-heading](../core/heading)
 - [ds-title-bar](../core/title-bar)
@@ -51,7 +50,6 @@ graph TD;
   ds-main --> ds-toggle
   ds-main --> ds-slider
   ds-main --> ds-slider-item
-  ds-main --> ds-button
   ds-main --> ds-trigger
   ds-main --> ds-heading
   ds-main --> ds-title-bar

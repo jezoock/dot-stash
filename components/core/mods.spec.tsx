@@ -1,11 +1,9 @@
 import { h } from '@stencil/core';
 import { newSpecPage, SpecPage } from '@stencil/core/testing';
 import { DSBlock } from './block/block';
-import { DSButton } from './button/button';
 import { DSCombo } from './combo/combo';
 import { DSGrid } from './grid/grid';
 import { DSHeading } from './heading/heading';
-import { DSSlideMsg } from './marquee/marquee';
 import { DSNav } from './nav/nav';
 import { DSPanel } from './panel/panel';
 import { DSPanelGroup } from './panel-group/panel-group';
@@ -20,7 +18,6 @@ import { DSToggle } from './toggle/toggle';
 import { DSToggleGroup } from './toggle-group/toggle-group';
 import { DSTooltip } from './tooltip/tooltip';
 import { DSTrigger } from './trigger/trigger';
-import { DSVideo } from './video/video';
 
 /** Where the class list is rendered: on the host, or on the root element the component renders in it. */
 type ClassTarget = 'host' | 'root';
@@ -28,11 +25,9 @@ type ClassTarget = 'host' | 'root';
 // [tag, component, main class, class target, other props the component needs to render]
 const components: [string, unknown, string, ClassTarget, Record<string, string>?][] = [
   ['ds-block', DSBlock, 'ds-block', 'host'],
-  ['ds-button', DSButton, 'ds-button', 'host'],
   ['ds-combo', DSCombo, 'ds-combo', 'root'],
   ['ds-grid', DSGrid, 'ds-grid', 'root'],
   ['ds-heading', DSHeading, 'ds-heading', 'host'],
-  ['ds-marquee', DSSlideMsg, 'ds-marquee', 'host'],
   ['ds-nav', DSNav, 'ds-nav', 'root'],
   ['ds-panel', DSPanel, 'ds-panel', 'host'],
   ['ds-panel-group', DSPanelGroup, 'ds-panel-group', 'host'],
@@ -48,7 +43,6 @@ const components: [string, unknown, string, ClassTarget, Record<string, string>?
   ['ds-tooltip', DSTooltip, 'ds-tooltip', 'root'],
   // The main class of ds-trigger is `ds-<type>`: `control` by default.
   ['ds-trigger', DSTrigger, 'ds-control', 'host'],
-  ['ds-video', DSVideo, 'ds-video', 'host'],
 ];
 
 describe.each(components)('%s mods', (tag, component, mainClass, classTarget, props = {}) => {
