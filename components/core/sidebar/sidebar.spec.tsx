@@ -77,4 +77,16 @@ describe('ds-sidebar', () => {
     expect(stylesheet).toContain('[is-shown]');
     expect(stylesheet).toContain('overscroll-behavior: contain');
   });
+
+  it('hides off-screen on the side of its reflected h-pos, not on a from attribute it does not have', async () => {
+    const stylesheet = readFileSync(join(__dirname, 'sidebar.scss'), 'utf8');
+    const { page } = await render('<ds-sidebar h-pos="right"></ds-sidebar>');
+
+    expect(page.root).toHaveAttribute('h-pos');
+    expect(page.root).not.toHaveAttribute('from');
+    expect(stylesheet).not.toContain('[from=');
+    expect(stylesheet).toMatch(/transition:\s*transform ease 0\.4s,\s*visibility 0s linear 0\.4s;/); // out of sight while it slides out on load
+    expect(stylesheet).toMatch(/ {2}&:not\(\[is-shown\]\) \{\s*transform: translate3d\(-100%, 0, 0\);/);
+    expect(stylesheet).toMatch(/&\[h-pos='right'\]:not\(\[is-shown\]\) \{\s*transform: translate3d\(100%, 0, 0\);/);
+  });
 });

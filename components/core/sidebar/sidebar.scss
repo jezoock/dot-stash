@@ -1,6 +1,10 @@
 ds-sidebar {
   position: fixed;
-  transition: transform ease 0.4s;
+  // This stylesheet arrives with the component: a hidden sidebar then slides out of the screen once. The visibility
+  // Stencil gives the component when it is ready (hidden until its hydrated class) changes at the end of that slide.
+  transition:
+    transform ease 0.4s,
+    visibility 0s linear 0.4s;
   // Scrolling to the end of the sidebar does not scroll the page behind it.
   overscroll-behavior: contain;
 
@@ -13,28 +17,14 @@ ds-sidebar {
     transform: translate3d(0, 0, 0);
   }
 
-  &[from='top'] {
-    &:not([is-shown]) {
-      transform: translate3d(0, -100%, 0);
-    }
+  // Hidden, the sidebar is out of the screen on its side (the reflected hPos property, left by default: also before
+  // the first render reflects it, so that it does not slide out on load). show() slides it in.
+  &:not([is-shown]) {
+    transform: translate3d(-100%, 0, 0);
   }
 
-  &[from='right'] {
-    &:not([is-shown]) {
-      transform: translate3d(100%, 0, 0);
-    }
-  }
-
-  &[from='bottom'] {
-    &:not([is-shown]) {
-      transform: translate3d(0, 100%, 0);
-    }
-  }
-
-  &[from='left'] {
-    &:not([is-shown]) {
-      transform: translate3d(-100%, 0, 0);
-    }
+  &[h-pos='right']:not([is-shown]) {
+    transform: translate3d(100%, 0, 0);
   }
 
   &[v-pos='top'] {
