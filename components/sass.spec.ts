@@ -163,7 +163,7 @@ describe('Sass stylesheets', () => {
 
       expect(tokens.get('--ds-color-primary-base')).toBe('#e4be90');
       expect(tokens.get('--ds-color-secondary-dark')).toBe('#c94328');
-      expect(tokens.has('--ds-color-status-warning')).toBe(false); // not in the legacy palette
+      expect(tokens.get('--ds-color-status-warning')).toBe('#f29100');
       expect(tokens.get('--ds-colorset-solid-primary-background')).toBe('var(--ds-color-primary-base)');
       expect(tokens.get('--ds-colorset-solid-primary-hover-border')).toBe('var(--ds-color-primary-dark)');
       expect(tokens.get('--ds-colorset-solid-white-text')).toBe('var(--ds-color-gray-black)');
@@ -380,7 +380,7 @@ describe('Sass stylesheets', () => {
 
     it('leaves the declaration out for an optional color that does not exist', () => {
       const css = compileString(
-        `@use 'themes/legacy/tokens' as *; a { color: ds-color(status, warning, $optional: true); border-color: ds-color(status, error, $optional: true); }`,
+        `@use 'themes/legacy/tokens' as *; a { color: ds-color(status, overdue, $optional: true); border-color: ds-color(status, error, $optional: true); }`,
       );
 
       expect(declarationsOf(css, 'a')).toEqual([['border-color', 'var(--ds-color-status-error)']]);

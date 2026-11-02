@@ -267,7 +267,7 @@ Each theme writes its tokens once, as CSS custom properties on `:root`, with `@i
 | `bp`          | `$breakpoints`   | `--ds-bp-<label>`, in px, and `--ds-bp-labels`, the list of the labels      | `--ds-bp-md: 992px`, `--ds-bp-labels: xxs xs sm md lg xl xxl`          |
 | `gradient`    | `$gradients`     | `--ds-gradient-<name>-<attr>`                                               | (none: no gradient in the themes)                                      |
 
-`default` writes 165 custom properties, `legacy` 180 (`legacy` has no `status` `warning` color, so no `--ds-color-status-warning`, and adds colors and font families of its own). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
+`default` writes 165 custom properties, `legacy` 181 (it adds colors and font families of its own). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
 
 The `--ds-bp-*` properties are for JavaScript (`tokens.getBreakpoints()`, `tokens.getToken('bp-md')`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript)): media queries cannot use custom properties, so `break-p()` and `ds-breakpoint()` use the Sass values, and changing the properties at runtime does not change the media queries of the theme.
 
@@ -290,7 +290,7 @@ A token can be a reference to another one: `ds-ref(<group>, <keys>…)` in a map
 
 Use the `-value` functions wherever Sass needs the value itself: color functions (`color.change(ds-color-value(gray, white), $alpha: 0.6)`), arithmetic and comparisons (`ds-spacing-value(4) * 2`), media queries. `var()` cannot be computed by Sass (`color.change(ds-color(…))` is an error), and the result of a computation is a value: it does not follow the token at runtime.
 
-The colorset and font style accessors resolve the inheritance at build time: `ds-font-family(title, page-sub)` is `var(--ds-font-style-title-default-family)`, the variant that declares it. An unknown token, type or variant, a group of tokens (`ds-token(color, primary)`) or a token without value is a Sass error, with the known keys. `ds-color($type, $variant, $optional: true)` returns `null` for a color that does not exist, so the declaration is left out: `legacy`'s message skin uses it for `ds-color(status, warning)`, which its palette does not have (to be fixed in the palette).
+The colorset and font style accessors resolve the inheritance at build time: `ds-font-family(title, page-sub)` is `var(--ds-font-style-title-default-family)`, the variant that declares it. An unknown token, type or variant, a group of tokens (`ds-token(color, primary)`) or a token without value is a Sass error, with the known keys. `ds-color($type, $variant, $optional: true)` returns `null` for a color that does not exist, so the declaration is left out: for a skin shared by themes whose palettes differ.
 
 #### Changing a token at runtime
 

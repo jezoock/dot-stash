@@ -35,6 +35,8 @@ $-colors: (
   ),
   status: (
     success: #0a9872,
+    // The warning orange of the site's first palette, between the success green and the error red.
+    warning: #f29100,
     error: #ea0000,
     info: #3b86ff,
     busy: #c8c8c8,
