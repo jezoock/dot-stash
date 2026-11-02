@@ -1,4 +1,4 @@
-@use 'sass:map';
+@use '../tools/references' as *;
 
 // *** FONT SIZES *** //
 
@@ -48,12 +48,13 @@ $font-families: (
 
 // *** FONT STYLES *** //
 // family, size, weight and decoration by type and variant. A variant inherits the `default` variant of its type,
-// which inherits the top-level `default` (see ds-font-style()).
+// which inherits the top-level `default` (see ds-font-style()). Families and sizes are references to $font-families and
+// $font-sizes (ds-ref(font-family, <name>), ds-ref(font-size, <step>)): they follow them, at runtime too.
 
 $font-styles: (
   default: (
-    family: map.get($font-families, default),
-    size: map.get($font-sizes, 200),
+    family: ds-ref(font-family, default),
+    size: ds-ref(font-size, 200),
     weight: 400,
     decoration: none,
   ),
@@ -71,44 +72,44 @@ $font-styles: (
     paragraph: (),
     span: (),
     note: (
-      size: map.get($font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
     quote: (
-      size: map.get($font-sizes, 300),
+      size: ds-ref(font-size, 300),
     ),
     code: (
-      family: map.get($font-families, mono),
-      size: map.get($font-sizes, 100),
+      family: ds-ref(font-family, mono),
+      size: ds-ref(font-size, 100),
     ),
     pre: (
-      family: map.get($font-families, mono),
-      size: map.get($font-sizes, 100),
+      family: ds-ref(font-family, mono),
+      size: ds-ref(font-size, 100),
     ),
   ),
   title: (
     default: (
-      family: map.get($font-families, heading),
+      family: ds-ref(font-family, heading),
       weight: 700,
     ),
     page-main: (
-      size: map.get($font-sizes, 800),
+      size: ds-ref(font-size, 800),
     ),
     page-sub: (
-      size: map.get($font-sizes, 500),
+      size: ds-ref(font-size, 500),
       weight: 400,
     ),
     section-main: (
-      size: map.get($font-sizes, 600),
+      size: ds-ref(font-size, 600),
     ),
     section-sub: (
-      size: map.get($font-sizes, 300),
+      size: ds-ref(font-size, 300),
       weight: 400,
     ),
     block-main: (
-      size: map.get($font-sizes, 400),
+      size: ds-ref(font-size, 400),
     ),
     block-sub: (
-      size: map.get($font-sizes, 200),
+      size: ds-ref(font-size, 200),
       weight: 400,
     ),
   ),
@@ -119,10 +120,10 @@ $font-styles: (
   ),
   form: (
     default: (
-      size: map.get($font-sizes, 200),
+      size: ds-ref(font-size, 200),
     ),
     input: (
-      size: map.get($font-sizes, 200),
+      size: ds-ref(font-size, 200),
     ),
     label: (
       weight: 600,

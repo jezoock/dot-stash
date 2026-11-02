@@ -1,20 +1,24 @@
-@use 'sass:map';
-@use '../variables' as *;
+@use './tokens' as *;
+
+// The accessors return the Sass value of a token; the -value variants too, for computations. An unknown step or name is
+// an error.
 
 // A step of the spacing scale: ds-spacing(4) → 1rem.
 @function ds-spacing($step) {
-  @if not map.has-key($spacings, $step) {
-    @error 'Unknown spacing: #{$step}. Spacings: #{map.keys($spacings)}.';
-  }
+  @return ds-token-value(space, $step);
+}
 
-  @return map.get($spacings, $step);
+// ds-spacing-value(4) → 1rem.
+@function ds-spacing-value($step) {
+  @return ds-token-value(space, $step);
 }
 
 // A border radius of the scale: ds-radius(sm) → 0.25rem.
 @function ds-radius($name) {
-  @if not map.has-key($radii, $name) {
-    @error 'Unknown radius: #{$name}. Radii: #{map.keys($radii)}.';
-  }
+  @return ds-token-value(radius, $name);
+}
 
-  @return map.get($radii, $name);
+// ds-radius-value(sm) → 0.25rem.
+@function ds-radius-value($name) {
+  @return ds-token-value(radius, $name);
 }

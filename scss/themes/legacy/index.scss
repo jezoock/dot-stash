@@ -30,3 +30,6 @@
 @use './components/tooltip';
 
 @use './base';
+
+// The design tokens, as custom properties on :root (--ds-color-primary-base…): the skins above read them with var().
+@include tokens.ds-tokens();

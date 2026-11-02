@@ -1,57 +1,64 @@
 @use 'sass:map';
-@use '../variables' as *;
+@use './tokens' as *;
 
-// *** Functions *** //
+// The accessors return the Sass value of a token, references resolved; the -value variants too, for computations
+// (color.change(ds-color-value(gray, white), $alpha: 0.6)).
 
-// A colorset property: the `$variant` of `$type`, else the `default` variant of `$type`, else the top-level `default`.
-@function ds-colorset-style($prop: null, $type: null, $variant: null) {
-  @if ($prop != null) {
-    $requestedStyle: map.get($colorset, 'default', $prop);
-    $typeDefaultStyle: map.get($colorset, $type, 'default', $prop);
-
-    @if ($typeDefaultStyle != null) {
-      $requestedStyle: $typeDefaultStyle;
-    }
-
-    @if ($variant != null) {
-      $variantStyle: map.get($colorset, $type, $variant, $prop);
-
-      @if ($variantStyle != null) {
-        $requestedStyle: $variantStyle;
-      }
-    }
-
-    @return $requestedStyle;
-  }
-}
+// *** Colors *** //
 
 // A shade of a color family: ds-color(primary, dark). Null when the family or the shade does not exist.
-@function ds-color($type: 'primary', $variant: 'base') {
-  @return map.get($colors, $type, $variant);
+@function ds-color($type: primary, $variant: base) {
+  @if not ds-has-token(color, $type, $variant) {
+    @return null;
+  }
+
+  @return ds-token-value(color, $type, $variant);
 }
 
-@function ds-colorset-text($type: 'primary', $variant: 'default') {
-  @return ds-colorset-style('text', $type, $variant);
+@function ds-color-value($type: primary, $variant: base) {
+  @return ds-token-value(color, $type, $variant);
 }
 
-@function ds-colorset-border($type: 'primary', $variant: 'default') {
-  @return ds-colorset-style('border', $type, $variant);
+// *** Colorsets *** //
+
+// A colorset property (text, border, background): the `$variant` of `$type`, else the `default` variant of `$type`, else the
+// top-level `default`. An unknown type or variant is an error.
+@function ds-colorset-style($prop, $type: default, $variant: null) {
+  @return ds-token-style-value(colorset, $prop, $type, $variant);
 }
 
-@function ds-colorset-background($type: 'primary', $variant: 'default') {
-  @return ds-colorset-style('background', $type, $variant);
+@function ds-colorset-style-value($prop, $type: default, $variant: null) {
+  @return ds-token-style-value(colorset, $prop, $type, $variant);
 }
 
-// *** Mixins *** //
+@function ds-colorset-text($type: default, $variant: null) {
+  @return ds-colorset-style(text, $type, $variant);
+}
 
-@mixin ds-colorset-styles($type: 'primary', $variant: null) {
-  $color: ds-colorset-style('text', $type, $variant);
-  $border-color: ds-colorset-style('border', $type, $variant);
-  $background-color: ds-colorset-style('background', $type, $variant);
+@function ds-colorset-text-value($type: default, $variant: null) {
+  @return ds-colorset-style-value(text, $type, $variant);
+}
 
-  color: $color;
-  border-color: $border-color;
-  background-color: $background-color;
+@function ds-colorset-border($type: default, $variant: null) {
+  @return ds-colorset-style(border, $type, $variant);
+}
+
+@function ds-colorset-border-value($type: default, $variant: null) {
+  @return ds-colorset-style-value(border, $type, $variant);
+}
+
+@function ds-colorset-background($type: default, $variant: null) {
+  @return ds-colorset-style(background, $type, $variant);
+}
+
+@function ds-colorset-background-value($type: default, $variant: null) {
+  @return ds-colorset-style-value(background, $type, $variant);
+}
+
+@mixin ds-colorset-styles($type: default, $variant: null) {
+  color: ds-colorset-style(text, $type, $variant);
+  border-color: ds-colorset-style(border, $type, $variant);
+  background-color: ds-colorset-style(background, $type, $variant);
 }
 
 // *** Gradients *** //
@@ -68,8 +75,13 @@ $-orientation-to-direction: (
   top-left: to bottom right,
 );
 
+// A color of a gradient: gradient(hero, from).
 @function gradient($color-name, $attr) {
-  @return map.get($gradients, $color-name, $attr);
+  @return ds-token-value(gradient, $color-name, $attr);
+}
+
+@function gradient-value($color-name, $attr) {
+  @return ds-token-value(gradient, $color-name, $attr);
 }
 
 @mixin gradient($gradient, $orientation, $type: linear) {

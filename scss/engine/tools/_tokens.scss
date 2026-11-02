@@ -1,0 +1,322 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+@use 'sass:string';
+@use '../variables' as *;
+@use './references' as *;
+
+// *** Design tokens as CSS custom properties *** //
+// ds-tokens() writes each token of the maps below once, on :root, as a custom property named from its group and keys:
+//
+//   --ds-<group>-<key>[-<key>…]: <value>      $colors: (primary: (base: #2563eb)) → --ds-color-primary-base: #2563eb
+//
+// The keys are lower-cased, and any character other than a-z, 0-9, - and _ becomes -. A null value is not written, nor a
+// reference to a token that has none. A reference (ds-ref()) is written as var(--ds-<the other token>), so it follows it.
+// ds-token() returns var(--ds-…); ds-token-value() returns the Sass value, for computations (color functions, arithmetic,
+// comparisons, media queries, the theme JSON).
+
+// The token groups: the custom property prefix (--ds-<group>-) and the map each one reads.
+$ds-token-groups: color, colorset, font-size, font-family, font-style, space, radius, bp, gradient;
+
+@function -tokens-of($group) {
+  @if $group == color {
+    @return $colors;
+  } @else if $group == colorset {
+    @return $colorset;
+  } @else if $group == font-size {
+    @return $font-sizes;
+  } @else if $group == font-family {
+    @return $font-families;
+  } @else if $group == font-style {
+    @return $font-styles;
+  } @else if $group == space {
+    @return $spacings;
+  } @else if $group == radius {
+    @return $radii;
+  } @else if $group == bp {
+    @return $breakpoints;
+  } @else if $group == gradient {
+    @return $gradients;
+  }
+
+  @error string.unquote('Unknown token group: #{$group}. Groups: #{$ds-token-groups}.');
+}
+
+// A map of tokens, or an empty one (`()`): a group of tokens rather than a token.
+@function -is-group($value) {
+  @return (meta.type-of($value) == map and not ds-is-ref($value)) or (meta.type-of($value) == list and list.length($value) == 0);
+}
+
+$-name-chars: 'abcdefghijklmnopqrstuvwxyz0123456789-_';
+
+// A key as a part of a custom property name: Garamond → garamond, 1.5 → 1-5.
+@function -name-part($key) {
+  $key: string.to-lower-case(string.unquote('#{$key}'));
+  $part: '';
+
+  @for $i from 1 through string.length($key) {
+    $char: string.slice($key, $i, $i);
+
+    @if string.index($-name-chars, $char) {
+      $part: $part + $char;
+    } @else {
+      $part: $part + '-';
+    }
+  }
+
+  @return $part;
+}
+
+// The custom property name of a token: ds-token-name(color, primary, base) → --ds-color-primary-base.
+@function ds-token-name($group, $keys...) {
+  @if not list.index($ds-token-groups, $group) {
+    @error string.unquote('Unknown token group: #{$group}. Groups: #{$ds-token-groups}.');
+  }
+
+  $name: '--ds-#{$group}';
+
+  @each $key in $keys {
+    $name: $name + '-' + -name-part($key);
+  }
+
+  @return string.unquote($name);
+}
+
+// The value of the token at `$keys` of `$group`, references resolved. Null when it does not exist, is a group, is null,
+// or refers to a token that has no value.
+@function -resolve($group, $keys, $depth: 0) {
+  @if $depth > 20 {
+    @error string.unquote('The token references loop (#{$group} #{$keys}).');
+  }
+
+  $value: map.get(-tokens-of($group), $keys...);
+
+  @if ds-is-ref($value) {
+    @return -resolve(map.get($value, ds-ref, group), map.get($value, ds-ref, keys), $depth + 1);
+  }
+
+  @if -is-group($value) {
+    @return null;
+  }
+
+  @return $value;
+}
+
+// Why the token at `$keys` of `$group` cannot be used, as an error message; null when it can.
+@function -problem($group, $keys) {
+  $keys: list.join((), $keys, $separator: space);
+  $level: -tokens-of($group);
+  $path: ();
+
+  @each $key in $keys {
+    @if not(meta.type-of($level) == map and map.has-key($level, $key)) {
+      $known: '';
+
+      @if meta.type-of($level) == map and list.length($path) > 0 {
+        $known: ' Keys of #{$path}: #{map.keys($level)}.';
+      } @else if meta.type-of($level) == map {
+        $known: ' Keys: #{map.keys($level)}.';
+      }
+
+      @return string.unquote('Unknown #{$group} token: #{$keys} (#{ds-token-name($group, $keys...)}).#{$known}');
+    }
+
+    $level: map.get($level, $key);
+    $path: list.append($path, $key);
+  }
+
+  @if -is-group($level) {
+    @return string.unquote('The #{$group} #{$keys} is a group of tokens, not a token: give one of its keys.');
+  }
+
+  @if $level == null {
+    @return string.unquote('The #{$group} token #{$keys} has no value (null) in this theme.');
+  }
+
+  @if -resolve($group, $keys) == null {
+    $target: map.get($level, ds-ref);
+    @return string.unquote('The #{$group} token #{$keys} refers to the #{map.get($target, group)} token #{map.get($target, keys)}, which does not exist or has no value.');
+  }
+
+  @return null;
+}
+
+// Whether the token at `$keys` of `$group` exists and has a value: ds-has-token(color, status, warning).
+@function ds-has-token($group, $keys...) {
+  @return -resolve($group, $keys) != null;
+}
+
+// A token as its custom property: ds-token(color, primary, base) → var(--ds-color-primary-base).
+// An unknown token, a group or a token without value is an error.
+@function ds-token($group, $keys...) {
+  $problem: -problem($group, $keys);
+
+  @if $problem {
+    @error $problem;
+  }
+
+  @return string.unquote('var(#{ds-token-name($group, $keys...)})');
+}
+
+// The Sass value of a token, references resolved: ds-token-value(color, primary, base) → #2563eb.
+@function ds-token-value($group, $keys...) {
+  $problem: -problem($group, $keys);
+
+  @if $problem {
+    @error $problem;
+  }
+
+  @return -resolve($group, $keys);
+}
+
+// *** Styles: type, variant, property (colorset, font-style) *** //
+
+// The keys of the token that gives `$prop` to the `$variant` of `$type`: the variant, else the `default` variant of the
+// type, else the top-level `default`. An unknown type or variant is an error.
+@function -style-keys($group, $prop, $type, $variant) {
+  $tokens: -tokens-of($group);
+  $levels: ();
+
+  @if $variant == default {
+    $variant: null;
+  }
+
+  @if $type != null and $type != default {
+    @if not map.has-key($tokens, $type) {
+      @error string.unquote('Unknown #{$group} type: #{$type}. Types: #{map.keys(map.remove($tokens, default))}.');
+    }
+
+    @if $variant != null {
+      @if not map.has-key($tokens, $type, $variant) {
+        @error string.unquote('Unknown #{$group} variant: #{$type} #{$variant}. Variants of #{$type}: #{map.keys(map.get($tokens, $type))}.');
+      }
+
+      $levels: list.append($levels, ($type, $variant), $separator: comma);
+    }
+
+    $levels: list.append($levels, ($type, default), $separator: comma);
+  } @else if $variant != null {
+    @error string.unquote('The top-level default of #{$group} has no variant (#{$variant}): give a type.');
+  }
+
+  // The top-level default: one key (list.append() below makes a list of a single value).
+  $levels: list.append($levels, default, $separator: comma);
+
+  @each $level in $levels {
+    $keys: list.append($level, $prop);
+
+    @if -resolve($group, $keys) != null {
+      @return $keys;
+    }
+  }
+
+  $style: 'the top-level default';
+
+  @if $type != null and $type != default and $variant != null {
+    $style: '#{$type} #{$variant}';
+  } @else if $type != null and $type != default {
+    $style: '#{$type}';
+  }
+
+  @error string.unquote('No #{$prop} in the #{$group} tokens for #{$style}, nor in its defaults.');
+}
+
+// The custom property that gives `$prop` to a style: ds-token-style(colorset, text, solid, primary)
+// → var(--ds-colorset-solid-primary-text).
+@function ds-token-style($group, $prop, $type: default, $variant: null) {
+  @return ds-token($group, -style-keys($group, $prop, $type, $variant)...);
+}
+
+// Its Sass value.
+@function ds-token-style-value($group, $prop, $type: default, $variant: null) {
+  @return ds-token-value($group, -style-keys($group, $prop, $type, $variant)...);
+}
+
+// *** Output *** //
+
+// The tokens of a map, flattened: (<list of keys>: <value>), groups left out.
+@function -leaves($tokens, $keys: ()) {
+  $leaves: ();
+
+  @each $key, $value in $tokens {
+    $value-keys: list.append($keys, $key);
+
+    @if meta.type-of($value) == map and not ds-is-ref($value) {
+      $leaves: map.merge($leaves, -leaves($value, $value-keys));
+    } @else if not -is-group($value) and $value != null {
+      $leaves: map.set($leaves, $value-keys, $value);
+    }
+  }
+
+  @return $leaves;
+}
+
+// The CSS value of a token: var() for a reference, px for a breakpoint. Null when it has none.
+@function -css-value($group, $keys, $value) {
+  // ds-ref() written where the function is not loaded is a plain CSS function for Sass: a string.
+  @if meta.type-of($value) == string and string.index($value, 'ds-ref(') == 1 {
+    @error string.unquote('The #{$group} token #{$keys} is #{$value}, a plain string: load ds-ref() where the tokens are configured (`@use \'<path to>/scss/engine/tools/references\' as *;`).');
+  }
+
+  @if ds-is-ref($value) {
+    $target-group: map.get($value, ds-ref, group);
+    $target-keys: map.get($value, ds-ref, keys);
+
+    @if -resolve($target-group, $target-keys) == null {
+      @return null;
+    }
+
+    @return string.unquote('var(#{ds-token-name($target-group, $target-keys...)})');
+  }
+
+  @if $group == bp and meta.type-of($value) == number and math.is-unitless($value) {
+    $value: $value * 1px;
+  }
+
+  @return meta.inspect($value);
+}
+
+// The custom properties of the tokens of `$groups` (all by default): (<name>: <CSS value>).
+@function ds-token-declarations($groups...) {
+  @if list.length($groups) == 0 {
+    $groups: $ds-token-groups;
+  }
+
+  $declarations: ();
+  $names: ();
+
+  @each $group in $groups {
+    @each $keys, $value in -leaves(-tokens-of($group)) {
+      $name: ds-token-name($group, $keys...);
+      $css-value: -css-value($group, $keys, $value);
+
+      @if map.has-key($names, $name) {
+        @error string.unquote('Two tokens get the same custom property name, #{$name} (#{$group} #{$keys}): rename one of their keys.');
+      }
+
+      $names: map.set($names, $name, true);
+
+      @if $css-value != null {
+        $declarations: map.set($declarations, $name, $css-value);
+      }
+    }
+  }
+
+  @return $declarations;
+}
+
+// Writes the tokens of `$groups` (all by default) as custom properties: at the root of a stylesheet, in a :root rule (a theme
+// includes it once, in its index.scss); in a rule, in that rule. In a scope, it redeclares the tokens that refer to others,
+// so that they follow a value given in that scope: `.promo { --ds-color-primary-base: #c00; @include ds-tokens(colorset); }`.
+@mixin ds-tokens($groups...) {
+  @if & {
+    @each $name, $value in ds-token-declarations($groups...) {
+      #{$name}: #{$value};
+    }
+  } @else {
+    :root {
+      @include ds-tokens($groups...);
+    }
+  }
+}

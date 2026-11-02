@@ -1,0 +1,25 @@
+@use 'sass:map';
+@use 'sass:meta';
+
+// *** Token references *** //
+// A token whose value is another token: ds-ref(color, primary, base) in a map of tokens stands for the value of
+// $colors → primary → base. The token is then written as var(--ds-color-primary-base) (see ds-tokens()), so it follows
+// that token, at runtime too; the -value functions (ds-colorset-text-value()…) resolve it to the Sass value.
+//
+// This module reads no token: a theme can load it in its _tokens.scss before it configures the engine
+// (`@use '<path to>/scss/engine/tools/references' as *;`). The engine forwards it too.
+
+// A reference to the token at `$keys` of the token group `$group` (color, font-size, font-family…, see $ds-token-groups).
+@function ds-ref($group, $keys...) {
+  @return (
+    ds-ref: (
+      group: $group,
+      keys: $keys,
+    )
+  );
+}
+
+// Whether `$value` is a reference made by ds-ref().
+@function ds-is-ref($value) {
+  @return meta.type-of($value) == map and map.has-key($value, ds-ref);
+}

@@ -1,8 +1,9 @@
-@use 'sass:map';
+@use '../../engine/tools/references' as *;
 
 // The legacy theme tokens: the engine configured with the values of the legacy look.
 // The theme stylesheets load the engine through this module (`@use '../tokens' as *;`), so they all get these values.
 // The values are !default: a theme built on legacy can still change them with `@use '<path>/themes/legacy/tokens' with (…)`.
+// The colorsets and font styles refer to colors, font sizes and families with ds-ref(): they follow them (see ds-tokens()).
 
 // *** COLORS *** //
 
@@ -51,45 +52,45 @@ $-colors: (
 
 $-colorset: (
   default: (
-    text: map.get($-colors, primary, base),
+    text: ds-ref(color, primary, base),
     border: transparent,
     background: transparent,
   ),
   solid: (
     default: (
       text: #fff,
-      border: map.get($-colors, primary, base),
-      background: map.get($-colors, primary, base),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
     ),
     primary: (
       text: #fff,
-      border: map.get($-colors, primary, base),
-      background: map.get($-colors, primary, base),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
     ),
     primary-hover: (
       text: #fff,
-      border: map.get($-colors, primary, dark),
-      background: map.get($-colors, primary, dark),
+      border: ds-ref(color, primary, dark),
+      background: ds-ref(color, primary, dark),
     ),
     primary-light: (
       text: #fff,
-      border: map.get($-colors, primary, light),
-      background: map.get($-colors, primary, light),
+      border: ds-ref(color, primary, light),
+      background: ds-ref(color, primary, light),
     ),
     primary-light-hover: (
       text: #fff,
-      border: map.get($-colors, primary, base),
-      background: map.get($-colors, primary, base),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
     ),
     secondary: (
       text: #fff,
-      border: map.get($-colors, secondary, base),
-      background: map.get($-colors, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, secondary, base),
     ),
     secondary-hover: (
       text: #fff,
-      border: map.get($-colors, secondary, dark),
-      background: map.get($-colors, secondary, dark),
+      border: ds-ref(color, secondary, dark),
+      background: ds-ref(color, secondary, dark),
     ),
     white: (
       text: #000,
@@ -113,35 +114,35 @@ $-colorset: (
     ),
     disabled: (
       text: #fff,
-      border: map.get($-colors, status, disabled),
-      background: map.get($-colors, status, disabled),
+      border: ds-ref(color, status, disabled),
+      background: ds-ref(color, status, disabled),
     ),
   ),
   outlined: (
     default: (
-      text: map.get($-colors, primary, base),
-      border: map.get($-colors, primary, base),
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
       background: transparent,
     ),
     primary: (
-      text: map.get($-colors, primary, base),
-      border: map.get($-colors, primary, base),
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
       background: transparent,
     ),
     primary-hover: (
       text: #fff,
-      border: map.get($-colors, primary, base),
-      background: map.get($-colors, primary, base),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
     ),
     secondary: (
-      text: map.get($-colors, secondary, base),
-      border: map.get($-colors, secondary, base),
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
       background: transparent,
     ),
     secondary-hover: (
       text: #fff,
-      border: map.get($-colors, secondary, base),
-      background: map.get($-colors, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, secondary, base),
     ),
     white: (
       text: #fff,
@@ -154,30 +155,30 @@ $-colorset: (
       background: #fff,
     ),
     disabled: (
-      text: map.get($-colors, status, disabled),
-      border: map.get($-colors, status, disabled),
+      text: ds-ref(color, status, disabled),
+      border: ds-ref(color, status, disabled),
       background: transparent,
     ),
   ),
   link: (
     default: (
-      text: map.get($-colors, primary, base),
-      border: map.get($-colors, primary, base),
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
       background: #fff,
     ),
     primary: (
-      text: map.get($-colors, primary, base),
-      border: map.get($-colors, primary, base),
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
       background: #fff,
     ),
     secondary: (
-      text: map.get($-colors, secondary, base),
-      border: map.get($-colors, secondary, base),
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
       background: #fff,
     ),
     disabled: (
-      text: map.get($-colors, secondary, base),
-      border: map.get($-colors, secondary, base),
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
       background: #fff,
     ),
   ),
@@ -216,8 +217,8 @@ $-font-families: (
 
 $-font-styles: (
   default: (
-    family: map.get($-font-families, 'Now'),
-    size: map.get($-font-sizes, 200),
+    family: ds-ref(font-family, 'Now'),
+    size: ds-ref(font-size, 200),
     weight: 500,
     decoration: none,
   ),
@@ -233,69 +234,69 @@ $-font-styles: (
   text: (
     default: (),
     paragraph: (
-      size: map.get($-font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
     span: (
-      size: map.get($-font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
     note: (
-      size: map.get($-font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
     quote: (
-      size: map.get($-font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
     code: (
-      size: map.get($-font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
     pre: (
-      size: map.get($-font-sizes, 100),
+      size: ds-ref(font-size, 100),
     ),
   ),
   title: (
     page-main: (
-      size: map.get($-font-sizes, 800),
+      size: ds-ref(font-size, 800),
       weight: 900,
     ),
     page-sub: (
-      size: map.get($-font-sizes, 700),
+      size: ds-ref(font-size, 700),
       weight: 700,
     ),
     section-main: (
-      size: map.get($-font-sizes, 600),
+      size: ds-ref(font-size, 600),
       weight: 700,
     ),
     section-sub: (
-      size: map.get($-font-sizes, 500),
+      size: ds-ref(font-size, 500),
     ),
     block-main: (
-      size: map.get($-font-sizes, 400),
+      size: ds-ref(font-size, 400),
       weight: 700,
     ),
     block-sub: (
-      size: map.get($-font-sizes, 300),
+      size: ds-ref(font-size, 300),
     ),
   ),
   button: (
     default: (
-      family: map.get($-font-families, 'Garamond'),
-      size: map.get($-font-sizes, 300),
+      family: ds-ref(font-family, 'Garamond'),
+      size: ds-ref(font-size, 300),
     ),
   ),
   form: (
     default: (
-      size: map.get($-font-sizes, 200),
+      size: ds-ref(font-size, 200),
     ),
     input: (
-      size: map.get($-font-sizes, 200),
+      size: ds-ref(font-size, 200),
     ),
     label: (
-      size: map.get($-font-sizes, 300),
+      size: ds-ref(font-size, 300),
       weight: 700,
     ),
   ),
   link: (
     default: (
-      size: map.get($-font-sizes, 200),
+      size: ds-ref(font-size, 200),
       weight: 500,
       decoration: underline,
     ),
