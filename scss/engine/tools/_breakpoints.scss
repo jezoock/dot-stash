@@ -1,42 +1,46 @@
 @use 'sass:map';
+@use 'sass:math';
 @use '../variables' as *;
 
+// A media query from $breakpoints, mobile first: min-width for `$breakpoint-min`, max-width (its width - 1px) for
+// `$breakpoint-max`, both for a range.
+//
+//   @include break-p(md) { … }          @media (min-width: 992px)
+//   @include break-p(null, md) { … }    @media (max-width: 991px)
+//   @include break-p(sm, md) { … }      @media (min-width: 768px) and (max-width: 991px)
+//
+// An unknown label, or no label at all, is an error. Below the first breakpoint is break-p(null, <first label>).
 @mixin break-p($breakpoint-min: null, $breakpoint-max: null) {
-  @if ($breakpoint-min == 'min') {
-    $max: map.get($breakpoints, 'min');
-    @media (max-width: '#{$max}px') {
-      @content;
-    }
+  @if $breakpoint-min == null and $breakpoint-max == null {
+    @error 'break-p() needs a breakpoint: break-p(md), break-p(null, md) or break-p(sm, md). Breakpoints: #{map.keys($breakpoints)}.';
   }
 
-  @if ($breakpoint-min == null) {
-    $max: map.get($breakpoints, $breakpoint-max);
-    @media (max-width: '#{$max - 1}px') {
+  @if $breakpoint-max == null {
+    @media (min-width: ds-breakpoint($breakpoint-min)) {
       @content;
     }
-  }
-
-  @if ($breakpoint-max == null) {
-    $min: map.get($breakpoints, $breakpoint-min);
-    @media (min-width: '#{$min}px') {
+  } @else if $breakpoint-min == null {
+    @media (max-width: ds-breakpoint($breakpoint-max) - 1px) {
       @content;
     }
-  }
-
-  @if ($breakpoint-min != null and $breakpoint-max != null) {
-    $min: map.get($breakpoints, $breakpoint-min);
-    $max: map.get($breakpoints, $breakpoint-max);
-    @media (min-width: '#{$min}px') and (max-width: '#{$max - 1}px') {
+  } @else {
+    @media (min-width: ds-breakpoint($breakpoint-min)) and (max-width: ds-breakpoint($breakpoint-max) - 1px) {
       @content;
     }
   }
 }
 
-// The minimum width of a breakpoint, in px: ds-breakpoint(md) → 992px.
+// The minimum width of a breakpoint, in px: ds-breakpoint(md) → 992px (a unitless width or a width in px).
 @function ds-breakpoint($label) {
   @if not map.has-key($breakpoints, $label) {
     @error 'Unknown breakpoint: #{$label}. Breakpoints: #{map.keys($breakpoints)}.';
   }
 
-  @return map.get($breakpoints, $label) * 1px;
+  $width: map.get($breakpoints, $label);
+
+  @if math.is-unitless($width) {
+    @return $width * 1px;
+  }
+
+  @return $width;
 }

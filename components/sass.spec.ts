@@ -384,6 +384,20 @@ describe('Sass stylesheets', () => {
       expect(() => sass.compileString(`@use 'engine' as *; a { b: ${call}; }`, { loadPaths })).toThrow(message);
     });
 
+    it('writes the media queries of break-p() from the breakpoints (unitless or px), and fails without a known breakpoint', () => {
+      const css = compileString(`
+        @use 'engine' as * with ($breakpoints: (sm: 768, md: 992px));
+        a { @include break-p(md) { b: c; } @include break-p(null, md) { d: e; } @include break-p(sm, md) { f: g; } }
+      `);
+
+      expect(css).toMatch(/@media\s*\(min-width:\s*992px\)\s*\{\s*a\{b:c\}/);
+      expect(css).toMatch(/@media\s*\(max-width:\s*991px\)\s*\{\s*a\{d:e\}/);
+      expect(css).toMatch(/@media\s*\(min-width:\s*768px\)\s*and\s*\(max-width:\s*991px\)\s*\{\s*a\{f:g\}/);
+      expect(() => sass.compileString(`@use 'engine' as *; a { @include break-p(min) { b: c; } }`, { loadPaths })).toThrow(/Unknown breakpoint: min\. Breakpoints: xxs, xs, /);
+      expect(() => sass.compileString(`@use 'engine' as *; a { @include break-p(null, nope) { b: c; } }`, { loadPaths })).toThrow(/Unknown breakpoint: nope/);
+      expect(() => sass.compileString(`@use 'engine' as *; a { @include break-p() { b: c; } }`, { loadPaths })).toThrow(/break-p\(\) needs a breakpoint/);
+    });
+
     it.each(themes)('the %s icons all have a glyph', theme => {
       for (const direction of ['up', 'down', 'left', 'right']) expect(themeCss[theme]).toMatch(new RegExp(`\\.ds-icon\\.--dir-${direction}:{1,2}before\\{content:"[^"]+"`));
       expect(() => sass.compileString(`@use 'engine' as *; a { @include ds-icon(dir-up); }`, { loadPaths })).toThrow(/Unknown icon: dir-up\. Icons: basket, ok, /);

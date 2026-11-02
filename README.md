@@ -216,7 +216,7 @@ The accessors of the tokens return their custom property, `var(--ds-…)` (see [
 - Typography: `ds-font-style($prop, $type, $variant)`, `ds-font-family()`, `ds-font-size()`, `ds-font-weight()`, `ds-font-decoration()` (`$type`, `$variant`), and `@include ds-font-styles($type, $variant)` for the family, size, weight and decoration.
 - Icons: `@include ds-icon($name, $display)` for an icon glyph, `@include ds-icon-content($name)` for the glyph only (a name that is not in `$icons` is an error), and `@include ds-icon-font-face($path: '../fonts')` for the `@font-face` of the `ds-icons` font.
 - Spacing: `ds-spacing($step)`, `ds-radius($name)`.
-- Breakpoints: `@include break-p($min, $max)` writes a media query from `$breakpoints`: `min-width` for `$min`, `max-width` (value - 1) for `$max`, or both. `ds-breakpoint($label)` returns the width of a breakpoint in px (a Sass value: media queries cannot read custom properties). JavaScript reads them from the custom properties, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript).
+- Breakpoints: `@include break-p($min, $max)` writes a media query from `$breakpoints`: `min-width` for `$min`, `max-width` (value - 1) for `$max`, or both; an unknown label, or none, is an error (below the first breakpoint: `break-p(null, <first label>)`). `ds-breakpoint($label)` returns the width of a breakpoint in px (a Sass value: media queries cannot read custom properties). JavaScript reads them from the custom properties, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript).
 - Misc: `@include ds-arrow($size, $direction, $color)`, `@include spin` (it uses the keyframes of `@include ds-keyframes()`, included once at the root of a theme).
 
 ```scss
