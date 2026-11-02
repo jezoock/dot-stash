@@ -63,7 +63,8 @@ components/
 scss/
   engine/          generic toolkit, no CSS output of its own (_index.scss forwards everything)
     variables/     token schema with neutral defaults: breakpoints, palette, typography, icons, spacing
-    tools/         functions and mixins: colors, typography, icons, spacing, breakpoints, misc, theme
+    tools/         functions and mixins: tokens (custom properties), references, colors, typography,
+                   icons, spacing, breakpoints, misc, theme
   themes/
     default/       neutral theme: _tokens.scss (the engine defaults), _base.scss, layout/,
                    components/, pages/, index.scss (entry point)
@@ -99,7 +100,7 @@ The SCSS uses the Sass module system (`@use` and `@forward`, no `@import`) and t
 
 It has two layers:
 
-- **The engine** (`scss/engine/`): the token schema, with neutral defaults, and the functions and mixins that read the tokens. It outputs no CSS by itself. `@use '<path to>/scss/engine' as *;` gives the tokens, functions and mixins without a namespace (`ds-color(...)`, `break-p(...)`, `$breakpoints`).
+- **The engine** (`scss/engine/`): the token schema, with neutral defaults, and the functions and mixins that read the tokens. It outputs no CSS by itself. `@use '<path to>/scss/engine' as *;` gives the tokens, functions and mixins without a namespace (`ds-color(...)`, `break-p(...)`, `$breakpoints`). Each theme writes the tokens once as CSS custom properties (`--ds-color-primary-base`…), and the skins read them with `var()`: see [Design tokens as custom properties](#design-tokens-as-custom-properties).
 - **Themes** (`scss/themes/<theme>/`): a theme configures the engine tokens and writes the CSS (base styles, fonts, component skins). Each one compiles to `dist/css/<theme>.css`.
   - `default`: neutral (blue primary, slate secondary, gray scale, system font stacks). Its base styles and skins take their sizes, colors and fonts from the tokens: start a new theme from it.
   - `legacy`: the look of the site the library comes from (gold primary, Montserrat and Mulish, uppercase titles, site-specific modifiers such as `.ds-grid.--home` or `.ds-block.--content`). Its skins still hard-code many values.
@@ -111,7 +112,7 @@ A theme folder holds:
 | File                     | Content                                                                                                                                                                                                 |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `_tokens.scss`           | Loads the engine configured for the theme (`@forward '../../engine' with (…)`). The other files of the theme start with `@use '../tokens' as *;` (or `'./tokens'`): they all get the configured tokens. |
-| `index.scss`             | The entry point compiled by gulp: loads the tokens first, then the base styles and skins. The order of the `@use` rules is the order of the CSS output.                                                 |
+| `index.scss`             | The entry point compiled by gulp: loads the tokens first, then the base styles and skins (the order of the `@use` rules is the order of the CSS output), and ends with `@include tokens.ds-tokens();`.  |
 | `_base.scss`             | Base element styles and the `body::before` bridge (`@include ds-theme()`): JavaScript reads it, a theme must have it.                                                                                   |
 | `layout/`, `components/` | Skins, one partial per component.                                                                                                                                                                       |
 | `pages/`                 | The page stylesheets of the theme (see [Page stylesheets](#page-stylesheets)).                                                                                                                          |
@@ -125,7 +126,7 @@ A theme folder holds:
 
 ### Theme switcher
 
-The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `/dist/css/`, `components/index.html` (`npm start`) from `/css/`, the copy of `dist/css/*.css` the Stencil build makes in `www/css/`. Both have a theme switcher: a `<select>` that replaces the file name of the theme stylesheet (`<link id="ds-theme-stylesheet">`). The choice is remembered in `localStorage` (key `ds-demo-theme`) when the browser allows it. The themes it offers are listed in the script of each page.
+The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `/dist/css/`, `components/index.html` (`npm start`) from `/css/`, the copy of `dist/css/*.css` the Stencil build makes in `www/css/`. Both have a theme switcher: a `<select>` that replaces the file name of the theme stylesheet (`<link id="ds-theme-stylesheet">`). The choice is remembered in `localStorage` (key `ds-demo-theme`) when the browser allows it. The themes it offers are listed in the script of each page. Below it, a color input changes the primary color token at runtime (see [Changing a token at runtime](#changing-a-token-at-runtime)).
 
 ### Creating a theme
 
@@ -152,10 +153,10 @@ The demo pages load the first theme: `index.html` (`npm run serve:theme`) from `
    );
    ```
 
-   A configured map replaces the whole default map: keep its keys, the tools and skins read them. The tokens derived from others follow the configured values: `$breakpoints` is built from `$grid-*`, `$colorset` from `$colors`, `$font-families` from `$font-family-*`, `$font-styles` from `$font-sizes` and `$font-families`. With `!default` after a value (`$grid-md: 1024 !default`, as `legacy` does), a stylesheet can still change it when it loads the theme: `@use 'themes/<name>/tokens' with ($grid-md: 1100); @use 'themes/<name>';`.
+   A configured map replaces the whole default map: keep its keys, the tools and skins read them. The tokens derived from others follow the configured values: `$breakpoints` is built from `$grid-*`, `$font-families` from `$font-family-*`, and `$colorset` and `$font-styles` refer to `$colors`, `$font-sizes` and `$font-families` with `ds-ref()` (see [References](#references-derived-tokens)). With `!default` after a value (`$grid-md: 1024 !default`, as `legacy` does), a stylesheet can still change it when it loads the theme: `@use 'themes/<name>/tokens' with ($grid-md: 1100); @use 'themes/<name>';`.
 
-3. Edit the base styles and skins, or add some: each partial starts with `@use '../tokens' as *;` and is loaded by `index.scss`. Keep `@include ds-icon-font-face();` and `@include ds-keyframes();` (once, at the root) and the `body::before` bridge.
-4. Add the name to `themes` in `dot-stash.config.mjs` (and to the switcher of the demo pages), then run `npm run build:css`: `dist/css/<name>.css`. `npm test` compiles the new theme, fails on any Sass warning, and checks the theme JSON of its `body::before`.
+3. Edit the base styles and skins, or add some: each partial starts with `@use '../tokens' as *;` and is loaded by `index.scss`. Keep `@include ds-icon-font-face();` and `@include ds-keyframes();` (once, at the root), the `body::before` bridge, and `@include tokens.ds-tokens();` at the end of `index.scss` (the custom properties the skins read).
+4. Add the name to `themes` in `dot-stash.config.mjs` (and to the switcher of the demo pages), then run `npm run build:css`: `dist/css/<name>.css`. `npm test` compiles the new theme, fails on any Sass warning, and checks the theme JSON of its `body::before` and its custom properties.
 
 The engine can also be configured from outside a theme that does not configure it, before the theme loads it: `@use '<path to>/scss/engine' with ($grid-md: 1024); @use '<path to>/scss/themes/default';`.
 
@@ -165,23 +166,26 @@ Every token is declared with `!default`. The defaults are neutral; `legacy/_toke
 
 - `_palette.scss`
   - `$colors`: color families and their shades: `primary` and `secondary` (`darker`, `dark`, `base`, `light`), `gray` (`white`, `lightest`, `lighter`, `light`, `base`, `dark`, `darker`, `darkest`, `black`), `status` (`success`, `warning`, `error`, `info`, `busy`, `disabled`, `discount`, `new`), `input` (`caret`), `shadow` (`base`).
-  - `$colorset`: named sets of `text`, `border` and `background` colors, grouped by type (`solid`, `outlined`, `link`) with variants such as `primary`, `primary-hover`, `secondary`, `white`, `gray` or `disabled`.
+  - `$colorset`: named sets of `text`, `border` and `background` colors, grouped by type (`solid`, `outlined`, `link`) with variants such as `primary`, `primary-hover`, `secondary`, `white`, `gray` or `disabled`. Its colors are references to `$colors` (`ds-ref(color, primary, base)`) or colors of their own.
   - `$gradients`: named gradients for `gradient()`, `(name: (fallback: …, from: …, to: …))`, empty by default.
 - `_typography.scss`
   - `$font-size-100` to `$font-size-900`, and the `$font-sizes` scale (`100` to `900`).
   - `$font-family-base`, `$font-family-heading`, `$font-family-mono` (system font stacks, no font file) and `$font-families` (`default`, `heading`, `mono`).
-  - `$font-styles`: family, size, weight and decoration per type (`page`, `text`, `title`, `button`, `form`, `link`) and variant (for `title`: `page-main`, `page-sub`, `section-main`, `section-sub`, `block-main`, `block-sub`). A variant inherits the `default` variant of its type, which inherits the top-level `default`.
+  - `$font-styles`: family, size, weight and decoration per type (`page`, `text`, `title`, `button`, `form`, `link`) and variant (for `title`: `page-main`, `page-sub`, `section-main`, `section-sub`, `block-main`, `block-sub`). A variant inherits the `default` variant of its type, which inherits the top-level `default`. Families and sizes are references (`ds-ref(font-family, heading)`, `ds-ref(font-size, 800)`).
 - `_icons.scss`: `$icons`, icon names mapped to glyph codes of the `ds-icons` font.
 - `_breakpoints.scss`: `$grid-xxs` to `$grid-xxl`, and `$breakpoints`, minimum widths in px (`xxs` 360, `xs` 576, `sm` 768, `md` 992, `lg` 1200, `xl` 1400, `xxl` 1600).
 - `_spacing.scss`: `$spacings`, steps `0` to `8` (`0` to `4rem`), and `$radii` (`none`, `sm`, `md`, `lg`, `pill`, `circle`).
 
 ### Functions and mixins (`scss/engine/tools/`)
 
-- Colors: `ds-color($type, $variant: base)`, `ds-colorset-text()`, `ds-colorset-border()`, `ds-colorset-background()`, and `@include ds-colorset-styles($type, $variant)` for all three properties. `gradient($name, $attr)` and `@include gradient($name, $orientation)` read `$gradients`.
+The accessors of the tokens return their custom property, `var(--ds-…)` (see [Design tokens as custom properties](#design-tokens-as-custom-properties)); each one has a `-value` variant that returns the Sass value, for computations.
+
+- Tokens: `@include ds-tokens($groups...)` writes the custom properties. `ds-token($group, $keys...)` returns the custom property of any token (`ds-token(font-size, 100)` → `var(--ds-font-size-100)`), `ds-token-value()` its Sass value, `ds-token-name()` its name (`--ds-font-size-100`), `ds-has-token()` whether it exists and has a value. `ds-ref($group, $keys...)` makes a reference to a token, in a token map.
+- Colors: `ds-color($type, $variant: base)`, `ds-colorset-text()`, `ds-colorset-border()`, `ds-colorset-background()`, `ds-colorset-style($prop, $type, $variant)`, and `@include ds-colorset-styles($type, $variant)` for all three properties. `gradient($name, $attr)` and `@include gradient($name, $orientation)` read `$gradients`.
 - Typography: `ds-font-style($prop, $type, $variant)`, `ds-font-family()`, `ds-font-size()`, `ds-font-weight()`, `ds-font-decoration()` (`$type`, `$variant`), and `@include ds-font-styles($type, $variant)` for the family, size, weight and decoration.
 - Icons: `@include ds-icon($name, $display)` for an icon glyph, `@include ds-icon-content($name)` for the glyph only, and `@include ds-icon-font-face($path: '../fonts')` for the `@font-face` of the `ds-icons` font.
 - Spacing: `ds-spacing($step)`, `ds-radius($name)`.
-- Breakpoints: `@include break-p($min, $max)` writes a media query from `$breakpoints`: `min-width` for `$min`, `max-width` (value - 1) for `$max`, or both. `ds-breakpoint($label)` returns the width of a breakpoint in px.
+- Breakpoints: `@include break-p($min, $max)` writes a media query from `$breakpoints`: `min-width` for `$min`, `max-width` (value - 1) for `$max`, or both. `ds-breakpoint($label)` returns the width of a breakpoint in px (a Sass value: media queries cannot read custom properties).
 - Misc: `@include ds-arrow($size, $direction, $color)`, `@include spin` (it uses the keyframes of `@include ds-keyframes()`, included once at the root of a theme).
 - Theme: `@include ds-theme()`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript).
 
@@ -211,6 +215,81 @@ Every token is declared with `!default`. The defaults are neutral; `legacy/_toke
   }
 }
 ```
+
+### Design tokens as custom properties
+
+Each theme writes its tokens once, as CSS custom properties on `:root`, with `@include tokens.ds-tokens();` at the end of its `index.scss`. The skins read them with `var()`, through the accessors, so a token can be changed at runtime, without compiling the theme again.
+
+#### Naming
+
+`--ds-<group>-<key>[-<key>…]`: the group of the token, then its keys in the map, from the outer to the inner one. The names are generated from the maps (a token added to a map gets its custom property), the keys lower-cased, and any character other than `a-z`, `0-9`, `-` and `_` replaced by `-` (`'Garamond'` → `garamond`); two tokens that would get the same name are a Sass error.
+
+| Group         | Map              | Custom properties                                                           | Example (legacy theme)                                                 |
+| ------------- | ---------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `color`       | `$colors`        | `--ds-color-<family>-<shade>`                                               | `--ds-color-primary-base: #e4be90`                                     |
+| `colorset`    | `$colorset`      | `--ds-colorset-<type>-<variant>-<prop>`                                     | `--ds-colorset-solid-primary-background: var(--ds-color-primary-base)` |
+|               |                  | `--ds-colorset-default-<prop>` (top-level default)                          | `--ds-colorset-default-text: var(--ds-color-primary-base)`             |
+| `font-size`   | `$font-sizes`    | `--ds-font-size-<step>`                                                     | `--ds-font-size-800: 2.25rem`                                          |
+| `font-family` | `$font-families` | `--ds-font-family-<name>`                                                   | `--ds-font-family-now: "Now"`                                          |
+| `font-style`  | `$font-styles`   | `--ds-font-style-<type>-<variant>-<prop>`, `--ds-font-style-default-<prop>` | `--ds-font-style-title-page-main-weight: 900`                          |
+| `space`       | `$spacings`      | `--ds-space-<step>`                                                         | `--ds-space-4: 1rem`                                                   |
+| `radius`      | `$radii`         | `--ds-radius-<name>`                                                        | `--ds-radius-pill: 999px`                                              |
+| `bp`          | `$breakpoints`   | `--ds-bp-<label>`, in px                                                    | `--ds-bp-md: 992px`                                                    |
+| `gradient`    | `$gradients`     | `--ds-gradient-<name>-<attr>`                                               | (none: no gradient in the themes)                                      |
+
+`default` writes 164 custom properties, `legacy` 166 (`legacy` has no `status` `warning` color, so no `--ds-color-status-warning`). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
+
+The `--ds-bp-*` properties are for JavaScript (`parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ds-bp-md'))`): media queries cannot use custom properties, so `break-p()` and `ds-breakpoint()` use the Sass values, and changing them at runtime changes nothing. The `body::before` theme JSON holds Sass values too.
+
+#### References (derived tokens)
+
+A token can be a reference to another one: `ds-ref(<group>, <keys>…)` in a map, such as `text: ds-ref(color, primary, base)` in `$colorset`. Its custom property is then `var()` of the other one, `--ds-colorset-default-text: var(--ds-color-primary-base)`, so it follows it, at build time (a configured `$colors`) and at runtime. The default `$colorset` and `$font-styles` refer to `$colors`, `$font-sizes` and `$font-families`; `legacy` does the same for the values it took from its palette and type scale, and keeps its own values (`#fff`, `#dcdcdc`…) for the others, which do not follow.
+
+`ds-ref()` is in `scss/engine/tools/references`, which reads no token: a theme loads it in its `_tokens.scss` before it configures the engine (`@use '../../engine/tools/references' as *;`, as `legacy` does), and so does a stylesheet that configures the engine with references (`@use '<path to>/scss/engine/tools/references' as *; @use '<path to>/scss/engine' with (…);`). Written where it is not loaded, Sass takes `ds-ref(…)` for a plain CSS function: `ds-tokens()` then fails with an error that says so.
+
+#### Accessors and Sass values
+
+| Returns `var(--ds-…)`                                                                                                             | Returns the Sass value                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `ds-token($group, $keys...)`                                                                                                      | `ds-token-value($group, $keys...)`                                                                                                |
+| `ds-color($type, $variant)`                                                                                                       | `ds-color-value()`                                                                                                                |
+| `ds-colorset-style($prop, $type, $variant)`, `ds-colorset-text()`, `-border()`, `-background()`, `@include ds-colorset-styles()`  | `ds-colorset-style-value()`, `ds-colorset-text-value()`, `ds-colorset-border-value()`, `ds-colorset-background-value()`           |
+| `ds-font-style($prop, $type, $variant)`, `ds-font-family()`, `-size()`, `-weight()`, `-decoration()`, `@include ds-font-styles()` | `ds-font-style-value()`, `ds-font-family-value()`, `ds-font-size-value()`, `ds-font-weight-value()`, `ds-font-decoration-value()` |
+| `ds-spacing($step)`, `ds-radius($name)`                                                                                           | `ds-spacing-value()`, `ds-radius-value()`                                                                                         |
+| `gradient($name, $attr)`, `@include gradient()`                                                                                   | `gradient-value()`                                                                                                                |
+
+Use the `-value` functions wherever Sass needs the value itself: color functions (`color.change(ds-color-value(gray, white), $alpha: 0.6)`), arithmetic and comparisons (`ds-spacing-value(4) * 2`), media queries, strings such as the theme JSON. `var()` cannot be computed by Sass (`color.change(ds-color(…))` is an error), and the result of a computation is a value: it does not follow the token at runtime.
+
+The colorset and font style accessors resolve the inheritance at build time: `ds-font-family(title, page-sub)` is `var(--ds-font-style-title-default-family)`, the variant that declares it. An unknown token, type or variant, a group of tokens (`ds-token(color, primary)`) or a token without value is a Sass error, with the known keys. `ds-color($type, $variant, $optional: true)` returns `null` for a color that does not exist, so the declaration is left out: `legacy`'s message skin uses it for `ds-color(status, warning)`, which its palette does not have (to be fixed in the palette).
+
+#### Changing a token at runtime
+
+Set the custom property after the theme, globally:
+
+```css
+:root {
+  --ds-color-primary-base: #0d9488;
+}
+```
+
+```js
+document.documentElement.style.setProperty('--ds-color-primary-base', '#0d9488');
+```
+
+Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the links, the `default` focus outline… What a skin hard-codes (`#fff`, `rgba(0, 0, 0, 0.3)`, font names in `legacy`) and the values Sass computed (`color.change(…)`, the theme JSON) do not, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
+
+Or in a scope: `.promo { --ds-color-primary-base: #0d9488; }`. The rules that read `--ds-color-primary-base` inside `.promo` follow, but not the tokens that refer to it: their `var()` was resolved on `:root`, and `.promo` inherits the result. Declare them again in the scope, from Sass with `ds-tokens()` and the groups to declare:
+
+```scss
+@use '../tokens' as *;
+
+.promo {
+  --ds-color-primary-base: #0d9488;
+  @include ds-tokens(colorset); // --ds-colorset-…: var(--ds-color-…), resolved in .promo
+}
+```
+
+The demo pages (`index.html`, `components/index.html`) have a **Primary color token (`--ds-color-primary-base`)** color input next to the theme switcher: it sets the custom property on `<html>`, the skins follow at once; **Reset the primary color** removes it, and switching themes removes it too.
 
 ### Page stylesheets
 
@@ -343,7 +422,7 @@ it('toggles a checkbox', async () => {
 });
 ```
 
-`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that each theme writes valid theme JSON in `body::before`, and that the tokens can be configured with `@use … with (…)`.
+`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that each theme writes valid theme JSON in `body::before`, and that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`.
 
 `npm test` runs them once, `npm run test.watch` on every change. Spec files are not part of the build output (`dist/`, `www/`, `loader/`). End-to-end tests (`*.e2e.ts`, `npm run test:e2e`) need Puppeteer's Chromium, so `npm ci` must run without `PUPPETEER_SKIP_DOWNLOAD`.
 
