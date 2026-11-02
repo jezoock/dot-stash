@@ -271,6 +271,21 @@ describe('Sass stylesheets', () => {
       expect(declarations.filter(fontLiteral)).toEqual([]);
     });
 
+    // Selectors that once matched nothing, compared with the classes the components render: :last-child(), page classes
+    // misspelled (--whih-top-header), descendant selectors for classes of the same element, a missing comma (h1 h2).
+    it('the legacy skins target the classes the components render', () => {
+      const css = themeCss.legacy;
+
+      expect(css).toContain('.ds-combo.--default.--open{');
+      expect(css).toContain('ds-nav-item:not(:last-child)>.ds-nav-item.--depth-1{');
+      expect(css).toContain('.--with-top-header .ds-nav-item.--depth-0>.ds-nav-item__sub-nav{');
+      expect(css).toContain('.--without-top-header .ds-nav-item.--depth-0>.ds-nav-item__sub-nav{');
+      expect(css).toContain('.ds-nav-item.--depth-0.--active>.ds-nav-item__link>a{');
+      expect(css).toContain('.ds-block.--content h1 a,.ds-block.--content h2 a,');
+      expect(css).toContain('.ds-text h1 a,.ds-text h2 a,');
+      expect(css).not.toMatch(/\(\)|--whih|h1 h2|\.ds-combo\.--default \.ds-combo\.--open|>\.ds-nav-item\.--active/);
+    });
+
     // The skins read the primary color through its custom property: its value is only in :root.
     it.each([
       ['default', '#2563eb'],

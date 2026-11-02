@@ -97,10 +97,12 @@
       }
     }
 
+    // A line between the items of a sub-navigation: the .ds-nav-item element is the only child of its ds-nav-item host.
+    ds-nav-item:not(:last-child) > &.--depth-1 {
+      border-bottom: 1px solid ds-color(gray, light);
+    }
+
     &.--depth-1 {
-      &:not(:last-child()) {
-        border-bottom: 1px solid ds-color(gray, light);
-      }
       & img {
         width: 100%;
       }
@@ -151,20 +153,19 @@
         &__sub-nav {
           padding: ds-spacing(4) 0;
 
-          .--whihout-top-header & {
+          // Classes of the page (a host page sets them on an ancestor), below a header with or without its top bar.
+          .--without-top-header & {
             top: 68px;
           }
 
-          .--whih-top-header & {
+          .--with-top-header & {
             top: 96px;
           }
         }
+      }
 
-        &.--active {
-          & a {
-            color: ds-color(primary, base);
-          }
-        }
+      &.--active > .ds-nav-item__link > a {
+        color: ds-color(primary, base);
       }
     }
 

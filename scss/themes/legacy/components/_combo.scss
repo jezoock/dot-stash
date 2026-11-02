@@ -103,6 +103,10 @@
     min-width: 200px;
     line-height: 2rem;
 
+    &.--open {
+      border-color: ds-color(primary, base);
+    }
+
     & .ds-combo {
       &__selected-option {
         padding: 0 ds-spacing(4);
@@ -116,9 +120,6 @@
           padding: ds-spacing(2);
           border: 1px solid ds-color(gray, light);
         }
-      }
-      &.--open {
-        border-color: ds-color(primary, base);
       }
     }
   }

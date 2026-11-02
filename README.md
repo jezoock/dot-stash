@@ -103,7 +103,7 @@ It has two layers:
 - **The engine** (`scss/engine/`): the token schema, with neutral defaults, and the functions and mixins that read the tokens. It outputs no CSS by itself. `@use '<path to>/scss/engine' as *;` gives the tokens, functions and mixins without a namespace (`ds-color(...)`, `break-p(...)`, `$breakpoints`). Each theme writes the tokens once as CSS custom properties (`--ds-color-primary-base`…), and the skins read them with `var()`: see [Design tokens as custom properties](#design-tokens-as-custom-properties).
 - **Themes** (`scss/themes/<theme>/`): a theme configures the engine tokens and writes the CSS (base styles, fonts, component skins). Each one compiles to `dist/css/<theme>.css`.
   - `default`: neutral (blue primary, slate secondary, gray scale, system font stacks). Its base styles and skins take their sizes, colors and fonts from the tokens: start a new theme from it.
-  - `legacy`: the look of the site the library comes from (gold primary, Montserrat and Mulish, uppercase titles, site-specific modifiers such as `.ds-grid.--home` or `.ds-block.--content`). Its skins read the legacy tokens too: see [Skins read the tokens](#skins-read-the-tokens).
+  - `legacy`: the look of the site the library comes from (gold primary, Montserrat and Mulish, uppercase titles, site-specific modifiers such as `.ds-grid.--home` or `.ds-block.--content`, page classes such as `--with-top-header` and `--without-top-header`, which a page sets on an ancestor of its `ds-nav` to place the drop-down sub-navigations below its header). Its skins read the legacy tokens too: see [Skins read the tokens](#skins-read-the-tokens).
 
 ### Themes
 
