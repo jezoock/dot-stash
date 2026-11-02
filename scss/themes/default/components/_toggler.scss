@@ -1,0 +1,27 @@
+@use '../tokens' as *;
+
+// A toggler item: a title with a plus / minus indicator, and its content.
+.ds-toggler-item {
+  & .ds-toggler-item__title {
+    position: relative;
+    padding: ds-spacing(3) ds-spacing(7) ds-spacing(3) 0;
+    border-bottom: 1px solid ds-color(gray, light);
+    cursor: pointer;
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      @include ds-icon(plus);
+    }
+  }
+
+  & .ds-toggler-item__content {
+    padding: ds-spacing(3) 0;
+  }
+
+  &.--is-active .ds-toggler-item__title::after {
+    @include ds-icon-content(minus);
+  }
+}

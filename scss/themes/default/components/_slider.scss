@@ -1,0 +1,60 @@
+@use 'sass:color';
+@use '../tokens' as *;
+
+.ds-slider {
+  position: relative;
+  width: 100%;
+
+  &__list {
+    width: 100%;
+  }
+
+  &__item img {
+    display: block;
+    width: 100%;
+  }
+
+  &__prev-button,
+  &__next-button {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    transform: translateY(-50%);
+  }
+
+  &__prev-button {
+    left: ds-spacing(2);
+  }
+
+  &__next-button {
+    right: ds-spacing(2);
+  }
+}
+
+// The previous / next buttons (ds-trigger with the button skin): round, with a chevron drawn with borders.
+.ds-button.--slider {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: ds-spacing(7);
+  height: ds-spacing(7);
+  padding: 0;
+  border-color: ds-color(gray, light);
+  border-radius: ds-radius(circle);
+  background-color: color.change(ds-color(gray, white), $alpha: 0.85);
+
+  &::before {
+    content: '';
+    width: ds-spacing(2);
+    height: ds-spacing(2);
+    margin-left: ds-spacing(1);
+    border: solid currentColor;
+    border-width: 0 0 2px 2px;
+    transform: rotate(45deg);
+  }
+
+  &.--next::before {
+    margin: 0 ds-spacing(1) 0 0;
+    transform: rotate(-135deg);
+  }
+}

@@ -1,0 +1,34 @@
+@use '../tokens' as *;
+
+// ds-select: the native select is transparent and covers the component, which shows the label and a chevron.
+.ds-select {
+  position: relative;
+  display: block;
+  border: 1px solid ds-color(gray, base);
+  border-radius: ds-radius(sm);
+  background-color: ds-color(gray, white);
+
+  &__label {
+    padding: ds-spacing(2) ds-spacing(7) ds-spacing(2) ds-spacing(3);
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      right: ds-spacing(3);
+      transform: translateY(-50%);
+      @include ds-icon(angle-down);
+    }
+  }
+
+  &__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &.--disabled {
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,36 @@
+@use '../tokens' as *;
+
+// Notifications and form feedback: message type → icon (the color is the status color of the same name).
+$-message-types: (
+  info: info,
+  warning: attention,
+  error: cancel,
+  success: ok,
+);
+
+.ds-message {
+  position: relative;
+  margin-bottom: ds-spacing(4);
+  padding: ds-spacing(3) ds-spacing(4) ds-spacing(3) ds-spacing(7);
+  border-left: 4px solid ds-color(gray, base);
+  border-radius: ds-radius(sm);
+  background-color: ds-color(gray, lightest);
+
+  &::before {
+    position: absolute;
+    top: 50%;
+    left: ds-spacing(3);
+    transform: translateY(-50%);
+  }
+
+  @each $type, $icon in $-message-types {
+    &.--#{$type} {
+      border-left-color: ds-color(status, $type);
+
+      &::before {
+        color: ds-color(status, $type);
+        @include ds-icon($icon);
+      }
+    }
+  }
+}

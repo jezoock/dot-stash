@@ -1,0 +1,4 @@
+// The default theme tokens: the engine with its neutral defaults.
+// The theme stylesheets load the engine through this module (`@use '../tokens' as *;`).
+// A theme derived from this one configures the engine here instead: `@forward '../../engine' with ($colors: (…) !default);`
+@forward '../../engine';

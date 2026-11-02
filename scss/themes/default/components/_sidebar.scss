@@ -1,0 +1,22 @@
+@use '../tokens' as *;
+
+.ds-sidebar {
+  z-index: 10;
+  max-height: 100vh;
+  padding: ds-spacing(6) ds-spacing(4);
+  background-color: ds-color(gray, white);
+  box-shadow: 0 0 24px ds-color(shadow, base);
+
+  &.--h-pos-left,
+  &.--h-pos-right {
+    width: 100%;
+    max-width: ds-breakpoint(xxs);
+    height: 100%;
+  }
+
+  &__content {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}

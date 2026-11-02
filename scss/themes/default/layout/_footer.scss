@@ -1,0 +1,30 @@
+@use '../tokens' as *;
+
+.ds-footer {
+  padding: ds-spacing(7) ds-spacing(4);
+  background-color: ds-color(secondary, darker);
+  color: ds-color(gray, light);
+
+  & a {
+    color: ds-color(gray, white);
+  }
+
+  & ds-grid {
+    display: block;
+    max-width: ds-breakpoint(xl);
+    margin: 0 auto;
+  }
+}
+
+.ds-footer-link {
+  display: block;
+  padding: ds-spacing(3) ds-spacing(4);
+  background-color: ds-color(secondary, dark);
+  color: ds-color(gray, light);
+  font-size: ds-font-size(text, note);
+  text-align: center;
+
+  &:hover {
+    color: ds-color(gray, white);
+  }
+}

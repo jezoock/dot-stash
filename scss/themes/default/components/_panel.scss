@@ -1,0 +1,57 @@
+@use '../tokens' as *;
+
+// ds-panel: a collapsible panel (chevron), or a tab of ds-panel-group.
+.ds-panel {
+  &__title {
+    position: relative;
+    padding: ds-spacing(3) ds-spacing(6) ds-spacing(3) 0;
+    font-family: ds-font-family(title);
+    font-size: ds-font-size(title, block-sub);
+    font-weight: ds-font-weight(title);
+    cursor: pointer;
+
+    & > * {
+      margin: 0;
+      font: inherit;
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      transition: transform 0.2s ease;
+      @include ds-icon(angle-down);
+    }
+  }
+
+  &__content-wrapper {
+    padding-bottom: ds-spacing(4);
+  }
+
+  &[expanded] > &__title::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  &.--collapsible {
+    border-bottom: 1px solid ds-color(gray, light);
+  }
+
+  &.--tab {
+    & > .ds-panel__title {
+      margin-bottom: ds-spacing(4);
+      padding: ds-spacing(2) ds-spacing(4);
+      border-bottom: 2px solid ds-color(gray, light);
+      color: ds-color(gray, dark);
+
+      &::after {
+        content: none;
+      }
+    }
+
+    &[expanded] > .ds-panel__title {
+      border-bottom-color: ds-color(primary, base);
+      color: ds-color(primary, base);
+    }
+  }
+}

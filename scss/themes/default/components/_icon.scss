@@ -1,0 +1,56 @@
+@use '../tokens' as *;
+
+// The types of ds-icon (`type` → `--<type>` class) and their glyph in $icons.
+$-icon-types: (
+  cart: basket,
+  help: help,
+  account: user-o,
+  voucher: ticket,
+  returns: truck,
+  location: location,
+  search: search,
+  orders: calendar,
+  filter: menu,
+  arrow-up: angle-up,
+  arrow-left: angle-left,
+  arrow-right: angle-right,
+  arrow-down: angle-down,
+  up: up,
+  down: down,
+  left: left,
+  right: right,
+  dir-up: up-dir,
+  dir-down: down-dir,
+  dir-left: left-dir,
+  dir-right: right-dir,
+  show: eye,
+  hide: eye-off,
+  cancel: cancel,
+  delete: trash,
+  plus: plus,
+  minus: minus,
+  refresh: arrows-cw,
+  loading: arrows-cw,
+);
+
+.ds-icon {
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+
+  &::before {
+    @include ds-icon(null, inline-block);
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @each $type, $glyph in $-icon-types {
+    &.--#{$type}::before {
+      @include ds-icon-content($glyph);
+    }
+  }
+
+  &.--loading::before {
+    @include spin();
+  }
+}

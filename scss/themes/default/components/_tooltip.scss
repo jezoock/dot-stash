@@ -1,0 +1,38 @@
+@use '../tokens' as *;
+
+$-background: ds-color(secondary, darker);
+
+.ds-tooltip {
+  & [slot='message'] {
+    padding: ds-spacing(2) ds-spacing(3);
+    border-radius: ds-radius(sm);
+    background-color: $-background;
+    color: ds-color(gray, white);
+    font-size: ds-font-size(text, note);
+    font-weight: normal;
+    line-height: 1.4;
+    box-shadow: 0 2px 8px ds-color(shadow, base);
+  }
+
+  // The arrow, for the top and bottom positions.
+  &.--with-arrow.--top,
+  &.--with-arrow.--bottom {
+    & [slot='message']::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      border: ds-spacing(2) solid transparent;
+      transform: translateX(-50%);
+    }
+  }
+
+  &.--with-arrow.--top [slot='message']::after {
+    top: 100%;
+    border-top-color: $-background;
+  }
+
+  &.--with-arrow.--bottom [slot='message']::after {
+    bottom: 100%;
+    border-bottom-color: $-background;
+  }
+}

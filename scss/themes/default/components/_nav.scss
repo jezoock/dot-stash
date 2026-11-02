@@ -1,0 +1,105 @@
+@use '../tokens' as *;
+
+// ds-nav and ds-nav-item. Below md, the sub-navigations are collapsed (ds-nav-item animates their height) and
+// opened by the expand button; from md, they drop down on hover.
+
+.ds-nav {
+  @include break-p(md) {
+    &.--main {
+      display: flex;
+      align-items: center;
+      gap: ds-spacing(2);
+    }
+  }
+}
+
+.ds-nav-item {
+  position: relative;
+
+  &__link > a {
+    display: block;
+    padding: ds-spacing(3) ds-spacing(2);
+    color: ds-color(gray, darkest);
+    font-weight: ds-font-weight(button);
+    text-decoration: none;
+
+    &:hover {
+      color: ds-color(primary, base);
+    }
+  }
+
+  &.--active > &__link > a {
+    color: ds-color(primary, base);
+  }
+
+  @include break-p(null, md) {
+    border-bottom: 1px solid ds-color(gray, light);
+
+    &__expand-button {
+      position: absolute;
+      top: ds-spacing(2);
+      right: 0;
+    }
+
+    &__sub-nav {
+      height: 0;
+      overflow: hidden;
+      padding-left: ds-spacing(4);
+      transition: height 0.3s ease;
+    }
+
+    &.--open > &__expand-button .ds-button.--menu-item::before {
+      @include ds-icon-content(minus);
+    }
+  }
+
+  @include break-p(md) {
+    &__expand-button {
+      display: none;
+    }
+
+    &__sub-nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 10;
+      min-width: 100%;
+      padding: ds-spacing(2) 0;
+      border: 1px solid ds-color(gray, light);
+      border-radius: ds-radius(md);
+      background-color: ds-color(gray, white);
+      box-shadow: 0 4px 12px ds-color(shadow, base);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    &:hover > &__sub-nav,
+    &:focus-within > &__sub-nav {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    & & {
+      & > .ds-nav-item__link > a {
+        padding: ds-spacing(2) ds-spacing(4);
+      }
+
+      & > .ds-nav-item__sub-nav {
+        top: 0;
+        left: 100%;
+      }
+    }
+  }
+}
+
+// The expand button of ds-nav-item (a ds-trigger with the button skin).
+.ds-button.--menu-item {
+  border-color: transparent;
+  background-color: transparent;
+
+  &::before {
+    @include ds-icon(plus);
+  }
+}

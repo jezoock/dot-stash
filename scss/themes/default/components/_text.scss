@@ -1,0 +1,26 @@
+@use '../tokens' as *;
+
+.ds-text {
+  display: block;
+  @include ds-font-styles(text, paragraph);
+  line-height: 1.6;
+
+  & p,
+  & ul,
+  & ol {
+    margin: 0 0 ds-spacing(3);
+  }
+
+  & ul,
+  & ol {
+    padding-left: ds-spacing(5);
+  }
+
+  & li + li {
+    margin-top: ds-spacing(1);
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
+}

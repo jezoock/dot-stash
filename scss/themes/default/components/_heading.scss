@@ -1,0 +1,36 @@
+@use '../tokens' as *;
+
+.ds-heading {
+  display: block;
+  margin-bottom: ds-spacing(5);
+
+  &__image {
+    margin-bottom: ds-spacing(4);
+
+    & img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &__sub-title {
+    margin-top: ds-spacing(1);
+    color: ds-color(gray, dark);
+  }
+
+  &__description {
+    max-width: 65ch;
+    margin-top: ds-spacing(3);
+    color: ds-color(gray, darker);
+  }
+
+  &[section] {
+    text-align: center;
+
+    & .ds-heading__description {
+      margin-right: auto;
+      margin-left: auto;
+    }
+  }
+}

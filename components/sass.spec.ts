@@ -56,12 +56,13 @@ describe('Sass stylesheets', () => {
     expect(messages).toEqual([]);
   });
 
-  it('lets a theme built on legacy configure its tokens with @use … with (…)', () => {
+  // The configuration comes with the first load of the module: the theme then gets the configured tokens.
+  it.each([
+    ['the engine tokens (default theme)', "@use 'engine' with ($grid-md: 1000); @use 'themes/default';"],
+    ['the legacy tokens (a theme built on legacy)', "@use 'themes/legacy/tokens' with ($grid-md: 1000); @use 'themes/legacy';"],
+  ])('lets a theme configure %s with @use … with (…)', (_, source) => {
     const messages: string[] = [];
-    const { css } = sass.compileString("@use 'themes/legacy/tokens' with ($grid-md: 1000); @use 'themes/legacy';", {
-      loadPaths: [path.join(root, 'scss')],
-      logger: collectingLogger(messages),
-    });
+    const { css } = sass.compileString(source, { loadPaths: [path.join(root, 'scss')], logger: collectingLogger(messages) });
 
     expect(messages).toEqual([]);
     expect(css).toContain('@media (min-width: 1000px)');

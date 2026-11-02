@@ -1,0 +1,30 @@
+@use '../tokens' as *;
+
+// ds-title: page, section (default) or block title; `sub` for a subtitle.
+.ds-title {
+  margin: 0;
+  @include ds-font-styles(title, section-main);
+  line-height: 1.25;
+  color: ds-color(gray, darkest);
+
+  &[sub] {
+    @include ds-font-styles(title, section-sub);
+    color: ds-color(gray, dark);
+  }
+
+  &[page] {
+    @include ds-font-styles(title, page-main);
+
+    &[sub] {
+      @include ds-font-styles(title, page-sub);
+    }
+  }
+
+  &[block] {
+    @include ds-font-styles(title, block-main);
+
+    &[sub] {
+      @include ds-font-styles(title, block-sub);
+    }
+  }
+}

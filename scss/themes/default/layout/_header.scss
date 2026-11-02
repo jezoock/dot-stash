@@ -1,0 +1,35 @@
+@use '../tokens' as *;
+
+.ds-header {
+  border-bottom: 1px solid ds-color(gray, light);
+  background-color: ds-color(gray, white);
+
+  &__before {
+    background-color: ds-color(secondary, darker);
+    color: ds-color(gray, white);
+    font-size: ds-font-size(text, note);
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: ds-spacing(4);
+    max-width: ds-breakpoint(xl);
+    min-height: ds-spacing(8);
+    margin: 0 auto;
+    padding: ds-spacing(2) ds-spacing(4);
+  }
+
+  &__logo {
+    & img {
+      display: block;
+      max-height: ds-spacing(7);
+      width: auto;
+    }
+  }
+
+  &__menu {
+    flex-grow: 1;
+  }
+}

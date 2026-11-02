@@ -1,0 +1,35 @@
+@use '../tokens' as *;
+
+.ds-block,
+.ds-section {
+  display: block;
+
+  &__header {
+    margin-bottom: ds-spacing(5);
+  }
+
+  &__body {
+    margin: 0 auto;
+  }
+
+  &__footer {
+    margin-top: ds-spacing(5);
+  }
+
+  // Width of the body: a breakpoint width, or the full width.
+  @each $size in (sm, md, lg) {
+    &.--#{$size} {
+      & .ds-block__body,
+      & .ds-section__body {
+        max-width: ds-breakpoint($size);
+      }
+    }
+  }
+
+  &.--full-width {
+    & .ds-block__body,
+    & .ds-section__body {
+      max-width: 100%;
+    }
+  }
+}
