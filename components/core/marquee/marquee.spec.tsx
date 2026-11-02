@@ -120,4 +120,14 @@ describe('ds-marquee', () => {
     expect(messagesRule?.[1]).toContain('display: inline-block');
     expect(stylesheet).not.toContain('.ds-marquee-message');
   });
+
+  it('is as high as its messages and clips them in its own stylesheet: the container is not out of the flow', () => {
+    const stylesheet = readFileSync(join(__dirname, 'marquee.scss'), 'utf8');
+    const hostBlock = stylesheet.slice(stylesheet.indexOf('.ds-marquee {'), stylesheet.indexOf('&__container {'));
+    const containerBlock = stylesheet.slice(stylesheet.indexOf('&__container {'), stylesheet.indexOf('&__content {'));
+
+    expect(hostBlock).toContain('overflow: hidden;');
+    expect(containerBlock).toContain('white-space: nowrap;');
+    expect(containerBlock).not.toContain('position: absolute');
+  });
 });

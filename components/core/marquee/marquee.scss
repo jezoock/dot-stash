@@ -1,11 +1,10 @@
 .ds-marquee {
   position: relative;
   display: block;
+  // The messages scroll on one line: the host is as high as that line, and clips what overflows it.
+  overflow: hidden;
 
   &__container {
-    position: absolute;
-    top: 0;
-    left: 0;
     white-space: nowrap;
     min-width: 100%;
   }
