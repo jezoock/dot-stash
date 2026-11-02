@@ -1,11 +1,11 @@
 @use './tokens' as *;
 
-// The accessors return the Sass value of a token; the -value variants too, for computations. An unknown step or name is
-// an error.
+// The accessors return the custom property of the token (var(--ds-…), see ds-tokens()); their -value variants return the
+// Sass value, for computations. An unknown step or name is an error.
 
-// A step of the spacing scale: ds-spacing(4) → 1rem.
+// A step of the spacing scale: ds-spacing(4) → var(--ds-space-4).
 @function ds-spacing($step) {
-  @return ds-token-value(space, $step);
+  @return ds-token(space, $step);
 }
 
 // ds-spacing-value(4) → 1rem.
@@ -13,9 +13,9 @@
   @return ds-token-value(space, $step);
 }
 
-// A border radius of the scale: ds-radius(sm) → 0.25rem.
+// A border radius of the scale: ds-radius(sm) → var(--ds-radius-sm).
 @function ds-radius($name) {
-  @return ds-token-value(radius, $name);
+  @return ds-token(radius, $name);
 }
 
 // ds-radius-value(sm) → 0.25rem.

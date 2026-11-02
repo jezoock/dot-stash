@@ -41,7 +41,7 @@
   padding: 0;
   border-color: ds-color(gray, light);
   border-radius: ds-radius(circle);
-  background-color: color.change(ds-color(gray, white), $alpha: 0.85);
+  background-color: color.change(ds-color-value(gray, white), $alpha: 0.85);
 
   &::before {
     content: '';

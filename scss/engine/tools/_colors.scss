@@ -1,18 +1,19 @@
 @use 'sass:map';
 @use './tokens' as *;
 
-// The accessors return the Sass value of a token, references resolved; the -value variants too, for computations
-// (color.change(ds-color-value(gray, white), $alpha: 0.6)).
+// The accessors return the custom property of the token (var(--ds-…), see ds-tokens()); their -value variants return the
+// Sass value, for color functions (color.change(ds-color-value(gray, white), $alpha: 0.6)).
 
 // *** Colors *** //
 
-// A shade of a color family: ds-color(primary, dark). Null when the family or the shade does not exist.
-@function ds-color($type: primary, $variant: base) {
-  @if not ds-has-token(color, $type, $variant) {
+// A shade of a color family: ds-color(primary, dark) → var(--ds-color-primary-dark).
+// An unknown family or shade is an error; with `$optional: true`, it returns null instead (the declaration is left out).
+@function ds-color($type: primary, $variant: base, $optional: false) {
+  @if $optional and not ds-has-token(color, $type, $variant) {
     @return null;
   }
 
-  @return ds-token-value(color, $type, $variant);
+  @return ds-token(color, $type, $variant);
 }
 
 @function ds-color-value($type: primary, $variant: base) {
@@ -22,9 +23,10 @@
 // *** Colorsets *** //
 
 // A colorset property (text, border, background): the `$variant` of `$type`, else the `default` variant of `$type`, else the
-// top-level `default`. An unknown type or variant is an error.
+// top-level `default`. ds-colorset-style(text, solid, primary) → var(--ds-colorset-solid-primary-text).
+// An unknown type or variant is an error.
 @function ds-colorset-style($prop, $type: default, $variant: null) {
-  @return ds-token-style-value(colorset, $prop, $type, $variant);
+  @return ds-token-style(colorset, $prop, $type, $variant);
 }
 
 @function ds-colorset-style-value($prop, $type: default, $variant: null) {
@@ -75,9 +77,9 @@ $-orientation-to-direction: (
   top-left: to bottom right,
 );
 
-// A color of a gradient: gradient(hero, from).
+// A color of a gradient: gradient(hero, from) → var(--ds-gradient-hero-from).
 @function gradient($color-name, $attr) {
-  @return ds-token-value(gradient, $color-name, $attr);
+  @return ds-token(gradient, $color-name, $attr);
 }
 
 @function gradient-value($color-name, $attr) {

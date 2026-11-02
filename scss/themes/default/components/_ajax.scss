@@ -11,7 +11,7 @@
       position: absolute;
       inset: 0;
       z-index: 10;
-      background-color: color.change(ds-color(gray, white), $alpha: 0.6);
+      background-color: color.change(ds-color-value(gray, white), $alpha: 0.6);
     }
 
     &::after {

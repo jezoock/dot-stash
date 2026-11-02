@@ -13,8 +13,8 @@
 //
 // The keys are lower-cased, and any character other than a-z, 0-9, - and _ becomes -. A null value is not written, nor a
 // reference to a token that has none. A reference (ds-ref()) is written as var(--ds-<the other token>), so it follows it.
-// ds-token() returns var(--ds-…); ds-token-value() returns the Sass value, for computations (color functions, arithmetic,
-// comparisons, media queries, the theme JSON).
+// The accessors (ds-token(), ds-color(), ds-spacing()…) return var(--ds-…); the -value functions return the Sass value,
+// for computations (color functions, arithmetic, comparisons, media queries, the theme JSON).
 
 // The token groups: the custom property prefix (--ds-<group>-) and the map each one reads.
 $ds-token-groups: color, colorset, font-size, font-family, font-style, space, radius, bp, gradient;

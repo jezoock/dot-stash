@@ -22,11 +22,12 @@
     }
   }
 
+  // The legacy palette has no status warning color (to be fixed): `$optional: true` leaves these declarations out, as before.
   &.--warning {
-    border-left-color: ds-color(status, warning);
+    border-left-color: ds-color(status, warning, $optional: true);
 
     &:before {
-      color: ds-color(status, warning);
+      color: ds-color(status, warning, $optional: true);
       @include ds-icon(attention);
     }
   }

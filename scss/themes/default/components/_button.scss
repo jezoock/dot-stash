@@ -5,23 +5,23 @@
 // Size modifiers: font size and padding (on the inner control, or on the host when it has none, as ds-trigger).
 $-sizes: (
   xs: (
-    font-size: map.get($font-sizes, 100),
+    font-size: ds-token(font-size, 100),
     padding: ds-spacing(1) ds-spacing(2),
   ),
   sm: (
-    font-size: map.get($font-sizes, 100),
+    font-size: ds-token(font-size, 100),
     padding: ds-spacing(2) ds-spacing(3),
   ),
   md: (
-    font-size: map.get($font-sizes, 200),
+    font-size: ds-token(font-size, 200),
     padding: ds-spacing(2) ds-spacing(4),
   ),
   lg: (
-    font-size: map.get($font-sizes, 300),
+    font-size: ds-token(font-size, 300),
     padding: ds-spacing(3) ds-spacing(5),
   ),
   xl: (
-    font-size: map.get($font-sizes, 400),
+    font-size: ds-token(font-size, 400),
     padding: ds-spacing(4) ds-spacing(6),
   ),
 );
