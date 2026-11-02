@@ -43,6 +43,7 @@
 }
 
 .ds-heading {
+  // !important: over the --image-text heading layout of the content blocks (.ds-block.--content .ds-heading.--image-text).
   &.--footer {
     justify-content: start !important;
     align-items: start !important;
@@ -61,7 +62,7 @@
         padding: 0 0 ds-spacing(6) 0 !important;
 
         & .ds-text {
-          width: 100% !important;
+          width: 100%;
         }
       }
     }

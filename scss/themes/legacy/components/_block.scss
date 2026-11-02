@@ -16,12 +16,12 @@
     h5,
     h6,
     p {
-      font-family: ds-token(font-family, text) !important;
+      font-family: ds-token(font-family, text);
     }
 
     p,
     li {
-      line-height: 1.4 !important;
+      line-height: 1.4;
     }
 
     ul {
@@ -74,8 +74,8 @@
 
     & .ds-panel {
       & .ds-title {
-        font-family: ds-token(font-family, text) !important;
-        padding: 0 0 10px 0 !important;
+        font-family: ds-token(font-family, text);
+        padding: 0 0 10px 0;
         font-weight: bold;
         text-transform: none;
         letter-spacing: 0.4px;
@@ -84,6 +84,7 @@
       }
     }
 
+    // !important: over the title of an --under heading (.ds-heading__content > h3) and the paddings of ds-text.
     &:not(.--home) {
       h2,
       h3,
@@ -94,11 +95,11 @@
       }
 
       h1 {
-        padding: 0 0 20px 0 !important;
+        padding: 0 0 20px 0;
       }
 
       h4 {
-        padding: 0 0 20px 0 !important;
+        padding: 0 0 20px 0;
       }
     }
 
@@ -112,11 +113,11 @@
       }
 
       h1 {
-        padding: 0 0 40px 0 !important;
+        padding: 0 0 40px 0;
       }
 
       h4 {
-        padding: 0 0 28px 0 !important;
+        padding: 0 0 28px 0;
       }
     }
 

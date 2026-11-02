@@ -1,6 +1,7 @@
 @use '../tokens' as *;
 
 .ds-text {
+  // !important: over the font shorthand and paddings of the toggler texts (.ds-toggler-item .ds-text.--toggler).
   h3,
   h5,
   h6,
@@ -49,17 +50,17 @@
   }
 
   h1 {
-    padding: 0 0 20px 0 !important;
+    padding: 0 0 20px 0;
     font-weight: normal;
   }
 
   h2 {
     letter-spacing: 1.8px;
-    padding: 0 0 10px 0 !important;
+    padding: 0 0 10px 0;
 
     &.--creative {
       font-weight: normal;
-      padding: 0 0 20px 0 !important;
+      padding: 0 0 20px 0;
     }
   }
 
@@ -71,7 +72,7 @@
 
   h4 {
     font-weight: normal;
-    padding: 0 0 20px 0 !important;
+    padding: 0 0 20px 0;
   }
 
   @include break-p(null, sm) {
@@ -81,7 +82,7 @@
 
     h2 {
       font-size: 20px;
-      line-height: 1.2 !important;
+      line-height: 1.2;
 
       &.--creative {
         font-size: 40px;
@@ -104,7 +105,7 @@
 
     h2 {
       font-size: 24px;
-      line-height: 30px !important;
+      line-height: 30px;
 
       &.--creative {
         font-size: 50px;
