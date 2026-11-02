@@ -112,25 +112,25 @@
 
   &.--dir-up {
     &:before {
-      @include ds-icon-content(dir-up);
+      @include ds-icon-content(up-dir);
     }
   }
 
   &.--dir-down {
     &:before {
-      @include ds-icon-content(dir-down);
+      @include ds-icon-content(down-dir);
     }
   }
 
   &.--dir-left {
     &:before {
-      @include ds-icon-content(dir-left);
+      @include ds-icon-content(left-dir);
     }
   }
 
   &.--dir-right {
     &:before {
-      @include ds-icon-content(dir-right);
+      @include ds-icon-content(right-dir);
     }
   }
 

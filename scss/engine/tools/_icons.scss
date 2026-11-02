@@ -19,7 +19,12 @@
   }
 }
 
+// The glyph of an icon of $icons: ds-icon-content(angle-down). An unknown name is an error (null writes no content).
 @mixin ds-icon-content($type: null) {
+  @if $type != null and not map.has-key($icons, $type) {
+    @error 'Unknown icon: #{$type}. Icons: #{map.keys($icons)}.';
+  }
+
   content: map.get($icons, $type);
 }
 

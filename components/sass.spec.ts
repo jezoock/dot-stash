@@ -384,6 +384,11 @@ describe('Sass stylesheets', () => {
       expect(() => sass.compileString(`@use 'engine' as *; a { b: ${call}; }`, { loadPaths })).toThrow(message);
     });
 
+    it.each(themes)('the %s icons all have a glyph', theme => {
+      for (const direction of ['up', 'down', 'left', 'right']) expect(themeCss[theme]).toMatch(new RegExp(`\\.ds-icon\\.--dir-${direction}:{1,2}before\\{content:"[^"]+"`));
+      expect(() => sass.compileString(`@use 'engine' as *; a { @include ds-icon(dir-up); }`, { loadPaths })).toThrow(/Unknown icon: dir-up\. Icons: basket, ok, /);
+    });
+
     it('leaves the declaration out for an optional color that does not exist', () => {
       const css = compileString(
         `@use 'themes/legacy/tokens' as *; a { color: ds-color(status, overdue, $optional: true); border-color: ds-color(status, error, $optional: true); }`,
