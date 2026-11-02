@@ -21,9 +21,9 @@ const menuOptions: DSOption[] = [
   { name: 'Formulaire', value: 'form', url: '#demo-form' },
 ];
 
+// No stylesheet of its own: the page loads a theme (dist/css/<theme>.css).
 @Component({
   tag: 'ds-main',
-  styleUrl: './global.scss',
 })
 export class DSMainTest {
   data: Record<string, unknown> = {

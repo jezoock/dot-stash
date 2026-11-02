@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Logger } from 'sass';
+import { removeQuotes } from './utils/responsive';
 
 // Compiles the stylesheets with the Sass JS API (the Sass version of gulp-sass and @stencil/sass, see package-lock.json):
 // a Sass warning, deprecations included, or error fails the tests instead of only being printed by the build.
@@ -54,6 +55,17 @@ describe('Sass stylesheets', () => {
     sass.compile(path.join(root, file), { logger: collectingLogger(messages), verbose: true });
 
     expect(messages).toEqual([]);
+  });
+
+  // JavaScript reads the theme JSON in the content of body::before (responsive.getStylesJSON(): getComputedStyle, then removeQuotes).
+  it.each(themes)('the %s theme writes the theme JSON in the content of body::before', theme => {
+    const { css } = sass.compile(path.join(root, 'scss/themes', theme, 'index.scss'), { style: 'compressed' });
+    const content = css.match(/body::before\{[^}]*?content:('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")/)?.[1];
+
+    expect(content).toBeDefined();
+    const json = JSON.parse(removeQuotes(content));
+    expect(json.breakpoints).toEqual({ xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 });
+    expect(json.palettes.primary.base).toMatch(/^#[0-9a-f]{6}$/);
   });
 
   // The configuration comes with the first load of the module: the theme then gets the configured tokens.
