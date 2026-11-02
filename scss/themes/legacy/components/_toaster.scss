@@ -1,0 +1,19 @@
+@use '../tokens' as *;
+
+// The toasts: the secondary color (near black: the legacy secondary dark is an orange red, which reads as an error), or
+// the status color of their modifier (mods="success", "warning", "error").
+// The position, size, text color and transitions are in the component stylesheet, which reads no token.
+
+$-toast-types: success, warning, error;
+
+.ds-toaster {
+  &__container {
+    background-color: ds-color(secondary, base);
+  }
+
+  @each $type in $-toast-types {
+    &.--#{$type} &__container {
+      background-color: ds-color(status, $type);
+    }
+  }
+}

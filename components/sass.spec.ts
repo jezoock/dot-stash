@@ -56,6 +56,16 @@ describe('Sass stylesheets', () => {
     expect(messages).toEqual([]);
   });
 
+  // Sass writes a function it does not know as plain CSS, without a warning: a misspelled or removed token function, or a
+  // color() of the former palette, would reach the browser, which drops the declaration. The component stylesheets are
+  // compiled by Stencil without the engine: they read no token at all (their colors are in the theme skins).
+  it.each(entryPoints)('%s writes no undefined function call', file => {
+    const { css } = sass.compile(path.join(root, file));
+
+    expect(css).not.toMatch(/(?<![\w-])(color|snk-[\w-]+|ds-[\w-]+)\(/);
+    if (file.startsWith('components/')) expect(fs.readFileSync(path.join(root, file), 'utf8')).not.toMatch(/var\(--ds-|@use '[^']*(engine|themes)/);
+  });
+
   // The configuration comes with the first load of the module: the theme then gets the configured tokens.
   it.each([
     ['the engine tokens (default theme)', "@use 'engine' with ($grid-md: 1000); @use 'themes/default';"],
@@ -251,11 +261,7 @@ describe('Sass stylesheets', () => {
     // transparent (rgba(0,0,0,0) once compressed) and the icon font, ds-icons (the glyphs of the engine's icon mixins).
     it('the legacy skins write no literal color or font name', () => {
       const css = themeCss.legacy.replace(ruleRegExp(':root', 'g'), '').replace(ruleRegExp('@font-face', 'g'), '');
-      // Not yet: the undefined color(…) of the combo skin, written as plain CSS (to be fixed).
-      const declarations = [...css.matchAll(/[{;]([\w-]+):((?:[^;{}"']|"[^"]*"|'[^']*')+)/g)].map(([, name, value]) => [
-        name,
-        value.replace(/rgba\(0,0,0,0\)|"ds-icons"|\bcolor\([^)]*\)/g, ''),
-      ]);
+      const declarations = [...css.matchAll(/[{;]([\w-]+):((?:[^;{}"']|"[^"]*"|'[^']*')+)/g)].map(([, name, value]) => [name, value.replace(/rgba\(0,0,0,0\)|"ds-icons"/g, '')]);
       const colorLiteral =
         /#[0-9a-f]{3,8}(?![\w-])|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(|(?<![\w-])(red|white|black|gr[ae]y|silver|blue|green|yellow|orange|purple|pink|gold)(?![\w-])/i;
       const fontLiteral = ([name, value]: string[]) => /^font(-family)?$/.test(name) && value !== '' && value !== 'inherit' && !value.includes('var(--ds-font-');

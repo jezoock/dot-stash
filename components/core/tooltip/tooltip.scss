@@ -1,6 +1,5 @@
-$tooltip_background-color: snk-color(primary, base);
-$triangle_small-side: 0.4375rem;
-$triangle_large-side: 0.8125rem;
+// The position and size of the message. Its background is in the theme skins (components/_tooltip.scss): this stylesheet
+// is compiled by Stencil without the engine, it reads no token.
 
 ds-tooltip {
   & > [slot] {
@@ -28,7 +27,6 @@ ds-tooltip {
     position: absolute;
     padding: 0.75rem;
     line-height: 1.3rem;
-    background-color: $tooltip_background-color;
     color: #000;
     font-size: 1rem;
     z-index: 1000;

@@ -1,7 +1,6 @@
-@use 'sass:string';
-
-// The color(…) values below are not defined (to be fixed): string.unquote() keeps them as they were output,
-// as plain CSS, now that Sass has a color() function of its own.
+// The position, size and transitions of the toaster. The background of the toasts, and its success, warning and error
+// modifiers (mods), are in the theme skins (components/_toaster.scss): this stylesheet is compiled by Stencil without the
+// engine, it reads no token.
 .ds-toaster {
   position: fixed;
   z-index: 10000;
@@ -24,23 +23,10 @@
     padding: 1.25rem;
     min-height: 3rem;
     transform-origin: center;
-    background-color: string.unquote('color(color-2, dark)');
     color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
     pointer-events: initial;
     font-size: 1rem;
-
-    &--valid {
-      background-color: string.unquote('color(valid)');
-    }
-
-    &--warning {
-      background-color: string.unquote('color(warning)');
-    }
-
-    &--error {
-      background-color: string.unquote('color(error)');
-    }
   }
 
   &__toast {
@@ -55,37 +41,6 @@
     align-items: center;
     height: 100%;
     line-height: 20px;
-  }
-
-  &__message {
-    &--info {
-    }
-
-    &--valid {
-      color: white;
-    }
-
-    &--warning {
-      color: white;
-    }
-
-    &--error {
-      color: white;
-    }
-  }
-
-  &__container {
-    &--valid {
-      & .ds-toaster {
-        &__message {
-          &--valid,
-          &--warning,
-          &--error {
-            color: #fff;
-          }
-        }
-      }
-    }
   }
 
   &__action {

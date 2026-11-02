@@ -1,11 +1,7 @@
-@use 'sass:string';
-
-// The color(…) values below are not defined (to be fixed): string.unquote() keeps them as they were output,
-// as plain CSS, now that Sass has a color() function of its own.
+// The layout of the rating rows. Their colors (borders, gauge, titles) are in the theme skins (components/_rating-list.scss):
+// this stylesheet is compiled by Stencil without the engine, it reads no token.
 .ds-rating {
   &.--average {
-    border-top: 1px solid string.unquote('color(color-2, base)');
-    border-bottom: 1px solid string.unquote('color(color-2, base)');
     padding: 0.75rem 0;
     margin: 1rem 0;
     &.--no-review {
@@ -37,25 +33,19 @@
       &__title {
         font-size: 2rem;
         width: 12.5%;
-
-        color: string.unquote('color(color-2, base)');
         &:after {
           font-size: 2rem;
-          color: string.unquote('color(color-2, base)');
           line-height: 2.75rem;
         }
       }
       &__jauge {
         width: 75%;
-        border: 1px solid string.unquote('color(color-2, base)');
         height: 34px;
         & > div {
           height: 2rem;
-          background-color: string.unquote('color(color-2, base)');
         }
       }
       &__count {
-        color: string.unquote('color(color-2, base)');
         font-size: 1.25rem;
       }
     }
@@ -75,7 +65,6 @@
       font-size: 1.5rem;
     }
     & > div {
-      color: string.unquote('color(color-2, base)');
       font-size: 2.5rem;
       font-weight: bold;
       padding: 0 0 2.5rem 0;
