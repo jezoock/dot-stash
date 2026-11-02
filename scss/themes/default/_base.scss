@@ -1,6 +1,6 @@
 @use './tokens' as *;
 
-// The icon font, the keyframes of the engine mixins, base element styles and the body::before bridge read by JavaScript.
+// The icon font, the keyframes of the engine mixins and base element styles.
 
 @include ds-icon-font-face();
 @include ds-keyframes();
@@ -19,10 +19,6 @@ body {
   background-color: ds-color(gray, white);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-
-  &::before {
-    @include ds-theme();
-  }
 }
 
 h1,

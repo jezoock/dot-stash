@@ -1,8 +1,8 @@
 @use '../tools/references' as *;
 
 // *** COLORS *** //
-// Color families and their shades. A theme replaces the whole map: keep the families and shade names, the tools,
-// the colorset below and the theme bridge (primary base) read them.
+// Color families and their shades. A theme replaces the whole map: keep the families and shade names, the tools
+// and the colorset below read them.
 
 $colors: (
   primary: (

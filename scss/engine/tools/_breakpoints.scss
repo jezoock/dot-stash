@@ -1,33 +1,5 @@
-@use 'sass:list';
 @use 'sass:map';
 @use '../variables' as *;
-
-@function ds-breakpoint-list($label, $breakpointValue, $counter) {
-  @return '"#{$label}": #{$breakpointValue}';
-}
-
-@function ds-breakpoints-to-json($newBreakpoints: null) {
-  $sassToJSON: '{';
-  $counter: 0;
-
-  $usedBreakpoints: $breakpoints;
-  @if ($newBreakpoints != null) {
-    $usedBreakpoints: $newBreakpoints;
-  }
-  $breakpointsLength: list.length($usedBreakpoints);
-
-  @each $label, $breakpointValue in $usedBreakpoints {
-    $sassToJSON: $sassToJSON + ds-breakpoint-list($label, $breakpointValue, $counter);
-    $counter: $counter + 1;
-    @if ($counter < $breakpointsLength) {
-      $sassToJSON: $sassToJSON + ',';
-    }
-  }
-
-  $sassToJSON: $sassToJSON + '}';
-
-  @return $sassToJSON;
-}
 
 @mixin break-p($breakpoint-min: null, $breakpoint-max: null) {
   @if ($breakpoint-min == 'min') {

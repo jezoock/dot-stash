@@ -1,15 +1,11 @@
 @use './tokens' as *;
 
-// Base styles, the body::before bridge read by JavaScript (ds-theme()), then rules of the legacy site.
+// Base styles, then rules of the legacy site.
 
 body {
   margin: 0;
   padding: 0;
   font-family: 'Montserrat';
-
-  &::before {
-    @include ds-theme();
-  }
 }
 
 a,

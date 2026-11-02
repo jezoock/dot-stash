@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Logger } from 'sass';
-import { removeQuotes } from './utils/responsive';
 
 // Compiles the stylesheets with the Sass JS API (the Sass version of gulp-sass and @stencil/sass, see package-lock.json):
 // a Sass warning, deprecations included, or error fails the tests instead of only being printed by the build.
@@ -57,17 +56,6 @@ describe('Sass stylesheets', () => {
     expect(messages).toEqual([]);
   });
 
-  // JavaScript reads the theme JSON in the content of body::before (responsive.getStylesJSON(): getComputedStyle, then removeQuotes).
-  it.each(themes)('the %s theme writes the theme JSON in the content of body::before', theme => {
-    const { css } = sass.compile(path.join(root, 'scss/themes', theme, 'index.scss'), { style: 'compressed' });
-    const content = css.match(/body::before\{[^}]*?content:('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")/)?.[1];
-
-    expect(content).toBeDefined();
-    const json = JSON.parse(removeQuotes(content));
-    expect(json.breakpoints).toEqual({ xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 });
-    expect(json.palettes.primary.base).toMatch(/^#[0-9a-f]{6}$/);
-  });
-
   // The configuration comes with the first load of the module: the theme then gets the configured tokens.
   it.each([
     ['the engine tokens (default theme)', "@use 'engine' with ($grid-md: 1000); @use 'themes/default';"],
@@ -78,8 +66,8 @@ describe('Sass stylesheets', () => {
 
     expect(messages).toEqual([]);
     expect(css).toContain('@media (min-width: 1000px)');
-    expect(css).toContain('"md": 1000');
     expect(css).toContain('--ds-bp-md: 1000px;');
+    expect(css).toContain('--ds-bp-labels: xxs xs sm md lg xl xxl;');
     expect(css).not.toContain('992px');
   });
 
@@ -162,6 +150,10 @@ describe('Sass stylesheets', () => {
       const tokens = tokensOf(theme);
       const expected = new Map(declarationsOf(compileString(expectedTokensSource(theme)), 'expected'));
 
+      // And the labels of the breakpoints, by width.
+      const breakpoints = [...expected].filter(([name]) => name.startsWith('--ds-bp-')).sort(([, a], [, b]) => parseFloat(a) - parseFloat(b));
+      expected.set('--ds-bp-labels', breakpoints.map(([name]) => name.slice('--ds-bp-'.length)).join(' '));
+
       expect([...tokens.keys()].sort()).toEqual([...expected.keys()].sort());
       for (const [name, value] of expected) expect([name, resolve(tokens, tokens.get(name))]).toEqual([name, value]);
     });
@@ -196,6 +188,49 @@ describe('Sass stylesheets', () => {
       expect(tokens.get('--ds-font-style-title-default-family')).toBe('var(--ds-font-family-heading)');
     });
 
+    // JavaScript reads the breakpoints from the custom properties (tokens.getBreakpoints()): --ds-bp-labels lists the labels,
+    // identifiers separated by spaces, by width; --ds-bp-<label> gives each width. The JSON of body::before is gone.
+    it.each(themes)('the %s theme lists its breakpoints in --ds-bp-labels, and writes no JSON in body::before', theme => {
+      const tokens = tokensOf(theme);
+      const labels = tokens.get('--ds-bp-labels');
+      const widths = [...tokens]
+        .filter(([name]) => name.startsWith('--ds-bp-') && name !== '--ds-bp-labels')
+        .map(([name, value]): [string, string] => [name.slice('--ds-bp-'.length), value]);
+
+      expect(labels).toMatch(/^[a-z_][a-z0-9_-]*( [a-z_][a-z0-9_-]*)*$/);
+      expect(labels.split(' ')).toEqual([...widths].sort(([, a], [, b]) => parseFloat(a) - parseFloat(b)).map(([label]) => label));
+      expect(widths.every(([, value]) => /^\d+px$/.test(value))).toBe(true);
+      expect(Object.fromEntries(widths.map(([label, value]) => [label, parseFloat(value)]))).toEqual({ xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 });
+      expect(themeCss[theme]).not.toContain('body::before');
+      expect(themeCss[theme]).not.toMatch(/content:\s*["']\s*\{/);
+    });
+
+    it('lists the breakpoint labels by width (equal widths in the order of the map), without the null ones, in a scope too', () => {
+      const css = compileString(`
+        @use 'engine' as * with ($breakpoints: (lg: 1200, sm: 768, Tab_Let: 768px, xs: 0, off: null));
+        @include ds-tokens(bp);
+        .scope { @include ds-tokens(bp); }
+      `);
+
+      expect(declarationsOf(css, ':root')).toEqual([
+        ['--ds-bp-lg', '1200px'],
+        ['--ds-bp-sm', '768px'],
+        ['--ds-bp-tab_let', '768px'],
+        ['--ds-bp-xs', '0px'],
+        ['--ds-bp-labels', 'xs sm tab_let lg'],
+      ]);
+      expect(declarationsOf(css, '.scope')).toEqual(declarationsOf(css, ':root'));
+      expect(compileString(`@use 'engine' as * with ($breakpoints: ()); @include ds-tokens(bp); a { b: c; }`)).not.toContain('--ds-bp');
+    });
+
+    it.each([
+      ['a label that is not an identifier', '(sm: 0, 2xl: 1600)', /The breakpoint label 2xl \(--ds-bp-2xl\) does not start with a letter or _/],
+      ['a breakpoint named labels', '(sm: 0, labels: 1600)', /A breakpoint gets the custom property name --ds-bp-labels/],
+      ['a width that is not in px', '(sm: 0, md: 62em)', /The breakpoint md is 62em: a breakpoint is a minimum width, in px/],
+    ])('fails on %s', (_, breakpoints, message) => {
+      expect(() => sass.compileString(`@use 'engine' as * with ($breakpoints: ${breakpoints}); @include ds-tokens(bp);`, { loadPaths })).toThrow(message);
+    });
+
     // Every var(--ds-…) of a theme, its page stylesheets included, has a custom property: none resolves to nothing.
     it.each(themes)('the %s theme only reads custom properties it declares', theme => {
       const tokens = tokensOf(theme);
@@ -206,12 +241,12 @@ describe('Sass stylesheets', () => {
       expect([...used].filter(name => !tokens.has(name))).toEqual([]);
     });
 
-    // The skins read the primary color through its custom property: its value is only in :root and in the theme JSON.
+    // The skins read the primary color through its custom property: its value is only in :root.
     it.each([
       ['default', '#2563eb'],
       ['legacy', '#e4be90'],
     ])('the %s skins read the primary color with var()', (theme, primary) => {
-      const css = themeCss[theme].replace(ruleRegExp(':root', 'g'), '').replace(ruleRegExp('body::before', 'g'), '');
+      const css = themeCss[theme].replace(ruleRegExp(':root', 'g'), '');
 
       expect(css).toContain('var(--ds-color-primary-base)');
       expect(css).not.toContain(primary);

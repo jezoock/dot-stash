@@ -14,7 +14,11 @@
 // The keys are lower-cased, and any character other than a-z, 0-9, - and _ becomes -. A null value is not written, nor a
 // reference to a token that has none. A reference (ds-ref()) is written as var(--ds-<the other token>), so it follows it.
 // The accessors (ds-token(), ds-color(), ds-spacing()…) return var(--ds-…); the -value functions return the Sass value,
-// for computations (color functions, arithmetic, comparisons, media queries, the theme JSON).
+// for computations (color functions, arithmetic, comparisons, media queries).
+//
+// With the breakpoints (--ds-bp-<label>: <min width>px), it writes the list of their labels, for JavaScript (see -bp-labels()):
+//
+//   --ds-bp-labels: xxs xs sm md lg xl xxl;
 
 // The token groups: the custom property prefix (--ds-<group>-) and the map each one reads.
 $ds-token-groups: color, colorset, font-size, font-family, font-style, space, radius, bp, gradient;
@@ -277,7 +281,78 @@ $-name-chars: 'abcdefghijklmnopqrstuvwxyz0123456789-_';
   @return meta.inspect($value);
 }
 
-// The custom properties of the tokens of `$groups` (all by default): (<name>: <CSS value>).
+// *** Breakpoint labels *** //
+
+// The custom property that lists the breakpoint labels.
+$-bp-labels-name: string.unquote('--ds-bp-labels');
+
+$-identifier-starts: 'abcdefghijklmnopqrstuvwxyz_';
+
+// `$list` with `$value` inserted at `$index` (1 to its length + 1).
+@function -insert($list, $index, $value) {
+  $result: ();
+
+  @for $i from 1 through list.length($list) + 1 {
+    @if $i == $index {
+      $result: list.append($result, $value, $separator: space);
+    }
+
+    @if $i <= list.length($list) {
+      $result: list.append($result, list.nth($list, $i), $separator: space);
+    }
+  }
+
+  @return $result;
+}
+
+// The labels of the breakpoints that get a --ds-bp-<label> property, from the smallest to the largest minimum width (equal
+// widths in the order of the map), as a space-separated list: xxs xs sm md lg xl xxl. A label is the end of the property
+// name (--ds-bp-<label>: the keys lower-cased, see -name-part()), so JavaScript finds each property from the list.
+//
+// Each label must be a CSS identifier that starts with a letter or _ (an error otherwise): the list is then a list of
+// identifiers, which browsers return as written, except for the whitespace around and between them, from
+// getComputedStyle(document.documentElement).getPropertyValue('--ds-bp-labels'). Split it on whitespace.
+@function -bp-labels() {
+  $prefix-length: string.length('#{$-bp-labels-name}') - string.length('labels');
+  $labels: ();
+  $values: ();
+
+  @each $keys, $value in -leaves(-tokens-of(bp)) {
+    $resolved: -resolve(bp, $keys);
+
+    @if $resolved != null {
+      $label: string.unquote(string.slice('#{ds-token-name(bp, $keys...)}', $prefix-length + 1));
+
+      @if meta.type-of($resolved) != number or not(math.is-unitless($resolved) or math.unit($resolved) == 'px') {
+        @error string.unquote('The breakpoint #{$keys} is #{meta.inspect($resolved)}: a breakpoint is a minimum width, in px (a unitless number or px).');
+      }
+
+      @if not string.index($-identifier-starts, string.slice($label, 1, 1)) {
+        @error string.unquote('The breakpoint label #{$label} (#{ds-token-name(bp, $keys...)}) does not start with a letter or _: #{$-bp-labels-name} lists the labels as CSS identifiers, which JavaScript reads. Rename its key (xxl rather than 2xl).');
+      }
+
+      // Before the first larger width.
+      $index: list.length($labels) + 1;
+      $i: 1;
+
+      @each $other in $values {
+        @if $index > list.length($labels) and $other > $resolved {
+          $index: $i;
+        }
+
+        $i: $i + 1;
+      }
+
+      $labels: -insert($labels, $index, $label);
+      $values: -insert($values, $index, $resolved);
+    }
+  }
+
+  @return $labels;
+}
+
+// The custom properties of the tokens of `$groups` (all by default): (<name>: <CSS value>). With the bp group, the
+// --ds-bp-labels list follows the breakpoints (when there is at least one).
 @function ds-token-declarations($groups...) {
   @if list.length($groups) == 0 {
     $groups: $ds-token-groups;
@@ -299,6 +374,19 @@ $-name-chars: 'abcdefghijklmnopqrstuvwxyz0123456789-_';
 
       @if $css-value != null {
         $declarations: map.set($declarations, $name, $css-value);
+      }
+    }
+
+    @if $group == bp {
+      @if map.has-key($names, $-bp-labels-name) {
+        @error string.unquote('A breakpoint gets the custom property name #{$-bp-labels-name}, which lists the breakpoint labels: rename its key.');
+      }
+
+      $labels: -bp-labels();
+
+      @if list.length($labels) > 0 {
+        $names: map.set($names, $-bp-labels-name, true);
+        $declarations: map.set($declarations, $-bp-labels-name, string.unquote('#{$labels}'));
       }
     }
   }
