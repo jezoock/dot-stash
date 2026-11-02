@@ -1,0 +1,314 @@
+@use '../tokens' as *;
+
+.ds-block,
+.ds-section {
+  box-sizing: border-box;
+  display: block;
+  margin: auto;
+
+  &__body {
+    margin: auto;
+  }
+
+  &.--content {
+    h2,
+    h3,
+    h5,
+    h6,
+    p {
+      font-family: 'Mulish', sans-serif !important;
+    }
+
+    p,
+    li {
+      line-height: 1.4 !important;
+    }
+
+    ul {
+      padding: 0 0 28px 0;
+    }
+
+    li {
+      font-family: 'Mulish', sans-serif;
+      padding: 0 0 0 0.5rem;
+      margin: 0 0 0 0.75rem;
+
+      &::marker {
+        content: '*';
+      }
+    }
+
+    h1 h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    li {
+      & a {
+        text-decoration: underline;
+      }
+    }
+
+    h1,
+    h4 {
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-weight: normal;
+    }
+
+    h2,
+    h3 {
+      font-weight: bold;
+      text-transform: none;
+      letter-spacing: 0.4px;
+      font-size: 18px;
+    }
+
+    h4 {
+      font-weight: normal;
+    }
+
+    & .ds-panel {
+      & .ds-title {
+        font-family: 'Mulish', sans-serif !important;
+        padding: 0 0 10px 0 !important;
+        font-weight: bold;
+        text-transform: none;
+        letter-spacing: 0.4px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+    }
+
+    &:not(.--home) {
+      h2,
+      h3,
+      h5,
+      h6,
+      p {
+        padding: 0 0 10px 0 !important;
+      }
+
+      h1 {
+        padding: 0 0 20px 0 !important;
+      }
+
+      h4 {
+        padding: 0 0 20px 0 !important;
+      }
+    }
+
+    &.--home {
+      h2,
+      h3,
+      h5,
+      h6,
+      p {
+        padding: 0 0 28px 0 !important;
+      }
+
+      h1 {
+        padding: 0 0 40px 0 !important;
+      }
+
+      h4 {
+        padding: 0 0 28px 0 !important;
+      }
+    }
+
+    @include break-p(null, sm) {
+      h1,
+      h4 {
+        font-size: 40px;
+      }
+    }
+
+    @include break-p(sm) {
+      h1,
+      h4 {
+        font-size: 50px;
+      }
+    }
+  }
+
+  &.--sm {
+    & .ds-block,
+    & .ds-section {
+      &__body {
+        max-width: 900px;
+      }
+    }
+  }
+
+  &.--md {
+    & .ds-block,
+    & .ds-section {
+      &__body {
+        max-width: 1300px;
+      }
+    }
+  }
+
+  &.--lg {
+    & .ds-block,
+    & .ds-section {
+      &__body {
+        max-width: 1700px;
+      }
+    }
+  }
+
+  &.--full-width {
+    & .ds-block,
+    & .ds-section {
+      &__body {
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+.ds-block,
+.ds-section {
+  &.--content {
+    @include break-p(null, md) {
+      padding: 0 0 50px 0;
+    }
+
+    @include break-p(md) {
+      padding: 0 0 100px 0;
+    }
+
+    & .ds-heading {
+      &__image {
+        & img {
+          width: 100%;
+          height: auto;
+        }
+      }
+
+      &.--image-text {
+        &:not(.--under) {
+          flex-wrap: wrap;
+          position: relative;
+          display: flex;
+          margin: auto;
+
+          & .ds-heading {
+            &__image {
+              max-width: 1100px;
+            }
+          }
+        }
+
+        @include break-p(null, md) {
+          & .ds-heading {
+            &__image {
+              order: 1;
+              width: 100%;
+              padding: 0 0 1.5rem 0;
+            }
+
+            &__content {
+              width: 100%;
+              order: 2;
+              padding: 0 0.75rem;
+            }
+          }
+        }
+
+        @include break-p(md) {
+          align-items: center;
+          justify-content: center;
+
+          & .ds-heading {
+            &__content {
+              width: 35%;
+            }
+
+            &__image {
+              width: 65%;
+            }
+          }
+
+          &.--left {
+            & .ds-heading {
+              &__content {
+                order: 2;
+                padding: 0 2rem 0 4vw;
+              }
+
+              &__image {
+                order: 1;
+              }
+            }
+          }
+
+          &.--right {
+            & .ds-heading {
+              &__content {
+                padding: 0 4vw 0 2rem;
+                order: 1;
+              }
+
+              &__image {
+                order: 2;
+              }
+            }
+          }
+        }
+
+        &.--under {
+          position: relative;
+          z-index: 1;
+          max-width: 1700px;
+          display: block;
+          margin: auto;
+          padding: 0;
+
+          & .ds-heading {
+            &__content {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate3d(-50%, -50%, 0);
+              z-index: 1;
+              text-align: center;
+              color: #fff;
+            }
+
+            &__image {
+              position: relative;
+              z-index: 0;
+            }
+          }
+
+          @include break-p(null, sm) {
+            & .ds-heading {
+              &__content {
+                width: 90%;
+
+                & > h3 {
+                  padding: 0 0 0.75rem 0;
+                }
+              }
+
+              &__image {
+                overflow: hidden;
+
+                & img {
+                  width: 200%;
+                  transform: translate3d(-25%, 0, 0);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+@use '../tokens' as *;
+
+.ds-footer {
+  background-color: ds-color(gray, darkest);
+  color: #fff;
+
+  & ds-grid {
+    max-width: 1700px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  @include break-p(null, md) {
+    padding: 75px 0 0 0;
+
+    & ds-grid {
+      padding: 0 2rem;
+    }
+  }
+
+  @include break-p(md) {
+    padding: 75px 0 0 0;
+
+    & ds-grid {
+      padding: 0 1rem 45px 1rem;
+    }
+  }
+}
+
+.ds-footer-link {
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  line-height: 50px;
+  background-color: ds-color(primary, base);
+  font-family: Arial;
+  font-size: 12px;
+  display: block;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.ds-heading {
+  &.--footer {
+    justify-content: start !important;
+    align-items: start !important;
+    max-width: 575px;
+    margin: 0 !important;
+
+    & .ds-heading {
+      &__image {
+        width: 100% !important;
+        max-width: 275px !important;
+        padding: 0 0 1.5rem 0;
+      }
+
+      &__content {
+        width: 100% !important;
+        padding: 0 0 2rem 0 !important;
+
+        & .ds-text {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+}

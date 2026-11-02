@@ -1,0 +1,32 @@
+@use 'sass:map';
+@use '../variables' as *;
+
+// The @font-face of the ds-icons font. `$path` is the folder of the font files, relative to the compiled stylesheet
+// (dist/css/<theme>.css: ../fonts is dist/fonts). The font files are not part of the repository.
+@mixin ds-icon-font-face($path: '../fonts') {
+  @font-face {
+    font-family: 'ds-icons';
+    src: url('#{$path}/ds-icons.eot');
+    src:
+      url('#{$path}/ds-icons.eot?#iefix') format('embedded-opentype'),
+      url('#{$path}/ds-icons.woff2') format('woff2'),
+      url('#{$path}/ds-icons.woff') format('woff'),
+      url('#{$path}/ds-icons.ttf') format('truetype'),
+      url('#{$path}/ds-icons.svg#ds-icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@mixin ds-icon-content($type: null) {
+  content: map.get($icons, $type);
+}
+
+@mixin ds-icon($type: null, $display: null) {
+  @if ($display != null) {
+    display: $display;
+  }
+  font-family: 'ds-icons';
+  @include ds-icon-content($type);
+}

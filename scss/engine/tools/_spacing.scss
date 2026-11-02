@@ -1,0 +1,20 @@
+@use 'sass:map';
+@use '../variables' as *;
+
+// A step of the spacing scale: ds-spacing(4) → 1rem.
+@function ds-spacing($step) {
+  @if not map.has-key($spacings, $step) {
+    @error 'Unknown spacing: #{$step}. Spacings: #{map.keys($spacings)}.';
+  }
+
+  @return map.get($spacings, $step);
+}
+
+// A border radius of the scale: ds-radius(sm) → 0.25rem.
+@function ds-radius($name) {
+  @if not map.has-key($radii, $name) {
+    @error 'Unknown radius: #{$name}. Radii: #{map.keys($radii)}.';
+  }
+
+  @return map.get($radii, $name);
+}

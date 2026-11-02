@@ -33,11 +33,20 @@ describe('Sass stylesheets', () => {
     }
   });
 
-  // The theme (gulp: dist/css/style.css), the page stylesheets (gulp), and the demo and component stylesheets (Stencil).
+  // The themes and their page stylesheets (gulp: dist/css/<theme>.css, dist/css/pages/<theme>/), and the demo and component
+  // stylesheets (Stencil).
+  const themes = fs
+    .readdirSync(path.join(root, 'scss/themes'), { withFileTypes: true })
+    .filter(entry => entry.isDirectory())
+    .map(entry => entry.name);
+  // As gulp: the .scss files directly in pages/, except the partials (_*.scss).
+  const pageFilesOf = (theme: string): string[] => {
+    const pagesDir = path.join(root, 'scss/themes', theme, 'pages');
+    return fs.existsSync(pagesDir) ? scssFilesIn(pagesDir).filter(file => path.dirname(file) === pagesDir && !path.basename(file).startsWith('_')) : [];
+  };
   const entryPoints = [
-    'scss/index.scss',
-    'scss/pages.scss',
-    ...[...scssFilesIn(path.join(root, 'scss/pages')), ...scssFilesIn(path.join(root, 'components'))].map(file => path.relative(root, file)),
+    ...themes.map(theme => `scss/themes/${theme}/index.scss`),
+    ...[...themes.flatMap(pageFilesOf), ...scssFilesIn(path.join(root, 'components'))].map(file => path.relative(root, file)),
   ];
 
   it.each(entryPoints)('%s compiles without any warning', file => {
@@ -47,9 +56,12 @@ describe('Sass stylesheets', () => {
     expect(messages).toEqual([]);
   });
 
-  it('lets a theme configure the tokens with @use … with (…)', () => {
+  it('lets a theme built on legacy configure its tokens with @use … with (…)', () => {
     const messages: string[] = [];
-    const { css } = sass.compileString("@use 'theme' with ($grid-md: 1000); @use 'index';", { loadPaths: [path.join(root, 'scss')], logger: collectingLogger(messages) });
+    const { css } = sass.compileString("@use 'themes/legacy/tokens' with ($grid-md: 1000); @use 'themes/legacy';", {
+      loadPaths: [path.join(root, 'scss')],
+      logger: collectingLogger(messages),
+    });
 
     expect(messages).toEqual([]);
     expect(css).toContain('@media (min-width: 1000px)');

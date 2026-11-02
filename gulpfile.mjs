@@ -1,9 +1,8 @@
+import fs from 'fs';
 import gulp from 'gulp';
 import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
-import clean from 'gulp-clean';
 import autoprefixer from 'gulp-autoprefixer';
-import merge from 'merge2';
 import concat from 'gulp-concat';
 import BrowserSync from 'browser-sync';
 import DotstashConfig from './dot-stash.config.mjs';
@@ -12,51 +11,58 @@ import webp from 'gulp-webp';
 
 const browserSync = BrowserSync.create();
 const sass = gulpSass(dartSass);
-const { paths, gulp: settings } = DotstashConfig;
+const { themes, paths, gulp: settings } = DotstashConfig;
 
-// gulpfile.js - css task
-export const generateThemeCSS = () => {
-  let previouslyGeneratedFiles = gulp.src(`${paths.destination.root}/${paths.destination.css}/*.css`, { read: false });
+const scssDir = `${paths.source.root}/${paths.source.css}`;
+const engineDir = `${scssDir}/${paths.source.engine}`;
+const themeDir = theme => `${scssDir}/${paths.source.themes}/${theme}`;
+const themePagesDir = theme => `${themeDir(theme)}/${paths.source.pages}`;
+const cssDestination = `${paths.destination.root}/${paths.destination.css}`;
+const pagesDestination = theme => `${cssDestination}/${paths.destination.pages}/${theme}`;
 
-  if (settings.scss.cleanDestinationDirectory) {
-    previouslyGeneratedFiles = previouslyGeneratedFiles.pipe(clean({ force: true }));
-  }
+/** Names a task function, for the gulp logs. */
+const task = (name, fn) => Object.assign(fn, { displayName: name });
 
-  let newlyGeneratedFiles = gulp.src(settings.scss.theme.sourceFiles).pipe(sass({ style: 'compressed' }).on('error', sass.logError));
+/**
+ * Compiles SCSS entry points to compressed CSS. In a one-off build a Sass error fails the task;
+ * while watching (`logErrors`), it is only logged, and the watch goes on.
+ */
+const compile = (stream, { logErrors = false } = {}) => {
+  const compiler = sass({ style: 'compressed' });
+  let css = stream.pipe(logErrors ? compiler.on('error', sass.logError) : compiler);
 
   if (settings.scss.autoprefix) {
-    newlyGeneratedFiles = newlyGeneratedFiles.pipe(autoprefixer({ browsers: settings.scss.autoprefixerTargetBrowsers }));
+    css = css.pipe(autoprefixer({ browsers: settings.scss.autoprefixerTargetBrowsers }));
   }
 
-  newlyGeneratedFiles = newlyGeneratedFiles
-    .pipe(concat(settings.scss.theme.generatedSylesheetName))
-    .pipe(gulp.dest(`${paths.destination.root}/${paths.destination.css}`))
+  return css;
+};
+
+/** scss/themes/<theme>/index.scss → dist/css/<theme>.css */
+const buildTheme = (theme, options) =>
+  compile(gulp.src(`${themeDir(theme)}/index.scss`), options)
+    .pipe(concat(`${theme}.css`))
+    .pipe(gulp.dest(cssDestination))
     .pipe(browserSync.stream());
 
-  return merge(previouslyGeneratedFiles, newlyGeneratedFiles);
-};
+/** scss/themes/<theme>/pages/<page>.scss (all of them, or `files`) → dist/css/pages/<theme>/<page>.css */
+const buildPages = (theme, options, files = `${themePagesDir(theme)}/*.scss`) =>
+  compile(gulp.src(files, { base: themePagesDir(theme) }), options)
+    .pipe(gulp.dest(pagesDestination(theme)))
+    .pipe(browserSync.stream());
 
-export const generatePagesCSS = scssFile => {
-  let previouslyGeneratedFiles = gulp.src(`${paths.destination.root}/${paths.destination.css}/pages/*.css`, { read: false });
-  let newlyGeneratedFiles = gulp
-    .src(scssFile, {
-      base: `${paths.source.root}/${paths.source.css}/pages/`,
-    })
-    .pipe(
-      sass({
-        style: 'compressed',
-        loadPaths: [settings.scss.pages.sourceFiles],
-      }),
-    );
+const themeTask = (theme, options) => task(`theme:${theme}`, () => buildTheme(theme, options));
+const pagesTask = (theme, options) => task(`pages:${theme}`, () => buildPages(theme, options));
 
-  if (settings.scss.autoprefix) {
-    newlyGeneratedFiles = newlyGeneratedFiles.pipe(autoprefixer({ browsers: settings.scss.autoprefixerTargetBrowsers }));
+const cleanCSS = task('clean:css', done => {
+  if (settings.scss.cleanDestinationDirectory) {
+    fs.rmSync(cssDestination, { recursive: true, force: true });
   }
+  done();
+});
 
-  newlyGeneratedFiles = newlyGeneratedFiles.pipe(gulp.dest(`${paths.destination.root}/${paths.destination.css}/pages`)).pipe(browserSync.stream());
-
-  return merge(previouslyGeneratedFiles, newlyGeneratedFiles);
-};
+/** Every theme and its page stylesheets (npm run build:css). */
+export const buildCSS = gulp.series(cleanCSS, gulp.parallel(...themes.flatMap(theme => [themeTask(theme), pagesTask(theme)])));
 
 export const generateImages = () => {
   return gulp
@@ -73,11 +79,20 @@ const server = () => {
     files: settings.server.files.map(file => `${paths.source.root}/${file}`),
   });
 
-  const themeStylesWatcher = gulp.watch(settings.scss.theme.watch.map(pattern => `${paths.source.root}/${pattern}`));
-  themeStylesWatcher.on('change', generateThemeCSS);
+  const watching = { logErrors: true };
 
-  const pageStylesWatcher = gulp.watch(settings.scss.pages.watch.map(pattern => `${paths.source.root}/${pattern}`));
-  pageStylesWatcher.on('change', generatePagesCSS);
+  // The engine is shared: a change rebuilds every theme and its pages.
+  gulp.watch(`${engineDir}/**/*.scss`, gulp.parallel(...themes.flatMap(theme => [themeTask(theme, watching), pagesTask(theme, watching)])));
+
+  themes.forEach(theme => {
+    // A theme file (tokens, base, skins): that theme and its pages, which use its tokens.
+    gulp.watch([`${themeDir(theme)}/**/*.scss`, `!${themePagesDir(theme)}/**`], gulp.parallel(themeTask(theme, watching), pagesTask(theme, watching)));
+
+    // A page stylesheet: that page only.
+    const pagesWatcher = gulp.watch(`${themePagesDir(theme)}/*.scss`);
+    pagesWatcher.on('add', file => buildPages(theme, watching, file));
+    pagesWatcher.on('change', file => buildPages(theme, watching, file));
+  });
 };
 
 export default server;

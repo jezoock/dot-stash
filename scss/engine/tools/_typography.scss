@@ -1,0 +1,56 @@
+@use 'sass:map';
+@use '../variables' as *;
+
+// *** Functions *** //
+
+// A font style property: the `$variant` of `$type`, else the `default` variant of `$type`, else the top-level `default`.
+@function ds-font-style($prop: null, $type: null, $variant: null) {
+  @if ($prop != null) {
+    $requestedStyle: map.get($font-styles, 'default', $prop);
+    $typeDefaultStyle: map.get($font-styles, $type, 'default', $prop);
+
+    @if ($typeDefaultStyle != null) {
+      $requestedStyle: $typeDefaultStyle;
+    }
+
+    @if ($variant != null) {
+      $variantStyle: map.get($font-styles, $type, $variant, $prop);
+
+      @if ($variantStyle != null) {
+        $requestedStyle: $variantStyle;
+      }
+    }
+
+    @return $requestedStyle;
+  }
+}
+
+@function ds-font-family($type: 'default', $variant: null) {
+  @return ds-font-style('family', $type, $variant);
+}
+
+@function ds-font-weight($type: 'default', $variant: null) {
+  @return ds-font-style('weight', $type, $variant);
+}
+
+@function ds-font-decoration($type: 'default', $variant: null) {
+  @return ds-font-style('decoration', $type, $variant);
+}
+
+@function ds-font-size($type: 'default', $variant: null) {
+  @return ds-font-style('size', $type, $variant);
+}
+
+// *** Mixins *** //
+
+@mixin ds-font-styles($type: 'page', $variant: null) {
+  $family: ds-font-style('family', $type, $variant);
+  $weight: ds-font-style('weight', $type, $variant);
+  $size: ds-font-style('size', $type, $variant);
+  $decoration: ds-font-style('decoration', $type, $variant);
+
+  font-family: $family;
+  font-size: $size;
+  font-weight: $weight;
+  text-decoration: $decoration;
+}

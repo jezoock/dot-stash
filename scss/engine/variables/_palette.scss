@@ -1,0 +1,193 @@
+@use 'sass:map';
+
+// *** COLORS *** //
+// Color families and their shades. A theme replaces the whole map: keep the families and shade names, the tools,
+// the colorset below and the theme bridge (primary base) read them.
+
+$colors: (
+  primary: (
+    darker: #1e3a8a,
+    dark: #1d4ed8,
+    base: #2563eb,
+    light: #dbeafe,
+  ),
+  secondary: (
+    darker: #0f172a,
+    dark: #1e293b,
+    base: #334155,
+    light: #94a3b8,
+  ),
+  gray: (
+    white: #ffffff,
+    lightest: #f8fafc,
+    lighter: #f1f5f9,
+    light: #e2e8f0,
+    base: #cbd5e1,
+    dark: #64748b,
+    darker: #334155,
+    darkest: #0f172a,
+    black: #000000,
+  ),
+  status: (
+    success: #15803d,
+    warning: #b45309,
+    error: #dc2626,
+    info: #2563eb,
+    busy: #94a3b8,
+    disabled: #64748b,
+    discount: #dc2626,
+    new: #0e7490,
+  ),
+  input: (
+    caret: #2563eb,
+  ),
+  shadow: (
+    base: rgba(15, 23, 42, 0.16),
+  ),
+) !default;
+
+@function -color($type, $variant) {
+  @return map.get($colors, $type, $variant);
+}
+
+// *** COLORSETS *** //
+// Named sets of text, border and background colors, by type (solid, outlined, link) and variant, derived from $colors.
+
+$colorset: (
+  default: (
+    text: -color(primary, base),
+    border: transparent,
+    background: transparent,
+  ),
+  solid: (
+    default: (
+      text: -color(gray, white),
+      border: -color(primary, base),
+      background: -color(primary, base),
+    ),
+    primary: (
+      text: -color(gray, white),
+      border: -color(primary, base),
+      background: -color(primary, base),
+    ),
+    primary-hover: (
+      text: -color(gray, white),
+      border: -color(primary, dark),
+      background: -color(primary, dark),
+    ),
+    primary-light: (
+      text: -color(primary, darker),
+      border: -color(primary, light),
+      background: -color(primary, light),
+    ),
+    primary-light-hover: (
+      text: -color(gray, white),
+      border: -color(primary, base),
+      background: -color(primary, base),
+    ),
+    secondary: (
+      text: -color(gray, white),
+      border: -color(secondary, base),
+      background: -color(secondary, base),
+    ),
+    secondary-hover: (
+      text: -color(gray, white),
+      border: -color(secondary, dark),
+      background: -color(secondary, dark),
+    ),
+    white: (
+      text: -color(gray, darkest),
+      border: -color(gray, white),
+      background: -color(gray, white),
+    ),
+    white-hover: (
+      text: -color(gray, white),
+      border: -color(gray, darkest),
+      background: -color(gray, darkest),
+    ),
+    gray: (
+      text: -color(gray, darkest),
+      border: -color(gray, light),
+      background: -color(gray, light),
+    ),
+    gray-hover: (
+      text: -color(gray, darkest),
+      border: -color(gray, base),
+      background: -color(gray, base),
+    ),
+    disabled: (
+      text: -color(gray, white),
+      border: -color(status, disabled),
+      background: -color(status, disabled),
+    ),
+  ),
+  outlined: (
+    default: (
+      text: -color(primary, base),
+      border: -color(primary, base),
+      background: transparent,
+    ),
+    primary: (
+      text: -color(primary, base),
+      border: -color(primary, base),
+      background: transparent,
+    ),
+    primary-hover: (
+      text: -color(gray, white),
+      border: -color(primary, base),
+      background: -color(primary, base),
+    ),
+    secondary: (
+      text: -color(secondary, base),
+      border: -color(secondary, base),
+      background: transparent,
+    ),
+    secondary-hover: (
+      text: -color(gray, white),
+      border: -color(secondary, base),
+      background: -color(secondary, base),
+    ),
+    white: (
+      text: -color(gray, white),
+      border: -color(gray, white),
+      background: transparent,
+    ),
+    white-hover: (
+      text: -color(gray, darkest),
+      border: -color(gray, white),
+      background: -color(gray, white),
+    ),
+    disabled: (
+      text: -color(status, disabled),
+      border: -color(status, disabled),
+      background: transparent,
+    ),
+  ),
+  link: (
+    default: (
+      text: -color(primary, base),
+      border: -color(primary, base),
+      background: transparent,
+    ),
+    primary: (
+      text: -color(primary, base),
+      border: -color(primary, base),
+      background: transparent,
+    ),
+    secondary: (
+      text: -color(secondary, base),
+      border: -color(secondary, base),
+      background: transparent,
+    ),
+    disabled: (
+      text: -color(status, disabled),
+      border: -color(status, disabled),
+      background: transparent,
+    ),
+  ),
+) !default;
+
+// *** GRADIENTS *** //
+// Named gradients for the gradient() function and mixin: (name: (fallback: <color>, from: <color>, to: <color>)).
+
+$gradients: () !default;

@@ -1,13 +1,21 @@
 const DotstashConfig = {
+  // The themes gulp compiles: scss/themes/<theme>/index.scss → dist/css/<theme>.css,
+  // and their page stylesheets scss/themes/<theme>/pages/<page>.scss → dist/css/pages/<theme>/<page>.css.
+  // The first one is the default theme of the demo pages.
+  themes: ['legacy'],
   paths: {
     source: {
       root: '.',
       css: 'scss',
+      engine: 'engine',
+      themes: 'themes',
+      pages: 'pages',
       images: 'images',
     },
     destination: {
       root: 'dist',
       css: 'css',
+      pages: 'pages',
       images: 'images',
     },
   },
@@ -20,17 +28,8 @@ const DotstashConfig = {
     scss: {
       autoprefix: false,
       autoprefixerTargetBrowsers: ['last 2 versions'],
+      // Delete dist/css before a full build.
       cleanDestinationDirectory: true,
-      theme: {
-        generatedSylesheetName: 'style.css',
-        watch: ['./scss/**/*.scss', '!./scss/pages/**/*'],
-        sourceFiles: './scss/index.scss',
-      },
-      pages: {
-        generatedSylesheetName: 'style.css',
-        watch: ['./scss/pages/*.scss'],
-        sourceFiles: './scss/pages.scss',
-      },
     },
   },
 };

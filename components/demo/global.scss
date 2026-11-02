@@ -1,10 +1,1 @@
-@use '../../scss/theme.scss' as *;
-
-body {
-  margin: 0;
-  padding: 0;
-
-  &::before {
-    @include ds-theme();
-  }
-}
+@use '../../scss/themes/legacy';

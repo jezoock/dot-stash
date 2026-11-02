@@ -1,0 +1,311 @@
+@use 'sass:map';
+
+// The legacy theme tokens: the engine configured with the values of the legacy look.
+// The theme stylesheets load the engine through this module (`@use '../tokens' as *;`), so they all get these values.
+// The values are !default: a theme built on legacy can still change them with `@use '<path>/themes/legacy/tokens' with (…)`.
+
+// *** COLORS *** //
+
+$-colors: (
+  primary: (
+    darker: #905f24,
+    dark: #c79f78,
+    base: #e4be90,
+    light: #ffe0ba,
+  ),
+  secondary: (
+    darker: #6b1909,
+    dark: #c94328,
+    base: #0d0d0d,
+    light: #ff9580,
+  ),
+  gray: (
+    white: #ffffff,
+    lightest: #f2f2f2,
+    lighter: #eeedec,
+    light: #ddd,
+    base: #bbb,
+    dark: #999,
+    darker: #444,
+    darkest: #161c27,
+    black: #000000,
+  ),
+  status: (
+    success: #0a9872,
+    error: #ea0000,
+    info: #3b86ff,
+    busy: #c8c8c8,
+    disabled: #3d3d3d,
+    discount: #ff7575,
+    new: #005f77,
+  ),
+  input: (
+    caret: #5294f2,
+  ),
+  shadow: (
+    base: #00000029,
+  ),
+);
+
+// *** COLORSETS *** //
+
+$-colorset: (
+  default: (
+    text: map.get($-colors, primary, base),
+    border: transparent,
+    background: transparent,
+  ),
+  solid: (
+    default: (
+      text: #fff,
+      border: map.get($-colors, primary, base),
+      background: map.get($-colors, primary, base),
+    ),
+    primary: (
+      text: #fff,
+      border: map.get($-colors, primary, base),
+      background: map.get($-colors, primary, base),
+    ),
+    primary-hover: (
+      text: #fff,
+      border: map.get($-colors, primary, dark),
+      background: map.get($-colors, primary, dark),
+    ),
+    primary-light: (
+      text: #fff,
+      border: map.get($-colors, primary, light),
+      background: map.get($-colors, primary, light),
+    ),
+    primary-light-hover: (
+      text: #fff,
+      border: map.get($-colors, primary, base),
+      background: map.get($-colors, primary, base),
+    ),
+    secondary: (
+      text: #fff,
+      border: map.get($-colors, secondary, base),
+      background: map.get($-colors, secondary, base),
+    ),
+    secondary-hover: (
+      text: #fff,
+      border: map.get($-colors, secondary, dark),
+      background: map.get($-colors, secondary, dark),
+    ),
+    white: (
+      text: #000,
+      border: #fff,
+      background: #fff,
+    ),
+    white-hover: (
+      text: #fff,
+      border: #000,
+      background: #000,
+    ),
+    gray: (
+      text: #000,
+      border: #dcdcdc,
+      background: #dcdcdc,
+    ),
+    gray-hover: (
+      text: #333,
+      border: #ccc,
+      background: #ccc,
+    ),
+    disabled: (
+      text: #fff,
+      border: map.get($-colors, status, disabled),
+      background: map.get($-colors, status, disabled),
+    ),
+  ),
+  outlined: (
+    default: (
+      text: map.get($-colors, primary, base),
+      border: map.get($-colors, primary, base),
+      background: transparent,
+    ),
+    primary: (
+      text: map.get($-colors, primary, base),
+      border: map.get($-colors, primary, base),
+      background: transparent,
+    ),
+    primary-hover: (
+      text: #fff,
+      border: map.get($-colors, primary, base),
+      background: map.get($-colors, primary, base),
+    ),
+    secondary: (
+      text: map.get($-colors, secondary, base),
+      border: map.get($-colors, secondary, base),
+      background: transparent,
+    ),
+    secondary-hover: (
+      text: #fff,
+      border: map.get($-colors, secondary, base),
+      background: map.get($-colors, secondary, base),
+    ),
+    white: (
+      text: #fff,
+      border: #fff,
+      background: transparent,
+    ),
+    white-hover: (
+      text: #000,
+      border: #fff,
+      background: #fff,
+    ),
+    disabled: (
+      text: map.get($-colors, status, disabled),
+      border: map.get($-colors, status, disabled),
+      background: transparent,
+    ),
+  ),
+  link: (
+    default: (
+      text: map.get($-colors, primary, base),
+      border: map.get($-colors, primary, base),
+      background: #fff,
+    ),
+    primary: (
+      text: map.get($-colors, primary, base),
+      border: map.get($-colors, primary, base),
+      background: #fff,
+    ),
+    secondary: (
+      text: map.get($-colors, secondary, base),
+      border: map.get($-colors, secondary, base),
+      background: #fff,
+    ),
+    disabled: (
+      text: map.get($-colors, secondary, base),
+      border: map.get($-colors, secondary, base),
+      background: #fff,
+    ),
+  ),
+);
+
+// *** TYPOGRAPHY *** //
+
+$-font-sizes: (
+  100: 0.875rem,
+  200: 1rem,
+  300: 1.125rem,
+  400: 1.5rem,
+  500: 1.625rem,
+  600: 1.75rem,
+  700: 2.125rem,
+  800: 2.25rem,
+  900: 2.5rem,
+);
+
+$-font-families: (
+  'default': (
+    '-apple-system',
+    'BlinkMacSystemFont',
+    '"Segoe UI"',
+    'Roboto',
+    '"Helvetica Neue"',
+    'Arial',
+    'sans-serif',
+    '"Apple Color Emoji"',
+    '"Segoe UI Emoji"',
+    '"Segoe UI Symbol"',
+  ),
+  'Garamond': 'Garamond',
+  'Now': 'Now',
+);
+
+$-font-styles: (
+  default: (
+    family: map.get($-font-families, 'Now'),
+    size: map.get($-font-sizes, 200),
+    weight: 500,
+    decoration: none,
+  ),
+  page: (
+    light: (
+      weight: 300,
+    ),
+    default: (),
+    strong: (
+      weight: 700,
+    ),
+  ),
+  text: (
+    default: (),
+    paragraph: (
+      size: map.get($-font-sizes, 100),
+    ),
+    span: (
+      size: map.get($-font-sizes, 100),
+    ),
+    note: (
+      size: map.get($-font-sizes, 100),
+    ),
+    quote: (
+      size: map.get($-font-sizes, 100),
+    ),
+    code: (
+      size: map.get($-font-sizes, 100),
+    ),
+    pre: (
+      size: map.get($-font-sizes, 100),
+    ),
+  ),
+  title: (
+    page-main: (
+      size: map.get($-font-sizes, 800),
+      weight: 900,
+    ),
+    page-sub: (
+      size: map.get($-font-sizes, 700),
+      weight: 700,
+    ),
+    section-main: (
+      size: map.get($-font-sizes, 600),
+      weight: 700,
+    ),
+    section-sub: (
+      size: map.get($-font-sizes, 500),
+    ),
+    block-main: (
+      size: map.get($-font-sizes, 400),
+      weight: 700,
+    ),
+    block-sub: (
+      size: map.get($-font-sizes, 300),
+    ),
+  ),
+  button: (
+    default: (
+      family: map.get($-font-families, 'Garamond'),
+      size: map.get($-font-sizes, 300),
+    ),
+  ),
+  form: (
+    default: (
+      size: map.get($-font-sizes, 200),
+    ),
+    input: (
+      size: map.get($-font-sizes, 200),
+    ),
+    label: (
+      size: map.get($-font-sizes, 300),
+      weight: 700,
+    ),
+  ),
+  link: (
+    default: (
+      size: map.get($-font-sizes, 200),
+      weight: 500,
+      decoration: underline,
+    ),
+  ),
+);
+
+@forward '../../engine' with (
+  $colors: $-colors !default,
+  $colorset: $-colorset !default,
+  $font-sizes: $-font-sizes !default,
+  $font-families: $-font-families !default,
+  $font-styles: $-font-styles !default
+);

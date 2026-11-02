@@ -1,0 +1,40 @@
+// *** Return CSS ruleset to display an arrow *** //
+
+@mixin ds-arrow($size, $direction, $color) {
+  border: $size solid transparent;
+  content: '';
+  @if ($direction == 'top') {
+    border-bottom-color: $color;
+  }
+  @if ($direction == 'right') {
+    border-left-color: $color;
+  }
+  @if ($direction == 'bottom') {
+    border-top-color: $color;
+  }
+  @if ($direction == 'left') {
+    border-right-color: $color;
+  }
+  width: $size;
+  height: $size;
+  display: inline-block;
+}
+
+// *** Animations *** //
+
+// The @keyframes the mixins below rely on. Include it once, at the root of a theme.
+@mixin ds-keyframes() {
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+// Needs the keyframes of ds-keyframes().
+@mixin spin {
+  animation: spin 2s linear infinite;
+}

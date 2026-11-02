@@ -1,0 +1,176 @@
+@use 'sass:string';
+@use '../tokens' as *;
+
+// The color(…) values below are not defined (to be fixed): string.unquote() keeps them as they were output,
+// as plain CSS, now that Sass has a color() function of its own.
+.ds-combo {
+  &__selected-option {
+    line-height: 1.5rem;
+    padding: 0 0.25rem 0 0;
+
+    & > span {
+      font-family: 'Montserrat';
+      color: ds-color(gray, darker);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0 0.5rem 0 0;
+    }
+
+    &:after {
+      @include ds-icon(angle-down);
+      transform: rotateZ(0deg);
+      transition: transform ease 0.4s;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
+
+  & > menu {
+  }
+
+  &__option-list {
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    max-height: 325px;
+    border-radius: 0.25rem;
+    > * {
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+  }
+
+  &__option {
+    border-bottom: 1px solid ds-color(gray, lighter);
+    transition: background-color ease 0.4s;
+    &:last-child {
+      border-bottom: none;
+    }
+    &:hover {
+      background: #000;
+    }
+    & > span,
+    & > a {
+      transition: color ease 0.4s;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.75rem;
+      line-height: 1.25rem;
+      padding: 0.25rem 1rem;
+      color: #000;
+      &:hover {
+        color: #fff;
+      }
+    }
+
+    &.--selected {
+      background-color: ds-color(gray, lighter);
+      &:hover {
+        background-color: #000;
+      }
+    }
+
+    &.--disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+
+      &:hover {
+        background: none;
+
+        & > span,
+        & > a {
+          color: #000;
+        }
+      }
+    }
+  }
+
+  &__overlay {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  &.--open {
+    & .ds-combo {
+      &__selected-option {
+        &:after {
+          transform: rotateZ(-180deg);
+        }
+      }
+    }
+  }
+
+  &.--default {
+    border: 1px solid string.unquote('color(gray, light)');
+    border-radius: 2px;
+    min-width: 200px;
+    line-height: 2rem;
+
+    & .ds-combo {
+      &__selected-option {
+        padding: 0 1rem;
+        font-size: 1rem;
+      }
+      &__option {
+        padding: 0 1rem;
+        &-list {
+          top: 3.25rem;
+          right: -1px;
+          padding: 0.5rem;
+          border: 1px solid string.unquote('color(gray, light)');
+        }
+      }
+      &.--open {
+        border-color: string.unquote('color(color-1, base)');
+      }
+    }
+  }
+
+  &.--alt {
+    & .ds-combo {
+      &__option {
+        padding: 0 1rem;
+        &-list {
+          left: -1rem;
+        }
+      }
+      &__selected-option {
+        color: string.unquote('color(color-1, base)');
+      }
+    }
+  }
+
+  &.--image {
+    & .ds-combo__option-list {
+      width: 675px;
+      padding: 0.5rem 0.5rem 0 0.5rem;
+      & > li {
+        width: 125px;
+        height: 78px;
+        margin: 0 0 0.5rem 0;
+        background: #fff;
+        transition: background-color ease 0.4s;
+        padding: 0;
+        & > span {
+          color: #fff;
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+          line-height: 78px;
+          text-align: center;
+        }
+        & > img {
+          transform: translateY(-20%);
+          transition:
+            transform ease 0.4s,
+            opacity ease 0.4s;
+        }
+        &:hover {
+          & > img {
+            opacity: 0.5;
+            transform: scale3d(1.2, 1.2, 1) translateY(-20%);
+          }
+        }
+      }
+    }
+  }
+}

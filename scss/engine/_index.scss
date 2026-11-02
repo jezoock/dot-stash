@@ -1,0 +1,8 @@
+// The dot-stash engine: the token schema with neutral defaults, and the functions and mixins that read it.
+// It outputs no CSS by itself: a theme configures it and writes the rules.
+//
+//   @use '<path to>/scss/engine' with ($colors: (…), $grid-md: 1024);
+//
+// The tokens must be forwarded before the tools, which read them: the configuration then applies to the module they use.
+@forward './variables';
+@forward './tools';
