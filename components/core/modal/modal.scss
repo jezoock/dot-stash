@@ -1,3 +1,7 @@
+// The structure of ds-modal: while a modal is shown, the page does not scroll. The lightbox itself (its position, a
+// backdrop, the dialog box, a hidden state) has no style yet, here or in the default theme: the content is rendered in
+// place, and the component has no custom property.
+
 // Set on the body while a modal is shown (see modal.tsx): the page does not scroll behind the modal.
 body.ds-js--modal-open {
   overflow: hidden;

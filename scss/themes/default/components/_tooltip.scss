@@ -1,17 +1,32 @@
 @use '../tokens' as *;
 
-$-background: ds-color(secondary, darker);
+// ds-tooltip: the message bubble and its arrow. The custom properties are documented in
+// components/core/tooltip/readme.md; the component stylesheet places the message (--ds-tooltip-offset).
+
+ds-tooltip {
+  --ds-tooltip-background: #{ds-color(secondary, darker)};
+  --ds-tooltip-color: #{ds-color(gray, white)};
+  --ds-tooltip-font-size: #{ds-font-size(text, note)};
+  --ds-tooltip-padding: #{ds-spacing(2) ds-spacing(3)};
+  --ds-tooltip-radius: #{ds-radius(sm)};
+  --ds-tooltip-shadow: 0 2px 8px #{ds-color(shadow, base)};
+  --ds-tooltip-width: 220px;
+  --ds-tooltip-offset: 10px;
+}
 
 .ds-tooltip {
   & [slot='message'] {
-    padding: ds-spacing(2) ds-spacing(3);
-    border-radius: ds-radius(sm);
-    background-color: $-background;
-    color: ds-color(gray, white);
-    font-size: ds-font-size(text, note);
+    width: var(--ds-tooltip-width);
+    padding: var(--ds-tooltip-padding);
+    border-radius: var(--ds-tooltip-radius);
+    background-color: var(--ds-tooltip-background);
+    color: var(--ds-tooltip-color);
+    font-size: var(--ds-tooltip-font-size);
     font-weight: normal;
     line-height: 1.4;
-    box-shadow: 0 2px 8px ds-color(shadow, base);
+    letter-spacing: 0.28px;
+    text-align: left;
+    box-shadow: var(--ds-tooltip-shadow);
   }
 
   // The arrow, for the top and bottom positions.
@@ -28,11 +43,11 @@ $-background: ds-color(secondary, darker);
 
   &.--with-arrow.--top [slot='message']::after {
     top: 100%;
-    border-top-color: $-background;
+    border-top-color: var(--ds-tooltip-background);
   }
 
   &.--with-arrow.--bottom [slot='message']::after {
     bottom: 100%;
-    border-bottom-color: $-background;
+    border-bottom-color: var(--ds-tooltip-background);
   }
 }

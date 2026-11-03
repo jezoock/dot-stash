@@ -1,9 +1,21 @@
-// The position, size and transitions of the toaster. The background of the toasts, and its success, warning and error
-// modifiers (mods), are in the theme skins (components/_toaster.scss): this stylesheet is compiled by Stencil without the
-// engine, it reads no token.
+// The structure of ds-toaster: a fixed box on the side and at the edge of its position, above the page, that fades in and
+// out (show() and hide() emit toasterShown and toasterHidden at the end of the transition) and lets the pointer through
+// around its toasts. The toasts are the look of the theme (components/_toaster.scss), from the custom properties below.
+
+/**
+ * @prop --ds-toaster-background: Background of the toasts. The `success`, `warning` and `error` modifiers set it to their status color.
+ * @prop --ds-toaster-color: Text color of the toasts.
+ * @prop --ds-toaster-font-size: Font size of the toasts.
+ * @prop --ds-toaster-padding: Padding of the box of the toasts.
+ * @prop --ds-toaster-gap: Space between two toasts.
+ * @prop --ds-toaster-shadow: Shadow of the box of the toasts.
+ * @prop --ds-toaster-min-width: Minimum width of the box of the toasts.
+ * @prop --ds-toaster-z-index: Stack level of the toaster.
+ */
+
 .ds-toaster {
   position: fixed;
-  z-index: 10000;
+  z-index: var(--ds-toaster-z-index, 10000);
   pointer-events: none;
   // show() / hide(): toasterShown and toasterHidden are emitted at the end of this transition.
   transition:
@@ -19,20 +31,10 @@
     box-sizing: border-box;
     display: block;
     max-width: 50vw;
-    min-width: 500px;
-    padding: 1.25rem;
+    min-width: var(--ds-toaster-min-width, 500px);
     min-height: 3rem;
     transform-origin: center;
-    color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
     pointer-events: initial;
-    font-size: 1rem;
-  }
-
-  &__toast {
-    & + & {
-      margin-top: 0.75rem;
-    }
   }
 
   &__content {
@@ -40,20 +42,6 @@
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    line-height: 20px;
-  }
-
-  &__action {
-    flex-shrink: 0;
-    margin: -0.5rem -0.5rem -0.5rem 0.5rem;
-
-    .ds-toaster__close-button {
-      color: #fff;
-      max-height: 2.25rem;
-      min-width: 0;
-      border: 0;
-      background: none;
-    }
   }
 
   // Position classes: --v-pos-<TOASTER_VERTICAL_POSITION> and --h-pos-<TOASTER_HORIZONTAL_POSITION>.

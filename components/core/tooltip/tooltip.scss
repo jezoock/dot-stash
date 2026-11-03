@@ -1,5 +1,17 @@
-// The position and size of the message. Its background is in the theme skins (components/_tooltip.scss): this stylesheet
-// is compiled by Stencil without the engine, it reads no token.
+// The structure of ds-tooltip: the message (slot `message`) is hidden until the tooltip is shown (`--is-shown`), then
+// placed next to the content on the side of its position, `--ds-tooltip-offset` away from it, above the page. The bubble
+// and its arrow are the look of the theme (components/_tooltip.scss), from the custom properties below.
+
+/**
+ * @prop --ds-tooltip-background: Background of the message bubble, and color of its arrow.
+ * @prop --ds-tooltip-color: Text color of the message.
+ * @prop --ds-tooltip-font-size: Font size of the message.
+ * @prop --ds-tooltip-padding: Padding of the message bubble.
+ * @prop --ds-tooltip-radius: Corner radius of the message bubble.
+ * @prop --ds-tooltip-shadow: Shadow of the message bubble.
+ * @prop --ds-tooltip-width: Width of the message bubble.
+ * @prop --ds-tooltip-offset: Distance between the message and the content.
+ */
 
 ds-tooltip {
   & > [slot] {
@@ -25,70 +37,61 @@ ds-tooltip {
   & [slot='message'] {
     display: none;
     position: absolute;
-    padding: 0.75rem;
-    line-height: 1.3rem;
-    color: #000;
-    font-size: 1rem;
     z-index: 1000;
-    width: 220px;
-    font-weight: 700;
-    border-radius: 0.5rem;
-    letter-spacing: 0.28px;
-    text-align: left;
   }
 
   &.--top {
     & [slot='message'] {
-      bottom: calc(100% + 10px);
+      bottom: calc(100% + var(--ds-tooltip-offset, 10px));
       left: 50%;
       transform: translateX(-50%);
     }
   }
   &.--top-left {
     & [slot='message'] {
-      bottom: calc(100% + 10px);
+      bottom: calc(100% + var(--ds-tooltip-offset, 10px));
       left: 50%;
       transform: translateX(-10%);
     }
   }
   &.--top-right {
     & [slot='message'] {
-      bottom: calc(100% + 10px);
+      bottom: calc(100% + var(--ds-tooltip-offset, 10px));
       left: 50%;
       transform: translateX(-85%);
     }
   }
   &.--bottom {
     & [slot='message'] {
-      top: calc(100% + 10px);
+      top: calc(100% + var(--ds-tooltip-offset, 10px));
       left: 50%;
       transform: translateX(-50%);
     }
   }
   &.--bottom-left {
     & [slot='message'] {
-      top: calc(100% + 10px);
+      top: calc(100% + var(--ds-tooltip-offset, 10px));
       left: 15%;
       transform: translateX(-5%);
     }
   }
   &.--bottom-right {
     & [slot='message'] {
-      top: calc(100% + 10px);
+      top: calc(100% + var(--ds-tooltip-offset, 10px));
       left: 15%;
       transform: translateX(-85%);
     }
   }
   &.--left {
     & [slot='message'] {
-      right: calc(100% + 10px);
+      right: calc(100% + var(--ds-tooltip-offset, 10px));
       top: -50%;
       transform: translateY(-50%);
     }
   }
   &.--right {
     & [slot='message'] {
-      left: calc(100% + 10px);
+      left: calc(100% + var(--ds-tooltip-offset, 10px));
       top: 50%;
       transform: translateY(-50%);
     }
