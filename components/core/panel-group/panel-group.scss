@@ -7,6 +7,17 @@
     display: flex;
     flex-flow: row wrap;
     position: relative;
-    overflow: hidden;
+
+    // While the content of a tab fades in or out, the content that fades out (absolute, under the other one) does not
+    // overflow the group. Out of the transitions, the group does not clip: the focus indicator of the tabs and of the
+    // elements of the content shows.
+    &:has(> .ds-panel.--transition) {
+      overflow: hidden;
+    }
+  }
+
+  // The tab list: the accessibility parent of the tabs (aria-owns), which stay in their panels. Out of the row.
+  &__tablist {
+    position: absolute;
   }
 }

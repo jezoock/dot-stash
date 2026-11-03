@@ -20,7 +20,9 @@ ds-panel {
     font-weight: ds-font-weight(title);
     cursor: pointer;
 
-    & > * {
+    // The title slot is in the control of the title (the tab, or the button of a collapsible panel).
+    & > *,
+    & > .ds-panel__control > * {
       margin: 0;
       font: inherit;
     }
@@ -31,7 +33,8 @@ ds-panel {
       right: 0;
       transform: translateY(-50%);
       transition: transform 0.2s ease;
-      @include ds-icon(angle-down);
+      // Decorative: not part of the name of the title (a heading).
+      @include ds-icon(angle-down, $alt: '');
     }
   }
 

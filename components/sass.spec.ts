@@ -391,6 +391,18 @@ describe('Sass stylesheets', () => {
       expect(() => sass.compileString(`@use 'engine' as *; a { @include ds-icon(dir-up); }`, { loadPaths })).toThrow(/Unknown icon: dir-up\. Icons: basket, ok, /);
     });
 
+    // CSS alternative text: a decorative glyph (of the private use area of the icon font) is not read by assistive
+    // technologies, nor part of the name of its element; the glyph alone first, for the browsers without that syntax.
+    it('writes the alternative text of a glyph after the glyph alone, with $alt', () => {
+      const css = compileString(`@use 'engine' as *; a { @include ds-icon(angle-down, $alt: ''); } b { @include ds-icon-content(plus); }`);
+
+      expect(css).toMatch(/a\{font-family:"ds-icons";content:"([^"]+)";content:"\1"\/""\}/);
+      expect(css).toMatch(/b\{content:"[^"]+"\}/);
+      for (const glyph of ['.ds-panel__title::after']) {
+        expect(themeCss.default).toMatch(new RegExp(`${glyph.replace(/[.]/g, '\\.')}\\{[^}]*content:"[^"]+";content:"[^"]+"/""`));
+      }
+    });
+
     it('leaves the declaration out for an optional color that does not exist', () => {
       const css = compileString(`@use 'engine' as *; a { color: ds-color(status, overdue, $optional: true); border-color: ds-color(status, error, $optional: true); }`);
 

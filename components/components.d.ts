@@ -276,14 +276,35 @@ export namespace Components {
          */
         "type": string;
     }
+    /**
+     * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+     * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+     *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+     *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+     *   that button.
+     * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+     *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+     * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+     * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+     * (at once when there is none).
+     */
     interface DsPanel {
         /**
+          * Whether the content is shown.
           * @default false
          */
         "expanded": boolean;
         "hide": () => Promise<void>;
+        /**
+          * The place of the panel in its `ds-panel-group` (set by the group).
+         */
         "index": number;
         /**
+          * The heading level (1 to 6) of the title of a collapsible panel: the title is then a heading (`role="heading"`, `aria-level`) that holds its button, as in the WAI-ARIA accordion pattern. Default: the level of an `h1`…`h6` element put in the `title` slot (which gets `role="none"`: the title is the heading), else none.
+         */
+        "level": number | string;
+        /**
+          * The minimum height of the content (a CSS length).
           * @default '0'
          */
         "minHeight": string;
@@ -293,24 +314,51 @@ export namespace Components {
          */
         "mods": string | string[];
         "setIndex": (index: number) => Promise<void>;
+        /**
+          * Makes the panel a tab of the tab list of its `ds-panel-group` (`true`), or not: `ds-panel-group` calls it. A `tab` panel that is not in a tab list has no role (its title is not a control).
+         */
+        "setTab": (isTab: boolean) => Promise<void>;
         "setType": (type: PanelType) => Promise<void>;
         "show": () => Promise<void>;
         "toggle": (mustShow?: boolean) => Promise<void>;
         /**
+          * `tab` (in a `ds-panel-group` of tabs) or `collapsible`. `ds-panel-group` sets it on its panels.
           * @default 'tab'
          */
         "type": PanelType;
     }
+    /**
+     * Groups `ds-panel` elements, and gives them its `type`:
+     * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+     *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+     *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+     *   and select it.
+     * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+     *   expanded at a time.
+     * The panels of the group are its own: not those of a group or a panel nested in one of them.
+     */
     interface DsPanelGroup {
+        /**
+          * The panels of the group: its `ds-panel` elements, but those of a nested group or panel.
+         */
         "getItems": () => Promise<HTMLDsPanelElement[]>;
         /**
           * Not implemented yet: does nothing.
          */
         "hidePanel": (_index?: number) => Promise<void>;
         /**
+          * `false`: the group does not set the type of its panels, which are all shown (no tab list).
           * @default true
          */
         "isActive": boolean;
+        /**
+          * The accessible name of the tab list (`aria-label`) of a `tab` group.
+         */
+        "label": string;
+        /**
+          * The id of a visible label of the tab list of a `tab` group (`aria-labelledby`), instead of `label`.
+         */
+        "labelledby": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -318,6 +366,7 @@ export namespace Components {
         "mods": string | string[];
         "showPanel": (index: number) => Promise<void>;
         /**
+          * A `collapsible` group expands one panel at a time.
           * @default false
          */
         "soloContent": boolean;
@@ -917,6 +966,18 @@ declare global {
         "panelHide": any;
         "panelHidden": any;
     }
+    /**
+     * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+     * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+     *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+     *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+     *   that button.
+     * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+     *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+     * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+     * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+     * (at once when there is none).
+     */
     interface HTMLDsPanelElement extends Components.DsPanel, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelElementEventMap>(type: K, listener: (this: HTMLDsPanelElement, ev: DsPanelCustomEvent<HTMLDsPanelElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -931,6 +992,16 @@ declare global {
         prototype: HTMLDsPanelElement;
         new (): HTMLDsPanelElement;
     };
+    /**
+     * Groups `ds-panel` elements, and gives them its `type`:
+     * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+     *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+     *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+     *   and select it.
+     * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+     *   expanded at a time.
+     * The panels of the group are its own: not those of a group or a panel nested in one of them.
+     */
     interface HTMLDsPanelGroupElement extends Components.DsPanelGroup, HTMLStencilElement {
     }
     var HTMLDsPanelGroupElement: {
@@ -1451,13 +1522,34 @@ declare namespace LocalJSX {
          */
         "type"?: string;
     }
+    /**
+     * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+     * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+     *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+     *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+     *   that button.
+     * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+     *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+     * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+     * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+     * (at once when there is none).
+     */
     interface DsPanel {
         /**
+          * Whether the content is shown.
           * @default false
          */
         "expanded"?: boolean;
+        /**
+          * The place of the panel in its `ds-panel-group` (set by the group).
+         */
         "index"?: number;
         /**
+          * The heading level (1 to 6) of the title of a collapsible panel: the title is then a heading (`role="heading"`, `aria-level`) that holds its button, as in the WAI-ARIA accordion pattern. Default: the level of an `h1`…`h6` element put in the `title` slot (which gets `role="none"`: the title is the heading), else none.
+         */
+        "level"?: number | string;
+        /**
+          * The minimum height of the content (a CSS length).
           * @default '0'
          */
         "minHeight"?: string;
@@ -1466,26 +1558,59 @@ declare namespace LocalJSX {
           * @default []
          */
         "mods"?: string | string[];
+        /**
+          * Emitted when the panel is collapsed, at the end of the transition of its content (at once when there is none).
+         */
         "onPanelHidden"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * Emitted when the panel starts to collapse (`detail.index`: its index).
+         */
         "onPanelHide"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * Emitted when the panel starts to expand (`detail.index`: its index).
+         */
         "onPanelShow"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * Emitted when the panel is expanded, at the end of the transition of its content (at once when there is none).
+         */
         "onPanelShown"?: (event: DsPanelCustomEvent<any>) => void;
         /**
+          * `tab` (in a `ds-panel-group` of tabs) or `collapsible`. `ds-panel-group` sets it on its panels.
           * @default 'tab'
          */
         "type"?: PanelType;
     }
+    /**
+     * Groups `ds-panel` elements, and gives them its `type`:
+     * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+     *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+     *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+     *   and select it.
+     * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+     *   expanded at a time.
+     * The panels of the group are its own: not those of a group or a panel nested in one of them.
+     */
     interface DsPanelGroup {
         /**
+          * `false`: the group does not set the type of its panels, which are all shown (no tab list).
           * @default true
          */
         "isActive"?: boolean;
+        /**
+          * The accessible name of the tab list (`aria-label`) of a `tab` group.
+         */
+        "label"?: string;
+        /**
+          * The id of a visible label of the tab list of a `tab` group (`aria-labelledby`), instead of `label`.
+         */
+        "labelledby"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods"?: string | string[];
         /**
+          * A `collapsible` group expands one panel at a time.
           * @default false
          */
         "soloContent"?: boolean;
@@ -1932,12 +2057,15 @@ declare namespace LocalJSX {
         "expanded": boolean;
         "index": number;
         "type": PanelType;
+        "level": string;
     }
     interface DsPanelGroupAttributes {
         "type": PanelType;
         "mods": string | string[];
         "isActive": boolean;
         "soloContent": boolean;
+        "label": string;
+        "labelledby": string;
     }
     interface DsRspAttributes {
         "debounceDelay": number;
@@ -2111,7 +2239,29 @@ declare module "@stencil/core" {
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-nav": LocalJSX.IntrinsicElements["ds-nav"] & JSXBase.HTMLAttributes<HTMLDsNavElement>;
             "ds-nav-item": LocalJSX.IntrinsicElements["ds-nav-item"] & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
+            /**
+             * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+             * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+             *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+             *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+             *   that button.
+             * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+             *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+             * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+             * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+             * (at once when there is none).
+             */
             "ds-panel": LocalJSX.IntrinsicElements["ds-panel"] & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
+            /**
+             * Groups `ds-panel` elements, and gives them its `type`:
+             * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+             *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+             *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+             *   and select it.
+             * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+             *   expanded at a time.
+             * The panels of the group are its own: not those of a group or a panel nested in one of them.
+             */
             "ds-panel-group": LocalJSX.IntrinsicElements["ds-panel-group"] & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
             /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`

@@ -1,3 +1,4 @@
+@use 'sass:list';
 @use 'sass:map';
 @use '../variables' as *;
 
@@ -20,18 +21,24 @@
 }
 
 // The glyph of an icon of $icons: ds-icon-content(angle-down). An unknown name is an error (null writes no content).
-@mixin ds-icon-content($type: null) {
+// `$alt`: the alternative text of the glyph for assistive technologies (`content: <glyph> / <alt>`), `''` for a decorative
+// icon, whose character (of the private use area of the font) is then not read, nor part of the name of its element. The
+// glyph alone is written first, for the browsers that do not read that syntax.
+@mixin ds-icon-content($type: null, $alt: null) {
   @if $type != null and not map.has-key($icons, $type) {
     @error 'Unknown icon: #{$type}. Icons: #{map.keys($icons)}.';
   }
 
   content: map.get($icons, $type);
+  @if $alt != null and $type != null {
+    content: list.slash(map.get($icons, $type), $alt);
+  }
 }
 
-@mixin ds-icon($type: null, $display: null) {
+@mixin ds-icon($type: null, $display: null, $alt: null) {
   @if $display != null {
     display: $display;
   }
   font-family: 'ds-icons';
-  @include ds-icon-content($type);
+  @include ds-icon-content($type, $alt);
 }
