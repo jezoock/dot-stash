@@ -26,6 +26,13 @@ ds-nav {
 | `mods`                | `mods`                   | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
 
 
+## Slots
+
+| Slot | Description      |
+| ---- | ---------------- |
+|      | The default slot |
+
+
 ## CSS Custom Properties
 
 | Name           | Description                                                                                         |

@@ -22,12 +22,12 @@ ds-slider {
 
 ## Properties
 
-| Property   | Attribute   | Description                                                                                        | Type                       | Default                 |
-| ---------- | ----------- | -------------------------------------------------------------------------------------------------- | -------------------------- | ----------------------- |
-| `mods`     | `mods`      | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]`       | `[]`                    |
-| `params`   | `params`    |                                                                                                    | `DSSliderParams \| string` | `{}`                    |
-| `sliderId` | `slider-id` |                                                                                                    | `string`                   | ``slide-${sliderId++}`` |
-| `type`     | `type`      |                                                                                                    | `string`                   | `'sld'`                 |
+| Property   | Attribute   | Description                                                                                        | Type                       | Default                     |
+| ---------- | ----------- | -------------------------------------------------------------------------------------------------- | -------------------------- | --------------------------- |
+| `mods`     | `mods`      | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]`       | `[]`                        |
+| `params`   | `params`    |                                                                                                    | `DSSliderParams \| string` | `{}`                        |
+| `sliderId` | `slider-id` |                                                                                                    | `string`                   | `` `slide-${sliderId++}` `` |
+| `type`     | `type`      |                                                                                                    | `string`                   | `'sld'`                     |
 
 
 ## Events
@@ -186,6 +186,13 @@ Type: `Promise<void>`
 Type: `Promise<void>`
 
 
+
+
+## Slots
+
+| Slot | Description      |
+| ---- | ---------------- |
+|      | The default slot |
 
 
 ## CSS Custom Properties

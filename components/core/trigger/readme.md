@@ -43,6 +43,13 @@ Calls a method of a target element on an event: `<ds-trigger target="#slider" ac
 | `type`     | `type`     |                                                                                                    | `"button" \| "control" \| "link"` | `'control'` |
 
 
+## Slots
+
+| Slot | Description      |
+| ---- | ---------------- |
+|      | The default slot |
+
+
 ## CSS Custom Properties
 
 | Name                            | Description                                                                           |

@@ -384,6 +384,8 @@ defineCustomElements();
 
 Add a theme stylesheet, `dot-stash/dist/css/<theme>.css`, to the page with your usual CSS pipeline, or compile your own theme (see [Creating a theme](#creating-a-theme)).
 
+The `exports` of `package.json` give these entry points, as ES modules (`import`) or CommonJS (`require`), with their types: `dot-stash` (the utilities, `ds`), `dot-stash/loader` and the files of `dist/` (`dot-stash/dist/css/<theme>.css`, `dot-stash/dist/collection/…`).
+
 ### Components
 
 Each component documents its properties, events, methods, slots and custom properties in the `readme.md` generated next to its source (`components/core/<component>/readme.md`), below a Styling section (see [Styling a component](#styling-a-component)). Among them:
@@ -398,6 +400,8 @@ Each component documents its properties, events, methods, slots and custom prope
 <ds-combo id="menu" mode="dropdown" options='[{"name": "Docs", "value": "docs", "url": "/docs"}]'></ds-combo>
 <ds-trigger type="button" mods="sm,stl-2" target="#menu" action="toggle">Menu</ds-trigger>
 ```
+
+The components render in the light DOM, and most of them move their children into their `<slot>` elements (Stencil's slot emulation). To change the content of such a component from a script, change its children (the `data` of a text node, the content of a child element) or add nodes with `appendChild()`: Stencil hides, at the next render of the component, the children that `innerHTML` or `textContent` set on the component element itself, as they are not in a slot.
 
 `ds-button`, `ds-video`, `ds-marquee` and `ds-rating-list` were removed from the library: their code is archived on the `archive/propal` branch (see [Archived code](#archived-code)).
 

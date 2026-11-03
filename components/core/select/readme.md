@@ -50,6 +50,13 @@ Type: `Promise<{ value: string; label: string; }>`
 
 
 
+## Slots
+
+| Slot | Description      |
+| ---- | ---------------- |
+|      | The default slot |
+
+
 ## CSS Custom Properties
 
 | Name                       | Description                                                           |

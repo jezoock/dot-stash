@@ -32,14 +32,17 @@ export namespace Components {
     interface DsAjax {
         /**
           * Event that will trigger the loading of the ajax content: `click` (default) or `load`
+          * @default 'click'
          */
         "on": 'load' | 'click';
         /**
           * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
+          * @default ''
          */
         "suffix": string;
         /**
           * Where to display the content, can be the component itself or an element specified by a css selector
+          * @default 'self'
          */
         "target": 'self' | string;
     }
@@ -56,6 +59,7 @@ export namespace Components {
         "modal": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
@@ -82,18 +86,22 @@ export namespace Components {
         "close": () => Promise<void>;
         /**
           * Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).
+          * @default ''
          */
         "customLabel": string;
         /**
           * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
+          * @default ''
          */
         "mode": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
           * Several options can be selected: a click toggles an option and keeps the list open.
+          * @default false
          */
         "multiple": boolean;
         /**
@@ -106,14 +114,17 @@ export namespace Components {
         "open": () => Promise<void>;
         /**
           * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
+          * @default []
          */
         "options": string | DSOption[];
         /**
           * Renders a full-page overlay behind the open list: a click on it closes the list.
+          * @default false
          */
         "overlay": boolean;
         /**
           * Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).
+          * @default 'left'
          */
         "position": DSComboPosition;
         /**
@@ -122,6 +133,7 @@ export namespace Components {
         "selected": string | DSComboSelection;
         /**
           * The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.
+          * @default []
          */
         "selectedOptions": DSOption[];
         /**
@@ -130,30 +142,59 @@ export namespace Components {
         "toggle": (forceDisplay?: boolean) => Promise<void>;
     }
     interface DsGrid {
+        /**
+          * @default 'start'
+         */
         "align": string | DSGridAlignment;
         "cellRatio": string | number;
+        /**
+          * @default 1
+         */
         "cols": string | number;
+        /**
+          * @default true
+         */
         "dataUseRsp": boolean;
+        /**
+          * @default '0'
+         */
         "hGap": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
+        /**
+          * @default 'fixed'
+         */
         "type": string | DSGridType;
+        /**
+          * @default 'start'
+         */
         "vAlign": string | DSGridAlignment;
+        /**
+          * @default '0'
+         */
         "vGap": string;
     }
     interface DsGridItem {
         "getWidth": () => Promise<number>;
         "ratioFromProps": number | string;
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
+        /**
+          * @default 1
+         */
         "width": number;
     }
     interface DsHeading {
         "block": boolean;
+        /**
+          * @default 'block-before'
+         */
         "imagePosition": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "section": boolean;
@@ -168,40 +209,75 @@ export namespace Components {
      * the class is removed when the last shown modal is hidden or removed from the document.
      */
     interface DsModal {
+        /**
+          * @default { '--dialog': true }
+         */
         "lightboxClass": any;
         "lightboxClassObject": any;
+        /**
+          * @default false
+         */
         "overlay": boolean;
         "setContent": (content: string) => Promise<void>;
+        /**
+          * @default false
+         */
         "shown": boolean;
     }
     interface DsNav {
         "currentActiveItemId": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
     }
     interface DsNavItem {
+        /**
+          * @default 0
+         */
         "depth": number;
+        /**
+          * @default false
+         */
         "hasChildren": boolean;
+        /**
+          * @default false
+         */
         "isActive": boolean;
+        /**
+          * @default true
+         */
         "isAnimated": boolean;
         "itemId": string;
+        /**
+          * @default 'page'
+         */
         "type": string;
     }
     interface DsPanel {
+        /**
+          * @default false
+         */
         "expanded": boolean;
         "hide": () => Promise<void>;
         "index": number;
+        /**
+          * @default '0'
+         */
         "minHeight": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "setIndex": (index: number) => Promise<void>;
         "setType": (type: PanelType) => Promise<void>;
         "show": () => Promise<void>;
         "toggle": (mustShow?: boolean) => Promise<void>;
+        /**
+          * @default 'tab'
+         */
         "type": PanelType;
     }
     interface DsPanelGroup {
@@ -210,13 +286,23 @@ export namespace Components {
           * Not implemented yet: does nothing.
          */
         "hidePanel": (_index?: number) => Promise<void>;
+        /**
+          * @default true
+         */
         "isActive": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "showPanel": (index: number) => Promise<void>;
+        /**
+          * @default false
+         */
         "soloContent": boolean;
+        /**
+          * @default 'tab'
+         */
         "type": PanelType;
     }
     /**
@@ -232,6 +318,9 @@ export namespace Components {
           * Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
          */
         "breakpointsFromProp": string | RawBreakpoint;
+        /**
+          * @default 500
+         */
         "debounceDelay": number;
         /**
           * Get the current breakpoint
@@ -248,6 +337,9 @@ export namespace Components {
         "getParamsForBreakpoint": (currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>;
         "getSubscribers": () => Promise<Element[]>;
         "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
+        /**
+          * @default 'data-rsp'
+         */
         "propertyName": string;
         /**
           * Reads the breakpoints again (from the `breakpoints` property, else from the theme custom properties) and applies them: subscribes the matching elements not subscribed yet, sets the params of the current breakpoint on every subscriber again, and emits `breakpointChange` only when the label or the limits of the current breakpoint changed. Without breakpoints until then (theme stylesheet loaded after ds-rsp), it starts, as when the theme is there at load. When it finds none, it keeps the current ones (if any) and logs a warning, once until it finds some again.  ds-rsp calls it when a stylesheet `<link>` of the document loads (a theme added, or its `href` changed). Call it after changing the theme otherwise: a `<style>` element, a constructed stylesheet, a `media` attribute changed after the load… Before ds-rsp has loaded, it does nothing: ds-rsp reads the breakpoints when it loads.
@@ -257,6 +349,9 @@ export namespace Components {
           * Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once (before, when ds-rsp starts).
          */
         "subscribe": (target: Element) => Promise<void>;
+        /**
+          * @default '[data-use-rsp]:not([data-rsp-init])'
+         */
         "subscriberSelector": string;
     }
     interface DsSelect {
@@ -265,20 +360,31 @@ export namespace Components {
         "getValue": () => Promise<{ value: string; label: string; }>;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "name": string;
     }
     interface DsSidebar {
+        /**
+          * @default true
+         */
         "ctx": boolean;
+        /**
+          * @default SIDEBAR_POSITION.LEFT
+         */
         "hPos": 'left' | 'right';
         /**
           * Hide the sidebar (nothing happens when it is already hidden)
          */
         "hide": () => Promise<void>;
+        /**
+          * @default false
+         */
         "isShown": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
@@ -290,6 +396,9 @@ export namespace Components {
           * @param mustShow Used to specify wether the sidebar must be shown or hidden; without it, the display is switched
          */
         "toggle": (mustShow?: boolean) => Promise<void>;
+        /**
+          * @default SIDEBAR_POSITION.TOP
+         */
         "vPos": 'top' | 'bottom';
     }
     interface DsSlider {
@@ -297,9 +406,13 @@ export namespace Components {
         "initialize": () => Promise<void>;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "next": (step?: number, startPosition?: number) => Promise<void>;
+        /**
+          * @default {}
+         */
         "params": DSSliderParams | string;
         "play": () => Promise<void>;
         "pointerDownHandler": (event: TouchEvent) => Promise<void>;
@@ -308,24 +421,40 @@ export namespace Components {
         "prev": (step?: number, startPosition?: number) => Promise<void>;
         "refresh": (reset?: boolean) => Promise<void>;
         "reset": () => Promise<void>;
+        /**
+          * @default `slide-${sliderId++}`
+         */
         "sliderId": string;
         "stop": () => Promise<void>;
+        /**
+          * @default 'sld'
+         */
         "type": string;
     }
     interface DsSliderItem {
     }
     interface DsSliderMenu {
+        /**
+          * @default 0
+         */
         "dsCurrentItemIndex": number;
+        /**
+          * @default 0
+         */
         "dsItemCount": number;
     }
     interface DsText {
         "inline": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "sub": boolean;
         "sup": boolean;
+        /**
+          * @default 'p'
+         */
         "type": 'p' | 'code' | 'quote';
         "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
@@ -335,6 +464,7 @@ export namespace Components {
         "form": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "page": boolean;
@@ -346,6 +476,7 @@ export namespace Components {
         "ctx": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
     }
@@ -357,6 +488,7 @@ export namespace Components {
     interface DsToaster {
         /**
           * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
+          * @default 3000
          */
         "closingDelay": number;
         /**
@@ -366,6 +498,7 @@ export namespace Components {
         "hide": () => Promise<void>;
         /**
           * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first. `0` displays them all.
+          * @default 3
          */
         "maxDisplayedToast": number;
         /**
@@ -374,10 +507,12 @@ export namespace Components {
         "messages": string | string[];
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
           * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+          * @default [     TOASTER_VERTICAL_POSITION.TOP,     TOASTER_HORIZONTAL_POSITION.LEFT,   ]
          */
         "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
@@ -391,6 +526,7 @@ export namespace Components {
         "disabled": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "name": string;
@@ -420,11 +556,13 @@ export namespace Components {
     interface DsToggleGroup {
         /**
           * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+          * @default [1, 1]
          */
         "count": number[] | string;
         "disabled": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         "name": string;
@@ -434,15 +572,26 @@ export namespace Components {
      * Simple icon tooltip component
      */
     interface DsTooltip {
+        /**
+          * @default ''
+         */
         "containerSelector": string;
+        /**
+          * @default true
+         */
         "hasArrow": boolean;
         /**
           * Displayed tooltip icon
+          * @default ''
          */
         "icon": string;
+        /**
+          * @default true
+         */
         "isActive": boolean;
         /**
           * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
+          * @default false
          */
         "isDisabled": boolean;
         /**
@@ -451,10 +600,12 @@ export namespace Components {
         "mode": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
           * @type {string} Tooltip position (top, left, right or bottom)
+          * @default TooltipPosition.TOP
          */
         "position": TooltipPosition;
     }
@@ -469,20 +620,26 @@ export namespace Components {
         "action": string;
         /**
           * A disabled trigger does not call the action.
+          * @default false
          */
         "disabled": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
           * Event of the trigger that calls the action.
+          * @default 'click'
          */
         "on": string;
         /**
           * The target: a CSS selector, `window` or `document`.
          */
         "target": string;
+        /**
+          * @default 'control'
+         */
         "type": 'button' | 'control' | 'link';
     }
 }
@@ -924,14 +1081,17 @@ declare namespace LocalJSX {
     interface DsAjax {
         /**
           * Event that will trigger the loading of the ajax content: `click` (default) or `load`
+          * @default 'click'
          */
         "on"?: 'load' | 'click';
         /**
           * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
+          * @default ''
          */
         "suffix"?: string;
         /**
           * Where to display the content, can be the component itself or an element specified by a css selector
+          * @default 'self'
          */
         "target"?: 'self' | string;
     }
@@ -947,6 +1107,7 @@ declare namespace LocalJSX {
         "modal"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         /**
@@ -969,18 +1130,22 @@ declare namespace LocalJSX {
     interface DsCombo {
         /**
           * Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).
+          * @default ''
          */
         "customLabel"?: string;
         /**
           * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
+          * @default ''
          */
         "mode"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         /**
           * Several options can be selected: a click toggles an option and keeps the list open.
+          * @default false
          */
         "multiple"?: boolean;
         /**
@@ -993,14 +1158,17 @@ declare namespace LocalJSX {
         "onOptionSelected"?: (event: DsComboCustomEvent<DSComboSelectedEventDetail>) => void;
         /**
           * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
+          * @default []
          */
         "options"?: string | DSOption[];
         /**
           * Renders a full-page overlay behind the open list: a click on it closes the list.
+          * @default false
          */
         "overlay"?: boolean;
         /**
           * Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).
+          * @default 'left'
          */
         "position"?: DSComboPosition;
         /**
@@ -1009,32 +1177,62 @@ declare namespace LocalJSX {
         "selected"?: string | DSComboSelection;
         /**
           * The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.
+          * @default []
          */
         "selectedOptions"?: DSOption[];
     }
     interface DsGrid {
+        /**
+          * @default 'start'
+         */
         "align"?: string | DSGridAlignment;
         "cellRatio"?: string | number;
+        /**
+          * @default 1
+         */
         "cols"?: string | number;
+        /**
+          * @default true
+         */
         "dataUseRsp"?: boolean;
+        /**
+          * @default '0'
+         */
         "hGap"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
+        /**
+          * @default 'fixed'
+         */
         "type"?: string | DSGridType;
+        /**
+          * @default 'start'
+         */
         "vAlign"?: string | DSGridAlignment;
+        /**
+          * @default '0'
+         */
         "vGap"?: string;
     }
     interface DsGridItem {
         "ratioFromProps"?: number | string;
+        /**
+          * @default 1
+         */
         "width"?: number;
     }
     interface DsHeading {
         "block"?: boolean;
+        /**
+          * @default 'block-before'
+         */
         "imagePosition"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "section"?: boolean;
@@ -1049,50 +1247,95 @@ declare namespace LocalJSX {
      * the class is removed when the last shown modal is hidden or removed from the document.
      */
     interface DsModal {
+        /**
+          * @default { '--dialog': true }
+         */
         "lightboxClass"?: any;
         "lightboxClassObject"?: any;
         "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
         "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
+        /**
+          * @default false
+         */
         "overlay"?: boolean;
+        /**
+          * @default false
+         */
         "shown"?: boolean;
     }
     interface DsNav {
         "currentActiveItemId"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
     }
     interface DsNavItem {
+        /**
+          * @default 0
+         */
         "depth"?: number;
+        /**
+          * @default false
+         */
         "hasChildren"?: boolean;
+        /**
+          * @default false
+         */
         "isActive"?: boolean;
+        /**
+          * @default true
+         */
         "isAnimated"?: boolean;
         "itemId"?: string;
         "onDsMenuItemClick"?: (event: DsNavItemCustomEvent<any>) => void;
+        /**
+          * @default 'page'
+         */
         "type"?: string;
     }
     interface DsPanel {
+        /**
+          * @default false
+         */
         "expanded"?: boolean;
         "index"?: number;
+        /**
+          * @default '0'
+         */
         "minHeight"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "onPanelHidden"?: (event: DsPanelCustomEvent<any>) => void;
         "onPanelHide"?: (event: DsPanelCustomEvent<any>) => void;
         "onPanelShow"?: (event: DsPanelCustomEvent<any>) => void;
         "onPanelShown"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * @default 'tab'
+         */
         "type"?: PanelType;
     }
     interface DsPanelGroup {
+        /**
+          * @default true
+         */
         "isActive"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
+        /**
+          * @default false
+         */
         "soloContent"?: boolean;
+        /**
+          * @default 'tab'
+         */
         "type"?: PanelType;
     }
     /**
@@ -1108,12 +1351,21 @@ declare namespace LocalJSX {
           * Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
          */
         "breakpointsFromProp"?: string | RawBreakpoint;
+        /**
+          * @default 500
+         */
         "debounceDelay"?: number;
         /**
           * Emitted by ds-rsp when the breakpoint changes (and when it starts), once the subscribers have their params. It bubbles. Each subscriber also receives a `breakpointChange` event on itself, which does not bubble: a subscriber that contains ds-rsp gets both, and should only handle the one whose target is itself.
          */
         "onBreakpointChange"?: (event: DsRspCustomEvent<BreakpointChangeDetail>) => void;
+        /**
+          * @default 'data-rsp'
+         */
         "propertyName"?: string;
+        /**
+          * @default '[data-use-rsp]:not([data-rsp-init])'
+         */
         "subscriberSelector"?: string;
     }
     interface DsSelect {
@@ -1121,39 +1373,69 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "name"?: string;
         "onValueChange"?: (event: DsSelectCustomEvent<any>) => void;
     }
     interface DsSidebar {
+        /**
+          * @default true
+         */
         "ctx"?: boolean;
+        /**
+          * @default SIDEBAR_POSITION.LEFT
+         */
         "hPos"?: 'left' | 'right';
+        /**
+          * @default false
+         */
         "isShown"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "onSidebarHidden"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarHide"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarShow"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarShown"?: (event: DsSidebarCustomEvent<any>) => void;
+        /**
+          * @default SIDEBAR_POSITION.TOP
+         */
         "vPos"?: 'top' | 'bottom';
     }
     interface DsSlider {
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "onSliderEvent"?: (event: DsSliderCustomEvent<{ slide: string; direction: number; currentIndex?: number }>) => void;
+        /**
+          * @default {}
+         */
         "params"?: DSSliderParams | string;
+        /**
+          * @default `slide-${sliderId++}`
+         */
         "sliderId"?: string;
+        /**
+          * @default 'sld'
+         */
         "type"?: string;
     }
     interface DsSliderItem {
     }
     interface DsSliderMenu {
+        /**
+          * @default 0
+         */
         "dsCurrentItemIndex"?: number;
+        /**
+          * @default 0
+         */
         "dsItemCount"?: number;
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
@@ -1161,10 +1443,14 @@ declare namespace LocalJSX {
         "inline"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "sub"?: boolean;
         "sup"?: boolean;
+        /**
+          * @default 'p'
+         */
         "type"?: 'p' | 'code' | 'quote';
         "weight"?: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
@@ -1174,6 +1460,7 @@ declare namespace LocalJSX {
         "form"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "page"?: boolean;
@@ -1185,6 +1472,7 @@ declare namespace LocalJSX {
         "ctx"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
     }
@@ -1196,10 +1484,12 @@ declare namespace LocalJSX {
     interface DsToaster {
         /**
           * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
+          * @default 3000
          */
         "closingDelay"?: number;
         /**
           * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first. `0` displays them all.
+          * @default 3
          */
         "maxDisplayedToast"?: number;
         /**
@@ -1208,6 +1498,7 @@ declare namespace LocalJSX {
         "messages"?: string | string[];
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "onToasterHidden"?: (event: DsToasterCustomEvent<any>) => void;
@@ -1216,6 +1507,7 @@ declare namespace LocalJSX {
         "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
         /**
           * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+          * @default [     TOASTER_VERTICAL_POSITION.TOP,     TOASTER_HORIZONTAL_POSITION.LEFT,   ]
          */
         "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
     }
@@ -1228,6 +1520,7 @@ declare namespace LocalJSX {
         "disabled"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "name"?: string;
@@ -1248,11 +1541,13 @@ declare namespace LocalJSX {
     interface DsToggleGroup {
         /**
           * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+          * @default [1, 1]
          */
         "count"?: number[] | string;
         "disabled"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         "name"?: string;
@@ -1263,15 +1558,26 @@ declare namespace LocalJSX {
      * Simple icon tooltip component
      */
     interface DsTooltip {
+        /**
+          * @default ''
+         */
         "containerSelector"?: string;
+        /**
+          * @default true
+         */
         "hasArrow"?: boolean;
         /**
           * Displayed tooltip icon
+          * @default ''
          */
         "icon"?: string;
+        /**
+          * @default true
+         */
         "isActive"?: boolean;
         /**
           * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
+          * @default false
          */
         "isDisabled"?: boolean;
         /**
@@ -1280,10 +1586,12 @@ declare namespace LocalJSX {
         "mode"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         /**
           * @type {string} Tooltip position (top, left, right or bottom)
+          * @default TooltipPosition.TOP
          */
         "position"?: TooltipPosition;
     }
@@ -1298,49 +1606,230 @@ declare namespace LocalJSX {
         "action"?: string;
         /**
           * A disabled trigger does not call the action.
+          * @default false
          */
         "disabled"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         /**
           * Event of the trigger that calls the action.
+          * @default 'click'
          */
         "on"?: string;
         /**
           * The target: a CSS selector, `window` or `document`.
          */
         "target"?: string;
+        /**
+          * @default 'control'
+         */
         "type"?: 'button' | 'control' | 'link';
     }
+
+    interface DsAjaxAttributes {
+        "on": 'load' | 'click';
+        "target": 'self' | string;
+        "suffix": string;
+    }
+    interface DsBlockAttributes {
+        "section": boolean;
+        "block": boolean;
+        "article": boolean;
+        "form": boolean;
+        "modal": boolean;
+        "type": string;
+        "name": string;
+        "mods": string | string[];
+    }
+    interface DsComboAttributes {
+        "options": string | DSOption[];
+        "name": string;
+        "mode": string;
+        "customLabel": string;
+        "multiple": boolean;
+        "overlay": boolean;
+        "position": DSComboPosition;
+        "selected": string | DSComboSelection;
+        "mods": string | string[];
+    }
+    interface DsGridAttributes {
+        "dataUseRsp": boolean;
+        "mods": string | string[];
+        "type": string | DSGridType;
+        "cols": string;
+        "hGap": string;
+        "vGap": string;
+        "align": string | DSGridAlignment;
+        "vAlign": string | DSGridAlignment;
+        "cellRatio": string;
+    }
+    interface DsGridItemAttributes {
+        "ratioFromProps": string;
+        "width": number;
+    }
+    interface DsHeadingAttributes {
+        "useContext": boolean;
+        "mods": string | string[];
+        "section": boolean;
+        "block": boolean;
+        "imagePosition": string;
+    }
+    interface DsIconAttributes {
+        "type": string;
+    }
+    interface DsModalAttributes {
+        "shown": boolean;
+        "overlay": boolean;
+        "lightboxClass": string;
+        "lightboxClassObject": string;
+    }
+    interface DsNavAttributes {
+        "currentActiveItemId": string;
+        "mods": string | string[];
+    }
+    interface DsNavItemAttributes {
+        "itemId": string;
+        "type": string;
+        "depth": number;
+        "hasChildren": boolean;
+        "isActive": boolean;
+        "isAnimated": boolean;
+    }
+    interface DsPanelAttributes {
+        "mods": string | string[];
+        "minHeight": string;
+        "expanded": boolean;
+        "index": number;
+        "type": PanelType;
+    }
+    interface DsPanelGroupAttributes {
+        "type": PanelType;
+        "mods": string | string[];
+        "isActive": boolean;
+        "soloContent": boolean;
+    }
+    interface DsRspAttributes {
+        "debounceDelay": number;
+        "subscriberSelector": string;
+        "propertyName": string;
+        "breakpointsFromProp": string | RawBreakpoint;
+    }
+    interface DsSelectAttributes {
+        "name": string;
+        "disabled": boolean;
+        "mods": string | string[];
+        "defaultValue": string;
+    }
+    interface DsSidebarAttributes {
+        "ctx": boolean;
+        "isShown": boolean;
+        "hPos": 'left' | 'right';
+        "vPos": 'top' | 'bottom';
+        "mods": string | string[];
+    }
+    interface DsSliderAttributes {
+        "sliderId": string;
+        "mods": string | string[];
+        "params": DSSliderParams | string;
+        "type": string;
+    }
+    interface DsSliderMenuAttributes {
+        "dsItemCount": number;
+        "dsCurrentItemIndex": number;
+    }
+    interface DsTextAttributes {
+        "mods": string | string[];
+        "type": 'p' | 'code' | 'quote';
+        "inline": boolean;
+        "sup": boolean;
+        "sub": boolean;
+        "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
+    }
+    interface DsTitleAttributes {
+        "mods": string | string[];
+        "article": boolean;
+        "form": boolean;
+        "page": boolean;
+        "section": boolean;
+        "block": boolean;
+        "sub": boolean;
+        "sup": boolean;
+    }
+    interface DsTitleBarAttributes {
+        "ctx": boolean;
+        "mods": string | string[];
+    }
+    interface DsToasterAttributes {
+        "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
+        "mods": string | string[];
+        "messages": string | string[];
+        "maxDisplayedToast": number;
+        "closingDelay": number;
+    }
+    interface DsToggleAttributes {
+        "mods": string | string[];
+        "value": string;
+        "name": string;
+        "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        "disabled": boolean;
+        "checked": boolean;
+    }
+    interface DsToggleGroupAttributes {
+        "name": string;
+        "type": string;
+        "disabled": boolean;
+        "count": number[] | string;
+        "mods": string | string[];
+    }
+    interface DsTooltipAttributes {
+        "icon": string;
+        "mode": string;
+        "position": TooltipPosition;
+        "isDisabled": boolean;
+        "hasArrow": boolean;
+        "isActive": boolean;
+        "mods": string | string[];
+        "containerSelector": string;
+    }
+    interface DsTriggerAttributes {
+        "disabled": boolean;
+        "action": string;
+        "on": string;
+        "target": string;
+        "type": 'button' | 'control' | 'link';
+        "mods": string | string[];
+    }
+
     interface IntrinsicElements {
-        "ds-ajax": DsAjax;
-        "ds-block": DsBlock;
-        "ds-combo": DsCombo;
-        "ds-grid": DsGrid;
-        "ds-grid-item": DsGridItem;
-        "ds-heading": DsHeading;
-        "ds-icon": DsIcon;
-        "ds-modal": DsModal;
-        "ds-nav": DsNav;
-        "ds-nav-item": DsNavItem;
-        "ds-panel": DsPanel;
-        "ds-panel-group": DsPanelGroup;
-        "ds-rsp": DsRsp;
-        "ds-select": DsSelect;
-        "ds-sidebar": DsSidebar;
-        "ds-slider": DsSlider;
+        "ds-ajax": Omit<DsAjax, keyof DsAjaxAttributes> & { [K in keyof DsAjax & keyof DsAjaxAttributes]?: DsAjax[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `attr:${K}`]?: DsAjaxAttributes[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `prop:${K}`]?: DsAjax[K] };
+        "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
+        "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
+        "ds-grid": Omit<DsGrid, keyof DsGridAttributes> & { [K in keyof DsGrid & keyof DsGridAttributes]?: DsGrid[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `attr:${K}`]?: DsGridAttributes[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `prop:${K}`]?: DsGrid[K] };
+        "ds-grid-item": Omit<DsGridItem, keyof DsGridItemAttributes> & { [K in keyof DsGridItem & keyof DsGridItemAttributes]?: DsGridItem[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `attr:${K}`]?: DsGridItemAttributes[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `prop:${K}`]?: DsGridItem[K] };
+        "ds-heading": Omit<DsHeading, keyof DsHeadingAttributes> & { [K in keyof DsHeading & keyof DsHeadingAttributes]?: DsHeading[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `attr:${K}`]?: DsHeadingAttributes[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `prop:${K}`]?: DsHeading[K] };
+        "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
+        "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] };
+        "ds-nav": Omit<DsNav, keyof DsNavAttributes> & { [K in keyof DsNav & keyof DsNavAttributes]?: DsNav[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `attr:${K}`]?: DsNavAttributes[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `prop:${K}`]?: DsNav[K] };
+        "ds-nav-item": Omit<DsNavItem, keyof DsNavItemAttributes> & { [K in keyof DsNavItem & keyof DsNavItemAttributes]?: DsNavItem[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `attr:${K}`]?: DsNavItemAttributes[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `prop:${K}`]?: DsNavItem[K] };
+        "ds-panel": Omit<DsPanel, keyof DsPanelAttributes> & { [K in keyof DsPanel & keyof DsPanelAttributes]?: DsPanel[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `attr:${K}`]?: DsPanelAttributes[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `prop:${K}`]?: DsPanel[K] };
+        "ds-panel-group": Omit<DsPanelGroup, keyof DsPanelGroupAttributes> & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes]?: DsPanelGroup[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `attr:${K}`]?: DsPanelGroupAttributes[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `prop:${K}`]?: DsPanelGroup[K] };
+        "ds-rsp": Omit<DsRsp, keyof DsRspAttributes> & { [K in keyof DsRsp & keyof DsRspAttributes]?: DsRsp[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `attr:${K}`]?: DsRspAttributes[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `prop:${K}`]?: DsRsp[K] };
+        "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
+        "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-slider-item": DsSliderItem;
-        "ds-slider-menu": DsSliderMenu;
-        "ds-text": DsText;
-        "ds-title": DsTitle;
-        "ds-title-bar": DsTitleBar;
-        "ds-toaster": DsToaster;
-        "ds-toggle": DsToggle;
-        "ds-toggle-group": DsToggleGroup;
-        "ds-tooltip": DsTooltip;
-        "ds-trigger": DsTrigger;
+        "ds-slider-menu": Omit<DsSliderMenu, keyof DsSliderMenuAttributes> & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes]?: DsSliderMenu[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `attr:${K}`]?: DsSliderMenuAttributes[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `prop:${K}`]?: DsSliderMenu[K] };
+        "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-title": Omit<DsTitle, keyof DsTitleAttributes> & { [K in keyof DsTitle & keyof DsTitleAttributes]?: DsTitle[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `attr:${K}`]?: DsTitleAttributes[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `prop:${K}`]?: DsTitle[K] };
+        "ds-title-bar": Omit<DsTitleBar, keyof DsTitleBarAttributes> & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes]?: DsTitleBar[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `attr:${K}`]?: DsTitleBarAttributes[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `prop:${K}`]?: DsTitleBar[K] };
+        "ds-toaster": Omit<DsToaster, keyof DsToasterAttributes> & { [K in keyof DsToaster & keyof DsToasterAttributes]?: DsToaster[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `attr:${K}`]?: DsToasterAttributes[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `prop:${K}`]?: DsToaster[K] };
+        "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
+        "ds-toggle-group": Omit<DsToggleGroup, keyof DsToggleGroupAttributes> & { [K in keyof DsToggleGroup & keyof DsToggleGroupAttributes]?: DsToggleGroup[K] } & { [K in keyof DsToggleGroup & keyof DsToggleGroupAttributes as `attr:${K}`]?: DsToggleGroupAttributes[K] } & { [K in keyof DsToggleGroup & keyof DsToggleGroupAttributes as `prop:${K}`]?: DsToggleGroup[K] };
+        "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] };
+        "ds-trigger": Omit<DsTrigger, keyof DsTriggerAttributes> & { [K in keyof DsTrigger & keyof DsTriggerAttributes]?: DsTrigger[K] } & { [K in keyof DsTrigger & keyof DsTriggerAttributes as `attr:${K}`]?: DsTriggerAttributes[K] } & { [K in keyof DsTrigger & keyof DsTriggerAttributes as `prop:${K}`]?: DsTrigger[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -1352,13 +1841,13 @@ declare module "@stencil/core" {
              * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
              * Version: 1.0
              */
-            "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
+            "ds-ajax": LocalJSX.IntrinsicElements["ds-ajax"] & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
             /**
              * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
              * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
              * (`ds-home-hero__header`, `__body`, `__footer`).
              */
-            "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
+            "ds-block": LocalJSX.IntrinsicElements["ds-block"] & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             /**
              * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
              * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
@@ -1366,21 +1855,21 @@ declare module "@stencil/core" {
              * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
              * `ds-trigger`). A click outside the component closes the list.
              */
-            "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
-            "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
-            "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
-            "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
-            "ds-icon": LocalJSX.DsIcon & JSXBase.HTMLAttributes<HTMLDsIconElement>;
+            "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
+            "ds-grid": LocalJSX.IntrinsicElements["ds-grid"] & JSXBase.HTMLAttributes<HTMLDsGridElement>;
+            "ds-grid-item": LocalJSX.IntrinsicElements["ds-grid-item"] & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
+            "ds-heading": LocalJSX.IntrinsicElements["ds-heading"] & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
+            "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             /**
              * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
              * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
              * the class is removed when the last shown modal is hidden or removed from the document.
              */
-            "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
-            "ds-nav": LocalJSX.DsNav & JSXBase.HTMLAttributes<HTMLDsNavElement>;
-            "ds-nav-item": LocalJSX.DsNavItem & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
-            "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
-            "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
+            "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            "ds-nav": LocalJSX.IntrinsicElements["ds-nav"] & JSXBase.HTMLAttributes<HTMLDsNavElement>;
+            "ds-nav-item": LocalJSX.IntrinsicElements["ds-nav-item"] & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
+            "ds-panel": LocalJSX.IntrinsicElements["ds-panel"] & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
+            "ds-panel-group": LocalJSX.IntrinsicElements["ds-panel-group"] & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
             /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
@@ -1389,26 +1878,26 @@ declare module "@stencil/core" {
              * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
              * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
              */
-            "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
-            "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
-            "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
-            "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
-            "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
-            "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
-            "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
-            "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
-            "ds-title-bar": LocalJSX.DsTitleBar & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
+            "ds-rsp": LocalJSX.IntrinsicElements["ds-rsp"] & JSXBase.HTMLAttributes<HTMLDsRspElement>;
+            "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
+            "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
+            "ds-slider-item": LocalJSX.IntrinsicElements["ds-slider-item"] & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
+            "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
+            "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            "ds-title": LocalJSX.IntrinsicElements["ds-title"] & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
+            "ds-title-bar": LocalJSX.IntrinsicElements["ds-title-bar"] & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
             /**
              * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
              * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
              * at the end of that transition.
              */
-            "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
+            "ds-toaster": LocalJSX.IntrinsicElements["ds-toaster"] & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
             /**
              * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
              * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
              */
-            "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             /**
              * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
              * The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
@@ -1416,16 +1905,16 @@ declare module "@stencil/core" {
              * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
              * MutationObserver, in browsers).
              */
-            "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
+            "ds-toggle-group": LocalJSX.IntrinsicElements["ds-toggle-group"] & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
              * Simple icon tooltip component
              */
-            "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
+            "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             /**
              * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
              * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
              */
-            "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
+            "ds-trigger": LocalJSX.IntrinsicElements["ds-trigger"] & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
         }
     }
 }

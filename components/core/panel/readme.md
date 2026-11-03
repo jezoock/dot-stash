@@ -116,6 +116,14 @@ Type: `Promise<void>`
 
 
 
+## Slots
+
+| Slot      | Description      |
+| --------- | ---------------- |
+|           | The default slot |
+| `"title"` |                  |
+
+
 ## CSS Custom Properties
 
 | Name                             | Description                                                                                                                              |

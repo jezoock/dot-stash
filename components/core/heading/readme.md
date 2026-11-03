@@ -37,6 +37,16 @@ ds-heading ds-title {
 | `useContext`    | `use-context`    |                                                                                                    | `boolean`            | `undefined`      |
 
 
+## Slots
+
+| Slot            | Description      |
+| --------------- | ---------------- |
+|                 | The default slot |
+| `"description"` |                  |
+| `"image"`       |                  |
+| `"sub-title"`   |                  |
+
+
 ## CSS Custom Properties
 
 | Name                                 | Description                                                         |

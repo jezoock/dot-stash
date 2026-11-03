@@ -47,6 +47,7 @@ Simple icon tooltip component
 
 | Slot             | Description            |
 | ---------------- | ---------------------- |
+|                  | The default slot       |
 | `"content slot"` |                        |
 | `"message"`      | slot to put message in |
 

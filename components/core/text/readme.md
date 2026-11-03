@@ -31,6 +31,13 @@ ds-text {
 | `weight` | `weight`  |                                                                                                    | `"bold" \| "bolder" \| "light" \| "normal" \| "thin"` | `undefined` |
 
 
+## Slots
+
+| Slot | Description      |
+| ---- | ---------------- |
+|      | The default slot |
+
+
 ## CSS Custom Properties
 
 | Name                    | Description                                                      |

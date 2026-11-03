@@ -115,6 +115,9 @@ export class DSAjax {
 
   //#region RENDER
 
+  // No <slot>: the content stays the light DOM children of the component, as written, and the loaded content
+  // replaces them. With a <slot>, Stencil (4.41 and later) would hide, on the next render, the children
+  // that the innerHTML of a load puts in place of the slotted ones.
   render() {
     return (
       <Host
@@ -122,9 +125,7 @@ export class DSAjax {
           'ds-ajax': true,
           '--is-loading': this.isLoading,
         }}
-      >
-        <slot />
-      </Host>
+      />
     );
   }
 

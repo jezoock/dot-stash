@@ -57,6 +57,15 @@ Type: `Promise<DSBlockContext>`
 
 
 
+## Slots
+
+| Slot       | Description      |
+| ---------- | ---------------- |
+|            | The default slot |
+| `"footer"` |                  |
+| `"header"` |                  |
+
+
 ## CSS Custom Properties
 
 | Name                    | Description                                                                                                                                                                                                 |

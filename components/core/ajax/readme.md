@@ -4,7 +4,7 @@
 
 - **Classes**: `ds-ajax` on `<ds-ajax>`, and `--is-loading` while it loads.
 - **Attributes** (reflected): `on`, `target`, `suffix`.
-- **Slots**: the default slot, with the link (`a`) whose URL is loaded.
+- **Content**: the link (`a`) whose URL is loaded, a child of `<ds-ajax>` (no slot: the component renders no element of its own).
 - **Structure** (`ajax.scss`): while it loads, an overlay (`::before`) covers the `ds-ajax` element and takes the pointer, and a loading indicator (`::after`) is in its center, above the overlay. The overlay covers the component even when the content goes to another `target`.
 - **Look** (default theme, `components/_ajax.scss`): a translucent white veil and a spinning `arrows-cw` glyph of the icon font, from the custom properties below, set on `ds-ajax`.
 

@@ -42,6 +42,14 @@ ds-nav-item {
 | `dsMenuItemClick` |             | `CustomEvent<any>` |
 
 
+## Slots
+
+| Slot         | Description      |
+| ------------ | ---------------- |
+|              | The default slot |
+| `"children"` |                  |
+
+
 ## CSS Custom Properties
 
 | Name                               | Description                                                                                                 |

@@ -38,6 +38,13 @@ ds-title {
 | `sup`     | `sup`     |                                                                                                    | `boolean`            | `undefined` |
 
 
+## Slots
+
+| Slot | Description      |
+| ---- | ---------------- |
+|      | The default slot |
+
+
 ## CSS Custom Properties
 
 | Name                     | Description                                                         |
