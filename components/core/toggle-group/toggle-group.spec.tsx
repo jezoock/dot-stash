@@ -2,10 +2,34 @@ import { newSpecPage, SpecPage } from '@stencil/core/testing';
 import { DSToggle } from '../toggle/toggle';
 import { DSToggleGroup } from './toggle-group';
 
+/**
+ * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
+ * `activeElement`, which `focus()` sets.
+ */
+const trackFocus = (page: SpecPage) => {
+  const focus: { active: HTMLElement | null } = { active: null };
+  let owner = Object.getPrototypeOf(page.body);
+  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
+
+  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
+    focus.active = this;
+  });
+  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
+
+  return () => page.doc.activeElement as HTMLElement;
+};
+
+const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
+  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
+  target.dispatchEvent(event);
+  return event;
+};
+
 describe('ds-toggle-group', () => {
   afterEach(() => {
     delete global.MutationObserver;
     delete window.MutationObserver;
+    jest.restoreAllMocks();
   });
 
   const render = async (groupAttributes: string, toggleAttributes = '') => {
@@ -209,5 +233,153 @@ describe('ds-toggle-group', () => {
     await click('b');
 
     expect(value()).toEqual(['a', 'b']);
+  });
+  describe('accessibility', () => {
+    const tabindexes = (page: SpecPage) => Array.from(page.root.querySelectorAll('ds-toggle')).map(toggle => toggle.getAttribute('tabindex'));
+
+    it.each([
+      ['switches', 'group', 'type="switch"'],
+      ['checkboxes', 'group', 'type="checkbox" count="[0, 3]"'],
+      ['radios', 'radiogroup', 'type="radio"'],
+      ['radios with a single optional selection', 'radiogroup', 'type="radio" count="[0, 1]"'],
+      ['radios with a multiple selection', 'group', 'type="radio" count="[0, 2]"'],
+    ])('a group of %s has the role %s', async (_, role, attributes) => {
+      const { page } = await render(attributes);
+
+      expect(page.root.getAttribute('role')).toBe(role);
+    });
+
+    it('is a group when one of its toggles has another type of its own, a radio group with radios of their own type', async () => {
+      const mixed = await newSpecPage({
+        components: [DSToggleGroup, DSToggle],
+        html: '<ds-toggle-group type="radio"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" type="checkbox"></ds-toggle></ds-toggle-group>',
+      });
+      expect(mixed.root.getAttribute('role')).toBe('group');
+
+      const { page } = await render('', 'type="radio"');
+      expect(page.root.getAttribute('role')).toBe('radiogroup');
+    });
+
+    it('is named by label (aria-label), or keeps the aria-labelledby of the page', async () => {
+      const { page } = await render('type="radio" label="Size"');
+      expect(page.root.getAttribute('aria-label')).toBe('Size');
+
+      const { page: labelled } = await render('type="radio" aria-labelledby="size-title"');
+      expect(labelled.root.hasAttribute('aria-label')).toBe(false);
+      expect(labelled.root.getAttribute('aria-labelledby')).toBe('size-title');
+    });
+
+    it('a radio group puts the checked radio in the Tab order, else the first enabled one', async () => {
+      const { page, click } = await render('type="radio"');
+      expect(tabindexes(page)).toEqual(['0', '-1', '-1']);
+
+      await click('c');
+      // The group renders, then the toggles it calls setTabbable() on.
+      await page.waitForChanges();
+      expect(tabindexes(page)).toEqual(['-1', '-1', '0']);
+
+      const disabledFirst = await newSpecPage({
+        components: [DSToggleGroup, DSToggle],
+        html: '<ds-toggle-group type="radio"><ds-toggle value="a" disabled></ds-toggle><ds-toggle value="b"></ds-toggle><ds-toggle value="c"></ds-toggle></ds-toggle-group>',
+      });
+      expect(tabindexes(disabledFirst)).toEqual([null, '0', '-1']);
+    });
+
+    it('the other groups keep every toggle in the Tab order, also after they stop being a radio group', async () => {
+      const { page } = await render('type="checkbox" count="[0, 3]"');
+      expect(tabindexes(page)).toEqual(['0', '0', '0']);
+
+      const radios = await render('type="radio"');
+      radios.page.root.type = 'switch';
+      await radios.page.waitForChanges();
+      await radios.page.waitForChanges();
+      expect(radios.page.root.getAttribute('role')).toBe('group');
+      expect(tabindexes(radios.page)).toEqual(['0', '0', '0']);
+    });
+
+    it('the arrow keys move the focus and the selection between the radios, round the group; Home and End to the ends', async () => {
+      const { page, checked, changes } = await render('type="radio"');
+      const focused = trackFocus(page);
+      const [a, b, c] = Array.from(page.root.querySelectorAll('ds-toggle'));
+      const press = async (key: string, from = focused()) => {
+        const event = keydown(from, key);
+        await page.waitForChanges();
+        return event;
+      };
+
+      expect((await press('ArrowDown', a)).defaultPrevented).toBe(true);
+      expect([focused(), checked()]).toEqual([b, ['b']]);
+      await press('ArrowRight');
+      expect([focused(), checked()]).toEqual([c, ['c']]);
+      await press('ArrowDown');
+      expect([focused(), checked()]).toEqual([a, ['a']]);
+      await press('ArrowUp');
+      expect([focused(), checked()]).toEqual([c, ['c']]);
+      await press('ArrowLeft');
+      expect([focused(), checked()]).toEqual([b, ['b']]);
+      await press('Home');
+      expect([focused(), checked()]).toEqual([a, ['a']]);
+      await press('End');
+      expect([focused(), checked()]).toEqual([c, ['c']]);
+
+      await page.waitForChanges();
+      expect(tabindexes(page)).toEqual(['-1', '-1', '0']);
+      expect(changes).toEqual([['b'], ['c'], ['a'], ['c'], ['b'], ['a'], ['c']]);
+    });
+
+    it('the arrow keys skip the disabled radios, and leave the keys with a modifier and the other groups alone', async () => {
+      const page = await newSpecPage({
+        components: [DSToggleGroup, DSToggle],
+        html: '<ds-toggle-group type="radio"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle><ds-toggle value="c"></ds-toggle></ds-toggle-group>',
+      });
+      const focused = trackFocus(page);
+      const [a, , c] = Array.from(page.root.querySelectorAll('ds-toggle'));
+
+      keydown(a, 'ArrowDown');
+      await page.waitForChanges();
+      expect([focused(), c.checked]).toEqual([c, true]);
+
+      expect(keydown(c, 'ArrowDown', { altKey: true }).defaultPrevented).toBe(false);
+      expect(keydown(c, 'a').defaultPrevented).toBe(false);
+
+      const { page: checkboxes } = await render('type="checkbox" count="[0, 3]"');
+      const first = checkboxes.root.querySelector('ds-toggle');
+      expect(keydown(first, 'ArrowDown').defaultPrevented).toBe(false);
+      await checkboxes.waitForChanges();
+      expect(Array.from(checkboxes.root.querySelectorAll('ds-toggle')).some(toggle => toggle.checked)).toBe(false);
+    });
+
+    it('disabled, disables its toggles (aria-disabled on the group); enabled, gives them their own disabled back', async () => {
+      const page = await newSpecPage({
+        components: [DSToggleGroup, DSToggle],
+        html: '<ds-toggle-group type="checkbox" count="[0, 3]" disabled><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle></ds-toggle-group>',
+      });
+      const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
+      const states = () => toggles.map(toggle => [toggle.disabled, toggle.getAttribute('tabindex')]);
+
+      expect(page.root.getAttribute('aria-disabled')).toBe('true');
+      expect(states()).toEqual([
+        [true, null],
+        [true, null],
+      ]);
+      toggles[0].click();
+      await page.waitForChanges();
+      expect(toggles[0].checked).toBeFalsy();
+
+      page.root.disabled = false;
+      await page.waitForChanges();
+      expect(page.root.hasAttribute('aria-disabled')).toBe(false);
+      expect(states()).toEqual([
+        [false, '0'],
+        [true, null],
+      ]);
+
+      page.root.disabled = true;
+      await page.waitForChanges();
+      expect(states()).toEqual([
+        [true, null],
+        [true, null],
+      ]);
+    });
   });
 });

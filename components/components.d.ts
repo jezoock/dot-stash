@@ -591,6 +591,9 @@ export namespace Components {
      * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
      * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
      * MutationObserver, in browsers).
+     * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+     * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+     * focus and the selection between the enabled radios.
      */
     interface DsToggleGroup {
         /**
@@ -598,7 +601,14 @@ export namespace Components {
           * @default [1, 1]
          */
         "count": number[] | string;
+        /**
+          * Disables all the toggles of the group (`disabled` on each, `aria-disabled` on the group). Enabled again, the toggles get back the `disabled` they had when the group was disabled.
+         */
         "disabled": boolean;
+        /**
+          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element instead.
+         */
+        "label": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -1072,6 +1082,9 @@ declare global {
      * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
      * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
      * MutationObserver, in browsers).
+     * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+     * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+     * focus and the selection between the enabled radios.
      */
     interface HTMLDsToggleGroupElement extends Components.DsToggleGroup, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleGroupElement, ev: DsToggleGroupCustomEvent<HTMLDsToggleGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1639,6 +1652,9 @@ declare namespace LocalJSX {
      * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
      * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
      * MutationObserver, in browsers).
+     * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+     * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+     * focus and the selection between the enabled radios.
      */
     interface DsToggleGroup {
         /**
@@ -1646,7 +1662,14 @@ declare namespace LocalJSX {
           * @default [1, 1]
          */
         "count"?: number[] | string;
+        /**
+          * Disables all the toggles of the group (`disabled` on each, `aria-disabled` on the group). Enabled again, the toggles get back the `disabled` they had when the group was disabled.
+         */
         "disabled"?: boolean;
+        /**
+          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element instead.
+         */
+        "label"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -1892,6 +1915,7 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "count": number[] | string;
         "mods": string | string[];
+        "label": string;
     }
     interface DsTooltipAttributes {
         "icon": string;
@@ -2033,6 +2057,9 @@ declare module "@stencil/core" {
              * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
              * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
              * MutationObserver, in browsers).
+             * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+             * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+             * focus and the selection between the enabled radios.
              */
             "ds-toggle-group": LocalJSX.IntrinsicElements["ds-toggle-group"] & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
