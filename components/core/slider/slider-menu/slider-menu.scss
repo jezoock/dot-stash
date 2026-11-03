@@ -1,5 +1,6 @@
-// The structure of ds-slider-menu: a row of dots, one per item of its ds-slider, over the bottom of the slider; a click on
-// a dot shows its item. The dots are the look of the theme (components/_slider.scss), from the custom properties below.
+// The structure of ds-slider-menu: a row of dots, one per item of its ds-slider, over the bottom of the slider; each dot
+// holds a button, as large as the dot, that shows its item. The dots are the look of the theme (components/_slider.scss),
+// from the custom properties below; the button draws nothing (the focus indicator of the theme draws around it).
 
 /**
  * @prop --ds-slider-menu-offset: Vertical offset of the menu from its place below the slider (negative: over the slider).
@@ -18,6 +19,20 @@
   z-index: 1000;
   &__item {
     cursor: pointer;
+  }
+  // Inline: a block would open a line of its own after the list marker of the dot, which would grow.
+  &__button {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    cursor: inherit;
+    appearance: none;
   }
   &__label {
     display: none;

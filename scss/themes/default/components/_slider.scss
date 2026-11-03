@@ -53,6 +53,27 @@ ds-slider-menu {
     margin: 0 ds-spacing(1) 0 0;
     transform: rotate(-135deg);
   }
+
+  // The rotation button of an automatic rotation: two bars (stop) while the slides rotate, a triangle (start) once stopped.
+  &.--pause::before,
+  &.--play::before {
+    margin: 0;
+    transform: none;
+  }
+
+  &.--pause::before {
+    width: ds-spacing(2);
+    height: ds-spacing(3);
+    border-width: 0 3px;
+  }
+
+  &.--play::before {
+    width: 0;
+    height: 0;
+    margin-left: 3px;
+    border-width: 6px 0 6px 10px;
+    border-color: transparent currentColor;
+  }
 }
 
 // The dots of the menu.

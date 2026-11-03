@@ -1,7 +1,10 @@
 import { Component, Element, Event, EventEmitter, forceUpdate, h, Prop, Watch, Listen, Method, State } from '@stencil/core';
 import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
+import { getFocusedElement } from '../../utils/focus';
 import { fromJSON, toClassList } from '../../utils/props';
-import { DSSliderParams } from './slider.types';
+import { TransitionWait, waitForTransition } from '../../utils/transition';
+import { DSSliderDefaultLabels, formatLabel } from './slider.constants';
+import { DSSliderLabels, DSSliderParams } from './slider.types';
 
 let sliderId = 0;
 
@@ -29,6 +32,19 @@ const DSSliderDefaults: DSSliderParams = {
   draggable: true,
 };
 
+const prefersReducedMotion = (): boolean => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+ * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+ * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+ * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+ * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+ * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+ * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+ *
+ * @slot - The `ds-slider-item` elements.
+ */
 @Component({
   tag: 'ds-slider',
   styleUrl: 'slider.scss',
@@ -41,6 +57,15 @@ export class DSSlider {
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true, reflect: true }) params: DSSliderParams | string = {};
   @Prop({ mutable: true, reflect: true }) type = 'sld';
+  /** The accessible name of the carousel (`aria-label`): what its slides are ("Featured products"). */
+  @Prop() label: string;
+  /**
+   * The texts read by assistive technologies, to translate them (JSON as an attribute): `carousel` and `slide` (the
+   * `aria-roledescription` of the slider and of a slide), `slideName` (the name of a slide, `{index} of {count}`),
+   * `previous`, `next`, `play`, `pause` (the names of the buttons), `menu` and `menuItem` (the names of the menu and of a
+   * dot, `Slide {index}`). Each one has an English default.
+   */
+  @Prop() labels: DSSliderLabels | string = {};
 
   @State() isTransitionStarted = false;
 
@@ -74,7 +99,14 @@ export class DSSlider {
 
   isScrollable = false;
   isDraggable = false;
+  /**
+   * Whether the automatic rotation is on (`params.autoplay`): stopped by `stop()`, the rotation button, or the focus
+   * entering the slider; started again by `play()` or the button. Not a @State: changed in componentDidLoad too, it
+   * requests its render (forceUpdate).
+   */
   isPlaying = true;
+  /** Whether the pointer is over the slider: the rotation pauses. */
+  isHovered = false;
 
   isDragging = false;
   xStart = 0;
@@ -83,6 +115,17 @@ export class DSSlider {
   swipeDelay = 200;
 
   options: DSSliderParams;
+
+  /** The wait for the end of the slide, while it runs. */
+  private slide: TransitionWait;
+  /** The start of a slide, 50 ms after its first state. */
+  private slideTimer: ReturnType<typeof setTimeout>;
+  /** The index of each slide among the slides, from 0: a copy made for the loop has the index of its slide. */
+  private slideIndexes = new WeakMap<Element, number>();
+  /** The slides that have an `aria-label` of their own, which the slider keeps. */
+  private ownLabels = new WeakSet<Element>();
+  /** The previous / next button that had the focus before a render: it is given to the other one if it is removed. */
+  private focusedButton: HTMLElement | null = null;
 
   @Watch('params')
   paramsChangeHandler(newParams: DSSliderParams) {
@@ -101,6 +144,11 @@ export class DSSlider {
     }
   }
 
+  @Watch('labels')
+  labelsChangeHandler() {
+    this.labelSlides();
+  }
+
   @Event() sliderEvent: EventEmitter<{ slide: string; direction: number; currentIndex?: number }>;
 
   @Listen('request_displaySliderItem_event')
@@ -111,24 +159,62 @@ export class DSSlider {
     }
   }
 
+  /** The focus entering the slider stops the rotation (WAI-ARIA carousel pattern): it starts again from the button only. */
+  @Listen('focusin')
+  focusInHandler(event: FocusEvent) {
+    const from = event.relatedTarget as Node | null;
+    if (this.options.autoplay && this.isPlaying && !(from && this.host.contains(from))) {
+      this.stop();
+    }
+  }
+
+  /** The pointer over the slider pauses the rotation, until it leaves. */
+  @Listen('mouseenter')
+  mouseEnterHandler() {
+    this.isHovered = true;
+    if (this.options.autoplay) {
+      clearTimeout(this.timer);
+      forceUpdate(this);
+    }
+  }
+
+  @Listen('mouseleave')
+  mouseLeaveHandler() {
+    this.isHovered = false;
+    if (this.options.autoplay) {
+      if (!this.isTransitionStarted) {
+        this.continue();
+      }
+      forceUpdate(this);
+    }
+  }
+
   constructor() {
-    this.slideTransitionEndHandler = this.slideTransitionEndHandler.bind(this);
     this.prevButtonClickHandler = this.prevButtonClickHandler.bind(this);
     this.nextButtonClickHandler = this.nextButtonClickHandler.bind(this);
+    this.rotationButtonClickHandler = this.rotationButtonClickHandler.bind(this);
     this.pointerDownHandler = this.pointerDownHandler.bind(this);
     this.pointerUpHandler = this.pointerUpHandler.bind(this);
     this.pointerMoveHandler = this.pointerMoveHandler.bind(this);
   }
 
   disconnectedCallback() {
-    this.list.removeEventListener('touchstart', this.pointerDownHandler, false);
-    this.list.removeEventListener('touchend', this.pointerUpHandler, false);
-    this.list.removeEventListener('touchmove', this.pointerMoveHandler, false);
+    clearTimeout(this.timer);
+    clearTimeout(this.slideTimer);
+    this.slide?.cancel();
+    this.slide = undefined;
+    this.list?.removeEventListener('touchstart', this.pointerDownHandler, false);
+    this.list?.removeEventListener('touchend', this.pointerUpHandler, false);
+    this.list?.removeEventListener('touchmove', this.pointerMoveHandler, false);
   }
 
   componentWillLoad() {
     const optionsFromProps = fromJSON(this.params);
     this.options = { ...DSSliderDefaults, ...optionsFromProps, selectors: { ...DSSliderDefaults.selectors, ...optionsFromProps.selectors } };
+    // Less motion: the automatic rotation does not start; the rotation button can start it.
+    if (this.options.autoplay && prefersReducedMotion()) {
+      this.isPlaying = false;
+    }
   }
 
   componentDidLoad() {
@@ -140,6 +226,20 @@ export class DSSlider {
     if (this.options.isActive) {
       this.initialize();
     }
+  }
+
+  componentWillRender() {
+    const focused = getFocusedElement();
+    this.focusedButton = focused?.matches?.('.ds-slider__prev-button, .ds-slider__next-button') && this.host.contains(focused) ? focused : null;
+  }
+
+  componentDidRender() {
+    // A previous / next button that had the focus is no longer rendered (the first or last slide, without loop): the
+    // focus goes to the other one, rather than to the page.
+    if (this.focusedButton && !this.focusedButton.isConnected) {
+      this.host.querySelector<HTMLElement>('.ds-slider__prev-button, .ds-slider__next-button')?.focus();
+    }
+    this.focusedButton = null;
   }
 
   @Method()
@@ -173,6 +273,70 @@ export class DSSlider {
 
   getListItems(): HTMLDsSliderItemElement[] {
     return Array.from(this.host.querySelectorAll<HTMLDsSliderItemElement>(this.options.selectors.items));
+  }
+
+  /** The texts read by assistive technologies: `labels` over the English defaults. */
+  getLabels(): Required<DSSliderLabels> {
+    let labels: DSSliderLabels = {};
+    try {
+      labels = fromJSON(this.labels ?? {}) as DSSliderLabels;
+    } catch {
+      console.error('[ds-slider] labels is not valid JSON');
+    }
+    return { ...DSSliderDefaultLabels, ...labels };
+  }
+
+  /**
+   * The slides are groups (`aria-roledescription="slide"`) named by their place, "2 of 5" (`labels.slideName`), unless
+   * they have an `aria-label` of their own. A slide is numbered from its place among the slides the first time the
+   * slider sees it; the copies made for the loop keep the number of their slide.
+   */
+  labelSlides() {
+    const labels = this.getLabels();
+    const items = this.getListItems();
+    const count = this.listLen || items.length;
+
+    items.forEach((item, position) => {
+      if (!this.slideIndexes.has(item)) {
+        this.slideIndexes.set(item, position);
+        if (item.hasAttribute('aria-label')) {
+          this.ownLabels.add(item);
+        }
+      }
+      if (!item.hasAttribute('role')) {
+        item.setAttribute('role', 'group');
+      }
+      item.setAttribute('aria-roledescription', labels.slide);
+      if (!this.ownLabels.has(item)) {
+        item.setAttribute('aria-label', formatLabel(labels.slideName, { index: this.slideIndexes.get(item) + 1, count }));
+      }
+    });
+  }
+
+  /** A copy of a slide, for the loop: it keeps the number and the own label of the slide. */
+  cloneSlide(item: HTMLDsSliderItemElement): HTMLDsSliderItemElement {
+    const clone = item.cloneNode(true) as HTMLDsSliderItemElement;
+    if (this.slideIndexes.has(item)) {
+      this.slideIndexes.set(clone, this.slideIndexes.get(item));
+    }
+    if (this.ownLabels.has(item)) {
+      this.ownLabels.add(clone);
+    }
+    return clone;
+  }
+
+  /**
+   * The slides out of view are inert (out of the Tab order and of the accessibility tree): those out of
+   * `[first, first + the number of slides in view)` in the list. Without a slide to scroll, they are all in view.
+   */
+  setVisibleSlides(first = 0) {
+    this.getListItems().forEach((item, position) => {
+      if (!this.isScrollable || (position >= first && position < first + this.dspItems)) {
+        item.removeAttribute('inert');
+      } else {
+        item.setAttribute('inert', '');
+      }
+    });
   }
 
   @Method()
@@ -303,9 +467,11 @@ export class DSSlider {
         this.continue();
       }
 
+      this.labelSlides();
+      this.setVisibleSlides(0);
+
       setCss({ opacity: '1' } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
 
-      this.list.addEventListener('transitionend', this.slideTransitionEndHandler, { passive: true });
       if (this.options.draggable) {
         this.list.addEventListener('touchstart', this.pointerDownHandler, { passive: true });
         this.list.addEventListener('touchend', this.pointerUpHandler, { passive: true });
@@ -367,6 +533,24 @@ export class DSSlider {
     }
   }
 
+  /**
+   * Starts the slide of the list to its transform `to`, after 50 ms, and calls the end handler of the direction at its
+   * end: on the `transitionend` event of the list, at once when it does not slide (a duration of 0, less motion), or when
+   * its duration is over if the event does not come.
+   */
+  startSlide(to: Partial<CSSStyleDeclaration>, beforeSlide?: () => void) {
+    this.slideTimer = setTimeout(() => {
+      beforeSlide?.();
+      this.slide?.cancel();
+      this.slide = waitForTransition(this.list, () => {
+        this.slide = undefined;
+        this.slideEndHandler();
+      });
+      setCss(to, [this.list]);
+      this.slide.measure();
+    }, 50);
+  }
+
   @Method()
   async next(step: number = this.options.step, startPosition: number = 0) {
     if (this.options.autoplay) {
@@ -399,15 +583,16 @@ export class DSSlider {
       }
 
       for (let i = 0; i < step; i++) {
-        const newElem = this.items[i].cloneNode(true);
-        this.list.appendChild(newElem);
+        this.list.appendChild(this.cloneSlide(this.items[i]));
       }
+      // The slides that come in view are no longer inert at once (the live region reads them), those that go are.
+      this.setVisibleSlides(step);
 
       setCss(from, [this.list]);
 
       this.step = step;
       this.getList().classList.add('--sliding');
-      setTimeout(() => setCss(to, [this.list]), 50);
+      this.startSlide(to);
     }
   }
 
@@ -442,31 +627,37 @@ export class DSSlider {
       }
 
       for (let i = step; i > 0; i--) {
-        this.list.insertBefore(this.items[this.listLen - 1].cloneNode(true), this.items[0]);
+        this.list.insertBefore(this.cloneSlide(this.items[this.listLen - 1]), this.items[0]);
         this.items = this.getListItems();
       }
 
       this.items = this.getListItems();
+      this.setVisibleSlides(0);
 
       setCss(from, [this.list]);
 
       this.step = step;
 
-      setTimeout(() => {
-        this.list.classList.add('--sliding');
-        setCss(to, [this.list]);
-      }, 50);
+      this.startSlide(to, () => this.list.classList.add('--sliding'));
     }
   }
 
+  /** Stops the automatic rotation (`params.autoplay`): the rotation button then starts it. */
   @Method()
   async stop() {
     this.isPlaying = false;
+    clearTimeout(this.timer);
+    forceUpdate(this);
   }
 
+  /** Starts the automatic rotation again (`params.autoplay`), unless the pointer is over the slider (it then starts when it leaves). */
   @Method()
   async play() {
     this.isPlaying = true;
+    if (!this.isTransitionStarted) {
+      this.continue();
+    }
+    forceUpdate(this);
   }
 
   transitionCleanUp = () => {
@@ -482,23 +673,28 @@ export class DSSlider {
     );
   };
 
+  /** Whether the slides rotate now: the automatic rotation is on, and the pointer is not over the slider. */
+  get isRotating(): boolean {
+    return !!this.options.autoplay && this.isPlaying && !this.isHovered;
+  }
+
   continue = () => {
-    if (this.options.autoplay && this.isPlaying) {
+    clearTimeout(this.timer);
+    if (this.isRotating && this.isScrollable) {
       this.timer = setTimeout(() => this[this.options.direction === 1 ? 'next' : 'prev'](), this.currentItem.dTime);
     }
   };
 
   //#region Handlers
 
-  slideTransitionEndHandler(event: Event) {
-    const eventTarget = event.target as HTMLDivElement;
-    if (eventTarget.getAttribute('id') === this.sliderId) {
-      if (this.softCleanup) {
-        this.transitionCleanUp();
-      } else {
-        this[`${this.transitionDirection}TransitionEndHandler`]();
-      }
+  /** The end of a slide. */
+  slideEndHandler() {
+    if (this.softCleanup) {
+      this.transitionCleanUp();
+    } else {
+      this[`${this.transitionDirection}TransitionEndHandler`]();
     }
+    this.setVisibleSlides(0);
   }
 
   nextTransitionEndHandler() {
@@ -518,7 +714,8 @@ export class DSSlider {
     this.transitionCleanUp();
     const { index: previousIndex } = this.currentItem;
 
-    const newIndex = previousIndex + (previousIndex + step > this.listLen - 1 ? -(this.listLen - 1) : step);
+    // Round the slides: from the last one to the first.
+    const newIndex = (((previousIndex + step) % this.listLen) + this.listLen) % this.listLen;
     this.currentItem.index = newIndex;
 
     this.sliderEvent.emit({
@@ -546,7 +743,8 @@ export class DSSlider {
 
     this.transitionCleanUp();
     const { index: previousIndex } = this.currentItem;
-    const newIndex = previousIndex - (previousIndex < 0 ? this.listLen - 1 : step);
+    // Round the slides: from the first one to the last.
+    const newIndex = (((previousIndex - step) % this.listLen) + this.listLen) % this.listLen;
 
     this.currentItem.index = newIndex;
 
@@ -567,9 +765,15 @@ export class DSSlider {
     await this.next(this.options.step);
   }
 
+  async rotationButtonClickHandler() {
+    await (this.isPlaying ? this.stop() : this.play());
+  }
+
   //#endregion
 
   render() {
+    const labels = this.getLabels();
+
     return (
       <div
         class={{
@@ -582,22 +786,35 @@ export class DSSlider {
           '--isReady': this.isReady,
           '--transition': this.isTransitionStarted,
         }}
+        role="region"
+        aria-roledescription={labels.carousel}
+        aria-label={this.label}
       >
+        {this.options.autoplay && this.isScrollable && (
+          <ds-trigger
+            type="button"
+            class="ds-slider__rotation-button"
+            mods={['slider', this.isPlaying ? 'pause' : 'play']}
+            onClick={this.rotationButtonClickHandler}
+            label={this.isPlaying ? labels.pause : labels.play}
+          />
+        )}
+
         {this.options.controls && this.isScrollable && (this.options.loop || this.currentItem.index > 0) && (
-          <ds-trigger type="button" class="ds-slider__prev-button" mods={['slider', 'prev']} onClick={this.prevButtonClickHandler} aria-label="Previous image" />
+          <ds-trigger type="button" class="ds-slider__prev-button" mods={['slider', 'prev']} onClick={this.prevButtonClickHandler} label={labels.previous} />
         )}
 
         <div class="ds-slider__container">
-          <div class="ds-slider__list" id={this.sliderId}>
+          <div class="ds-slider__list" id={this.sliderId} aria-live={this.isRotating ? 'off' : 'polite'}>
             <slot />
           </div>
         </div>
 
         {this.options.controls && this.isScrollable && (this.options.loop || this.currentItem.index + this.dspItems < this.listLen) && (
-          <ds-trigger class="ds-slider__next-button" mods={['slider', 'next']} onClick={this.nextButtonClickHandler} type="button" aria-label="Next image" />
+          <ds-trigger class="ds-slider__next-button" mods={['slider', 'next']} onClick={this.nextButtonClickHandler} type="button" label={labels.next} />
         )}
 
-        {this.options.menu && <ds-slider-menu dsItemCount={this.listLen} dsCurrentItemIndex={this.currentItem.index} />}
+        {this.options.menu && <ds-slider-menu dsItemCount={this.listLen} dsCurrentItemIndex={this.currentItem.index} label={labels.menu} itemLabel={labels.menuItem} />}
       </div>
     );
   }

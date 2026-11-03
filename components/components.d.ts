@@ -10,7 +10,7 @@ import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
-import { DSSliderParams } from "./core/slider/slider.types";
+import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
@@ -19,7 +19,7 @@ export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
-export { DSSliderParams } from "./core/slider/slider.types";
+export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
@@ -502,9 +502,27 @@ export namespace Components {
          */
         "vPos": 'top' | 'bottom';
     }
+    /**
+     * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+     * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+     * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+     * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+     * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+     * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+     * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+     */
     interface DsSlider {
         "goTo": (itemIndex: number) => Promise<void>;
         "initialize": () => Promise<void>;
+        /**
+          * The accessible name of the carousel (`aria-label`): what its slides are ("Featured products").
+         */
+        "label": string;
+        /**
+          * The texts read by assistive technologies, to translate them (JSON as an attribute): `carousel` and `slide` (the `aria-roledescription` of the slider and of a slide), `slideName` (the name of a slide, `{index} of {count}`), `previous`, `next`, `play`, `pause` (the names of the buttons), `menu` and `menuItem` (the names of the menu and of a dot, `Slide {index}`). Each one has an English default.
+          * @default {}
+         */
+        "labels": DSSliderLabels | string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -515,6 +533,9 @@ export namespace Components {
           * @default {}
          */
         "params": DSSliderParams | string;
+        /**
+          * Starts the automatic rotation again (`params.autoplay`), unless the pointer is over the slider (it then starts when it leaves).
+         */
         "play": () => Promise<void>;
         "pointerDownHandler": (event: TouchEvent) => Promise<void>;
         "pointerMoveHandler": () => Promise<void>;
@@ -526,6 +547,9 @@ export namespace Components {
           * @default `slide-${sliderId++}`
          */
         "sliderId": string;
+        /**
+          * Stops the automatic rotation (`params.autoplay`): the rotation button then starts it.
+         */
         "stop": () => Promise<void>;
         /**
           * @default 'sld'
@@ -534,6 +558,11 @@ export namespace Components {
     }
     interface DsSliderItem {
     }
+    /**
+     * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+     * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+     * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+     */
     interface DsSliderMenu {
         /**
           * @default 0
@@ -543,6 +572,16 @@ export namespace Components {
           * @default 0
          */
         "dsItemCount": number;
+        /**
+          * The accessible name of a dot: `{index}` is the number of its slide, `{count}` the number of slides.
+          * @default 'Slide {index}'
+         */
+        "itemLabel": string;
+        /**
+          * The accessible name of the menu (`aria-label` of its list).
+          * @default 'Choose a slide'
+         */
+        "label": string;
     }
     interface DsText {
         "inline": boolean;
@@ -1086,6 +1125,15 @@ declare global {
     interface HTMLDsSliderElementEventMap {
         "sliderEvent": { slide: string; direction: number; currentIndex?: number };
     }
+    /**
+     * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+     * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+     * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+     * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+     * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+     * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+     * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+     */
     interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1109,6 +1157,11 @@ declare global {
     interface HTMLDsSliderMenuElementEventMap {
         "request_displaySliderItem_event": any;
     }
+    /**
+     * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+     * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+     * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+     */
     interface HTMLDsSliderMenuElement extends Components.DsSliderMenu, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderMenuElementEventMap>(type: K, listener: (this: HTMLDsSliderMenuElement, ev: DsSliderMenuCustomEvent<HTMLDsSliderMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1718,7 +1771,25 @@ declare namespace LocalJSX {
          */
         "vPos"?: 'top' | 'bottom';
     }
+    /**
+     * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+     * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+     * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+     * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+     * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+     * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+     * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+     */
     interface DsSlider {
+        /**
+          * The accessible name of the carousel (`aria-label`): what its slides are ("Featured products").
+         */
+        "label"?: string;
+        /**
+          * The texts read by assistive technologies, to translate them (JSON as an attribute): `carousel` and `slide` (the `aria-roledescription` of the slider and of a slide), `slideName` (the name of a slide, `{index} of {count}`), `previous`, `next`, `play`, `pause` (the names of the buttons), `menu` and `menuItem` (the names of the menu and of a dot, `Slide {index}`). Each one has an English default.
+          * @default {}
+         */
+        "labels"?: DSSliderLabels | string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -1740,6 +1811,11 @@ declare namespace LocalJSX {
     }
     interface DsSliderItem {
     }
+    /**
+     * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+     * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+     * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+     */
     interface DsSliderMenu {
         /**
           * @default 0
@@ -1749,6 +1825,16 @@ declare namespace LocalJSX {
           * @default 0
          */
         "dsItemCount"?: number;
+        /**
+          * The accessible name of a dot: `{index}` is the number of its slide, `{count}` the number of slides.
+          * @default 'Slide {index}'
+         */
+        "itemLabel"?: string;
+        /**
+          * The accessible name of the menu (`aria-label` of its list).
+          * @default 'Choose a slide'
+         */
+        "label"?: string;
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
     interface DsText {
@@ -2094,10 +2180,14 @@ declare namespace LocalJSX {
         "mods": string | string[];
         "params": DSSliderParams | string;
         "type": string;
+        "label": string;
+        "labels": DSSliderLabels | string;
     }
     interface DsSliderMenuAttributes {
         "dsItemCount": number;
         "dsCurrentItemIndex": number;
+        "label": string;
+        "itemLabel": string;
     }
     interface DsTextAttributes {
         "mods": string | string[];
@@ -2287,8 +2377,22 @@ declare module "@stencil/core" {
              * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
              */
             "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
+            /**
+             * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+             * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+             * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+             * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+             * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+             * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+             * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+             */
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.IntrinsicElements["ds-slider-item"] & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
+            /**
+             * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+             * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+             * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+             */
             "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             "ds-title": LocalJSX.IntrinsicElements["ds-title"] & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
