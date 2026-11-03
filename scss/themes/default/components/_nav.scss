@@ -1,9 +1,9 @@
 @use '../tokens' as *;
 
 // ds-nav and ds-nav-item. Below md, the sub-navigations are collapsed (ds-nav-item animates their height) and
-// opened by the expand button; from md, they drop down on hover. These rules depend on the breakpoints: they are the
-// theme's, not the component stylesheets'. The custom properties are documented in components/core/nav/readme.md and
-// components/core/nav/nav-item/readme.md.
+// opened by the expand button; from md, they drop down on hover and focus. These rules depend on the breakpoints: they
+// are the theme's, not the component stylesheets'. The custom properties are documented in components/core/nav/readme.md
+// and components/core/nav/nav-item/readme.md.
 
 ds-nav {
   --ds-nav-gap: #{ds-spacing(2)};
@@ -54,11 +54,25 @@ ds-nav-item {
       right: 0;
     }
 
+    // Collapsed: not rendered once its height is 0 (visibility, at the end of the transition), so that its links are
+    // out of the Tab order and of the accessibility tree. Open (--open): rendered at once, as high as its content
+    // (ds-nav-item animates the height, unless is-animated is false).
     &__sub-nav {
       height: 0;
       overflow: hidden;
       padding-left: ds-spacing(4);
-      transition: height 0.3s ease;
+      visibility: hidden;
+      transition:
+        height 0.3s ease,
+        visibility 0s linear 0.3s;
+    }
+
+    &.--open > &__sub-nav {
+      height: auto;
+      visibility: visible;
+      transition:
+        height 0.3s ease,
+        visibility 0s linear 0s;
     }
 
     &.--open > &__expand-button .ds-button.--menu-item::before {
@@ -92,6 +106,12 @@ ds-nav-item {
     &:focus-within > &__sub-nav {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    // Hidden by Escape (ds-nav-item), until the focus and the pointer leave the item.
+    &.--dismissed > &__sub-nav {
+      opacity: 0;
+      pointer-events: none;
     }
 
     & & {

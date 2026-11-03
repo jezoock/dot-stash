@@ -1,5 +1,6 @@
 import { Component, Event, EventEmitter, h, Prop } from '@stencil/core';
-import { DSSliderDefaultLabels, formatLabel } from '../slider.constants';
+import { formatLabel } from '../../../utils/labels';
+import { DSSliderDefaultLabels } from '../slider.constants';
 
 /**
  * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The

@@ -245,14 +245,32 @@ export namespace Components {
          */
         "shown": boolean;
     }
+    /**
+     * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+     * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+     * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+     */
     interface DsNav {
         "currentActiveItemId": string;
+        /**
+          * The accessible name of the navigation landmark (`aria-label`), which tells it from the other navigations of the page: "Main", "Footer". Not rendered on a sub-navigation.
+         */
+        "label": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods": string | string[];
     }
+    /**
+     * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+     * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+     * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+     * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+     * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+     * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+     * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     */
     interface DsNavItem {
         /**
           * @default 0
@@ -263,14 +281,25 @@ export namespace Components {
          */
         "hasChildren": boolean;
         /**
+          * The item of the current page: its link gets `aria-current="page"` (unless it has an `aria-current` of its own).
           * @default false
          */
         "isActive": boolean;
         /**
+          * Whether the expand button animates the height of the sub-navigation (`false`: the theme opens it, on `--open`).
           * @default true
          */
         "isAnimated": boolean;
         "itemId": string;
+        /**
+          * The name of the item in the name of its expand button. Default: the text of its link.
+         */
+        "label": string;
+        /**
+          * The name of the expand button (`aria-label`): `{label}` is the name of the item.
+          * @default '{label} submenu'
+         */
+        "toggleLabel": string;
         /**
           * @default 'page'
          */
@@ -976,6 +1005,11 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    /**
+     * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+     * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+     * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+     */
     interface HTMLDsNavElement extends Components.DsNav, HTMLStencilElement {
     }
     var HTMLDsNavElement: {
@@ -985,6 +1019,15 @@ declare global {
     interface HTMLDsNavItemElementEventMap {
         "dsMenuItemClick": any;
     }
+    /**
+     * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+     * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+     * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+     * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+     * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+     * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+     * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     */
     interface HTMLDsNavItemElement extends Components.DsNavItem, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsNavItemElementEventMap>(type: K, listener: (this: HTMLDsNavItemElement, ev: DsNavItemCustomEvent<HTMLDsNavItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1543,14 +1586,32 @@ declare namespace LocalJSX {
          */
         "shown"?: boolean;
     }
+    /**
+     * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+     * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+     * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+     */
     interface DsNav {
         "currentActiveItemId"?: string;
+        /**
+          * The accessible name of the navigation landmark (`aria-label`), which tells it from the other navigations of the page: "Main", "Footer". Not rendered on a sub-navigation.
+         */
+        "label"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods"?: string | string[];
     }
+    /**
+     * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+     * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+     * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+     * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+     * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+     * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+     * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     */
     interface DsNavItem {
         /**
           * @default 0
@@ -1561,15 +1622,26 @@ declare namespace LocalJSX {
          */
         "hasChildren"?: boolean;
         /**
+          * The item of the current page: its link gets `aria-current="page"` (unless it has an `aria-current` of its own).
           * @default false
          */
         "isActive"?: boolean;
         /**
+          * Whether the expand button animates the height of the sub-navigation (`false`: the theme opens it, on `--open`).
           * @default true
          */
         "isAnimated"?: boolean;
         "itemId"?: string;
+        /**
+          * The name of the item in the name of its expand button. Default: the text of its link.
+         */
+        "label"?: string;
         "onDsMenuItemClick"?: (event: DsNavItemCustomEvent<any>) => void;
+        /**
+          * The name of the expand button (`aria-label`): `{label}` is the name of the item.
+          * @default '{label} submenu'
+         */
+        "toggleLabel"?: string;
         /**
           * @default 'page'
          */
@@ -2128,6 +2200,7 @@ declare namespace LocalJSX {
     interface DsNavAttributes {
         "currentActiveItemId": string;
         "mods": string | string[];
+        "label": string;
     }
     interface DsNavItemAttributes {
         "itemId": string;
@@ -2136,6 +2209,8 @@ declare namespace LocalJSX {
         "hasChildren": boolean;
         "isActive": boolean;
         "isAnimated": boolean;
+        "label": string;
+        "toggleLabel": string;
     }
     interface DsPanelAttributes {
         "mods": string | string[];
@@ -2327,7 +2402,21 @@ declare module "@stencil/core" {
              * the document.
              */
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            /**
+             * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+             * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+             * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+             */
             "ds-nav": LocalJSX.IntrinsicElements["ds-nav"] & JSXBase.HTMLAttributes<HTMLDsNavElement>;
+            /**
+             * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+             * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+             * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+             * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+             * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+             * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+             * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+             */
             "ds-nav-item": LocalJSX.IntrinsicElements["ds-nav-item"] & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
             /**
              * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:

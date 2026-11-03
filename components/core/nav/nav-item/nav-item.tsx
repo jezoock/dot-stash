@@ -1,6 +1,24 @@
-import { Component, Event, EventEmitter, h, Prop, Element, State, Fragment } from '@stencil/core';
+import { Component, Event, EventEmitter, h, Host, Listen, Prop, Element, State, Fragment } from '@stencil/core';
+import { formatLabel } from '../../../utils/labels';
 import { isTrue, toNumber } from '../../../utils/props';
+import { TransitionWait, waitForTransition } from '../../../utils/transition';
 
+let navItemIds = 0;
+
+const isEscape = (event: KeyboardEvent) => event.key === 'Escape' || event.key === 'Esc';
+
+/**
+ * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+ * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+ * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+ * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+ * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+ * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+ * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+ *
+ * @slot - The link of the item.
+ * @slot children - The sub-navigation: a `ds-nav` of `ds-nav-item` elements.
+ */
 @Component({
   tag: 'ds-nav-item',
   styleUrl: 'nav-item.scss',
@@ -12,16 +30,38 @@ export class DSNavMenuItem {
   @Prop({ reflect: true, mutable: true }) type = 'page';
   @Prop({ reflect: true, mutable: true }) depth = 0;
   @Prop({ reflect: true, mutable: true }) hasChildren = false;
+  /** The item of the current page: its link gets `aria-current="page"` (unless it has an `aria-current` of its own). */
   @Prop({ reflect: true, mutable: true }) isActive = false;
+  /** Whether the expand button animates the height of the sub-navigation (`false`: the theme opens it, on `--open`). */
   @Prop({ reflect: true, mutable: true }) isAnimated = true;
+  /** The name of the item in the name of its expand button. Default: the text of its link. */
+  @Prop() label: string;
+  /** The name of the expand button (`aria-label`): `{label}` is the name of the item. */
+  @Prop() toggleLabel = '{label} submenu';
 
+  /** Whether the sub-navigation is open (the expand button: `aria-expanded`). */
   @State() isOpened = false;
+  /** Whether Escape hid the drop-down sub-navigation (the theme from `md`), until the focus and the pointer leave the item. */
+  @State() isDismissed = false;
 
   @Event() dsMenuItemClick: EventEmitter;
 
+  private uid: string;
+  private linkWrapper: HTMLElement;
+  private toggleWrapper: HTMLElement;
+  private toggleButton: HTMLElement;
+  private subNav: HTMLElement;
+  /** The wait for the end of the height transition of the sub-navigation, while it runs. */
+  private subNavTransition: TransitionWait;
+  /** The link that got `aria-current="page"` from the component (it had none of its own). */
+  private currentLink: HTMLElement | null = null;
+
   constructor() {
     this.itemClickHandler = this.itemClickHandler.bind(this);
-    this.removeTransition = this.removeTransition.bind(this);
+  }
+
+  connectedCallback() {
+    this.uid ??= `ds-nav-item-${++navItemIds}`;
   }
 
   componentWillLoad() {
@@ -31,43 +71,104 @@ export class DSNavMenuItem {
     this.depth = toNumber(this.depth);
   }
 
+  componentDidRender() {
+    this.updateCurrentLink();
+  }
+
+  disconnectedCallback() {
+    this.subNavTransition?.cancel();
+    this.subNavTransition = undefined;
+  }
+
+  /** The link of the item: the first link of its default slot. */
+  getLink(): HTMLElement | null {
+    return this.linkWrapper?.querySelector<HTMLElement>('a[href]') ?? null;
+  }
+
+  /** The name of the item: `label`, else the text of its default slot (its link). */
+  getItemLabel(): string {
+    if (this.label) {
+      return this.label;
+    }
+    // Before the first render, the slotted elements are still children of the host.
+    const nodes = Array.from((this.linkWrapper ?? this.host).childNodes).filter(
+      node => !(node.nodeType === 1 && ((node as Element).getAttribute('slot') === 'children' || (node as Element).matches('.ds-nav-item__expand-button, .ds-nav-item__sub-nav'))),
+    );
+    return nodes
+      .map(node => node.textContent)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /** `aria-current="page"` on the link of the current page (`is-active`), unless it has an `aria-current` of its own. */
+  updateCurrentLink() {
+    const link = this.getLink();
+
+    if (this.currentLink && (this.currentLink !== link || !this.isActive)) {
+      this.currentLink.removeAttribute('aria-current');
+      this.currentLink = null;
+    }
+    if (link && this.isActive && !link.hasAttribute('aria-current')) {
+      link.setAttribute('aria-current', 'page');
+      this.currentLink = link;
+    }
+  }
+
   toggleSubNav(mustShow = false): void {
     this.isOpened = mustShow;
     this[`${mustShow ? 'show' : 'hide'}SubNav`]();
   }
 
-  removeTransition() {
-    const subNav = this.host.querySelector('.ds-nav-item__sub-nav') as HTMLDivElement;
-    if (subNav.offsetHeight !== 0) {
-      subNav.style.height = 'auto';
-    }
-    subNav.removeEventListener('transitionend', this.removeTransition);
+  /**
+   * Waits for the end of the height transition of the sub-navigation (`waitForTransition`: at once without a transition,
+   * or once its duration is over without `transitionend`): open, its height follows its content again (`auto`).
+   */
+  waitForSubNav(subNav: HTMLElement): TransitionWait {
+    this.subNavTransition?.cancel();
+    this.subNavTransition = waitForTransition(subNav, () => {
+      this.subNavTransition = undefined;
+      if (this.isOpened && subNav.offsetHeight !== 0) {
+        subNav.style.height = 'auto';
+      }
+    });
+    return this.subNavTransition;
   }
 
   showSubNav(): void {
-    const subNav = this.host.querySelector('.ds-nav-item__sub-nav') as HTMLDivElement;
+    const subNav = this.subNav;
     const subNavContent = this.host.querySelector('.ds-nav-item__sub-nav > ds-nav > .ds-nav') as HTMLDivElement;
     if (subNav && subNavContent) {
-      subNav.addEventListener('transitionend', this.removeTransition);
+      const transition = this.waitForSubNav(subNav);
       subNav.style.height = `${subNavContent.offsetHeight}px`;
+      transition.measure();
     }
   }
 
   hideSubNav(): void {
-    const subNav = this.host.querySelector('.ds-nav-item__sub-nav') as HTMLDivElement;
+    const subNav = this.subNav;
+    if (!subNav) {
+      return;
+    }
+    this.subNavTransition?.cancel();
     subNav.style.height = `${subNav.offsetHeight}px`;
-    subNav.addEventListener('transitionend', this.removeTransition);
     setTimeout(() => {
+      // The height in px is computed before it changes to 0, so that it transitions.
+      void subNav.offsetHeight;
+      const transition = this.waitForSubNav(subNav);
       subNav.style.height = '0';
+      transition.measure();
     }, 0);
   }
 
+  /** The expand button opens or closes the sub-navigation. */
   toggleIsSelected() {
-    const isSelected = !this.isActive;
-    this.isActive = isSelected;
-    this.dsMenuItemClick.emit({ isSelected });
+    const isOpened = !this.isOpened;
+    this.dsMenuItemClick.emit({ isSelected: isOpened });
     if (this.isAnimated) {
-      this.toggleSubNav(isSelected);
+      this.toggleSubNav(isOpened);
+    } else {
+      this.isOpened = isOpened;
     }
   }
 
@@ -86,32 +187,128 @@ export class DSNavMenuItem {
     this.toggleIsSelected();
   }
 
+  /** Whether the expand button is rendered: the theme collapses the sub-navigation (below `md`), else it drops down. */
+  isToggleRendered(): boolean {
+    return !!this.toggleWrapper && window.getComputedStyle(this.toggleWrapper).display !== 'none';
+  }
+
+  /**
+   * Escape in the item (on its link, its expand button or in its sub-navigation): closes the open sub-navigation and
+   * gives the focus to its expand button; where the sub-navigation drops down (no expand button), hides it and gives the
+   * focus to the link of the item. The key press goes no further. Otherwise (nothing to close), it goes on to the item
+   * of the parent navigation.
+   */
+  @Listen('keydown')
+  keyDownHandler(event: KeyboardEvent) {
+    if (!isEscape(event) || !this.hasChildren || event.defaultPrevented) {
+      return;
+    }
+
+    if (this.isToggleRendered()) {
+      if (this.isOpened) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.toggleButton?.focus();
+        this.toggleIsSelected();
+      }
+    } else if (!this.isDismissed) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (this.subNav?.contains(event.target as Node)) {
+        this.getLink()?.focus();
+      }
+      this.isDismissed = true;
+    }
+  }
+
+  /**
+   * Escape while the pointer is over the item, and the focus elsewhere: hides the drop-down sub-navigation it shows (the
+   * content shown on hover can be dismissed without moving the pointer). The other layers (a dialog, a sidebar, a list
+   * that has the focus) handle Escape first, and stop it.
+   */
+  @Listen('keydown', { target: 'document' })
+  documentKeyDownHandler(event: KeyboardEvent) {
+    if (isEscape(event) && this.hasChildren && !event.defaultPrevented && !this.isDismissed && !this.host.contains(event.target as Node) && this.isHovered()) {
+      if (!this.isToggleRendered()) {
+        this.isDismissed = true;
+      }
+    }
+  }
+
+  /** The focus that moves into the dismissed drop-down shows it again. */
+  @Listen('focusin')
+  focusInHandler(event: FocusEvent) {
+    if (this.isDismissed && this.subNav?.contains(event.target as Node)) {
+      this.isDismissed = false;
+    }
+  }
+
+  /** The drop-down dismissed by Escape shows again on hover and focus once both have left the item. */
+  @Listen('focusout')
+  focusOutHandler(event: FocusEvent) {
+    const to = event.relatedTarget as Node | null;
+    if (this.isDismissed && !(to && this.host.contains(to)) && !this.isHovered()) {
+      this.isDismissed = false;
+    }
+  }
+
+  @Listen('mouseleave')
+  mouseLeaveHandler() {
+    const focused = document.activeElement;
+    if (this.isDismissed && !(focused && this.host.contains(focused))) {
+      this.isDismissed = false;
+    }
+  }
+
+  isHovered(): boolean {
+    try {
+      return this.host.matches(':hover');
+    } catch {
+      return false;
+    }
+  }
+
   render() {
+    const subNavId = `${this.uid}-sub-nav`;
+
     return (
-      <div
-        class={{
-          'ds-nav-item': true,
-          '--with-children': this.hasChildren,
-          '--active': this.isActive,
-          '--open': this.isOpened,
-          [`--depth-${this.depth}`]: true,
-          [`--${this.type}-${this.itemId}`]: true,
-        }}
-      >
-        <div class="ds-nav-item__link">
-          <slot />
+      // An item of the list of its ds-nav.
+      <Host role={this.host.parentElement?.closest('ds-nav') ? 'listitem' : undefined}>
+        <div
+          class={{
+            'ds-nav-item': true,
+            '--with-children': this.hasChildren,
+            // An open item is active too (its link has the active color).
+            '--active': this.isActive || this.isOpened,
+            '--open': this.isOpened,
+            '--dismissed': this.isDismissed,
+            [`--depth-${this.depth}`]: true,
+            [`--${this.type}-${this.itemId}`]: true,
+          }}
+        >
+          <div class="ds-nav-item__link" ref={element => (this.linkWrapper = element)}>
+            <slot />
+          </div>
+          {this.hasChildren && (
+            <Fragment>
+              <div class="ds-nav-item__expand-button" ref={element => (this.toggleWrapper = element)}>
+                <ds-trigger
+                  type="button"
+                  mods="menu-item"
+                  onClick={this.itemClickHandler}
+                  label={formatLabel(this.toggleLabel, { label: this.getItemLabel() })}
+                  aria-expanded={this.isOpened ? 'true' : 'false'}
+                  aria-controls={subNavId}
+                  ref={element => (this.toggleButton = element)}
+                />
+              </div>
+              <div class="ds-nav-item__sub-nav" id={subNavId} ref={element => (this.subNav = element)}>
+                <slot name="children" />
+              </div>
+            </Fragment>
+          )}
         </div>
-        {this.hasChildren && (
-          <Fragment>
-            <div class="ds-nav-item__expand-button">
-              <ds-trigger type="button" mods="menu-item" onClick={this.itemClickHandler} />
-            </div>
-            <div class="ds-nav-item__sub-nav">
-              <slot name="children" />
-            </div>
-          </Fragment>
-        )}
-      </div>
+      </Host>
     );
   }
 }

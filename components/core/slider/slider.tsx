@@ -3,7 +3,8 @@ import { set as setCss, toNumber as cssToNumber } from '../../utils/css';
 import { getFocusedElement } from '../../utils/focus';
 import { fromJSON, toClassList } from '../../utils/props';
 import { TransitionWait, waitForTransition } from '../../utils/transition';
-import { DSSliderDefaultLabels, formatLabel } from './slider.constants';
+import { formatLabel } from '../../utils/labels';
+import { DSSliderDefaultLabels } from './slider.constants';
 import { DSSliderLabels, DSSliderParams } from './slider.types';
 
 let sliderId = 0;
