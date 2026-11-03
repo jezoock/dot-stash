@@ -697,6 +697,10 @@ export namespace Components {
     /**
      * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
      * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+     * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+     * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+     * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
      */
     interface DsTrigger {
         /**
@@ -704,17 +708,21 @@ export namespace Components {
          */
         "action": string;
         /**
-          * A disabled trigger does not call the action.
+          * A disabled trigger does not call the action; when it is the control, it is `aria-disabled` and cannot be focused.
           * @default false
          */
         "disabled": boolean;
+        /**
+          * The accessible name of the trigger (`aria-label`) when it is the control, for a trigger without a text (an icon).
+         */
+        "label": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods": string | string[];
         /**
-          * Event of the trigger that calls the action.
+          * Event of the trigger that calls the action. With another event than `click`, the trigger is not a button.
           * @default 'click'
          */
         "on": string;
@@ -723,6 +731,7 @@ export namespace Components {
          */
         "target": string;
         /**
+          * `control` (no skin), `button` (the `.ds-button` skin) or `link` (the `.ds-link` skin): the look only, all are buttons.
           * @default 'control'
          */
         "type": 'button' | 'control' | 'link';
@@ -1158,6 +1167,10 @@ declare global {
     /**
      * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
      * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+     * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+     * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+     * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
      */
     interface HTMLDsTriggerElement extends Components.DsTrigger, HTMLStencilElement {
     }
@@ -1801,6 +1814,10 @@ declare namespace LocalJSX {
     /**
      * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
      * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+     * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+     * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+     * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
      */
     interface DsTrigger {
         /**
@@ -1808,17 +1825,21 @@ declare namespace LocalJSX {
          */
         "action"?: string;
         /**
-          * A disabled trigger does not call the action.
+          * A disabled trigger does not call the action; when it is the control, it is `aria-disabled` and cannot be focused.
           * @default false
          */
         "disabled"?: boolean;
+        /**
+          * The accessible name of the trigger (`aria-label`) when it is the control, for a trigger without a text (an icon).
+         */
+        "label"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods"?: string | string[];
         /**
-          * Event of the trigger that calls the action.
+          * Event of the trigger that calls the action. With another event than `click`, the trigger is not a button.
           * @default 'click'
          */
         "on"?: string;
@@ -1827,6 +1848,7 @@ declare namespace LocalJSX {
          */
         "target"?: string;
         /**
+          * `control` (no skin), `button` (the `.ds-button` skin) or `link` (the `.ds-link` skin): the look only, all are buttons.
           * @default 'control'
          */
         "type"?: 'button' | 'control' | 'link';
@@ -2012,6 +2034,7 @@ declare namespace LocalJSX {
         "target": string;
         "type": 'button' | 'control' | 'link';
         "mods": string | string[];
+        "label": string;
     }
 
     interface IntrinsicElements {
@@ -2161,6 +2184,10 @@ declare module "@stencil/core" {
             /**
              * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
              * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+             * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+             * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+             * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+             * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
              */
             "ds-trigger": LocalJSX.IntrinsicElements["ds-trigger"] & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
         }
