@@ -1,30 +1,47 @@
 @use '../tokens' as *;
 
-// ds-title: page, section (default) or block title; `sub` for a subtitle.
+// ds-title: page, section (default) or block title; `sub` for a subtitle. Each variant takes its font size and weight
+// from the title font styles; the colors, font family and line height come from the custom properties documented in
+// components/core/title/readme.md.
+
+ds-title {
+  --ds-title-color: #{ds-color(gray, darkest)};
+  --ds-title-sub-color: #{ds-color(gray, dark)};
+  --ds-title-font-family: #{ds-font-family(title)};
+  --ds-title-line-height: 1.25;
+}
+
+@mixin -font($variant) {
+  font-size: ds-font-size(title, $variant);
+  font-weight: ds-font-weight(title, $variant);
+}
+
 .ds-title {
   margin: 0;
-  @include ds-font-styles(title, section-main);
-  line-height: 1.25;
-  color: ds-color(gray, darkest);
+  font-family: var(--ds-title-font-family);
+  @include -font(section-main);
+  text-decoration: ds-font-decoration(title);
+  line-height: var(--ds-title-line-height);
+  color: var(--ds-title-color);
 
   &[sub] {
-    @include ds-font-styles(title, section-sub);
-    color: ds-color(gray, dark);
+    @include -font(section-sub);
+    color: var(--ds-title-sub-color);
   }
 
   &[page] {
-    @include ds-font-styles(title, page-main);
+    @include -font(page-main);
 
     &[sub] {
-      @include ds-font-styles(title, page-sub);
+      @include -font(page-sub);
     }
   }
 
   &[block] {
-    @include ds-font-styles(title, block-main);
+    @include -font(block-main);
 
     &[sub] {
-      @include ds-font-styles(title, block-sub);
+      @include -font(block-sub);
     }
   }
 }

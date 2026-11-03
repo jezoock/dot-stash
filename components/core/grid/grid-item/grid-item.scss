@@ -1,3 +1,6 @@
+// The structure of ds-grid-item: a cell of ds-grid, its width and paddings set by the grid (inline styles); with a
+// `ratio`, its content fills a box of that ratio. No look of its own, and no custom property.
+
 ds-grid-item {
   display: inline-block;
   box-sizing: border-box;

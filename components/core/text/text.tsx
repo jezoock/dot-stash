@@ -3,6 +3,7 @@ import { toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-text',
+  styleUrl: 'text.scss',
 })
 export class DSText {
   /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */

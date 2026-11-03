@@ -228,14 +228,16 @@ describe('Sass stylesheets', () => {
       expect(() => sass.compileString(`@use 'engine' as * with ($breakpoints: ${breakpoints}); @include ds-tokens(bp);`, { loadPaths })).toThrow(message);
     });
 
-    // Every var(--ds-…) of a theme, its page stylesheets included, has a custom property: none resolves to nothing.
+    // Every var(--ds-…) of a theme, its page stylesheets included, has a custom property: none resolves to nothing. The
+    // tokens are declared on :root, the component custom properties (--ds-<component>-…) on the component elements.
     it.each(themes)('the %s theme only reads custom properties it declares', theme => {
       const tokens = tokensOf(theme);
       const stylesheets = [themeCss[theme], ...pageFilesOf(theme).map(file => sass.compile(file, { style: 'compressed' }).css)];
       const used = new Set(stylesheets.flatMap(css => [...css.matchAll(/var\((--ds-[\w-]+)/g)].map(([, name]) => name)));
+      const declared = new Set(stylesheets.flatMap(css => [...css.matchAll(/[{;](--ds-[\w-]+):/g)].map(([, name]) => name)));
 
       expect(used.size).toBeGreaterThan(10);
-      expect([...used].filter(name => !tokens.has(name))).toEqual([]);
+      expect([...used].filter(name => !tokens.has(name) && !declared.has(name))).toEqual([]);
     });
 
     // The skins read the primary color through its custom property: its value is only in :root.

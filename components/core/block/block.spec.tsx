@@ -94,7 +94,8 @@ describe('ds-block', () => {
 
   // The spec DOM has no styles: the stylesheet is read instead (checked in Chromium too).
   it('only hides a header or footer wrapper without its slot, named as block.tsx names it', () => {
-    const stylesheet = readFileSync(join(__dirname, 'block.scss'), 'utf8');
+    // The rules, without the comments (the documented custom properties are named --ds-block-header-gap…).
+    const stylesheet = readFileSync(join(__dirname, 'block.scss'), 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
 
     expect(stylesheet).toContain(":not(:has([slot='header']))");
     expect(stylesheet).toContain(":not(:has([slot='footer']))");

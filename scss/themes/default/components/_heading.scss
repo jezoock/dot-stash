@@ -1,11 +1,21 @@
 @use '../tokens' as *;
 
+// ds-heading: the spacing of its parts, and the description. Its titles are ds-title elements, styled by the ds-title
+// skin and custom properties (--ds-title-color, --ds-title-sub-color). The custom properties of ds-heading are documented
+// in components/core/heading/readme.md.
+
+ds-heading {
+  --ds-heading-gap: #{ds-spacing(5)};
+  --ds-heading-image-gap: #{ds-spacing(4)};
+  --ds-heading-description-color: #{ds-color(gray, darker)};
+  --ds-heading-description-max-width: 65ch;
+}
+
 .ds-heading {
-  display: block;
-  margin-bottom: ds-spacing(5);
+  margin-bottom: var(--ds-heading-gap);
 
   &__image {
-    margin-bottom: ds-spacing(4);
+    margin-bottom: var(--ds-heading-image-gap);
 
     & img {
       display: block;
@@ -14,15 +24,10 @@
     }
   }
 
-  &__sub-title {
-    margin-top: ds-spacing(1);
-    color: ds-color(gray, dark);
-  }
-
   &__description {
-    max-width: 65ch;
+    max-width: var(--ds-heading-description-max-width);
     margin-top: ds-spacing(3);
-    color: ds-color(gray, darker);
+    color: var(--ds-heading-description-color);
   }
 
   &[section] {

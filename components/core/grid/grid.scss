@@ -1,3 +1,7 @@
+// The structure of ds-grid: a wrapping row of ds-grid-item elements, aligned by the align and v-align modifiers. The
+// columns and gaps come from the props (cols, h-gap, v-gap, cell-ratio), written as inline styles on the items: the grid
+// has no look of its own, and no custom property.
+
 .ds-grid {
   &__row {
     display: flex;

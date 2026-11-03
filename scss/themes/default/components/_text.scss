@@ -1,19 +1,32 @@
 @use '../tokens' as *;
 
+// ds-text: the paragraph typography, and the spacing of its paragraphs and lists. Its custom properties are documented in
+// components/core/text/readme.md.
+
+ds-text {
+  --ds-text-font-family: #{ds-font-family(text, paragraph)};
+  --ds-text-font-size: #{ds-font-size(text, paragraph)};
+  --ds-text-line-height: 1.6;
+  --ds-text-spacing: #{ds-spacing(3)};
+  --ds-text-list-indent: #{ds-spacing(5)};
+}
+
 .ds-text {
-  display: block;
-  @include ds-font-styles(text, paragraph);
-  line-height: 1.6;
+  font-family: var(--ds-text-font-family);
+  font-size: var(--ds-text-font-size);
+  font-weight: ds-font-weight(text, paragraph);
+  text-decoration: ds-font-decoration(text, paragraph);
+  line-height: var(--ds-text-line-height);
 
   & p,
   & ul,
   & ol {
-    margin: 0 0 ds-spacing(3);
+    margin: 0 0 var(--ds-text-spacing);
   }
 
   & ul,
   & ol {
-    padding-left: ds-spacing(5);
+    padding-left: var(--ds-text-list-indent);
   }
 
   & li + li {
