@@ -1,3 +1,18 @@
+// The structure of ds-combo: the toggle button (a native button, its browser styles reset) and the list of options, which
+// hangs from a menu below the button (above it with the top position), `--ds-combo-list-offset` away, above the page. The
+// button, the list and the options are the look of the theme (components/_combo.scss), from the custom properties below.
+
+/**
+ * @prop --ds-combo-background: Background of the toggle button and of the list.
+ * @prop --ds-combo-color: Text color of the toggle button and of the options.
+ * @prop --ds-combo-border-color: Border color of the toggle button.
+ * @prop --ds-combo-active-color: Border color of the toggle button while the list is open.
+ * @prop --ds-combo-hover-background: Background of a hovered option.
+ * @prop --ds-combo-selected-background: Background of a selected option.
+ * @prop --ds-combo-selected-color: Text color of a selected option.
+ * @prop --ds-combo-list-offset: Distance between the toggle button and the list (positions `left`, `right` and `top`).
+ */
+
 .ds-combo {
   cursor: pointer;
   display: inline-block;
@@ -16,7 +31,7 @@
 
   &__option-list {
     position: absolute;
-    top: 0.5rem;
+    top: var(--ds-combo-list-offset, 0.5rem);
     z-index: 100;
     overflow-x: hidden;
     // At least as wide as the toggle button, and as wide as the options (they do not wrap).
@@ -42,7 +57,7 @@
 
     & .ds-combo__option-list {
       top: auto;
-      bottom: 0.5rem;
+      bottom: var(--ds-combo-list-offset, 0.5rem);
     }
   }
 
@@ -64,9 +79,6 @@
       display: block;
       white-space: nowrap;
     }
-
-    &.--selected {
-    }
   }
 
   &__overlay {
@@ -77,32 +89,12 @@
     bottom: 0;
   }
 
-  &.--default {
-    & .ds-combo {
-      &__selected-option {
-      }
-      &__option {
-        &-list {
-          top: 3.25rem;
-          right: -1px;
-        }
-      }
-      &.--open {
-      }
-    }
+  &.--default .ds-combo__option-list {
+    top: 3.25rem;
+    right: -1px;
   }
 
-  &.--alt {
-    & .ds-combo {
-      &__option {
-        &-list {
-        }
-      }
-      &__selected-option {
-      }
-    }
-  }
-
+  // Image mode: the options are a wrapping row of images, each name over its image.
   &.--image {
     & .ds-combo__option-list {
       display: flex;

@@ -1,15 +1,22 @@
 @use '../tokens' as *;
 
-// ds-select: the native select is transparent and covers the component, which shows the label and a chevron.
+// ds-select: a box with the label and a chevron. The custom properties are documented in components/core/select/readme.md;
+// the native select that covers the box is in the component stylesheet.
+
+ds-select {
+  --ds-select-background: #{ds-color(gray, white)};
+  --ds-select-border-color: #{ds-color(gray, base)};
+  --ds-select-radius: #{ds-radius(sm)};
+  --ds-select-padding: #{ds-spacing(2) ds-spacing(7) ds-spacing(2) ds-spacing(3)};
+}
+
 .ds-select {
-  position: relative;
-  display: block;
-  border: 1px solid ds-color(gray, base);
-  border-radius: ds-radius(sm);
-  background-color: ds-color(gray, white);
+  border: 1px solid var(--ds-select-border-color);
+  border-radius: var(--ds-select-radius);
+  background-color: var(--ds-select-background);
 
   &__label {
-    padding: ds-spacing(2) ds-spacing(7) ds-spacing(2) ds-spacing(3);
+    padding: var(--ds-select-padding);
 
     &::before {
       position: absolute;
@@ -18,14 +25,6 @@
       transform: translateY(-50%);
       @include ds-icon(angle-down);
     }
-  }
-
-  &__input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    opacity: 0;
-    cursor: pointer;
   }
 
   &.--disabled {

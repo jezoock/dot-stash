@@ -1,0 +1,23 @@
+// The structure of ds-select: a block that shows the label of the selected option, covered by the native select, which is
+// transparent: a click opens the native list. The box and its chevron are the look of the theme (components/_select.scss),
+// from the custom properties below.
+
+/**
+ * @prop --ds-select-background: Background of the box.
+ * @prop --ds-select-border-color: Border color of the box.
+ * @prop --ds-select-radius: Corner radius of the box.
+ * @prop --ds-select-padding: Padding of the label (its right padding leaves room for the chevron).
+ */
+
+.ds-select {
+  position: relative;
+  display: block;
+
+  &__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+}

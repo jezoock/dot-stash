@@ -25,17 +25,19 @@ ds-slider-menu {
   display: block;
 }
 
-// The previous / next buttons (ds-trigger with the button skin): round, with a chevron drawn with borders.
+// The previous / next buttons (ds-trigger with the button skin): round, with a chevron drawn with borders. Their border and
+// background colors are those of the button skin, set from the slider custom properties (a hovered button keeps the hover
+// colors of the button skin).
 .ds-button.--slider {
+  --ds-trigger-border-color: var(--ds-slider-button-border-color);
+  --ds-trigger-background: var(--ds-slider-button-background);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: var(--ds-slider-button-size);
   height: var(--ds-slider-button-size);
   padding: 0;
-  border-color: var(--ds-slider-button-border-color);
   border-radius: ds-radius(circle);
-  background-color: var(--ds-slider-button-background);
 
   &::before {
     content: '';

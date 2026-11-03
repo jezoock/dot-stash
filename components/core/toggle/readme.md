@@ -1,6 +1,25 @@
 # ds-toggle
 
+## Styling
 
+- **Classes**: `ds-toggle` on `<ds-toggle>`, and `--<type>`: `--radio`, `--checkbox`, `--switch` (the default) or `--icon` (its own `type`, else the type of its `ds-toggle-group`); `mods` → `--<mod>`.
+- **Attributes** (reflected): `checked` and `disabled` (the states the theme styles), `type`, `name`, `value`, `mods`.
+- **Slots**: the default slot, the content of an `icon` toggle (the other types draw themselves).
+- **Structure** (`toggle.scss`): an inline box that takes the pointer. A radio or a checkbox is a 2rem square with a 1.5rem mark (`::after`) in its center, shown when `checked`; a switch is a 3.5rem × 2rem track with a 1.5rem knob (`::after`), on the left, on the right when `checked`. The changes are animated (0.4 s). An `icon` toggle is its content.
+- **Look** (default theme, `components/_toggle.scss`): the borders and radii of the radios, checkboxes and switches, and their colors in each state, from the custom properties below, set on `ds-toggle`.
+
+Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
+
+```css
+ds-toggle {
+  --ds-toggle-checked-color: var(--ds-color-primary-base);
+  --ds-toggle-knob-checked-color: var(--ds-color-status-success);
+}
+
+.filters ds-toggle {
+  --ds-toggle-color: var(--ds-color-gray-dark);
+}
+```
 
 <!-- Auto Generated Below -->
 
@@ -95,6 +114,20 @@ its own. `undefined` removes it.
 Type: `Promise<void>`
 
 
+
+
+## CSS Custom Properties
+
+| Name                               | Description                                            |
+| ---------------------------------- | ------------------------------------------------------ |
+| `--ds-toggle-checked-color`        | Border and mark color of a checked radio or checkbox.  |
+| `--ds-toggle-color`                | Border and mark color of a radio or a checkbox.        |
+| `--ds-toggle-disabled-color`       | Border and mark color of a disabled radio or checkbox. |
+| `--ds-toggle-knob-checked-color`   | Knob color of a checked switch.                        |
+| `--ds-toggle-knob-color`           | Knob color of a switch.                                |
+| `--ds-toggle-knob-disabled-color`  | Knob color of a disabled switch.                       |
+| `--ds-toggle-track-color`          | Track color of a switch.                               |
+| `--ds-toggle-track-disabled-color` | Track color of a disabled switch.                      |
 
 
 ----------------------------------------------

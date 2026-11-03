@@ -40,6 +40,16 @@ $colors: (
   ),
   input: (
     caret: #2563eb,
+    // Toggles (ds-toggle): the border and mark of a radio or a checkbox, unchecked, checked or disabled, and the track
+    // and knob of a switch.
+    unchecked: #000000,
+    checked: #ff0000,
+    disabled: #808080,
+    track: #dddddd,
+    track-disabled: #eeeeee,
+    knob: #777777,
+    knob-checked: #00cc00,
+    knob-disabled: #dddddd,
   ),
   shadow: (
     base: rgba(15, 23, 42, 0.16),

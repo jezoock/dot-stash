@@ -3,6 +3,7 @@ import { toClassList } from '../../utils/props';
 
 @Component({
   tag: 'ds-select',
+  styleUrl: 'select.scss',
 })
 export class DSSelect {
   @Element() hostContainer: HTMLElement;

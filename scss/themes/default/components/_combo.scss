@@ -1,5 +1,19 @@
 @use '../tokens' as *;
 
+// ds-combo: the toggle button and its chevron, the list and the options. The custom properties are documented in
+// components/core/combo/readme.md; the component stylesheet reads the list offset.
+
+ds-combo {
+  --ds-combo-background: #{ds-color(gray, white)};
+  --ds-combo-color: #{ds-color(gray, darkest)};
+  --ds-combo-border-color: #{ds-color(gray, base)};
+  --ds-combo-active-color: #{ds-color(primary, base)};
+  --ds-combo-hover-background: #{ds-color(gray, lighter)};
+  --ds-combo-selected-background: #{ds-color(primary, light)};
+  --ds-combo-selected-color: #{ds-color(primary, darker)};
+  --ds-combo-list-offset: 0.5rem;
+}
+
 .ds-combo {
   &__selected-option {
     display: inline-flex;
@@ -7,10 +21,10 @@
     gap: ds-spacing(2);
     max-width: 100%;
     padding: ds-spacing(2) ds-spacing(3);
-    border: 1px solid ds-color(gray, base);
+    border: 1px solid var(--ds-combo-border-color);
     border-radius: ds-radius(sm);
-    background-color: ds-color(gray, white);
-    color: ds-color(gray, darkest);
+    background-color: var(--ds-combo-background);
+    color: var(--ds-combo-color);
     cursor: pointer;
 
     &::after {
@@ -20,7 +34,7 @@
   }
 
   &.--open > &__selected-option {
-    border-color: ds-color(primary, base);
+    border-color: var(--ds-combo-active-color);
 
     &::after {
       transform: rotate(180deg);
@@ -40,7 +54,7 @@
     overflow-y: auto;
     border: 1px solid ds-color(gray, light);
     border-radius: ds-radius(md);
-    background-color: ds-color(gray, white);
+    background-color: var(--ds-combo-background);
     box-shadow: 0 4px 12px ds-color(shadow, base);
   }
 
@@ -48,20 +62,20 @@
     & > span,
     & > a {
       padding: ds-spacing(2) ds-spacing(4);
-      color: ds-color(gray, darkest);
+      color: var(--ds-combo-color);
       text-decoration: none;
     }
 
     &:hover {
-      background-color: ds-color(gray, lighter);
+      background-color: var(--ds-combo-hover-background);
     }
 
     &.--selected {
-      background-color: ds-color(primary, light);
+      background-color: var(--ds-combo-selected-background);
 
       & > span,
       & > a {
-        color: ds-color(primary, darker);
+        color: var(--ds-combo-selected-color);
       }
     }
 

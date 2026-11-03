@@ -8,13 +8,13 @@
 
 @use './components/ajax';
 @use './components/block';
-@use './components/button';
+// The .ds-button and .ds-link skins of ds-trigger: before the skins that add button variants (nav, slider).
+@use './components/trigger';
 @use './components/combo';
 @use './components/form';
 @use './components/grid';
 @use './components/heading';
 @use './components/icon';
-@use './components/link';
 @use './components/message';
 @use './components/nav';
 @use './components/panel';
@@ -25,6 +25,7 @@
 @use './components/title';
 @use './components/title-bar';
 @use './components/toaster';
+@use './components/toggle';
 @use './components/toggler';
 @use './components/tooltip';
 

@@ -31,6 +31,28 @@ Option fields (`DSOption`):
 `ds-combo` replaces `ds-dropdown` and `ds-dropdown-item`. There are no slotted options: the options are rendered from
 the `options` data only.
 
+## Styling
+
+- **Classes**: `<ds-combo>` renders a `div` with the main class, `ds-combo`, its modifiers, and `--open` (while the list is open), `--position-<position>` (`left` by default, `right`, `top`, `bottom`), `--<mode>` (`--dropdown`, `--image`) and `--with-overlay` (`overlay`).
+- **Elements**: `__selected-option` (the toggle button, a native `button`, not rendered in `dropdown` mode), a `menu` that holds `__option-list` (a `ul`, `--hidden` while it is closed in `image` mode), `__option` (an `li`, `--selected`, `--disabled`; it holds a `span`, or an `a` with a `url`, after its `img` in `image` mode) and `__overlay` (with `overlay`, while the list is open).
+- **Attributes** (reflected): `name`, `mode`, `position`, `mods`.
+- **Structure** (`combo.scss`): an inline block. The browser styles of the toggle button are reset (with `:where()`: zero specificity, any skin wins) and its label stays on one line. The list is positioned below the button (above it with `top`), `--ds-combo-list-offset` away (against it with `bottom`), above the page (`z-index: 100`), at least as wide as the button and as its options; in `image` mode, the options are a wrapping row, each name over its image. The overlay covers the page. The `default` modifier puts the list at 3.25rem from the top of the menu.
+- **Look** (default theme, `components/_combo.scss`): the toggle button (border, radius, padding, a chevron turned while open), the list (border, radius, shadow, at most half the screen high, then it scrolls) and the options (padding, hover, selected and disabled states), from the custom properties below, set on `ds-combo`.
+
+Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
+
+```css
+ds-combo {
+  --ds-combo-selected-background: var(--ds-color-gray-lighter);
+  --ds-combo-selected-color: var(--ds-color-gray-darkest);
+}
+
+.toolbar ds-combo {
+  --ds-combo-border-color: transparent;
+  --ds-combo-list-offset: 0;
+}
+```
+
 <!-- Auto Generated Below -->
 
 
@@ -102,6 +124,20 @@ Opens the list if it is closed and closes it if it is open, or opens (`true`) or
 Type: `Promise<void>`
 
 
+
+
+## CSS Custom Properties
+
+| Name                             | Description                                                                            |
+| -------------------------------- | -------------------------------------------------------------------------------------- |
+| `--ds-combo-active-color`        | Border color of the toggle button while the list is open.                              |
+| `--ds-combo-background`          | Background of the toggle button and of the list.                                       |
+| `--ds-combo-border-color`        | Border color of the toggle button.                                                     |
+| `--ds-combo-color`               | Text color of the toggle button and of the options.                                    |
+| `--ds-combo-hover-background`    | Background of a hovered option.                                                        |
+| `--ds-combo-list-offset`         | Distance between the toggle button and the list (positions `left`, `right` and `top`). |
+| `--ds-combo-selected-background` | Background of a selected option.                                                       |
+| `--ds-combo-selected-color`      | Text color of a selected option.                                                       |
 
 
 ----------------------------------------------

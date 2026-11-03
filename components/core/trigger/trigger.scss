@@ -1,3 +1,19 @@
+// The structure of ds-trigger: an inline block, without padding or margin, whose direct link, button or text child takes
+// the look of the trigger (it inherits its text and colors: the resets below set none of their own). With
+// `type="button"` or `type="link"`, the trigger is skinned by the theme (the .ds-button and .ds-link skins,
+// components/_trigger.scss), from the custom properties below.
+
+/**
+ * @prop --ds-trigger-color: Text color of a button (`type="button"`). The `stl-*` modifiers and the hover set it.
+ * @prop --ds-trigger-background: Background of a button. The `stl-*` modifiers and the hover set it.
+ * @prop --ds-trigger-border-color: Border color of a button. The `stl-*` modifiers and the hover set it.
+ * @prop --ds-trigger-radius: Corner radius of a button. The `rounded` modifier sets it.
+ * @prop --ds-trigger-padding: Padding of a button. The size modifiers (`xs` to `xl`) set it.
+ * @prop --ds-trigger-font-size: Font size of a button. The size modifiers (`xs` to `xl`) set it.
+ * @prop --ds-trigger-link-color: Text color of a link (`type="link"`).
+ * @prop --ds-trigger-link-hover-color: Text color of a hovered link.
+ */
+
 ds-trigger {
   padding: 0;
   margin: 0;

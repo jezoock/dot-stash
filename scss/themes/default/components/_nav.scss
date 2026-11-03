@@ -109,8 +109,8 @@ ds-nav-item {
 
 // The expand button of ds-nav-item (a ds-trigger with the button skin).
 .ds-button.--menu-item {
-  border-color: transparent;
-  background-color: transparent;
+  --ds-trigger-border-color: transparent;
+  --ds-trigger-background: transparent;
 
   &::before {
     @include ds-icon(plus);

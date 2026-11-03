@@ -1,6 +1,11 @@
 # ds-toggle-group
 
+## Styling
 
+- **Classes**: `ds-toggle-group` on `<ds-toggle-group>`; `mods` → `--<mod>`. The `mods` of the group also replace those of its toggles: the toggles get the same `--<mod>` classes.
+- **Attributes** (reflected): `name`, `type` (given to its toggles without a type of their own), `disabled`, `mods`.
+- **Structure**: none (no stylesheet): an inline wrapper of its `ds-toggle` elements.
+- **Look**: none, and no custom property: the `ds-toggle` elements carry the look. Set their `--ds-toggle-*` properties on them (`.filters ds-toggle { … }`, see `ds-toggle`).
 
 <!-- Auto Generated Below -->
 
