@@ -22,11 +22,16 @@ const TABBABLE_SELECTOR = [
 
 const FORM_CONTROLS = ['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'];
 
+/** `checkVisibility`: whether an element the browser does not render is left out (the default). */
+export interface FocusQueryOptions {
+  checkVisibility?: boolean;
+}
+
 /**
- * Whether an element of the selector above can take the focus: not disabled, not inert, not hidden (`hidden`,
- * `display: none`, `visibility: hidden`, where the browser can tell: `checkVisibility()`).
+ * Whether an element of the selector above can take the focus: not disabled, not inert, not hidden (`hidden`, and with
+ * `checkVisibility`, `display: none` or `visibility: hidden`, where the browser can tell: `checkVisibility()`).
  */
-const isFocusable = (element: Element): boolean => {
+const isFocusable = (element: Element, { checkVisibility: mustBeRendered = true }: FocusQueryOptions = {}): boolean => {
   if (FORM_CONTROLS.includes(element.tagName) && (element.hasAttribute('disabled') || element.closest('fieldset[disabled]'))) {
     return false;
   }
@@ -37,18 +42,22 @@ const isFocusable = (element: Element): boolean => {
 
   const { checkVisibility } = element as Element & { checkVisibility?: (options?: Record<string, boolean>) => boolean };
 
-  return typeof checkVisibility === 'function' ? checkVisibility.call(element, { checkVisibilityCSS: true, visibilityProperty: true }) : true;
+  return mustBeRendered && typeof checkVisibility === 'function' ? checkVisibility.call(element, { checkVisibilityCSS: true, visibilityProperty: true }) : true;
 };
 
 /** Whether Tab can reach the element: it can take the focus and is not out of the Tab order (`tabindex="-1"`). */
-export const isTabbable = (element: Element): boolean => {
+export const isTabbable = (element: Element, options?: FocusQueryOptions): boolean => {
   const tabindex = element.getAttribute('tabindex');
 
-  return !(tabindex !== null && tabindex.trim() !== '' && parseInt(tabindex, 10) < 0) && element.matches(TABBABLE_SELECTOR) && isFocusable(element);
+  return !(tabindex !== null && tabindex.trim() !== '' && parseInt(tabindex, 10) < 0) && element.matches(TABBABLE_SELECTOR) && isFocusable(element, options);
 };
 
-/** The elements Tab reaches in `root` (not `root` itself), in the document order. */
-export const getTabbableElements = (root: Element): HTMLElement[] => Array.from(root.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter(isTabbable);
+/**
+ * The elements Tab reaches in `root` (not `root` itself), in the document order. With `checkVisibility: false`, the
+ * ones that are not rendered at that time are kept (a part of the page that is hidden for now).
+ */
+export const getTabbableElements = (root: Element, options?: FocusQueryOptions): HTMLElement[] =>
+  Array.from(root.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter(element => isTabbable(element, options));
 
 /** The element that has the focus, `null` when none has (the body, or no document focus). */
 export const getFocusedElement = (): HTMLElement | null => {

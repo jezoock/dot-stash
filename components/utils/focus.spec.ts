@@ -43,6 +43,7 @@ describe('focus', () => {
     b.checkVisibility = () => false;
 
     expect(getTabbableElements(element).map(({ id }) => id)).toEqual(['a']);
+    expect(getTabbableElements(element, { checkVisibility: false }).map(({ id }) => id)).toEqual(['a', 'b']);
   });
 
   it('focuses an autofocus element first, else the first tabbable element, else the fallback', () => {

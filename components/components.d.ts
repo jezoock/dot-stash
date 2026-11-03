@@ -578,7 +578,11 @@ export namespace Components {
         "type": string;
     }
     /**
-     * Simple icon tooltip component
+     * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+     * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+     * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+     * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+     * moving the focus or the pointer. On touch screens, a tap shows or hides it.
      */
     interface DsTooltip {
         /**
@@ -1039,7 +1043,11 @@ declare global {
         new (): HTMLDsToggleGroupElement;
     };
     /**
-     * Simple icon tooltip component
+     * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+     * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+     * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+     * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+     * moving the focus or the pointer. On touch screens, a tap shows or hides it.
      */
     interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
     }
@@ -1578,7 +1586,11 @@ declare namespace LocalJSX {
         "type"?: string;
     }
     /**
-     * Simple icon tooltip component
+     * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+     * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+     * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+     * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+     * moving the focus or the pointer. On touch screens, a tap shows or hides it.
      */
     interface DsTooltip {
         /**
@@ -1936,7 +1948,11 @@ declare module "@stencil/core" {
              */
             "ds-toggle-group": LocalJSX.IntrinsicElements["ds-toggle-group"] & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
-             * Simple icon tooltip component
+             * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+             * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+             * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+             * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+             * moving the focus or the pointer. On touch screens, a tap shows or hides it.
              */
             "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
             /**
