@@ -1,0 +1,14 @@
+@use '../tools/references' as *;
+
+// *** FOCUS INDICATOR *** //
+// The outline of the element that has the keyboard focus (:focus-visible), written by ds-focus-ring(): its color (a
+// reference to $colors, so it follows the configured palette), its width and style, and its offset, the space between
+// the element and the outline. Keep its color at a contrast of 3:1 at least with the backgrounds around the focusable
+// elements (WCAG 1.4.11).
+
+$focus: (
+  color: ds-ref(color, primary, base),
+  width: 2px,
+  style: solid,
+  offset: 2px,
+) !default;

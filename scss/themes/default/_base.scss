@@ -106,7 +106,40 @@ hr {
   border-top: 1px solid ds-color(gray, light);
 }
 
+// The focus indicator: an outline around the element that has the keyboard focus (or the focus a script gives after a
+// key press), from the focus tokens (--ds-focus-color, --ds-focus-width, --ds-focus-style, --ds-focus-offset). No rule of
+// the theme or of the components removes it: an element that draws its own focus state does it on :focus-visible too.
 :focus-visible {
-  outline: 2px solid ds-color(primary, base);
-  outline-offset: 2px;
+  @include ds-focus-ring();
+}
+
+// Less motion (prefers-reduced-motion: reduce): the transitions and animations end at once. Their durations become
+// 0.01ms, not 0, so that the transitionend and animationend events still come (ds-sidebar, ds-toaster, ds-slider and
+// ds-nav-item wait for them). The loading indicators keep turning, slowly (the spin() mixin). Smooth scrolling is off.
+// !important: wins over the transitions and animations of the skins and of the component stylesheets.
+@include ds-reduced-motion() {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Hidden on the screen, read by screen readers: the text of an icon button, a label, an announcement.
+// !important: the class wins over the rules of the element it is set on (a component class, a skin).
+.ds-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
 }

@@ -2,8 +2,16 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { newSpecPage } from '@stencil/core/testing';
 import { DSSidebar } from './sidebar';
+import { TRANSITION_END_MARGIN } from '../../utils/transition';
+
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// The spec tests have no CSS engine: the computed transition of the sidebar is given here.
+const mockTransition = (transitionDuration: string, transitionDelay = '0s') =>
+  jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay } as CSSStyleDeclaration);
 
 describe('ds-sidebar', () => {
+  afterEach(() => jest.restoreAllMocks());
+
   const render = async (html = '<ds-sidebar><nav>Menu</nav></ds-sidebar>') => {
     const page = await newSpecPage({ components: [DSSidebar], html });
     const events: string[] = [];
@@ -59,6 +67,46 @@ describe('ds-sidebar', () => {
 
     page.root.dispatchEvent(new Event('transitionend'));
     expect(events).toEqual(['sidebarShow', 'sidebarShown']);
+  });
+
+  it('emits sidebarShown and sidebarHidden at once when it does not slide (durations of 0, less motion)', async () => {
+    const { page, events } = await render();
+    mockTransition('0s, 0s', '0s, 0s');
+
+    await page.root.show();
+    await page.waitForChanges();
+    expect(events).toEqual(['sidebarShow', 'sidebarShown']);
+
+    await page.root.hide();
+    await page.waitForChanges();
+    expect(events).toEqual(['sidebarShow', 'sidebarShown', 'sidebarHide', 'sidebarHidden']);
+    expect(page.root.isShown).toBe(false);
+  });
+
+  it('emits sidebarShown when the slide is over, without its transitionend event, once', async () => {
+    const { page, events } = await render();
+    mockTransition('0.02s, 0s', '0s, 0.02s');
+
+    await page.root.show();
+    await page.waitForChanges();
+    expect(events).toEqual(['sidebarShow']);
+
+    await wait(20 + TRANSITION_END_MARGIN + 10);
+    page.root.dispatchEvent(new Event('transitionend'));
+    expect(events).toEqual(['sidebarShow', 'sidebarShown']);
+  });
+
+  it('emits the event of the last change only when it changes during the slide', async () => {
+    const { page, events } = await render();
+    mockTransition('0.02s');
+
+    await page.root.show();
+    await page.waitForChanges();
+    await page.root.hide();
+    await page.waitForChanges();
+    await wait(20 + TRANSITION_END_MARGIN + 10);
+
+    expect(events).toEqual(['sidebarShow', 'sidebarHide', 'sidebarHidden']);
   });
 
   it('does not cancel touchmove events', async () => {

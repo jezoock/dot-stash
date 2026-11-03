@@ -1,0 +1,20 @@
+@use './tokens' as *;
+
+// *** Focus indicator *** //
+// The tokens of $focus: ds-focus(color) → var(--ds-focus-color); ds-focus-value(width) → 2px. An unknown property is an
+// error.
+
+@function ds-focus($prop) {
+  @return ds-token(focus, $prop);
+}
+
+@function ds-focus-value($prop) {
+  @return ds-token-value(focus, $prop);
+}
+
+// The focus indicator, an outline drawn from the focus tokens: the base styles of a theme write it for :focus-visible, a
+// skin where an element draws its own focus state.
+@mixin ds-focus-ring() {
+  outline: ds-focus(width) ds-focus(style) ds-focus(color);
+  outline-offset: ds-focus(offset);
+}

@@ -17,15 +17,10 @@
 ds-toggle {
   border: none;
   background: transparent;
-  outline: none;
   position: relative;
   transition: all ease 0.4s;
   cursor: pointer;
   display: inline-block;
-
-  &:focus {
-    outline: none;
-  }
 
   &.--switch,
   &.--checkbox,

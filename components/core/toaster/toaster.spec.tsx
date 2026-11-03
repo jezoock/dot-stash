@@ -1,10 +1,16 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { DSToaster } from './toaster';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
+import { TRANSITION_END_MARGIN } from '../../utils/transition';
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// The spec tests have no CSS engine: the computed transition of the toaster is given here.
+const mockTransition = (transitionDuration: string, transitionDelay = '0s') =>
+  jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay } as CSSStyleDeclaration);
 
 describe('ds-toaster', () => {
+  afterEach(() => jest.restoreAllMocks());
+
   const render = async (html: string) => {
     const page = await newSpecPage({ components: [DSToaster], html });
     const toaster = page.root.querySelector<HTMLDivElement>('.ds-toaster');
@@ -105,6 +111,37 @@ describe('ds-toaster', () => {
     toaster.dispatchEvent(new Event('transitionend'));
 
     expect(events).toEqual(['toasterShow', 'toasterShown', 'toasterHide', 'toasterHidden']);
+  });
+
+  it('emits toasterShown and toasterHidden at once when it does not fade (durations of 0, less motion)', async () => {
+    const { page } = await render('<ds-toaster messages="Saved"></ds-toaster>');
+    const events: string[] = [];
+    ['toasterShow', 'toasterShown', 'toasterHide', 'toasterHidden'].forEach(name => page.root.addEventListener(name, () => events.push(name)));
+    mockTransition('0s, 0s');
+
+    await page.root.show();
+    await page.waitForChanges();
+    await page.root.hide();
+    await page.waitForChanges();
+
+    expect(events).toEqual(['toasterShow', 'toasterShown', 'toasterHide', 'toasterHidden']);
+  });
+
+  it('emits toasterHidden when the fade is over, without its transitionend event', async () => {
+    const { page, toaster } = await render('<ds-toaster messages="Saved"></ds-toaster>');
+    const events: string[] = [];
+    ['toasterShown', 'toasterHidden'].forEach(name => page.root.addEventListener(name, () => events.push(name)));
+    mockTransition('0.02s, 0.02s');
+
+    await page.root.show();
+    await page.waitForChanges();
+    toaster.dispatchEvent(new Event('transitionend'));
+    await page.root.hide();
+    await page.waitForChanges();
+    expect(events).toEqual(['toasterShown']);
+
+    await wait(20 + TRANSITION_END_MARGIN + 10);
+    expect(events).toEqual(['toasterShown', 'toasterHidden']);
   });
 
   it('hides when clicked', async () => {

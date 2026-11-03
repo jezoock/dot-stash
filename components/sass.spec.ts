@@ -149,6 +149,7 @@ describe('Sass stylesheets', () => {
         }
         @each $step, $value in $spacings { @include token(space, $step); }
         @each $name, $value in $radii { @include token(radius, $name); }
+        @each $prop, $value in $focus { @include token(focus, $prop); }
         @each $label, $value in $breakpoints { #{name(bp, $label)}: #{$value}px; }
       }
     `;
@@ -187,7 +188,34 @@ describe('Sass stylesheets', () => {
       expect(tokens.get('--ds-font-style-title-page-main-size')).toBe('var(--ds-font-size-800)');
       expect(tokens.get('--ds-font-size-800')).toBe('2.25rem');
       expect(tokens.get('--ds-space-4')).toBe('1rem');
+      expect(tokens.get('--ds-focus-color')).toBe('var(--ds-color-primary-base)');
+      expect(tokens.get('--ds-focus-width')).toBe('2px');
+      expect(tokens.get('--ds-focus-style')).toBe('solid');
+      expect(tokens.get('--ds-focus-offset')).toBe('2px');
       expect(tokens.get('--ds-bp-md')).toBe('992px');
+    });
+
+    it('writes the focus indicator from the focus tokens, and reads them with ds-focus()', () => {
+      const css = compileString(`
+        @use 'engine' as * with ($focus: (color: #c00, width: 3px, style: dashed, offset: 1px));
+        a { b: ds-focus(color); c: ds-focus-value(width) * 2; @include ds-focus-ring(); }
+      `);
+
+      expect(declarationsOf(css, 'a')).toEqual([
+        ['b', 'var(--ds-focus-color)'],
+        ['c', '6px'],
+        ['outline', 'var(--ds-focus-width) var(--ds-focus-style) var(--ds-focus-color)'],
+        ['outline-offset', 'var(--ds-focus-offset)'],
+      ]);
+      expect(declarationsOf(compileString(`@use 'engine' as * with ($focus: (color: #c00, width: 3px, style: dashed, offset: 1px)); @include ds-tokens(focus);`), ':root')).toEqual(
+        [
+          ['--ds-focus-color', '#c00'],
+          ['--ds-focus-width', '3px'],
+          ['--ds-focus-style', 'dashed'],
+          ['--ds-focus-offset', '1px'],
+        ],
+      );
+      expect(() => sass.compileString(`@use 'engine' as *; a { b: ds-focus(blur); }`, { loadPaths })).toThrow(/Unknown focus token: blur/);
     });
 
     // JavaScript reads the breakpoints from the custom properties (tokens.getBreakpoints()): --ds-bp-labels lists the labels,
@@ -579,6 +607,60 @@ describe('Sass stylesheets', () => {
 
       expect(handWritten).toMatch(/\n## Styling\n/);
       expect(listed.sort()).toEqual(documentedBy(component));
+    });
+  });
+
+  // Accessibility (README.md, "Accessibility"): the focus indicator, that no stylesheet removes, less motion, and the
+  // visually hidden class of the default theme.
+  describe('accessibility', () => {
+    let themeCss: string;
+
+    beforeAll(() => {
+      themeCss = sass.compile(path.join(root, 'scss/themes/default/index.scss'), { style: 'compressed' }).css;
+    });
+
+    it('the default theme draws the focus indicator on :focus-visible, from the focus tokens', () => {
+      expect(themeCss).toMatch(
+        /(^|\})\s*:focus-visible\{outline:var\(--ds-focus-width\) var\(--ds-focus-style\) var\(--ds-focus-color\);outline-offset:var\(--ds-focus-offset\)\}/,
+      );
+    });
+
+    it.each(['scss/themes/default/index.scss', ...scssFilesIn(path.join(root, 'components')).map(file => path.relative(root, file))])(
+      '%s does not remove the focus outline',
+      file => {
+        const css = sass.compile(path.join(root, file)).css.replace(/\/\*[\s\S]*?\*\//g, '');
+        const outlines = [...css.matchAll(/(?<![\w-])(outline(?:-style|-width)?)\s*:\s*([^;{}]+)/g)].map(([, name, value]) => [name, value.trim()]);
+
+        expect(outlines.filter(([, value]) => /^(none|0(px)?|hidden)\b/.test(value))).toEqual([]);
+      },
+    );
+
+    it('the default theme ends the transitions and animations at once with less motion, but for the loading indicators', () => {
+      const rules = (selector: string) =>
+        [...themeCss.matchAll(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([^{}]+)\{([^{}]*)\}\}/g)]
+          .filter(([, selectors]) => selectors === selector)
+          .map(([, , body]) => body.split(';'));
+
+      // 0.01ms, not 0: the transitionend and animationend events still come.
+      expect(rules('*,*::before,*::after')).toEqual([
+        [
+          'transition-duration:.01ms !important',
+          'transition-delay:0s !important',
+          'animation-duration:.01ms !important',
+          'animation-delay:0s !important',
+          'animation-iteration-count:1 !important',
+          'scroll-behavior:auto !important',
+        ],
+      ]);
+      for (const spinner of ['.ds-ajax.--is-loading::after', '.ds-icon.--loading::before']) {
+        expect(rules(spinner)).toEqual([['animation-duration:4s !important', 'animation-iteration-count:infinite !important']]);
+      }
+    });
+
+    it('the default theme has a visually hidden class', () => {
+      expect(themeCss).toMatch(
+        /\.ds-visually-hidden\{position:absolute !important;width:1px !important;height:1px !important;[^}]*overflow:hidden !important;clip-path:inset\(50%\) !important;/,
+      );
     });
   });
 });

@@ -77,6 +77,18 @@
     transform: translate(-50%, -50%);
   }
 
+  // Less motion (after the position classes, which it overrides): the toaster shows and hides without fading or sliding
+  // in; show() and hide() then emit toasterShown and toasterHidden at once. (The base styles of a theme may shorten the
+  // transitions too.)
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &.--v-pos-top,
+    &.--v-pos-bottom {
+      transition-duration: 0s;
+      animation: none;
+    }
+  }
+
   // The keyframes are global: their names are prefixed like the classes.
   @keyframes ds-toaster-fade-in-bottom {
     from {

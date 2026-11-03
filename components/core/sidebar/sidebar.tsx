@@ -1,6 +1,7 @@
 import { Component, Element, h, Host, Prop, Method, Event, EventEmitter } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 import SIDEBAR_POSITION from '../../utils/interfaces/sidebar-position';
+import { TransitionWait, waitForTransition } from '../../utils/transition';
 
 @Component({
   tag: 'ds-sidebar',
@@ -10,6 +11,11 @@ export class DSSidebar {
   //#region PROPS
 
   @Element() container: HTMLDsSidebarElement;
+
+  /** The wait for the end of the slide in or out, while it runs. */
+  private slide: TransitionWait;
+  /** Whether the duration of the slide was read, once its state was rendered. */
+  private isSlideMeasured = false;
 
   @Prop({ reflect: true }) ctx = true;
   @Prop({ mutable: true, reflect: true }) isShown = false;
@@ -49,7 +55,7 @@ export class DSSidebar {
     if (!this.isShown) {
       this.containerRefresh();
       this.sidebarShow.emit();
-      this.container.addEventListener('transitionend', this.animationEndHandler);
+      this.waitForSlide();
       this.isShown = true;
     }
   }
@@ -61,7 +67,7 @@ export class DSSidebar {
   async hide() {
     if (this.isShown) {
       this.sidebarHide.emit();
-      this.container.addEventListener('transitionend', this.animationEndHandler);
+      this.waitForSlide();
       this.isShown = false;
     }
   }
@@ -69,6 +75,20 @@ export class DSSidebar {
   //#endregion
 
   //#region TOOLS
+
+  /**
+   * Emits `sidebarShown` or `sidebarHidden` (the state at that time) at the end of the slide that the state change
+   * starts: on the `transitionend` event of the sidebar, or at once when it does not slide (a duration of 0, less motion
+   * without the theme), or when its duration is over if the event does not come. A new change cancels the wait.
+   */
+  waitForSlide() {
+    this.slide?.cancel();
+    this.slide = waitForTransition(this.container, () => {
+      this.slide = undefined;
+      this[`sidebar${this.isShown ? 'Shown' : 'Hidden'}`].emit();
+    });
+    this.isSlideMeasured = false;
+  }
 
   containerRefresh() {
     const windowHeight = window.innerHeight;
@@ -82,25 +102,17 @@ export class DSSidebar {
 
   //#region LYFECYCLE
 
-  constructor() {
-    this.animationEndHandler = this.animationEndHandler.bind(this);
+  componentDidRender() {
+    // The slide starts with the render of the new state: its duration is read from the new style.
+    if (this.slide && !this.isSlideMeasured) {
+      this.isSlideMeasured = true;
+      this.slide.measure();
+    }
   }
 
   disconnectedCallback() {
-    this.container.removeEventListener('transitionend', this.animationEndHandler);
-  }
-
-  //#endregion
-
-  //#region HANDLERS
-
-  animationEndHandler(event: Event) {
-    // Only the sidebar's own transition, not the ones of its content.
-    if (event.target === this.container) {
-      this.container.removeEventListener('transitionend', this.animationEndHandler);
-      const eventName = `sidebar${this.isShown ? 'Shown' : 'Hidden'}`;
-      this[eventName].emit();
-    }
+    this.slide?.cancel();
+    this.slide = undefined;
   }
 
   //#endregion

@@ -1,6 +1,7 @@
 import { Component, h, Method, State, Prop, Event, EventEmitter } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
+import { TransitionWait, waitForTransition } from '../../utils/transition';
 
 /**
  * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
@@ -14,6 +15,10 @@ import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaste
 export class DSToaster {
   container: HTMLDivElement;
   closingTimer: ReturnType<typeof setTimeout>;
+  /** The wait for the end of the fade in or out, while it runs. */
+  private fade: TransitionWait;
+  /** Whether the duration of the fade was read, once its state was rendered. */
+  private isFadeMeasured = false;
 
   /**
    * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`,
@@ -59,7 +64,7 @@ export class DSToaster {
   async show() {
     if (!this.isShown) {
       this.toasterShow.emit();
-      this.container.addEventListener('transitionend', this.animationEndHandler);
+      this.waitForFade();
       this.isShown = true;
     }
   }
@@ -68,7 +73,7 @@ export class DSToaster {
   async hide() {
     if (this.isShown) {
       this.toasterHide.emit();
-      this.container.addEventListener('transitionend', this.animationEndHandler);
+      this.waitForFade();
       this.isShown = false;
     }
   }
@@ -76,25 +81,36 @@ export class DSToaster {
   constructor() {
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
-    this.animationEndHandler = this.animationEndHandler.bind(this);
+  }
+
+  componentDidRender() {
+    // The fade starts with the render of the new state: its duration is read from the new style.
+    if (this.fade && !this.isFadeMeasured) {
+      this.isFadeMeasured = true;
+      this.fade.measure();
+    }
   }
 
   disconnectedCallback() {
     clearTimeout(this.closingTimer);
-    this.container?.removeEventListener('transitionend', this.animationEndHandler);
+    this.fade?.cancel();
+    this.fade = undefined;
   }
 
-  //#region HANDLERS
-
-  animationEndHandler(event: Event) {
-    // Only the toaster's own transition (several properties may end it), not the ones of its content.
-    if (event.target === this.container) {
-      this.container.removeEventListener('transitionend', this.animationEndHandler);
+  /**
+   * Emits `toasterShown` or `toasterHidden` (the state at that time) at the end of the fade that the state change starts:
+   * on the toaster's own `transitionend` event (several properties may end it, not the ones of its content), or at once
+   * when it does not fade (durations of 0, less motion without the theme), or when its duration is over if the event does
+   * not come. A new change cancels the wait.
+   */
+  waitForFade() {
+    this.fade?.cancel();
+    this.fade = waitForTransition(this.container, () => {
+      this.fade = undefined;
       this[`toaster${this.isShown ? 'Shown' : 'Hidden'}`].emit();
-    }
+    });
+    this.isFadeMeasured = false;
   }
-
-  //#endregion
 
   /** The messages displayed: the last `maxDisplayedToast` ones (all of them for `0`). */
   getDisplayedMessages(): string[] {

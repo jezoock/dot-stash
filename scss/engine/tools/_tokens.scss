@@ -21,7 +21,7 @@
 //   --ds-bp-labels: xxs xs sm md lg xl xxl;
 
 // The token groups: the custom property prefix (--ds-<group>-) and the map each one reads.
-$ds-token-groups: color, colorset, font-size, font-family, font-style, space, radius, bp, gradient;
+$ds-token-groups: color, colorset, font-size, font-family, font-style, space, radius, focus, bp, gradient;
 
 @function -tokens-of($group) {
   @if $group == color {
@@ -38,6 +38,8 @@ $ds-token-groups: color, colorset, font-size, font-family, font-style, space, ra
     @return $spacings;
   } @else if $group == radius {
     @return $radii;
+  } @else if $group == focus {
+    @return $focus;
   } @else if $group == bp {
     @return $breakpoints;
   } @else if $group == gradient {

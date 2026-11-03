@@ -34,7 +34,22 @@
   }
 }
 
-// Needs the keyframes of ds-keyframes().
+// Rules for the users who ask for less motion (their system setting, `prefers-reduced-motion: reduce`):
+// `@include ds-reduced-motion() { transition: none; }`.
+@mixin ds-reduced-motion() {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Needs the keyframes of ds-keyframes(). A loading indicator: an essential animation, which tells that something is going
+// on. With less motion, it keeps turning, more slowly, where the base styles of a theme cut the other animations short
+// (!important: wins over that rule of the base styles, `*::after` and the others).
 @mixin spin {
   animation: spin 2s linear infinite;
+
+  @include ds-reduced-motion() {
+    animation-duration: 4s !important;
+    animation-iteration-count: infinite !important;
+  }
 }

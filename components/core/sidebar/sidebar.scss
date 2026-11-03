@@ -28,6 +28,13 @@ ds-sidebar {
   // Scrolling to the end of the sidebar does not scroll the page behind it.
   overscroll-behavior: contain;
 
+  // Less motion: the sidebar shows and hides without sliding; show() and hide() then emit sidebarShown and sidebarHidden
+  // at once. (The base styles of a theme may shorten the transitions too.)
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0s;
+    transition-delay: 0s;
+  }
+
   & .ds-sidebar__content {
     height: 100%;
     overflow: hidden auto;
