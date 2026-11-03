@@ -544,10 +544,21 @@ export namespace Components {
     /**
      * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
      * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+     * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+     * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+     * cannot be focused.
      */
     interface DsToggle {
         "checked": boolean;
+        /**
+          * A disabled toggle ignores clicks and keys, and cannot be focused (`aria-disabled="true"`, no `tabindex`).
+         */
         "disabled": boolean;
+        /**
+          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with `aria-labelledby` (its id) on the element instead.
+         */
+        "label": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -560,6 +571,10 @@ export namespace Components {
           * Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored.
          */
         "setProps": (properties: Record<string, unknown>) => Promise<void>;
+        /**
+          * Sets whether Tab reaches the toggle, for a parent that moves the focus between its toggles (the arrow keys of a `ds-toggle-group` of radios): `false` renders `tabindex="-1"`, `true` or `undefined` `tabindex="0"`, the default.
+         */
+        "setTabbable": (isTabbable?: boolean) => Promise<void>;
         /**
           * Sets the type given by a parent (`ds-toggle-group` calls it): the toggle uses it while it has no `type` of its own. `undefined` removes it.
          */
@@ -1029,6 +1044,10 @@ declare global {
     /**
      * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
      * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+     * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+     * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+     * cannot be focused.
      */
     interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1586,10 +1605,21 @@ declare namespace LocalJSX {
     /**
      * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
      * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+     * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+     * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+     * cannot be focused.
      */
     interface DsToggle {
         "checked"?: boolean;
+        /**
+          * A disabled toggle ignores clicks and keys, and cannot be focused (`aria-disabled="true"`, no `tabindex`).
+         */
         "disabled"?: boolean;
+        /**
+          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with `aria-labelledby` (its id) on the element instead.
+         */
+        "label"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -1854,6 +1884,7 @@ declare namespace LocalJSX {
         "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "disabled": boolean;
         "checked": boolean;
+        "label": string;
     }
     interface DsToggleGroupAttributes {
         "name": string;
@@ -1990,6 +2021,10 @@ declare module "@stencil/core" {
             /**
              * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
              * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+             * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+             * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+             * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+             * cannot be focused.
              */
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             /**

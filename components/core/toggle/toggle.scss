@@ -18,7 +18,11 @@ ds-toggle {
   border: none;
   background: transparent;
   position: relative;
-  transition: all ease 0.4s;
+  // The changes of state are animated, not the focus outline: it shows at once.
+  transition:
+    all ease 0.4s,
+    outline 0s,
+    outline-offset 0s;
   cursor: pointer;
   display: inline-block;
 
