@@ -36,6 +36,7 @@ npm run build:all
 | `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                               |
 | `npm run lint`         | ESLint on the repository: the components, the scripts and the configuration files (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                       |
 | `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                |
+| `npm run lint:css`     | Stylelint on the `.scss` files of `scss/` and `components/` (`stylelint.config.mjs`, see [Tooling](#tooling)).                                                                                           |
 | `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files). |
 | `npm run format:check` | Checks the same files without writing.                                                                                                                                                                   |
 
@@ -49,11 +50,12 @@ The build uses Stencil for the components and the `sass` package for the theme s
   - `--source-map`: writes a source map, `<stylesheet>.css.map`, next to each stylesheet, with the SCSS sources in it.
 - **`scripts/dev.mjs`** (`npm start`) runs `build-css.mjs --watch` and, once the stylesheets are compiled, the Stencil dev server (`stencil build --dev --watch --serve`), in one terminal; Ctrl+C stops both, and when one of them stops, the other is stopped too. The dev server serves `www/`, with the dev page `components/index.html`: add `ds-*` markup there to try the components. The Stencil build copies `dist/css/` to `www/css/`, and watches `dist/css/` (`watchExternalDirs` in `stencil.config.ts`): a stylesheet the watcher recompiles makes a rebuild, which copies it, and the page reloads. A change of a component reloads it as before (Stencil's hot module replacement).
 - **`dot-stash.config.mjs`** is the configuration of the stylesheet build: `themes` (the folders of `scss/themes/` to compile), `paths` (`scss`, the sources; `css`, the output, `dist/css`) and `css` (`style`, `compressed` or `expanded`; `sourceMap`).
+- **Stylelint** (`npm run lint:css`, `stylelint.config.mjs`) checks the SCSS with the standard SCSS configuration (`stylelint-config-standard-scss`), adapted to the conventions of the project, each change explained in the configuration: the class names `ds-<block>__<element>--<modifier>` and `--<modifier>`, the custom properties `--ds-…`, the blank lines that group the lines of a block, the explicit `== null` tests of the engine, and the values the compiled theme writes as they are (six-digit colors, font names, the quoted icon font). Prettier formats the files (Stylelint has no formatting rule left).
 - **TypeScript** (`typescript`, `~5.8.3`) is the version Stencil 4.45 compiles with (it bundles its own copy): typescript-eslint and the editors use this one, and `npx tsc --noEmit` type-checks `components/` with it.
 
 The dev page only loads the components (`/build/dot-stash.esm.js`) and the `default` theme stylesheet (`/css/default.css`, the copy of `dist/css/default.css`); a page stylesheet is at `/css/pages/<theme>/<page>.css`. The former demo (the `ds-main` component, the theme switcher and the runtime color control of the dev pages) is archived on `archive/propal` (see [Archived code](#archived-code)).
 
-CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check`, `lint` and `npm test` on every push and pull request. Every step is blocking: a build, formatting, lint or test error fails the run.
+CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check`, `lint`, `lint:css` and `npm test` on every push and pull request. Every step is blocking: a build, formatting, lint or test error fails the run.
 
 ## Project structure
 
@@ -81,6 +83,8 @@ scripts/
   dev.mjs              npm start: the CSS watcher and the Stencil dev server
 dot-stash.config.mjs   stylesheet build configuration: themes, paths, output style, source maps
 stencil.config.ts      Stencil configuration (srcDir: components)
+eslint.config.mjs      ESLint configuration (npm run lint)
+stylelint.config.mjs   Stylelint configuration (npm run lint:css)
 docs/                  project notes (archives)
 ```
 

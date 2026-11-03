@@ -87,7 +87,7 @@ $-orientation-to-direction: (
 }
 
 @mixin gradient($gradient, $orientation, $type: linear) {
-  @if ($orientation == 'radial') {
+  @if $orientation == 'radial' {
     $type: radial;
     background: gradient($gradient, fallback);
     background: -moz-#{$type}-gradient(circle, gradient($gradient, from), gradient($gradient, to));

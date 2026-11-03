@@ -5,25 +5,18 @@ ds-grid-item {
   display: inline-block;
   box-sizing: border-box;
   position: relative;
-  flex-shrink: 0;
   flex: 0 0 auto;
 }
 
 .ds-grid-item {
-  &__content {
-  }
-
   &.--with-ratio {
-    padding: 100% 0 0 0;
+    padding: 100% 0 0;
     position: relative;
 
     & .ds-grid-item {
       &__content {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
       }
     }
   }

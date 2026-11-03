@@ -24,8 +24,7 @@ ds-tooltip {
   position: relative;
   white-space: normal;
   width: min-content;
-  align-content: center;
-  justify-content: center;
+  place-content: center;
 
   &__content {
     width: 100%;
@@ -105,7 +104,7 @@ ds-tooltip {
     &.--bottom-right,
     &.--left,
     &.--right {
-      &:after {
+      &::after {
         display: block;
       }
     }

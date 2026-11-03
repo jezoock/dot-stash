@@ -7,19 +7,6 @@
     display: flex;
     flex-wrap: wrap;
   }
-  &.--fixed {
-    & .ds-grid {
-      &__row {
-      }
-    }
-  }
-
-  &.--fluid {
-    & .ds-grid {
-      &__row {
-      }
-    }
-  }
 
   &.--align-start {
     & .ds-grid {

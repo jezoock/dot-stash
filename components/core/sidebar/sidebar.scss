@@ -30,8 +30,7 @@ ds-sidebar {
 
   & .ds-sidebar__content {
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden auto;
     overscroll-behavior: contain;
   }
 

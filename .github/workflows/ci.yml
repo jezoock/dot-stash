@@ -55,5 +55,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Lint stylesheets
+        run: npm run lint:css
+
       - name: Test
         run: npm test

@@ -47,8 +47,7 @@
   // Position classes: --v-pos-<TOASTER_VERTICAL_POSITION> and --h-pos-<TOASTER_HORIZONTAL_POSITION>.
   &.--v-pos-top {
     top: 0;
-    -webkit-animation: fadeinTop 0.5s;
-    animation: fadeinTop 0.5s;
+    animation: ds-toaster-fade-in-top 0.5s;
   }
 
   &.--v-pos-middle {
@@ -58,8 +57,7 @@
 
   &.--v-pos-bottom {
     bottom: 0;
-    -webkit-animation: fadeinBottom 0.5s;
-    animation: fadeinBottom 0.5s;
+    animation: ds-toaster-fade-in-bottom 0.5s;
   }
 
   &.--h-pos-left {
@@ -79,7 +77,8 @@
     transform: translate(-50%, -50%);
   }
 
-  @-webkit-keyframes fadeinBottom {
+  // The keyframes are global: their names are prefixed like the classes.
+  @keyframes ds-toaster-fade-in-bottom {
     from {
       bottom: -100px;
       opacity: 0;
@@ -90,29 +89,7 @@
     }
   }
 
-  @keyframes fadeinBottom {
-    from {
-      bottom: -100px;
-      opacity: 0;
-    }
-    to {
-      bottom: 0;
-      opacity: 1;
-    }
-  }
-
-  @-webkit-keyframes fadeinTop {
-    from {
-      top: -100px;
-      opacity: 0;
-    }
-    to {
-      top: 0;
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeinTop {
+  @keyframes ds-toaster-fade-in-top {
     from {
       top: -100px;
       opacity: 0;

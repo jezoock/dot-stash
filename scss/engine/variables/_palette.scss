@@ -52,8 +52,8 @@ $colors: (
     knob-disabled: #dddddd,
   ),
   shadow: (
-    base: rgba(15, 23, 42, 0.16),
-    strong: rgba(0, 0, 0, 0.6),
+    base: rgb(15 23 42 / 16%),
+    strong: rgb(0 0 0 / 60%),
   ),
   // Position indicators: the dots of a slider menu, the current one active.
   indicator: (

@@ -30,7 +30,7 @@ ds-toggle {
   &.--switch,
   &.--checkbox,
   &.--radio {
-    &:after {
+    &::after {
       display: block;
       content: '';
       position: absolute;
@@ -48,7 +48,7 @@ ds-toggle {
     height: 2rem;
     width: 2rem;
 
-    &:after {
+    &::after {
       left: 50%;
       transform: translate3d(-50%, -50%, 0);
     }
@@ -57,7 +57,7 @@ ds-toggle {
   &:not([checked]) {
     &.--radio,
     &.--checkbox {
-      &:after {
+      &::after {
         opacity: 0;
       }
     }
@@ -66,7 +66,7 @@ ds-toggle {
   &[checked] {
     &.--radio,
     &.--checkbox {
-      &:after {
+      &::after {
         opacity: 1;
       }
     }
@@ -78,14 +78,14 @@ ds-toggle {
     height: 2rem;
     width: 3.5rem;
 
-    &:after {
+    &::after {
       transform: translateY(-50%);
     }
   }
 
   &:not([checked]) {
     &.--switch {
-      &:after {
+      &::after {
         left: 0.25rem;
       }
     }
@@ -93,7 +93,7 @@ ds-toggle {
 
   &[checked] {
     &.--switch {
-      &:after {
+      &::after {
         left: calc(100% - 1.75rem);
       }
     }

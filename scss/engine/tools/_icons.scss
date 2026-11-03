@@ -29,7 +29,7 @@
 }
 
 @mixin ds-icon($type: null, $display: null) {
-  @if ($display != null) {
+  @if $display != null {
     display: $display;
   }
   font-family: 'ds-icons';
