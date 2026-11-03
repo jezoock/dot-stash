@@ -424,4 +424,161 @@ describe('Sass stylesheets', () => {
       );
     });
   });
+
+  // The styling contract (README.md, "Styling a component"): a component stylesheet holds what the component needs to
+  // work, the theme its look. The component custom properties (--ds-<component>-…) are documented with @prop in the
+  // component stylesheet (Stencil lists them in the readme), set by the default theme, and read by its skins or by the
+  // component stylesheet. The default theme compiles without any warning (above).
+  describe('styling contract', () => {
+    const coreDir = path.join(root, 'components/core');
+    const relative = (file: string) => path.relative(root, file);
+    const tsxFilesIn = (dir: string): string[] =>
+      fs
+        .readdirSync(dir, { withFileTypes: true })
+        .flatMap(entry => (entry.isDirectory() ? tsxFilesIn(path.join(dir, entry.name)) : /(?<!\.spec)\.tsx$/.test(entry.name) ? [path.join(dir, entry.name)] : []))
+        .sort();
+
+    // Each component: its tag, its folder (its readme) and its stylesheets (styleUrl, styleUrls).
+    const components = tsxFilesIn(coreDir)
+      .map(file => {
+        const source = fs.readFileSync(file, 'utf8');
+        const urls = source.match(/styleUrls?:\s*(\[[^\]]*\]|'[^']*')/)?.[1] ?? '';
+        return {
+          tag: source.match(/tag:\s*'(ds-[\w-]+)'/)?.[1],
+          dir: path.dirname(file),
+          sheets: [...urls.matchAll(/'([^']+)'/g)].map(([, url]) => path.resolve(path.dirname(file), url)),
+        };
+      })
+      .filter(({ tag }) => tag);
+    const tags = components.map(({ tag }) => tag);
+    const componentSheets = scssFilesIn(coreDir);
+    const read = (file: string) => fs.readFileSync(file, 'utf8');
+
+    // The component a custom property belongs to: the longest tag it starts with (--ds-slider-menu-… is ds-slider-menu's).
+    const ownerOf = (name: string): string | undefined => tags.filter(tag => name.startsWith(`--${tag}-`)).sort((a, b) => b.length - a.length)[0];
+
+    // The @prop annotations of a stylesheet, as Stencil reads them in its /** */ comments: the names of the documented properties.
+    const documentedIn = (file: string): string[] =>
+      [...read(file).matchAll(/\/\*\*[\s\S]*?\*\//g)].flatMap(([comment]) => [...comment.matchAll(/@prop\s+(--[\w-]+)\s*:\s*\S/g)].map(([, name]) => name));
+    const documentedBy = (component: (typeof components)[number]) => component.sheets.flatMap(documentedIn).sort();
+    const documented = new Set(components.flatMap(documentedBy));
+
+    // The declarations of a compiled stylesheet, comments left out: [property, value].
+    const declarationsIn = (css: string): [string, string][] =>
+      [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([\w-]+)\s*:\s*([^;{}]+);/g)].map(([, name, value]) => [name.toLowerCase(), value.trim()]);
+
+    // A word of a value that Sass reads as a color: a CSS color name (gray, red…).
+    const colorNames = new Map<string, boolean>();
+    const isColorName = (word: string): boolean => {
+      if (!colorNames.has(word)) {
+        let isColor = false;
+        try {
+          isColor = sass.compileString(`@use 'sass:meta'; a { b: meta.type-of(${word}); }`).css.includes('b: color');
+        } catch {
+          isColor = false;
+        }
+        colorNames.set(word, isColor);
+      }
+      return colorNames.get(word);
+    };
+
+    // The typography declarations a component stylesheet may write: resets, which make an element inherit the typography
+    // of its parent (set by the theme) and set none of their own.
+    const typographyResets = [
+      ['components/core/combo/combo.scss', 'font', 'inherit'], // the native button of the toggle
+      ['components/core/title/title.scss', 'font-size', 'inherit'], // the headings, paragraphs and links in a title
+      ['components/core/trigger/trigger.scss', 'font-size', 'inherit'], // the link or button in a trigger
+    ];
+
+    let themeCss: string;
+
+    beforeAll(() => {
+      themeCss = sass.compile(path.join(root, 'scss/themes/default/index.scss'), { style: 'compressed' }).css;
+    });
+
+    it('finds the components and their stylesheets, each one the stylesheet of a component', () => {
+      expect(components.length).toBeGreaterThan(20);
+      expect(new Set(tags).size).toBe(tags.length);
+      for (const { sheets } of components) for (const sheet of sheets) expect([relative(sheet), fs.existsSync(sheet)]).toEqual([relative(sheet), true]);
+      // Stencil only reads the @prop annotations of the stylesheets of a component.
+      expect(componentSheets.filter(file => !components.some(({ sheets }) => sheets.includes(file))).map(relative)).toEqual([]);
+    });
+
+    it.each(componentSheets.map(relative))('%s writes no color and no font: they are the look of the theme', file => {
+      const declarations = declarationsIn(sass.compile(path.join(root, file)).css);
+      const colors = declarations.filter(([, value]) => {
+        const words: string[] = value.replace(/--[\w-]+/g, '').match(/(?<![\w#.-])[a-z]+(?![\w(-])/gi) ?? [];
+        return (
+          /#[0-9a-f]{3,8}\b/i.test(value) ||
+          /(?<![\w-])(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\(/i.test(value) ||
+          words.some(word => word.toLowerCase() !== 'transparent' && isColorName(word))
+        );
+      });
+      const fonts = declarations.filter(([name]) => ['font', 'font-family', 'font-size'].includes(name));
+
+      expect(declarations.length + documentedIn(path.join(root, file)).length).toBeGreaterThan(0);
+      expect(colors).toEqual([]);
+      expect(fonts.filter(([name, value]) => !typographyResets.some(reset => reset[0] === file && reset[1] === name && reset[2] === value))).toEqual([]);
+    });
+
+    it('allows each typography reset where it is written', () => {
+      for (const [file, name, value] of typographyResets) expect(declarationsIn(sass.compile(path.join(root, file)).css)).toContainEqual([name, value]);
+    });
+
+    it('parses the declarations, and recognizes the color names', () => {
+      const css = sass.compileString(
+        'a { color: gray; border: 1px solid #000; background: rgb(0 0 0 / 0.5); font-size: 1rem; b: var(--ds-x-y, red); c: transparent; d: currentColor; }',
+      ).css;
+      const declarations = declarationsIn(css);
+
+      expect(declarations.map(([name]) => name)).toEqual(['color', 'border', 'background', 'font-size', 'b', 'c', 'd']);
+      expect(['gray', 'red', 'Gray'].every(isColorName)).toBe(true);
+      expect(['currentColor', 'solid', 'inherit', 'none', 'ease'].some(isColorName)).toBe(false);
+    });
+
+    it.each(componentSheets.map(relative))('%s reads no other custom property than those of its component it documents', file => {
+      const component = components.find(({ sheets }) => sheets.includes(path.join(root, file)));
+      const readNames = [...read(path.join(root, file)).matchAll(/var\(\s*(--[\w-]+)/g)].map(([, name]) => name);
+      const own = documentedBy(component);
+
+      expect(readNames.filter(name => !own.includes(name))).toEqual([]);
+    });
+
+    it.each(components.filter(component => documentedBy(component).length).map(({ tag }) => tag))('%s documents its custom properties once, named after it', tag => {
+      const names = documentedBy(components.find(component => component.tag === tag));
+
+      expect(new Set(names).size).toBe(names.length);
+      expect(names.filter(name => ownerOf(name) !== tag)).toEqual([]);
+    });
+
+    it('the default theme sets every documented custom property, and its skins or a component stylesheet read it', () => {
+      const declared = new Set([...themeCss.matchAll(/[{;](--ds-[\w-]+):/g)].map(([, name]) => name));
+      const readByTheme = [...themeCss.matchAll(/var\((--ds-[\w-]+)/g)].map(([, name]) => name);
+      const readBySheets = componentSheets.flatMap(file => [...read(file).matchAll(/var\(\s*(--[\w-]+)/g)].map(([, name]) => name));
+
+      expect(documented.size).toBeGreaterThan(50);
+      expect([...documented].filter(name => !declared.has(name))).toEqual([]);
+      expect([...documented].filter(name => !readByTheme.includes(name) && !readBySheets.includes(name))).toEqual([]);
+    });
+
+    it('the default theme declares and reads no undocumented component custom property, and no token is named after a component', () => {
+      const names = new Set([...themeCss.matchAll(/(?:[{;]|var\()(--ds-[\w-]+)/g)].map(([, name]) => name));
+      const tokens = new Set([...(themeCss.match(/(?:^|})\s*:root\{([^}]*)\}/)?.[1] ?? '').matchAll(/(--ds-[\w-]+):/g)].map(([, name]) => name));
+
+      expect(tokens.size).toBeGreaterThan(100);
+      expect([...tokens].filter(ownerOf)).toEqual([]);
+      expect([...names].filter(name => !tokens.has(name) && !documented.has(name))).toEqual([]);
+    });
+
+    // The readmes are generated by `npm run build` (Stencil): the CSS Custom Properties section lists the @prop annotations,
+    // the Styling section above the generated part is written by hand.
+    it.each(tags)('the readme of %s has a Styling section and lists its documented custom properties', tag => {
+      const component = components.find(other => other.tag === tag);
+      const [handWritten, generated = ''] = read(path.join(component.dir, 'readme.md')).split('<!-- Auto Generated Below -->');
+      const listed = [...(generated.match(/\n## CSS Custom Properties\n([\s\S]*?)(?=\n## |\n-{3,})/)?.[1] ?? '').matchAll(/^\| `(--[\w-]+)`/gm)].map(([, name]) => name);
+
+      expect(handWritten).toMatch(/\n## Styling\n/);
+      expect(listed.sort()).toEqual(documentedBy(component));
+    });
+  });
 });

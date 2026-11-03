@@ -5,7 +5,7 @@ A standalone UI library made of two parts:
 - **Web components**: generic `ds-*` custom elements built with Stencil. They render in the light DOM (no shadow DOM) and use plain class names (`ds-block`, `ds-block__body`, `--modifier`), so a regular page stylesheet can style them.
 - **SCSS theming toolkit**: an engine (design tokens, functions and mixins) and a theme built on it, `default`, neutral, compiled by gulp into one global stylesheet (`dist/css/default.css`) that skins the components and the page. A project gets its own look by configuring the engine in a theme of its own (see [Creating a theme](#creating-a-theme)).
 
-Some components also have a small structural stylesheet (`styleUrl`) that Stencil injects into the document. Colors, typography and component skins come from the theme stylesheet. Stencil compiles the structural stylesheets without the theming engine: they read no token, and the colors of a component are in the skins of the theme (`ds-combo`, `ds-toaster`, `ds-tooltip`…).
+Each component keeps its structure in its own stylesheet (`styleUrl`), which Stencil injects into the document, and gets its look from the theme stylesheet, through a few component custom properties (`--ds-tooltip-background`, `--ds-sidebar-width`…): see [Styling a component](#styling-a-component).
 
 ## Requirements
 
@@ -53,8 +53,9 @@ CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then
 
 ```
 components/
-  core/            ds-* components, one folder each (.tsx, optional structural .scss, type and enum
-                   modules, generated readme.md)
+  core/            ds-* components, one folder each (.tsx, structural .scss with the documented
+                   custom properties, type and enum modules, readme.md: generated, below a
+                   hand-written Styling section)
   utils/           shared TypeScript: utility modules (props, css, dom, ajax, responsive, tokens, env,
                    form, context), the `ds` object grouping them (dot-stash.ts), debounce, throttle,
                    uuid, and shared types and enums (interfaces/)
@@ -137,7 +138,7 @@ The library ships one theme, `default`. A project creates its own by configuring
          base: #0d9488,
          light: #ccfbf1,
        ),
-       // secondary, gray, status, input, shadow: all the families, with all their shades
+       // secondary, gray, status, input, shadow, indicator: all the families, with all their shades
      ),
      $font-family-base: (
        'Inter',
@@ -162,6 +163,7 @@ The skins take their values from the tokens, so that a theme configures them in 
 - **Colors**: `ds-color(<family>, <shade>)` or a colorset (`ds-colorset-styles()`), never a hex value, `rgb()` or a color keyword (`transparent` aside). A color the palette lacks is added to the `$colors` of the theme, in a family and shade named after its role, not after its value: two colors with the same value are different tokens when their roles differ. Shadows and veils are colors too (`rgba()` values, such as `shadow` `base`). Color math (`color.change()`) takes the `-value` accessors and does not follow the tokens at runtime: prefer a token.
 - **Font families**: `ds-font-family(<type>, <variant>)` (font styles) or `ds-token(font-family, <name>)`, never a font name; the icon font, `'ds-icons'`, is the one exception (the `ds-icon()` mixins write it).
 - **Font sizes, spacing, radii**: `ds-token(font-size, <step>)`, `ds-spacing(<step>)` (margins, paddings, gaps) and `ds-radius(<name>)` where the value is a step of the scale, in the same unit. The other values stay literal: sizes off the scale, offsets (`top: 0.5rem`), zeros.
+- **Component custom properties**: the skin of a component sets them on the component element with the same accessors, interpolated (`--ds-tooltip-background: #{ds-color(secondary, darker)};`), and its rules read them (see [Styling a component](#styling-a-component)).
 - **`!important`**: only where the rule must win over a more specific rule of the theme or of a component, with a comment that names it.
 
 ### Tokens (`scss/engine/variables/`)
@@ -169,7 +171,7 @@ The skins take their values from the tokens, so that a theme configures them in 
 Every token is declared with `!default`. The defaults are neutral: the values of the `default` theme.
 
 - `_palette.scss`
-  - `$colors`: color families and their shades: `primary` and `secondary` (`darker`, `dark`, `base`, `light`), `gray` (`white`, `lightest`, `lighter`, `light`, `base`, `dark`, `darker`, `darkest`, `black`), `status` (`success`, `warning`, `error`, `info`, `busy`, `disabled`, `discount`, `new`), `input` (`caret`), `shadow` (`base`). A theme can add families and shades of its own, for the colors the palette lacks (see [Skins read the tokens](#skins-read-the-tokens)): each one gets its custom property.
+  - `$colors`: color families and their shades: `primary` and `secondary` (`darker`, `dark`, `base`, `light`), `gray` (`white`, `lightest`, `lighter`, `light`, `base`, `dark`, `darker`, `darkest`, `black`), `status` (`success`, `warning`, `error`, `info`, `busy`, `disabled`, `discount`, `new`), `input` (`caret`, and the toggles of `ds-toggle`: `unchecked`, `checked`, `disabled`, `track`, `track-disabled`, `knob`, `knob-checked`, `knob-disabled`), `shadow` (`base`, `strong`), `indicator` (`base`, `active`: the dots of `ds-slider-menu`). A theme can add families and shades of its own, for the colors the palette lacks (see [Skins read the tokens](#skins-read-the-tokens)): each one gets its custom property.
   - `$colorset`: named sets of `text`, `border` and `background` colors, grouped by type (`solid`, `outlined`, `link`) with variants such as `primary`, `primary-hover`, `secondary`, `white`, `gray` or `disabled`. Its colors are references to `$colors` (`ds-ref(color, primary, base)`) or colors of their own.
   - `$gradients`: named gradients for `gradient()`, `(name: (fallback: …, from: …, to: …))`, empty by default.
 - `_typography.scss`
@@ -240,7 +242,7 @@ Each theme writes its tokens once, as CSS custom properties on `:root`, with `@i
 | `bp`          | `$breakpoints`   | `--ds-bp-<label>`, in px, and `--ds-bp-labels`, the list of the labels      | `--ds-bp-md: 992px`, `--ds-bp-labels: xxs xs sm md lg xl xxl`          |
 | `gradient`    | `$gradients`     | `--ds-gradient-<name>-<attr>`                                               | (none: no gradient in `default`)                                       |
 
-`default` writes 165 custom properties. A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
+`default` writes 176 custom properties on `:root`, the tokens (the component custom properties are on the component elements, see [Styling a component](#styling-a-component)). A token whose value is `null` is not written, nor a reference to a token that does not exist or has no value. `$icons` is not written: its glyph codes belong to the `ds-icons` font, not to a theme.
 
 The `--ds-bp-*` properties are for JavaScript (`tokens.getBreakpoints()`, `tokens.getToken('bp-md')`, see [Breakpoints shared with JavaScript](#breakpoints-shared-with-javascript)): media queries cannot use custom properties, so `break-p()` and `ds-breakpoint()` use the Sass values, and changing the properties at runtime does not change the media queries of the theme.
 
@@ -280,7 +282,7 @@ document.documentElement.style.setProperty('--ds-color-primary-base', '#0d9488')
 tokens.getToken('color-primary-base'); // '#0d9488': the value in effect, read with getComputedStyle()
 ```
 
-Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the links, the `default` focus outline… The skins read their colors and fonts from the tokens, so overriding any color or font family token works the same way (`--ds-color-shadow-base`, `--ds-font-family-heading`…). What a skin computes in Sass (`color.change(…)`, the two white veils of `default`) does not follow, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
+Everything that reads the token follows, the tokens that refer to it included: the `stl-1` buttons (`--ds-colorset-solid-primary-*`), the component custom properties set from it, the links, the `default` focus outline… The skins read their colors and fonts from the tokens, so overriding any color or font family token works the same way (`--ds-color-shadow-base`, `--ds-font-family-heading`…). What a skin computes in Sass (`color.change(…)`, the two white veils of `default`) does not follow, nor the other tokens that only have the same value (`--ds-color-status-info` and `--ds-color-input-caret` are `#2563eb` in `default`, like the primary color).
 
 Or in a scope: `.promo { --ds-color-primary-base: #0d9488; }`. The rules that read `--ds-color-primary-base` inside `.promo` follow, but not the tokens that refer to it: their `var()` was resolved on `:root`, and `.promo` inherits the result. Declare them again in the scope, from Sass with `ds-tokens()` and the groups to declare:
 
@@ -384,7 +386,7 @@ Add a theme stylesheet, `dot-stash/dist/css/<theme>.css`, to the page with your 
 
 ### Components
 
-Each component documents its properties, events, methods and slots in the `readme.md` generated next to its source (`components/core/<component>/readme.md`). Among them:
+Each component documents its properties, events, methods, slots and custom properties in the `readme.md` generated next to its source (`components/core/<component>/readme.md`), below a Styling section (see [Styling a component](#styling-a-component)). Among them:
 
 - **`ds-combo`** ([readme](components/core/combo/readme.md)): a custom select with single or `multiple` selection. Its options are data (an array, or its JSON string in HTML): text options, links (`url`), images (`mode="image"`), disabled options and placeholders (empty `value`). Pre-select options with `selected` (`{ index }`, `{ value }` or `{ name }`) or with the options' `selected` flags; each user selection emits `optionSelected` (`{ name, option, selectedOptions }`). `open()`, `close()` and `toggle()` drive the list; `mode="dropdown"` renders no toggle button, for a list opened by another element. A click outside closes the list. `ds-combo` replaces `ds-dropdown` and `ds-dropdown-item`, which were removed: their slotted items had no selection behavior.
 - **`ds-sidebar`** ([readme](components/core/sidebar/readme.md)): a fixed panel on the `h-pos` side of the screen (`left` by default, or `right`) and at its `v-pos` edge. Hidden, it is out of the screen on that side; `show()`, `hide()` and `toggle()` slide it, and `sidebarShown` / `sidebarHidden` are emitted at the end of the slide.
@@ -427,6 +429,107 @@ The helpers are split into modules, each exported as a namespace:
 
 `ds` groups the same modules in one object (`ds.props.toClassList(...)`, `ds.tokens.getBreakpoints()`), and `ds.tools` keeps the DOM helpers under their former key (`ds.tools.scrollTo`…). Inside the library, components import the functions from their module (`import { toClassList } from '../../utils/props'`), so each bundle only contains the helpers it uses.
 
+## Styling a component
+
+Every component follows the same contract, in three parts.
+
+- **The structure is in the component.** Its stylesheet (its `styleUrl`, `components/core/<component>/<component>.scss`, which Stencil injects into the document) holds what the component needs to work: the layout mechanics, positioning and overflow, the transitions and animations its behavior relies on (a slide that ends on `transitionend`), the stack levels, the hidden and shown states. It writes no look: no color, font, font size, border, shadow, radius or decorative spacing. Stencil compiles it without the engine: it reads no token.
+- **The look is in the theme.** The skin of the component in the theme (`scss/themes/<theme>/components/_<component>.scss`, `_trigger.scss` for the `.ds-button` and `.ds-link` classes of `ds-trigger`) draws it: colors, typography, borders, radii, shadows, spacing. The theme also writes the structure that depends on the breakpoints, as media queries cannot read custom properties and the component stylesheets have no breakpoints: the opening of the sub-navigations of `ds-nav-item`, the row of a main `ds-nav`.
+- **Component custom properties, fed by the tokens, are the styling API.** Each component exposes a few custom properties named `--ds-<component>-<property>`: what a project restyling it would change (colors, a few sizes and spaces, a duration or stack level). The theme sets them on the component element from the tokens, and its skin reads them:
+
+  ```scss
+  // scss/themes/default/components/_tooltip.scss
+  ds-tooltip {
+    --ds-tooltip-background: #{ds-color(secondary, darker)}; // var(--ds-color-secondary-darker)
+    --ds-tooltip-width: 220px;
+  }
+
+  .ds-tooltip [slot='message'] {
+    width: var(--ds-tooltip-width);
+    background-color: var(--ds-tooltip-background);
+  }
+  ```
+
+  A modifier sets them again (`.ds-toaster.--success { --ds-toaster-background: … }`, the sizes and colors of `.ds-button`). A structural value that stays tunable (a duration, a stack level, an offset, the width of `ds-sidebar`) is read by the component stylesheet itself, with a fallback for a page without a theme, `var(--ds-sidebar-width, auto)`, and the theme sets it like the others.
+
+The component stylesheet documents the custom properties with `@prop` annotations, which Stencil lists in the **CSS Custom Properties** section it generates in the readme of the component:
+
+```scss
+/**
+ * @prop --ds-tooltip-background: Background of the message bubble, and color of its arrow.
+ * @prop --ds-tooltip-width: Width of the message bubble.
+ */
+```
+
+Above the generated part, the **Styling** section of each readme, written by hand, lists what a stylesheet can target: the main class (`ds-<component>`, on the component element or on the element it renders inside it), its elements (`ds-<component>__<element>`), its modifiers (`mods` → `--<mod>`, and the classes the component sets from its state and props: `--open`, `--shown`, `--h-pos-left`…), the attributes and slots the styles read, what the component stylesheet does and what the theme draws, with an example.
+
+| Component                                                        | Custom properties (`--ds-<component>-…`)                                                                                                     |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ds-ajax`](components/core/ajax/readme.md)                      | `overlay-background`, `spinner-color`, `spinner-size`                                                                                        |
+| [`ds-block`](components/core/block/readme.md)                    | `header-gap`, `footer-gap`, `max-width`                                                                                                      |
+| [`ds-combo`](components/core/combo/readme.md)                    | `background`, `color`, `border-color`, `active-color`, `hover-background`, `selected-background`, `selected-color`, `list-offset`            |
+| [`ds-grid`](components/core/grid/readme.md)                      | none: its props set the columns and gaps                                                                                                     |
+| [`ds-grid-item`](components/core/grid/grid-item/readme.md)       | none: `ds-grid` sizes it                                                                                                                     |
+| [`ds-heading`](components/core/heading/readme.md)                | `gap`, `image-gap`, `description-color`, `description-max-width`                                                                             |
+| [`ds-icon`](components/core/icon/readme.md)                      | `size`, `color`                                                                                                                              |
+| [`ds-modal`](components/core/modal/readme.md)                    | none yet: the lightbox has no style (see its readme)                                                                                         |
+| [`ds-nav`](components/core/nav/readme.md)                        | `gap`                                                                                                                                        |
+| [`ds-nav-item`](components/core/nav/nav-item/readme.md)          | `color`, `active-color`, `padding`, `border-color`, `sub-nav-background`, `sub-nav-shadow`                                                   |
+| [`ds-panel`](components/core/panel/readme.md)                    | `border-color`, `tab-color`, `active-color`, `title-font-size`, `transition-duration`                                                        |
+| [`ds-panel-group`](components/core/panel-group/readme.md)        | none: its panels carry the look                                                                                                              |
+| [`ds-rsp`](components/core/responsive/readme.md)                 | none: it renders nothing                                                                                                                     |
+| [`ds-select`](components/core/select/readme.md)                  | `background`, `border-color`, `radius`, `padding`                                                                                            |
+| [`ds-sidebar`](components/core/sidebar/readme.md)                | `width`, `max-width`, `z-index`, `transition-duration`, `padding`, `background`, `shadow`                                                    |
+| [`ds-slider`](components/core/slider/readme.md)                  | `transition-duration`, `button-offset`, `button-size`, `button-background`, `button-border-color`                                            |
+| [`ds-slider-item`](components/core/slider/slider-item/readme.md) | none: no look of its own                                                                                                                     |
+| [`ds-slider-menu`](components/core/slider/slider-menu/readme.md) | `offset`, `dot-size`, `dot-gap`, `dot-color`, `dot-active-color`                                                                             |
+| [`ds-text`](components/core/text/readme.md)                      | `font-family`, `font-size`, `line-height`, `spacing`, `list-indent`                                                                          |
+| [`ds-title`](components/core/title/readme.md)                    | `color`, `sub-color`, `font-family`, `line-height`                                                                                           |
+| [`ds-title-bar`](components/core/title-bar/readme.md)            | `gap`                                                                                                                                        |
+| [`ds-toaster`](components/core/toaster/readme.md)                | `background`, `color`, `font-size`, `padding`, `gap`, `shadow`, `min-width`, `z-index`                                                       |
+| [`ds-toggle`](components/core/toggle/readme.md)                  | `color`, `checked-color`, `disabled-color`, `track-color`, `track-disabled-color`, `knob-color`, `knob-checked-color`, `knob-disabled-color` |
+| [`ds-toggle-group`](components/core/toggle-group/readme.md)      | none: its toggles carry the look                                                                                                             |
+| [`ds-tooltip`](components/core/tooltip/readme.md)                | `background`, `color`, `font-size`, `padding`, `radius`, `shadow`, `width`, `offset`                                                         |
+| [`ds-trigger`](components/core/trigger/readme.md)                | `color`, `background`, `border-color`, `radius`, `padding`, `font-size`, `link-color`, `link-hover-color`                                    |
+
+`npm test` checks the contract: no color and no font in the component stylesheets (the resets that make an element inherit the font of its parent aside), every documented custom property named after its component, set by the default theme and read, no undocumented one, and every readme up to date (see [Tests](#tests)).
+
+### Overriding the custom properties
+
+The theme sets the custom properties on the component elements (`ds-tooltip { … }`): set them on the same elements, in a stylesheet loaded after the theme or with a more specific selector. Set on an ancestor (`:root`, a wrapper), they do not reach the component, which declares its own.
+
+```css
+/* After dist/css/default.css: every tooltip */
+ds-tooltip {
+  --ds-tooltip-background: #1e293b;
+  --ds-tooltip-width: 16rem;
+}
+
+/* In an area of the page */
+.dark ds-title {
+  --ds-title-color: var(--ds-color-gray-white);
+}
+
+/* A modifier: on its own selector */
+.ds-toaster.--success {
+  --ds-toaster-background: var(--ds-color-primary-dark);
+}
+```
+
+```html
+<ds-sidebar id="cart" h-pos="right" style="--ds-sidebar-width: 32rem; --ds-sidebar-max-width: 100%">…</ds-sidebar>
+```
+
+```js
+document.querySelector('#cart').style.setProperty('--ds-sidebar-width', '24rem');
+```
+
+The tokens still apply: the theme writes the component custom properties as `var()` of the tokens, resolved on each component element, so a token changed at runtime changes the components that read it, on `:root` or in a scope (`.promo { --ds-color-secondary-darker: #4c1d95; }` changes the tooltips inside `.promo`; see [Changing a token at runtime](#changing-a-token-at-runtime)).
+
+### Skins of a new theme
+
+A theme gives each component its skin, a partial of its `components/` folder loaded by its `index.scss`: it sets the custom properties of the component on the component element, from the tokens of the theme, and writes the rules that read them. Start from the skins of `default` (see [Creating a theme](#creating-a-theme)): keep the names of the custom properties, which the readmes document and the projects override, and set all of them; keep the rules of the skins that are structure (the media queries of the navigation). The component stylesheets do not change from one theme to another. A theme that keeps the `default` skins and only configures the tokens gets them all, set from its tokens.
+
 ## Tests
 
 Unit tests are Stencil spec tests: Stencil's test runner drives Jest 27 (the `jest` and `jest-cli` dev dependencies) in Stencil's simulated DOM, without a browser:
@@ -447,7 +550,7 @@ it('toggles a checkbox', async () => {
 });
 ```
 
-`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that its `--ds-bp-labels` lists its `--ds-bp-*` breakpoints by width (and that no JSON is written in a `content` any more), the errors on breakpoint labels, that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`. It also checks that no stylesheet writes a function call Sass does not know (`color(…)`, `ds-…(…)`: Sass writes them as plain CSS, which browsers drop), and that the component stylesheets read no token.
+`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that its `--ds-bp-labels` lists its `--ds-bp-*` breakpoints by width (and that no JSON is written in a `content` any more), the errors on breakpoint labels, that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`. It also checks that no stylesheet writes a function call Sass does not know (`color(…)`, `ds-…(…)`: Sass writes them as plain CSS, which browsers drop), and that the component stylesheets read no token. For the [styling contract](#styling-a-component), it checks that each `.scss` file of `components/core/` is the stylesheet of a component; that the component stylesheets write no color (hexadecimal, color function or color name, `transparent` aside) and no `font`, `font-family` or `font-size`, but for the resets it lists (`font-size: inherit`…); that they read no other custom property than the documented ones of their component; that each component documents its custom properties once, named after it (`--ds-<component>-…`); that the default theme sets each documented property, that its skins or a component stylesheet read it, and that it declares or reads no other `--ds-…` property than the tokens and the documented ones; and that the readme of each component has a Styling section and lists its documented properties (regenerated by `npm run build`).
 
 `npm test` runs them once, `npm run test.watch` on every change. Spec files are not part of the build output (`dist/`, `www/`, `loader/`). End-to-end tests (`*.e2e.ts`, `npm run test:e2e`) need Puppeteer's Chromium, so `npm ci` must run without `PUPPETEER_SKIP_DOWNLOAD`.
 
