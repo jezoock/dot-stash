@@ -44,6 +44,11 @@ $colors: (
   shadow: (
     base: rgba(15, 23, 42, 0.16),
   ),
+  // Position indicators: the dots of a slider menu, the current one active.
+  indicator: (
+      base: #283583,
+      active: #e1388c,
+    ),
 ) !default;
 
 // *** COLORSETS *** //

@@ -85,7 +85,10 @@ describe('ds-sidebar', () => {
     expect(page.root).toHaveAttribute('h-pos');
     expect(page.root).not.toHaveAttribute('from');
     expect(stylesheet).not.toContain('[from=');
-    expect(stylesheet).toMatch(/transition:\s*transform ease 0\.4s,\s*visibility 0s linear 0\.4s;/); // out of sight while it slides out on load
+    // Out of sight while it slides out on load: the visibility changes at the end of the slide.
+    expect(stylesheet).toMatch(
+      /transition:\s*transform ease var\(--ds-sidebar-transition-duration, 0\.4s\),\s*visibility 0s linear var\(--ds-sidebar-transition-duration, 0\.4s\);/,
+    );
     expect(stylesheet).toMatch(/ {2}&:not\(\[is-shown\]\) \{\s*transform: translate3d\(-100%, 0, 0\);/);
     expect(stylesheet).toMatch(/&\[h-pos='right'\]:not\(\[is-shown\]\) \{\s*transform: translate3d\(100%, 0, 0\);/);
   });

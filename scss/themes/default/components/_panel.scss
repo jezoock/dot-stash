@@ -1,12 +1,22 @@
 @use '../tokens' as *;
 
-// ds-panel: a collapsible panel (chevron), or a tab of ds-panel-group.
+// ds-panel: a collapsible panel (chevron), or a tab of ds-panel-group. Its custom properties are documented in
+// components/core/panel/readme.md.
+
+ds-panel {
+  --ds-panel-border-color: #{ds-color(gray, light)};
+  --ds-panel-tab-color: #{ds-color(gray, dark)};
+  --ds-panel-active-color: #{ds-color(primary, base)};
+  --ds-panel-title-font-size: #{ds-font-size(title, block-sub)};
+  --ds-panel-transition-duration: 0.4s;
+}
+
 .ds-panel {
   &__title {
     position: relative;
     padding: ds-spacing(3) ds-spacing(6) ds-spacing(3) 0;
     font-family: ds-font-family(title);
-    font-size: ds-font-size(title, block-sub);
+    font-size: var(--ds-panel-title-font-size);
     font-weight: ds-font-weight(title);
     cursor: pointer;
 
@@ -34,15 +44,15 @@
   }
 
   &.--collapsible {
-    border-bottom: 1px solid ds-color(gray, light);
+    border-bottom: 1px solid var(--ds-panel-border-color);
   }
 
   &.--tab {
     & > .ds-panel__title {
       margin-bottom: ds-spacing(4);
       padding: ds-spacing(2) ds-spacing(4);
-      border-bottom: 2px solid ds-color(gray, light);
-      color: ds-color(gray, dark);
+      border-bottom: 2px solid var(--ds-panel-border-color);
+      color: var(--ds-panel-tab-color);
 
       &::after {
         content: none;
@@ -50,8 +60,8 @@
     }
 
     &[expanded] > .ds-panel__title {
-      border-bottom-color: ds-color(primary, base);
-      color: ds-color(primary, base);
+      border-bottom-color: var(--ds-panel-active-color);
+      color: var(--ds-panel-active-color);
     }
   }
 }

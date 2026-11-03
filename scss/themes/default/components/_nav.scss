@@ -1,39 +1,52 @@
 @use '../tokens' as *;
 
 // ds-nav and ds-nav-item. Below md, the sub-navigations are collapsed (ds-nav-item animates their height) and
-// opened by the expand button; from md, they drop down on hover.
+// opened by the expand button; from md, they drop down on hover. These rules depend on the breakpoints: they are the
+// theme's, not the component stylesheets'. The custom properties are documented in components/core/nav/readme.md and
+// components/core/nav/nav-item/readme.md.
+
+ds-nav {
+  --ds-nav-gap: #{ds-spacing(2)};
+}
+
+ds-nav-item {
+  --ds-nav-item-color: #{ds-color(gray, darkest)};
+  --ds-nav-item-active-color: #{ds-color(primary, base)};
+  --ds-nav-item-padding: #{ds-spacing(3) ds-spacing(2)};
+  --ds-nav-item-border-color: #{ds-color(gray, light)};
+  --ds-nav-item-sub-nav-background: #{ds-color(gray, white)};
+  --ds-nav-item-sub-nav-shadow: 0 4px 12px #{ds-color(shadow, base)};
+}
 
 .ds-nav {
   @include break-p(md) {
     &.--main {
       display: flex;
       align-items: center;
-      gap: ds-spacing(2);
+      gap: var(--ds-nav-gap);
     }
   }
 }
 
 .ds-nav-item {
-  position: relative;
-
   &__link > a {
     display: block;
-    padding: ds-spacing(3) ds-spacing(2);
-    color: ds-color(gray, darkest);
+    padding: var(--ds-nav-item-padding);
+    color: var(--ds-nav-item-color);
     font-weight: ds-font-weight(button);
     text-decoration: none;
 
     &:hover {
-      color: ds-color(primary, base);
+      color: var(--ds-nav-item-active-color);
     }
   }
 
   &.--active > &__link > a {
-    color: ds-color(primary, base);
+    color: var(--ds-nav-item-active-color);
   }
 
   @include break-p(null, md) {
-    border-bottom: 1px solid ds-color(gray, light);
+    border-bottom: 1px solid var(--ds-nav-item-border-color);
 
     &__expand-button {
       position: absolute;
@@ -65,10 +78,10 @@
       z-index: 10;
       min-width: 100%;
       padding: ds-spacing(2) 0;
-      border: 1px solid ds-color(gray, light);
+      border: 1px solid var(--ds-nav-item-border-color);
       border-radius: ds-radius(md);
-      background-color: ds-color(gray, white);
-      box-shadow: 0 4px 12px ds-color(shadow, base);
+      background-color: var(--ds-nav-item-sub-nav-background);
+      box-shadow: var(--ds-nav-item-sub-nav-shadow);
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;

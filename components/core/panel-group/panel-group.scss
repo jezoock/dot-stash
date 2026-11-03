@@ -1,3 +1,7 @@
+// The structure of ds-panel-group: in tab mode, a wrapping row where the titles of its ds-panel elements come first and
+// their contents below them, one shown at a time. No look of its own, and no custom property: its panels carry the look
+// (see the --ds-panel-* custom properties).
+
 .ds-panel-group {
   &[type='tab'] {
     display: flex;

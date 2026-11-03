@@ -1,21 +1,23 @@
+// The structure of ds-slider-menu: a row of dots, one per item of its ds-slider, over the bottom of the slider; a click on
+// a dot shows its item. The dots are the look of the theme (components/_slider.scss), from the custom properties below.
+
+/**
+ * @prop --ds-slider-menu-offset: Vertical offset of the menu from its place below the slider (negative: over the slider).
+ * @prop --ds-slider-menu-dot-size: Width and height of a dot.
+ * @prop --ds-slider-menu-dot-gap: Space on each side of a dot.
+ * @prop --ds-slider-menu-dot-color: Color of a dot.
+ * @prop --ds-slider-menu-dot-active-color: Color of the dot of the current item (`--active`).
+ */
+
 .ds-slider-menu {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: -4rem 0 0 0;
+  margin: var(--ds-slider-menu-offset, -4rem) 0 0 0;
   position: relative;
   z-index: 1000;
   &__item {
-    margin: 0 0.5rem;
-    width: 1.125rem;
-    height: 1.125rem;
-    border-radius: 50%;
-    background-color: #283583;
     cursor: pointer;
-    transition: background-color ease 0.4s;
-    &.--active {
-      background-color: #e1388c;
-    }
   }
   &__label {
     display: none;

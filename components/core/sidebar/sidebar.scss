@@ -1,14 +1,37 @@
+// The structure of ds-sidebar: a fixed panel on its h-pos side of the screen and at its v-pos edge, as high as the screen,
+// that slides out of the screen when hidden; its content scrolls. The size, stack level and slide duration can be tuned
+// with the custom properties below; the look (padding, background, shadow) is in the theme (components/_sidebar.scss).
+
+/**
+ * @prop --ds-sidebar-width: Width of the sidebar.
+ * @prop --ds-sidebar-max-width: Maximum width of the sidebar.
+ * @prop --ds-sidebar-z-index: Stack level of the sidebar.
+ * @prop --ds-sidebar-transition-duration: Duration of the slide in and out (`sidebarShown` and `sidebarHidden` are emitted at its end).
+ * @prop --ds-sidebar-padding: Padding of the sidebar.
+ * @prop --ds-sidebar-background: Background of the sidebar.
+ * @prop --ds-sidebar-shadow: Shadow of the sidebar.
+ */
+
 ds-sidebar {
   position: fixed;
+  z-index: var(--ds-sidebar-z-index, auto);
+  width: var(--ds-sidebar-width, auto);
+  max-width: var(--ds-sidebar-max-width, none);
+  // show() sets the height that is left below the top of the sidebar.
+  height: 100%;
+  max-height: 100vh;
   // This stylesheet arrives with the component: a hidden sidebar then slides out of the screen once. The visibility
   // Stencil gives the component when it is ready (hidden until its hydrated class) changes at the end of that slide.
   transition:
-    transform ease 0.4s,
-    visibility 0s linear 0.4s;
+    transform ease var(--ds-sidebar-transition-duration, 0.4s),
+    visibility 0s linear var(--ds-sidebar-transition-duration, 0.4s);
   // Scrolling to the end of the sidebar does not scroll the page behind it.
   overscroll-behavior: contain;
 
   & .ds-sidebar__content {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
     overscroll-behavior: contain;
   }
 

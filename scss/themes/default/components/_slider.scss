@@ -1,34 +1,28 @@
 @use 'sass:color';
 @use '../tokens' as *;
 
-.ds-slider {
-  position: relative;
-  width: 100%;
+// ds-slider and ds-slider-menu: the previous / next buttons and the dots of the menu. The structure (the sliding list,
+// the place of the buttons and of the menu) is in the component stylesheets. The custom properties are documented in
+// components/core/slider/readme.md and components/core/slider/slider-menu/readme.md.
 
-  &__list {
-    width: 100%;
-  }
+ds-slider {
+  --ds-slider-transition-duration: 0.6s;
+  --ds-slider-button-offset: #{ds-spacing(2)};
+  --ds-slider-button-size: #{ds-spacing(7)};
+  --ds-slider-button-background: #{color.change(ds-color-value(gray, white), $alpha: 0.85)};
+  --ds-slider-button-border-color: #{ds-color(gray, light)};
+}
 
-  &__item img {
-    display: block;
-    width: 100%;
-  }
+ds-slider-menu {
+  --ds-slider-menu-offset: -4rem;
+  --ds-slider-menu-dot-size: 1.125rem;
+  --ds-slider-menu-dot-gap: #{ds-spacing(2)};
+  --ds-slider-menu-dot-color: #{ds-color(indicator, base)};
+  --ds-slider-menu-dot-active-color: #{ds-color(indicator, active)};
+}
 
-  &__prev-button,
-  &__next-button {
-    position: absolute;
-    top: 50%;
-    z-index: 10;
-    transform: translateY(-50%);
-  }
-
-  &__prev-button {
-    left: ds-spacing(2);
-  }
-
-  &__next-button {
-    right: ds-spacing(2);
-  }
+.ds-slider__item img {
+  display: block;
 }
 
 // The previous / next buttons (ds-trigger with the button skin): round, with a chevron drawn with borders.
@@ -36,12 +30,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: ds-spacing(7);
-  height: ds-spacing(7);
+  width: var(--ds-slider-button-size);
+  height: var(--ds-slider-button-size);
   padding: 0;
-  border-color: ds-color(gray, light);
+  border-color: var(--ds-slider-button-border-color);
   border-radius: ds-radius(circle);
-  background-color: color.change(ds-color-value(gray, white), $alpha: 0.85);
+  background-color: var(--ds-slider-button-background);
 
   &::before {
     content: '';
@@ -56,5 +50,19 @@
   &.--next::before {
     margin: 0 ds-spacing(1) 0 0;
     transform: rotate(-135deg);
+  }
+}
+
+// The dots of the menu.
+.ds-slider-menu__item {
+  margin: 0 var(--ds-slider-menu-dot-gap);
+  width: var(--ds-slider-menu-dot-size);
+  height: var(--ds-slider-menu-dot-size);
+  border-radius: ds-radius(circle);
+  background-color: var(--ds-slider-menu-dot-color);
+  transition: background-color ease 0.4s;
+
+  &.--active {
+    background-color: var(--ds-slider-menu-dot-active-color);
   }
 }

@@ -1,6 +1,11 @@
 # ds-panel-group
 
+## Styling
 
+- **Classes**: `ds-panel-group` on `<ds-panel-group>`; `mods` → `--<mod>`.
+- **Attributes** (reflected): `type` (`tab` or `collapsible`, given to its panels), `active` (`false`: the panels are all shown, as they are), `solo-content` (a collapsible group expands one panel at a time), `mods`.
+- **Structure** (`panel-group.scss`): a `tab` group is a wrapping flex row that clips its content: the titles of its panels in a row, the content of the expanded one below them.
+- **Look**: none, and no custom property: the `ds-panel` elements carry the look. Set their `--ds-panel-*` properties on them (`.faq ds-panel { … }`, see `ds-panel`).
 
 <!-- Auto Generated Below -->
 

@@ -1,0 +1,7 @@
+// The structure of ds-nav: a wrapper of ds-nav-item elements (the default slot), without a layout of its own. The row of a
+// main navigation, from the md breakpoint, is in the theme (components/_nav.scss): it depends on the breakpoints, which
+// the component stylesheets cannot read.
+
+/**
+ * @prop --ds-nav-gap: Space between the items of a `main` navigation, from the `md` breakpoint (where they are in a row).
+ */

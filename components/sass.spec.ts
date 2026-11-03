@@ -58,12 +58,17 @@ describe('Sass stylesheets', () => {
 
   // Sass writes a function it does not know as plain CSS, without a warning: a misspelled or removed token function, or a
   // color() of the former palette, would reach the browser, which drops the declaration. The component stylesheets are
-  // compiled by Stencil without the engine: they read no token at all (their colors are in the theme skins).
+  // compiled by Stencil without the engine: they read no token at all (their look is in the theme skins), only their
+  // component custom properties (--ds-<component>-…, see the styling contract below).
   it.each(entryPoints)('%s writes no undefined function call', file => {
     const { css } = sass.compile(path.join(root, file));
 
     expect(css).not.toMatch(/(?<![\w-])(color|snk-[\w-]+|ds-[\w-]+)\(/);
-    if (file.startsWith('components/')) expect(fs.readFileSync(path.join(root, file), 'utf8')).not.toMatch(/var\(--ds-|@use '[^']*(engine|themes)/);
+    if (file.startsWith('components/')) {
+      expect(fs.readFileSync(path.join(root, file), 'utf8')).not.toMatch(
+        /var\(--ds-(color|colorset|font-size|font-family|font-style|space|radius|bp|gradient)-|@use '[^']*(engine|themes)/,
+      );
+    }
   });
 
   // The configuration comes with the first load of the module: the theme then gets the configured tokens.
