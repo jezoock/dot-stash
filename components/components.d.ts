@@ -374,6 +374,13 @@ export namespace Components {
         "mods": string | string[];
         "name": string;
     }
+    /**
+     * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+     * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+     * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+     * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+     * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+     */
     interface DsSidebar {
         /**
           * @default true
@@ -384,7 +391,7 @@ export namespace Components {
          */
         "hPos": 'left' | 'right';
         /**
-          * Hide the sidebar (nothing happens when it is already hidden)
+          * Hide the sidebar (nothing happens when it is already hidden), and give the focus back to the element that had it before `show()`, when the focus is in the sidebar
          */
         "hide": () => Promise<void>;
         /**
@@ -392,12 +399,16 @@ export namespace Components {
          */
         "isShown": boolean;
         /**
+          * The accessible name of the sidebar (`aria-label`), which tells it from the other landmarks of the page.
+         */
+        "label": string;
+        /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods": string | string[];
         /**
-          * Show the sidebar (nothing happens when it is already shown)
+          * Show the sidebar (nothing happens when it is already shown), and move the focus into it
          */
         "show": () => Promise<void>;
         /**
@@ -904,6 +915,13 @@ declare global {
         "sidebarShow": any;
         "sidebarShown": any;
     }
+    /**
+     * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+     * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+     * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+     * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+     * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+     */
     interface HTMLDsSidebarElement extends Components.DsSidebar, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSidebarElementEventMap>(type: K, listener: (this: HTMLDsSidebarElement, ev: DsSidebarCustomEvent<HTMLDsSidebarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1418,6 +1436,13 @@ declare namespace LocalJSX {
         "name"?: string;
         "onValueChange"?: (event: DsSelectCustomEvent<any>) => void;
     }
+    /**
+     * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+     * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+     * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+     * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+     * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+     */
     interface DsSidebar {
         /**
           * @default true
@@ -1431,6 +1456,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "isShown"?: boolean;
+        /**
+          * The accessible name of the sidebar (`aria-label`), which tells it from the other landmarks of the page.
+         */
+        "label"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -1777,6 +1806,7 @@ declare namespace LocalJSX {
         "hPos": 'left' | 'right';
         "vPos": 'top' | 'bottom';
         "mods": string | string[];
+        "label": string;
     }
     interface DsSliderAttributes {
         "sliderId": string;
@@ -1933,6 +1963,13 @@ declare module "@stencil/core" {
              */
             "ds-rsp": LocalJSX.IntrinsicElements["ds-rsp"] & JSXBase.HTMLAttributes<HTMLDsRspElement>;
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            /**
+             * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+             * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+             * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+             * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+             * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+             */
             "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
             "ds-slider-item": LocalJSX.IntrinsicElements["ds-slider-item"] & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;

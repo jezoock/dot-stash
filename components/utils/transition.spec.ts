@@ -24,6 +24,12 @@ describe('transition', () => {
       expect(getTransitionTime(document.createElement('div'))).toBeCloseTo(time);
     });
 
+    it('returns 0 without a transition property', () => {
+      jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration: '0.4s', transitionDelay: '0s', transitionProperty: 'none' } as CSSStyleDeclaration);
+
+      expect(getTransitionTime(document.createElement('div'))).toBe(0);
+    });
+
     it('returns undefined without a computed transition (no CSS engine)', () => {
       expect(getTransitionTime(document.createElement('div'))).toBeUndefined();
     });

@@ -93,14 +93,14 @@
     transform: translate(-50%, -50%);
   }
 
-  // Less motion (after the position classes, which it overrides): the toaster shows and hides without fading or sliding
-  // in; show() and hide() then emit toasterShown and toasterHidden at once. (The base styles of a theme may shorten the
-  // transitions too.)
+  // Less motion (after the position classes, which it overrides): no transition and no animation, the toaster shows and
+  // hides at once, and show() and hide() emit toasterShown and toasterHidden at once. No property at all, rather than
+  // durations of 0, which the base styles of a theme may make 0.01ms.
   @media (prefers-reduced-motion: reduce) {
     &,
     &.--v-pos-top,
     &.--v-pos-bottom {
-      transition-duration: 0s;
+      transition-property: none;
       animation: none;
     }
   }

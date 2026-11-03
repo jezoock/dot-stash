@@ -21,7 +21,8 @@ const toMs = (time: string): number => {
 /**
  * The end of the longest transition of an element, in ms from its start: the largest duration + delay of its computed
  * `transition-duration` and `transition-delay` lists (the shorter list repeated, as CSS does). `0` when no transition
- * runs; `undefined` when the computed style has no transition at all (no CSS engine, as in the spec tests).
+ * runs (`transition-property: none` too); `undefined` when the computed style has no transition at all (no CSS engine,
+ * as in the spec tests).
  */
 export const getTransitionTime = (element: Element): number | undefined => {
   const style = typeof window.getComputedStyle === 'function' ? window.getComputedStyle(element) : undefined;
@@ -29,6 +30,10 @@ export const getTransitionTime = (element: Element): number | undefined => {
 
   if (typeof durations !== 'string' || durations.trim() === '') {
     return undefined;
+  }
+
+  if (style.transitionProperty?.trim() === 'none') {
+    return 0;
   }
 
   const durationList = durations.split(',').map(toMs);

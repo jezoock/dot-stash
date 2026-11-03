@@ -1,13 +1,14 @@
 // The structure of ds-sidebar: a fixed panel on its h-pos side of the screen and at its v-pos edge, as high as the screen,
-// that slides out of the screen when hidden; its content scrolls. The size, stack level and slide duration can be tuned
-// with the custom properties below; the look (padding, background, shadow) is in the theme (components/_sidebar.scss).
+// that slides out of the screen when hidden, then is not rendered (visibility: hidden); its content scrolls. The size,
+// stack level and slide duration can be tuned with the custom properties below; the look (padding, background, shadow)
+// is in the theme (components/_sidebar.scss).
 
 /**
  * @prop --ds-sidebar-width: Width of the sidebar.
  * @prop --ds-sidebar-max-width: Maximum width of the sidebar.
  * @prop --ds-sidebar-z-index: Stack level of the sidebar.
  * @prop --ds-sidebar-transition-duration: Duration of the slide in and out (`sidebarShown` and `sidebarHidden` are emitted at its end).
- * @prop --ds-sidebar-padding: Padding of the sidebar.
+ * @prop --ds-sidebar-padding: Padding of the sidebar, inside its scrolling content.
  * @prop --ds-sidebar-background: Background of the sidebar.
  * @prop --ds-sidebar-shadow: Shadow of the sidebar.
  */
@@ -20,20 +21,13 @@ ds-sidebar {
   // show() sets the height that is left below the top of the sidebar.
   height: 100%;
   max-height: 100vh;
-  // This stylesheet arrives with the component: a hidden sidebar then slides out of the screen once. The visibility
-  // Stencil gives the component when it is ready (hidden until its hydrated class) changes at the end of that slide.
+  // Hiding: the sidebar becomes hidden (visibility, below) at the end of the slide out. (This stylesheet arrives with the
+  // component: a hidden sidebar then slides out of the screen once, hidden.)
   transition:
     transform ease var(--ds-sidebar-transition-duration, 0.4s),
     visibility 0s linear var(--ds-sidebar-transition-duration, 0.4s);
   // Scrolling to the end of the sidebar does not scroll the page behind it.
   overscroll-behavior: contain;
-
-  // Less motion: the sidebar shows and hides without sliding; show() and hide() then emit sidebarShown and sidebarHidden
-  // at once. (The base styles of a theme may shorten the transitions too.)
-  @media (prefers-reduced-motion: reduce) {
-    transition-duration: 0s;
-    transition-delay: 0s;
-  }
 
   & .ds-sidebar__content {
     height: 100%;
@@ -41,19 +35,41 @@ ds-sidebar {
     overscroll-behavior: contain;
   }
 
-  // The isShown property is reflected as the is-shown attribute.
+  // The isShown property is reflected as the is-shown attribute. Showing: the sidebar is visible at once, then slides in.
   &[is-shown] {
     transform: translate3d(0, 0, 0);
+    transition:
+      transform ease var(--ds-sidebar-transition-duration, 0.4s),
+      visibility 0s linear 0s;
   }
 
   // Hidden, the sidebar is out of the screen on its side (the reflected hPos property, left by default: also before
-  // the first render reflects it, so that it does not slide out on load). show() slides it in.
+  // the first render reflects it, so that it does not slide out on load), and not rendered once it is there: its
+  // content can neither take the focus nor be read by screen readers (the component makes it inert at once). Over the
+  // visibility Stencil gives the component when it is ready (its hydrated class). show() slides it in.
   &:not([is-shown]) {
     transform: translate3d(-100%, 0, 0);
+    visibility: hidden;
   }
 
   &[h-pos='right']:not([is-shown]) {
     transform: translate3d(100%, 0, 0);
+  }
+
+  // Less motion (after the rules above, which it overrides): no transition, the sidebar shows and hides at once, and
+  // show() and hide() emit sidebarShown and sidebarHidden at once (no property at all rather than durations of 0, which
+  // the base styles of a theme may make 0.01ms). Its visibility does not change either: with the 0.01ms transitions such
+  // base styles give every element, its content would stay hidden a moment once it is shown, and could not take the
+  // focus then. Hidden, it is out of the screen and inert.
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &[is-shown] {
+      transition-property: none;
+    }
+
+    &:not([is-shown]) {
+      visibility: inherit;
+    }
   }
 
   &[v-pos='top'] {

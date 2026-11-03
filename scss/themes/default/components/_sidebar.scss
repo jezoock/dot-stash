@@ -14,7 +14,11 @@ ds-sidebar {
 }
 
 .ds-sidebar {
-  padding: var(--ds-sidebar-padding);
   background-color: var(--ds-sidebar-background);
   box-shadow: var(--ds-sidebar-shadow);
+
+  // The padding is inside the scrolling content: the focus indicator of the elements at its edges is not cut.
+  & > .ds-sidebar__content {
+    padding: var(--ds-sidebar-padding);
+  }
 }
