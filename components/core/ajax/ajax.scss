@@ -1,0 +1,30 @@
+// The structure of ds-ajax: while it loads (`--is-loading`), an overlay (`::before`) covers it and takes the pointer, and
+// a loading indicator (`::after`) is in its center. The veil and the indicator (a spinning glyph of the icon font) are the
+// look of the theme (components/_ajax.scss), from the custom properties below.
+
+/**
+ * @prop --ds-ajax-overlay-background: Background of the overlay that covers the content while it loads.
+ * @prop --ds-ajax-spinner-color: Color of the loading indicator.
+ * @prop --ds-ajax-spinner-size: Size of the loading indicator (its font size).
+ */
+
+.ds-ajax {
+  &.--is-loading {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 11;
+      margin: -0.5em 0 0 -0.5em;
+    }
+  }
+}

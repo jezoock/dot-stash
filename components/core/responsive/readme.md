@@ -1,6 +1,8 @@
 # ds-rsp
 
+## Styling
 
+`<ds-rsp>` renders nothing: an empty element, without class, stylesheet or custom property. It reads the breakpoints of the theme from its `--ds-bp-*` tokens (see [Breakpoints shared with JavaScript](../../../README.md#breakpoints-shared-with-javascript)), or from its `breakpoints` attribute.
 
 <!-- Auto Generated Below -->
 

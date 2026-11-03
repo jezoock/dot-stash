@@ -33,8 +33,16 @@ $-icon-types: (
   loading: arrows-cw,
 );
 
+// The size and color of the icons (documented in components/core/icon/readme.md): by default, those of the text.
+ds-icon {
+  --ds-icon-size: 1em;
+  --ds-icon-color: currentColor;
+}
+
 .ds-icon {
   display: inline-block;
+  font-size: var(--ds-icon-size);
+  color: var(--ds-icon-color);
   line-height: 1;
   vertical-align: middle;
 

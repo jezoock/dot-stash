@@ -1,0 +1,7 @@
+// ds-icon has no structure of its own: it is a glyph of the icon font of the theme (components/_icon.scss), drawn in its
+// `::before` (the `type` gives the glyph, `--<type>`). Its size and color are the custom properties below.
+
+/**
+ * @prop --ds-icon-size: Size of the icon (its font size).
+ * @prop --ds-icon-color: Color of the icon.
+ */

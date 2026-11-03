@@ -9,6 +9,7 @@ import { get as ajaxGet } from '../../utils/ajax';
 
 @Component({
   tag: 'ds-ajax',
+  styleUrl: 'ajax.scss',
 })
 export class DSAjax {
   @Element() hostContainer: HTMLElement;

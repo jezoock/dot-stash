@@ -1,27 +1,24 @@
 @use 'sass:color';
 @use '../tokens' as *;
 
-// While loading: a translucent overlay and a spinning icon.
+// ds-ajax: while loading, a translucent veil and a spinning icon. The custom properties are documented in
+// components/core/ajax/readme.md; the overlay and the place of the indicator are in the component stylesheet.
+
+ds-ajax {
+  --ds-ajax-overlay-background: #{color.change(ds-color-value(gray, white), $alpha: 0.6)};
+  --ds-ajax-spinner-color: #{ds-color(primary, base)};
+  --ds-ajax-spinner-size: #{ds-font-size(title, page-main)};
+}
+
 .ds-ajax {
   &.--is-loading {
-    position: relative;
-
     &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      background-color: color.change(ds-color-value(gray, white), $alpha: 0.6);
+      background-color: var(--ds-ajax-overlay-background);
     }
 
     &::after {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 11;
-      margin: -0.5em 0 0 -0.5em;
-      color: ds-color(primary, base);
-      font-size: ds-font-size(title, page-main);
+      color: var(--ds-ajax-spinner-color);
+      font-size: var(--ds-ajax-spinner-size);
       line-height: 1;
       @include ds-icon(arrows-cw);
       @include spin();

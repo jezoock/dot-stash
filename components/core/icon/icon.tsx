@@ -2,6 +2,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
 
 @Component({
   tag: 'ds-icon',
+  styleUrl: 'icon.scss',
 })
 export class DSIcon {
   @Prop() type: string;
