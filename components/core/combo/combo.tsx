@@ -1,6 +1,8 @@
 import { Component, Element, Event, EventEmitter, h, Method, Prop, State, Watch } from '@stencil/core';
 import uuid from '../../utils/uuid';
 import { toClassList } from '../../utils/props';
+import { getFocusedElement } from '../../utils/focus';
+import { COMBO_PAGE_SIZE, COMBO_TYPE_AHEAD_DELAY } from './combo.constants';
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from './combo.types';
 
 /** Parses a JSON string prop; an invalid JSON string is logged and gives `undefined`. */
@@ -28,6 +30,9 @@ const isSameJSON = (value: unknown, otherValue: unknown): boolean => {
 /** An option can be selected unless it is disabled or its value is an empty string (a placeholder). */
 const isSelectable = (option: DSOption | undefined): boolean => !!option && !option.disabled && option.value !== '';
 
+/** The keys move to the options that can be activated: not disabled, and selectable or links. The others are `aria-disabled`. */
+const isActivatable = (option: DSOption | undefined): boolean => !!option && !option.disabled && (isSelectable(option) || !!option.url);
+
 const findOptionIndex = (options: DSOption[], selection: DSComboSelection): number => {
   if (typeof selection.index === 'number') {
     return selection.index >= 0 && selection.index < options.length ? selection.index : -1;
@@ -47,6 +52,10 @@ const findOptionIndex = (options: DSOption[], selection: DSComboSelection): numb
  * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
  * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
  * `ds-trigger`). A click outside the component closes the list.
+ * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+ * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+ * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+ * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
  */
 @Component({
   tag: 'ds-combo',
@@ -91,27 +100,47 @@ export class DSCombo {
   @Prop({ mutable: true }) selectedOptions: DSOption[] = [];
   /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
+  /**
+   * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list.
+   * Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
+   */
+  @Prop() label: string;
+  /** The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list. */
+  @Prop() labelledby: string;
 
   @State() isOpen = false;
   @State() optionsArray: DSOption[] = [];
+  /** The option the keys move and select (`aria-activedescendant`, `--active`) while the list is open; -1 for none. */
+  @State() activeIndex = -1;
+
+  /** The combobox (the toggle button) and the list, once rendered. */
+  private button: HTMLButtonElement;
+  private list: HTMLElement;
+  /** `dropdown` mode: the element that had the focus when the list was opened, which gets it back. */
+  private returnFocusElement: HTMLElement | null = null;
+  /** `dropdown` mode: the focus moves to the list once it is rendered open. */
+  private needsListFocus = false;
+  /** The characters typed in a row, and the timer that ends the search. */
+  private typeAheadText = '';
+  private typeAheadTimer: ReturnType<typeof setTimeout>;
+  /** The active option the list was last scrolled to. */
+  private scrolledIndex = -1;
 
   /** Emitted when the user selects an option (or toggles it, in a multiple combo). See `DSComboSelectedEventDetail`. */
   @Event() optionSelected: EventEmitter<DSComboSelectedEventDetail>;
 
   //#region METHODS
 
-  /** Opens the list. */
+  /** Opens the list. In `dropdown` mode, it moves the focus to the list. */
   @Method()
   async open() {
-    this.isOpen = true;
-    this.listenToOutsideClicks();
+    this.openList();
   }
 
-  /** Closes the list. */
+  /** Closes the list. When the focus is in the list (`dropdown` mode), it goes back to the element that had it before. */
   @Method()
   async close() {
-    this.isOpen = false;
-    this.stopListeningToOutsideClicks();
+    this.closeList(false);
   }
 
   /** Opens the list if it is closed and closes it if it is open, or opens (`true`) or closes (`false`) it. */
@@ -157,6 +186,15 @@ export class DSCombo {
 
   disconnectedCallback() {
     this.stopListeningToOutsideClicks();
+    this.clearTypeAhead();
+  }
+
+  componentDidRender() {
+    if (this.needsListFocus && this.isOpen && this.list) {
+      this.needsListFocus = false;
+      this.list.focus({ preventScroll: true });
+    }
+    this.scrollToActiveOption();
   }
 
   //#endregion
@@ -184,11 +222,23 @@ export class DSCombo {
     }
 
     this.setOptions(options);
+    this.activeIndex = this.isOpen ? this.getInitialActiveIndex() : -1;
   }
 
   setOptions(options: DSOption[]) {
     this.optionsArray = options;
     this.selectedOptions = options.filter(option => option.selected).map(option => ({ ...option }));
+  }
+
+  /** The indexes of the options the keys move to, in the list order. */
+  getActivatableIndexes(): number[] {
+    return this.optionsArray.filter(isActivatable).map(option => option.index);
+  }
+
+  /** The active option when the list opens: the (first) selected option, else the first option the keys move to. */
+  getInitialActiveIndex(): number {
+    const indexes = this.getActivatableIndexes();
+    return indexes.find(index => this.optionsArray[index].selected) ?? indexes[0] ?? -1;
   }
 
   /** Selects the option (or toggles it, in a multiple combo) and emits `optionSelected`. Returns `false` for an option that cannot be selected. */
@@ -213,6 +263,238 @@ export class DSCombo {
 
   //#endregion
 
+  //#region OPEN AND CLOSE
+
+  /** Opens the list (once), its active option on the selected one; `activeIndex` moves the active option. */
+  openList(activeIndex?: number) {
+    if (!this.isOpen) {
+      if (this.mode === 'dropdown') {
+        const focused = getFocusedElement();
+        this.returnFocusElement = focused && !this.host.contains(focused) ? focused : null;
+        this.needsListFocus = true;
+      }
+      this.isOpen = true;
+      this.activeIndex = this.getInitialActiveIndex();
+    }
+    if (activeIndex !== undefined && activeIndex > -1) {
+      this.activeIndex = activeIndex;
+    }
+    this.listenToOutsideClicks();
+  }
+
+  /**
+   * Closes the list. The focus goes to the opener (the combobox, or in `dropdown` mode the element that had it before
+   * the list opened) with `restoreFocus`, and always when it is in the list, which is removed or hidden.
+   */
+  closeList(restoreFocus: boolean) {
+    const focused = getFocusedElement();
+    const mustFocusOpener = restoreFocus || (!!focused && !!this.list?.contains(focused));
+    const opener = this.mode === 'dropdown' ? this.returnFocusElement : this.button;
+
+    this.isOpen = false;
+    this.activeIndex = -1;
+    this.needsListFocus = false;
+    this.returnFocusElement = null;
+    this.stopListeningToOutsideClicks();
+    this.clearTypeAhead();
+
+    if (mustFocusOpener && opener?.isConnected && opener !== focused) {
+      opener.focus();
+    }
+  }
+
+  /** Whether the focus is in the combo or nowhere (the body): the keys or a click in the combo. */
+  isFocusInCombo(): boolean {
+    const focused = getFocusedElement();
+    return !focused || this.host.contains(focused);
+  }
+
+  /** Keeps the active option in view in a list that scrolls, without scrolling the page. */
+  scrollToActiveOption() {
+    if (!this.isOpen || this.activeIndex < 0) {
+      this.scrolledIndex = -1;
+      return;
+    }
+    const option = this.list?.querySelector<HTMLElement>(`[id="${this.optionId(this.activeIndex)}"]`);
+
+    if (!option || this.scrolledIndex === this.activeIndex) {
+      return;
+    }
+    this.scrolledIndex = this.activeIndex;
+    const list = this.list;
+    if (option.offsetTop < list.scrollTop) {
+      list.scrollTop = option.offsetTop;
+    } else if (option.offsetTop + option.offsetHeight > list.scrollTop + list.clientHeight) {
+      list.scrollTop = option.offsetTop + option.offsetHeight - list.clientHeight;
+    }
+  }
+
+  //#endregion
+
+  //#region KEYBOARD
+
+  /** Moves the active option by `delta` options the keys move to (Page Up and Page Down: by 10), stopping at the ends. */
+  moveActiveOption(delta: number) {
+    const indexes = this.getActivatableIndexes();
+    const position = indexes.indexOf(this.activeIndex);
+
+    if (!indexes.length) {
+      return;
+    }
+    if (position < 0) {
+      this.activeIndex = delta > 0 ? indexes[0] : indexes[indexes.length - 1];
+    } else {
+      this.activeIndex = indexes[Math.min(Math.max(position + delta, 0), indexes.length - 1)];
+    }
+  }
+
+  /**
+   * Type-ahead: the characters typed in a row (less than `COMBO_TYPE_AHEAD_DELAY` apart) move the active option to the next
+   * option whose name starts with them; the same character typed again goes round the options that start with it.
+   */
+  typeAhead(character: string) {
+    clearTimeout(this.typeAheadTimer);
+    this.typeAheadTimer = setTimeout(() => (this.typeAheadText = ''), COMBO_TYPE_AHEAD_DELAY);
+    this.typeAheadText += character.toLowerCase();
+
+    const text = this.typeAheadText;
+    const indexes = this.getActivatableIndexes();
+    const position = indexes.indexOf(this.activeIndex);
+    // A new search starts after the active option, a search that goes on from it (it may still match).
+    const start = position < 0 ? 0 : position + (text.length > 1 ? 0 : 1);
+    const ordered = [...indexes.slice(start), ...indexes.slice(0, start)];
+    const startingWith = (prefix: string) => ordered.filter(index => (this.optionsArray[index].name ?? '').trim().toLowerCase().startsWith(prefix));
+    const matches = startingWith(text);
+    // The same character typed again ("bb", no option starts with it): the next option that starts with the character.
+    const isSameCharacter = [...text].every(other => other === text[0]);
+    const [match] = matches.length || !isSameCharacter ? matches : startingWith(text[0]).filter(index => index !== this.activeIndex);
+
+    if (match !== undefined) {
+      this.activeIndex = match;
+    }
+  }
+
+  clearTypeAhead() {
+    clearTimeout(this.typeAheadTimer);
+    this.typeAheadText = '';
+  }
+
+  /** Enter or Space on the active option: as a click on it, on its link for a link option (it is followed). */
+  activateOption(index: number) {
+    const option = this.optionsArray[index];
+
+    if (!isActivatable(option)) {
+      return;
+    }
+    if (option.url) {
+      this.list?.querySelector<HTMLElement>(`[id="${this.optionId(index)}"] > a`)?.click();
+    } else {
+      this.chooseOption(option);
+    }
+  }
+
+  /**
+   * The keys of the combobox, and of the list in `dropdown` mode. Closed: Down, Up, Enter and Space open the list, Home
+   * and End open it on the first or the last option, a character on the option it starts. Open: see the readme.
+   */
+  keyDownHandler = (event: KeyboardEvent) => {
+    const { key, altKey, ctrlKey, metaKey } = event;
+    const isCharacter = key.length === 1 && key !== ' ' && !altKey && !ctrlKey && !metaKey;
+
+    if (ctrlKey || metaKey) {
+      return;
+    }
+
+    if (!this.isOpen) {
+      const indexes = this.getActivatableIndexes();
+      const activeIndex = { Home: indexes[0], End: indexes[indexes.length - 1] }[key];
+
+      if (['ArrowDown', 'ArrowUp', 'Enter', ' ', 'Home', 'End'].includes(key) || isCharacter) {
+        event.preventDefault();
+        this.openList(activeIndex);
+        if (isCharacter) {
+          this.typeAhead(key);
+        }
+      }
+      return;
+    }
+
+    switch (key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        if (!altKey) {
+          this.moveActiveOption(1);
+        }
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        if (altKey) {
+          // Alt+Up selects the active option and closes the list, as Tab.
+          this.selectOnClose();
+          this.closeList(true);
+        } else {
+          this.moveActiveOption(-1);
+        }
+        break;
+      case 'Home':
+      case 'End': {
+        event.preventDefault();
+        const indexes = this.getActivatableIndexes();
+        if (indexes.length) {
+          this.activeIndex = key === 'Home' ? indexes[0] : indexes[indexes.length - 1];
+        }
+        break;
+      }
+      case 'PageUp':
+      case 'PageDown':
+        event.preventDefault();
+        this.moveActiveOption(key === 'PageUp' ? -COMBO_PAGE_SIZE : COMBO_PAGE_SIZE);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        if (!event.repeat) {
+          this.activateOption(this.activeIndex);
+        }
+        break;
+      case 'Escape':
+      case 'Esc':
+        // Closes the list only: a modal or a sidebar around the combo stays open.
+        event.preventDefault();
+        event.stopPropagation();
+        this.closeList(true);
+        break;
+      case 'Tab':
+        // The focus moves on (no preventDefault).
+        this.selectOnClose();
+        this.closeList(false);
+        break;
+      default:
+        if (isCharacter) {
+          event.preventDefault();
+          this.typeAhead(key);
+        }
+    }
+  };
+
+  /** A single combo selects its active option when the list is left with Tab or Alt+Up (not a link: it is not followed). */
+  selectOnClose() {
+    const option = this.optionsArray[this.activeIndex];
+
+    if (!this.multiple && isSelectable(option) && !option.url && !option.selected) {
+      this.selectOption(option.index);
+    }
+  }
+
+  /** Space opens the list on keydown: on keyup, the native button would be clicked, and close it. */
+  keyUpHandler = (event: KeyboardEvent) => {
+    if (event.key === ' ') {
+      event.preventDefault();
+    }
+  };
+
+  //#endregion
+
   //#region OUTSIDE CLICKS
 
   listenToOutsideClicks() {
@@ -234,7 +516,7 @@ export class DSCombo {
   documentClickHandler = (event: MouseEvent) => {
     // The path is computed at dispatch: it still holds the host if the clicked element was re-rendered since.
     if (!event.composedPath().includes(this.host)) {
-      this.close();
+      this.closeList(false);
     }
   };
 
@@ -243,7 +525,12 @@ export class DSCombo {
   };
 
   overlayClickHandler = () => {
-    this.close();
+    this.closeList(false);
+  };
+
+  /** A mouse down in the list does not move the focus: it stays on the combobox (or on the list, in `dropdown` mode). */
+  listMouseDownHandler = (event: MouseEvent) => {
+    event.preventDefault();
   };
 
   optionClickHandler(event: MouseEvent, option: DSOption) {
@@ -251,9 +538,23 @@ export class DSCombo {
       event.preventDefault();
       return;
     }
+    this.chooseOption(option);
+  }
+
+  /**
+   * Selects the option (toggles it in a multiple combo): a single combo closes, the focus on the opener; a multiple one
+   * stays open, the option active.
+   */
+  chooseOption(option: DSOption) {
     if (this.selectOption(option.index) && !this.multiple) {
-      this.close();
+      this.closeList(this.isFocusInCombo());
+    } else if (this.isOpen && isActivatable(option)) {
+      this.activeIndex = option.index;
     }
+  }
+
+  optionId(index: number): string {
+    return `${this.rootId}-option-${index}`;
   }
 
   //#endregion
@@ -273,6 +574,13 @@ export class DSCombo {
 
   render() {
     const isImageMode = this.mode === 'image';
+    const isDropdown = this.mode === 'dropdown';
+    const isListRendered = this.isOpen || isImageMode;
+    const listId = `${this.rootId}-listbox`;
+    const activeId = this.isOpen && this.optionsArray[this.activeIndex] ? this.optionId(this.activeIndex) : undefined;
+    // The name of the combobox and of the list: labelledby, else label, else custom-label, else name.
+    const labelledby = this.labelledby || undefined;
+    const label = labelledby ? undefined : this.label || this.customLabel || this.name || undefined;
 
     return (
       <div
@@ -286,33 +594,65 @@ export class DSCombo {
         }}
       >
         {this.overlay && this.isOpen && <div class="ds-combo__overlay" onClick={this.overlayClickHandler} />}
-        {this.mode !== 'dropdown' && (
-          <button type="button" class="ds-combo__selected-option" aria-expanded={this.isOpen ? 'true' : 'false'} onClick={this.toggleButtonClickHandler}>
+        {!isDropdown && (
+          <button
+            type="button"
+            class="ds-combo__selected-option"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-expanded={this.isOpen ? 'true' : 'false'}
+            aria-controls={isListRendered ? listId : undefined}
+            aria-activedescendant={activeId}
+            aria-label={label}
+            aria-labelledby={labelledby}
+            ref={element => (this.button = element)}
+            onClick={this.toggleButtonClickHandler}
+            onKeyDown={this.keyDownHandler}
+            onKeyUp={this.keyUpHandler}
+          >
             {this.renderToggleLabel()}
           </button>
         )}
-        {(this.isOpen || isImageMode) && (
-          <menu>
+        {isListRendered && (
+          <div class="ds-combo__menu">
             <ul
+              id={listId}
               class={{
                 'ds-combo__option-list': true,
                 '--hidden': !this.isOpen,
               }}
+              role="listbox"
+              aria-multiselectable={this.multiple ? 'true' : undefined}
+              aria-label={label}
+              aria-labelledby={labelledby}
+              // Out of the Tab order: a list that scrolls is a Tab stop in some browsers, and Tab closes the list. In
+              // dropdown mode, the list takes the focus from open(), and points to the active option.
+              tabindex="-1"
+              aria-activedescendant={isDropdown ? activeId : undefined}
+              ref={element => (this.list = element)}
+              onMouseDown={this.listMouseDownHandler}
+              onKeyDown={isDropdown ? this.keyDownHandler : undefined}
             >
               {this.optionsArray.map(option => (
                 <li
                   key={option.index}
+                  id={this.optionId(option.index)}
                   class={{
                     'ds-combo__option': true,
                     '--disabled': !!option.disabled,
                     '--selected': option.selected,
+                    '--active': this.isOpen && option.index === this.activeIndex,
                   }}
+                  role="option"
+                  aria-selected={option.selected ? 'true' : 'false'}
+                  aria-disabled={isActivatable(option) ? undefined : 'true'}
                   onClick={event => this.optionClickHandler(event, option)}
                 >
                   {/* The name follows the image: the image is decorative. */}
                   {isImageMode && option.image && <img src={option.image} alt="" />}
                   {option.url ? (
-                    <a href={option.disabled ? undefined : option.url} aria-disabled={option.disabled ? 'true' : undefined}>
+                    // Out of the Tab order: the keys activate the option, which follows the link.
+                    <a href={option.disabled ? undefined : option.url} tabindex="-1" aria-disabled={option.disabled ? 'true' : undefined}>
                       {option.name}
                     </a>
                   ) : (
@@ -321,7 +661,7 @@ export class DSCombo {
                 </li>
               ))}
             </ul>
-          </menu>
+          </div>
         )}
       </div>
     );

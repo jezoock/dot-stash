@@ -1,6 +1,7 @@
 // The structure of ds-combo: the toggle button (a native button, its browser styles reset) and the list of options, which
-// hangs from a menu below the button (above it with the top position), `--ds-combo-list-offset` away, above the page. The
-// button, the list and the options are the look of the theme (components/_combo.scss), from the custom properties below.
+// hangs from a wrapper (__menu) below the button (above it with the top position), `--ds-combo-list-offset` away, above the
+// page. The button, the list and the options are the look of the theme (components/_combo.scss), from the custom properties
+// below.
 
 /**
  * @prop --ds-combo-background: Background of the toggle button and of the list.
@@ -25,7 +26,7 @@
     text-overflow: ellipsis;
   }
 
-  & > menu {
+  &__menu {
     position: relative;
   }
 
@@ -44,9 +45,9 @@
     }
   }
 
-  // Above the toggle button: the list hangs from a menu placed at the top of the component.
+  // Above the toggle button: the list hangs from a wrapper placed at the top of the component.
   &.--position-top {
-    & > menu {
+    & > .ds-combo__menu {
       position: absolute;
       left: 0;
       right: 0;

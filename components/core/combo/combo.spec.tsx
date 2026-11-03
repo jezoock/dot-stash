@@ -2,6 +2,34 @@ import { h } from '@stencil/core';
 import { newSpecPage, SpecPage } from '@stencil/core/testing';
 import { DSCombo } from './combo';
 import { DSComboSelectedEventDetail, DSOption } from './combo.types';
+import { COMBO_TYPE_AHEAD_DELAY } from './combo.constants';
+
+/**
+ * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
+ * `activeElement`, which `focus()` sets, dispatching `focusout` and `focusin` as a browser does.
+ */
+const trackFocus = (page: SpecPage) => {
+  const focus: { active: HTMLElement | null } = { active: null };
+  let owner = Object.getPrototypeOf(page.body);
+  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
+
+  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
+    const previous = focus.active;
+    if (previous === this) return;
+    focus.active = this;
+    previous?.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: this }));
+    this.dispatchEvent(new FocusEvent('focusin', { bubbles: true, relatedTarget: previous }));
+  });
+  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
+
+  return () => page.doc.activeElement as HTMLElement;
+};
+
+const dispatchKey = (target: EventTarget, key: string, options: KeyboardEventInit = {}, type = 'keydown') => {
+  const event = new KeyboardEvent(type, { key, bubbles: true, cancelable: true, ...options });
+  target.dispatchEvent(event);
+  return event;
+};
 
 const colors: DSOption[] = [
   { name: 'Red', value: 'red' },
@@ -534,6 +562,457 @@ describe('ds-combo', () => {
       expect(root(page)).toHaveClass('--position-top');
       expect(root(page)).not.toHaveClass('--position-left');
       expect(page.root.getAttribute('position')).toBe('top');
+    });
+  });
+  describe('accessibility', () => {
+    const listOf = (page: SpecPage) => list(page) as HTMLElement;
+    /** The options as [name, aria-selected, aria-disabled], and whether the --active one is the active descendant. */
+    const optionStates = (page: SpecPage) => items(page).map(item => [item.textContent, item.getAttribute('aria-selected'), item.getAttribute('aria-disabled')]);
+    /** The name of the active option: the element the combobox (or the list, in dropdown mode) points to. */
+    const activeName = (page: SpecPage, owner: HTMLElement = toggleButton(page)) => {
+      const id = owner.getAttribute('aria-activedescendant');
+      const active = items(page).filter(item => item.classList.contains('--active'));
+      expect(active.map(item => item.id)).toEqual(id ? [id] : []);
+      return id ? page.doc.getElementById(id).textContent : null;
+    };
+
+    /** A combo with the focus on its combobox; `press()` dispatches a key on the focused element. */
+    const renderFocused = async (props: Record<string, unknown>) => {
+      const { page, events } = await renderWith(props);
+      const focused = trackFocus(page);
+      toggleButton(page)?.focus();
+      const press = async (key: string, options: KeyboardEventInit = {}) => {
+        const event = dispatchKey(focused(), key, options);
+        await page.waitForChanges();
+        return event;
+      };
+      return { page, events, focused, press };
+    };
+
+    const palette: DSOption[] = [
+      { name: 'Choose a color', value: '' },
+      { name: 'Red', value: 'red' },
+      { name: 'Green', value: 'green', disabled: true },
+      { name: 'Blue', value: 'blue' },
+      { name: 'Black', value: 'black' },
+    ];
+
+    it('renders a combobox that controls a listbox of options with ids, aria-selected and aria-disabled', async () => {
+      const { page } = await renderWith({ options: palette, selected: { value: 'blue' } });
+      const button = toggleButton(page);
+
+      expect([button.getAttribute('role'), button.getAttribute('aria-haspopup'), button.getAttribute('aria-expanded')]).toEqual(['combobox', 'listbox', 'false']);
+      // Closed: the list is not rendered, the combobox controls nothing yet.
+      expect(button.hasAttribute('aria-controls')).toBe(false);
+      expect(button.hasAttribute('aria-activedescendant')).toBe(false);
+
+      await click(page, button);
+      const listbox = listOf(page);
+
+      expect(button.getAttribute('aria-expanded')).toBe('true');
+      expect(button.getAttribute('aria-controls')).toBe(listbox.id);
+      expect(listbox.id).toBe(`${root(page).id}-listbox`);
+      // Out of the Tab order (a list that scrolls is a Tab stop in Chrome): the combobox keeps the focus and points to the option.
+      expect([listbox.tagName, listbox.getAttribute('role'), listbox.hasAttribute('aria-multiselectable'), listbox.getAttribute('tabindex')]).toEqual([
+        'UL',
+        'listbox',
+        false,
+        '-1',
+      ]);
+      expect(listbox.hasAttribute('aria-activedescendant')).toBe(false);
+      // A valid structure: the list hangs from a div (it was a menu holding a ul).
+      expect(page.root.querySelector('menu')).toBeNull();
+      expect(listbox.parentElement.tagName).toBe('DIV');
+      expect(listbox.parentElement).toHaveClass('ds-combo__menu');
+      expect(items(page).map(item => [item.getAttribute('role'), item.id])).toEqual(palette.map((_, index) => ['option', `${root(page).id}-option-${index}`]));
+      // The placeholder and the disabled option cannot be chosen.
+      expect(optionStates(page)).toEqual([
+        ['Choose a color', 'false', 'true'],
+        ['Red', 'false', null],
+        ['Green', 'false', 'true'],
+        ['Blue', 'true', null],
+        ['Black', 'false', null],
+      ]);
+      expect(activeName(page)).toBe('Blue');
+    });
+
+    it('a multiple combo has a multiselectable listbox', async () => {
+      const { page } = await renderWith({ options: colors, multiple: true, selected: { index: 1 } });
+
+      await click(page, toggleButton(page));
+
+      expect(listOf(page).getAttribute('aria-multiselectable')).toBe('true');
+      expect(optionStates(page).map(([, selected]) => selected)).toEqual(['false', 'true', 'false']);
+    });
+
+    it.each([
+      ['label', { label: 'Color', customLabel: 'Pick', name: 'color' }, 'Color', null],
+      ['labelledby', { labelledby: 'color-label', label: 'Color' }, null, 'color-label'],
+      ['custom-label', { customLabel: 'Pick', name: 'color' }, 'Pick', null],
+      ['name', { name: 'color' }, 'color', null],
+      ['nothing', {}, null, null],
+    ])('is named by %s (combobox and listbox)', async (_, props, ariaLabel, ariaLabelledby) => {
+      const { page } = await renderWith({ options: colors, ...props });
+
+      await click(page, toggleButton(page));
+
+      for (const element of [toggleButton(page), listOf(page)]) {
+        expect([element.getAttribute('aria-label'), element.getAttribute('aria-labelledby')]).toEqual([ariaLabel, ariaLabelledby]);
+      }
+    });
+
+    it.each(['Enter', ' ', 'ArrowDown', 'ArrowUp'])('%p opens the list on the selected option, without selecting', async key => {
+      const { page, events, press } = await renderFocused({ options: palette, selected: { value: 'blue' } });
+
+      expect((await press(key)).defaultPrevented).toBe(true);
+
+      expect(isOpen(page)).toBe(true);
+      expect(activeName(page)).toBe('Blue');
+      expect(events).toEqual([]);
+    });
+
+    it('opens on the first option that can be chosen without a selection, Home and End on the first and the last one', async () => {
+      const first = await renderFocused({ options: palette });
+      await first.press('ArrowDown');
+      expect(activeName(first.page)).toBe('Red');
+
+      const end = await renderFocused({ options: palette, selected: { value: 'red' } });
+      await end.press('End');
+      expect(activeName(end.page)).toBe('Black');
+
+      const home = await renderFocused({ options: palette, selected: { value: 'black' } });
+      await home.press('Home');
+      expect(activeName(home.page)).toBe('Red');
+    });
+
+    it('Space on the combobox does not click it on keyup (the native button would toggle the list again)', async () => {
+      const { page } = await renderFocused({ options: colors });
+
+      expect(dispatchKey(toggleButton(page), ' ', {}, 'keyup').defaultPrevented).toBe(true);
+    });
+
+    it('Down, Up, Home and End move the active option over the options that can be chosen, and stop at the ends', async () => {
+      const { page, press, events } = await renderFocused({ options: palette });
+
+      await press('ArrowDown');
+      expect(activeName(page)).toBe('Red');
+      expect((await press('ArrowDown')).defaultPrevented).toBe(true);
+      // Green is disabled.
+      expect(activeName(page)).toBe('Blue');
+      await press('ArrowDown');
+      await press('ArrowDown');
+      expect(activeName(page)).toBe('Black');
+      await press('ArrowUp');
+      expect(activeName(page)).toBe('Blue');
+      await press('Home');
+      expect(activeName(page)).toBe('Red');
+      // The placeholder is skipped too.
+      await press('ArrowUp');
+      expect(activeName(page)).toBe('Red');
+      await press('End');
+      expect(activeName(page)).toBe('Black');
+
+      expect(isOpen(page)).toBe(true);
+      expect(events).toEqual([]);
+    });
+
+    it('Page Down and Page Up move the active option by 10, stopping at the ends', async () => {
+      const options = Array.from({ length: 25 }, (_, index) => ({ name: `Option ${index}`, value: `${index}` }));
+      const { page, press } = await renderFocused({ options });
+
+      await press('ArrowDown');
+      await press('PageDown');
+      expect(activeName(page)).toBe('Option 10');
+      await press('PageDown');
+      await press('PageDown');
+      expect(activeName(page)).toBe('Option 24');
+      await press('PageUp');
+      expect(activeName(page)).toBe('Option 14');
+      await press('PageUp');
+      await press('PageUp');
+      expect(activeName(page)).toBe('Option 0');
+    });
+
+    it('type-ahead: typed characters move to the next option they start, the same one repeated goes round them', async () => {
+      const options = ['Blue', 'Gray', 'Green', 'Black', 'Brown'].map(name => ({ name, value: name.toLowerCase() }));
+      const { page, press } = await renderFocused({ options });
+
+      // Closed: the character opens the list on the option it starts.
+      expect((await press('g')).defaultPrevented).toBe(true);
+      expect([isOpen(page), activeName(page)]).toEqual([true, 'Gray']);
+      // "gr" still matches Gray, "gre" Green.
+      await press('r');
+      expect(activeName(page)).toBe('Gray');
+      await press('E');
+      expect(activeName(page)).toBe('Green');
+
+      page.rootInstance.clearTypeAhead();
+      await press('b');
+      expect(activeName(page)).toBe('Black');
+      await press('b');
+      expect(activeName(page)).toBe('Brown');
+      await press('b');
+      expect(activeName(page)).toBe('Blue');
+      // No match: the active option stays.
+      await press('z');
+      expect(activeName(page)).toBe('Blue');
+    });
+
+    it(`type-ahead: a character typed ${COMBO_TYPE_AHEAD_DELAY} ms after the last one starts a new search`, async () => {
+      const options = ['Red', 'Gray', 'Green'].map(name => ({ name, value: name.toLowerCase() }));
+      const { page, press } = await renderFocused({ options });
+
+      await press('g');
+      await press('r');
+      expect(activeName(page)).toBe('Gray');
+      await new Promise(resolve => setTimeout(resolve, COMBO_TYPE_AHEAD_DELAY + 50));
+      await press('r');
+      expect(activeName(page)).toBe('Red');
+    });
+
+    it.each(['Enter', ' '])('%p selects the active option of a single combo, closes the list and keeps the focus on the combobox', async key => {
+      const { page, events, press, focused } = await renderFocused({ name: 'color', options: palette });
+
+      await press('ArrowDown');
+      await press('ArrowDown');
+      expect((await press(key)).defaultPrevented).toBe(true);
+
+      expect(isOpen(page)).toBe(false);
+      expect(label(page)).toBe('Blue');
+      expect(events.map(event => event.option.name)).toEqual(['Blue']);
+      expect(focused()).toBe(toggleButton(page));
+      expect(toggleButton(page).hasAttribute('aria-activedescendant')).toBe(false);
+    });
+
+    it('Enter and Space toggle the active option of a multiple combo and keep the list open', async () => {
+      const { page, events, press } = await renderFocused({ name: 'colors', options: colors, multiple: true });
+
+      await press('ArrowDown');
+      await press(' ');
+      await press('ArrowDown');
+      await press('Enter');
+      expect([isOpen(page), selectedNames(page), label(page)]).toEqual([true, ['Red', 'Green'], 'colors (2)']);
+
+      await press(' ');
+      expect(selectedNames(page)).toEqual(['Red']);
+      expect(activeName(page)).toBe('Green');
+      expect(events.map(event => [event.option.name, event.option.selected])).toEqual([
+        ['Red', true],
+        ['Green', true],
+        ['Green', false],
+      ]);
+
+      // A key held down does not repeat.
+      await press(' ', { repeat: true });
+      expect(selectedNames(page)).toEqual(['Red']);
+    });
+
+    it('Escape closes the list without selecting, keeps the focus, and goes no further; closed, it is left to the page', async () => {
+      const { page, events, press, focused } = await renderFocused({ options: colors, selected: { index: 0 } });
+      const pageKeys: string[] = [];
+      page.body.addEventListener('keydown', (event: KeyboardEvent) => pageKeys.push(event.key));
+
+      await press('ArrowDown');
+      await press('ArrowDown');
+      expect((await press('Escape')).defaultPrevented).toBe(true);
+
+      expect([isOpen(page), selectedNames(page), events]).toEqual([false, ['Red'], []]);
+      expect(focused()).toBe(toggleButton(page));
+      expect(pageKeys).toEqual(['ArrowDown', 'ArrowDown']);
+
+      expect((await press('Escape')).defaultPrevented).toBe(false);
+      expect(pageKeys).toEqual(['ArrowDown', 'ArrowDown', 'Escape']);
+    });
+
+    it('Tab closes the list, selecting the active option of a single combo, and lets the focus move on', async () => {
+      const single = await renderFocused({ options: colors, selected: { index: 0 } });
+      await single.press('ArrowDown');
+      await single.press('ArrowDown');
+      expect((await single.press('Tab')).defaultPrevented).toBe(false);
+      expect([isOpen(single.page), selectedNames(single.page), single.events.length]).toEqual([false, ['Green'], 1]);
+
+      // On the selected option: no new event.
+      await single.press('ArrowDown');
+      await single.press('Tab');
+      expect(single.events.length).toBe(1);
+
+      const multiple = await renderFocused({ options: colors, multiple: true });
+      await multiple.press('ArrowDown');
+      await multiple.press('Tab');
+      expect([isOpen(multiple.page), selectedNames(multiple.page)]).toEqual([false, []]);
+    });
+
+    it('Alt+Up selects the active option and closes the list, Alt+Down opens it; Ctrl and Meta are left to the browser', async () => {
+      const { page, press } = await renderFocused({ options: colors });
+
+      await press('ArrowDown', { altKey: true });
+      expect(isOpen(page)).toBe(true);
+      await press('ArrowDown', { altKey: true });
+      expect(activeName(page)).toBe('Red');
+      await press('ArrowDown');
+      await press('ArrowUp', { altKey: true });
+      expect([isOpen(page), selectedNames(page)]).toEqual([false, ['Green']]);
+
+      expect((await press('ArrowDown', { ctrlKey: true })).defaultPrevented).toBe(false);
+      expect((await press('a', { metaKey: true })).defaultPrevented).toBe(false);
+      expect(isOpen(page)).toBe(false);
+    });
+
+    it('Enter on a link option clicks its link: the option is selected and the link followed; the links are out of the Tab order', async () => {
+      const options = [
+        { name: 'Home', value: 'home', url: '/home' },
+        { name: 'Shop', value: 'shop', url: '/shop', disabled: true },
+        { name: 'Docs', value: '', url: '/docs' },
+      ];
+      const { page, press, events } = await renderFocused({ options });
+
+      await press('ArrowDown');
+      const links = items(page).map(item => item.querySelector('a'));
+      const linkClicks: string[] = [];
+      links.forEach(link => link.addEventListener('click', () => linkClicks.push(link.textContent)));
+      expect(links.map(link => link.getAttribute('tabindex'))).toEqual(['-1', '-1', '-1']);
+      // A link with an empty value is not selected, but it can be followed; the disabled one is skipped.
+      expect(optionStates(page).map(([, , disabled]) => disabled)).toEqual([null, 'true', null]);
+
+      await press('ArrowDown');
+      expect(activeName(page)).toBe('Docs');
+      await press('Enter');
+      expect(linkClicks).toEqual(['Docs']);
+      expect(events).toEqual([]);
+
+      await press('ArrowUp');
+      await press('Enter');
+      expect(linkClicks).toEqual(['Docs', 'Home']);
+      expect([isOpen(page), selectedNames(page)]).toEqual([false, ['Home']]);
+      expect(events).toHaveLength(1);
+    });
+
+    it('Tab and Alt+Up do not select a link option (it would not be followed)', async () => {
+      const { page, press } = await renderFocused({ options: [{ name: 'Home', value: 'home', url: '/home' }] });
+
+      await press('ArrowDown');
+      await press('Tab');
+
+      expect(page.root.selectedOptions).toEqual([]);
+    });
+
+    it('a mouse down in the list keeps the focus; a click on an option makes it active (multiple) or gives the focus back (single)', async () => {
+      const multiple = await renderFocused({ options: colors, multiple: true });
+      await multiple.press('ArrowDown');
+      const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+      items(multiple.page)[2].dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+      await click(multiple.page, items(multiple.page)[2]);
+      expect(activeName(multiple.page)).toBe('Blue');
+
+      const single = await renderFocused({ options: colors });
+      await click(single.page, toggleButton(single.page));
+      single.page.body.focus();
+      await click(single.page, items(single.page)[1]);
+      expect(single.focused()).toBe(toggleButton(single.page));
+    });
+
+    it('resets the active option when the options change while the list is open', async () => {
+      const { page, press } = await renderFocused({ options: colors });
+
+      await press('ArrowDown');
+      await press('End');
+      page.root.options = [{ name: 'Small', value: 's' }];
+      await page.waitForChanges();
+
+      expect(activeName(page)).toBe('Small');
+    });
+
+    describe('dropdown mode', () => {
+      const renderDropdown = async (props: Record<string, unknown> = {}) => {
+        const page = await newSpecPage({
+          components: [DSCombo],
+          template: () => (
+            <div>
+              <button id="opener">Menu</button>
+              <ds-combo mode="dropdown" label="Colors" options={colors} {...props}></ds-combo>
+            </div>
+          ),
+        });
+        pages.push(page);
+        const combo = page.body.querySelector('ds-combo');
+        const events: DSComboSelectedEventDetail[] = [];
+        combo.addEventListener('optionSelected', (event: CustomEvent<DSComboSelectedEventDetail>) => events.push(event.detail));
+        const focused = trackFocus(page);
+        const opener = page.body.querySelector('#opener') as HTMLElement;
+        opener.focus();
+        const listbox = () => combo.querySelector('.ds-combo__option-list') as HTMLElement;
+        const press = async (key: string) => {
+          const event = dispatchKey(focused(), key);
+          await page.waitForChanges();
+          return event;
+        };
+        const open = async () => {
+          await combo.open();
+          await page.waitForChanges();
+        };
+        return { page, combo, events, focused, opener, listbox, press, open };
+      };
+
+      const activeOf = (listbox: HTMLElement) => listbox.ownerDocument.getElementById(listbox.getAttribute('aria-activedescendant'))?.textContent;
+
+      it('open() moves the focus to the listbox, which takes the keys and points to the active option', async () => {
+        const { combo, focused, listbox, press, open } = await renderDropdown();
+
+        await open();
+
+        expect(focused()).toBe(listbox());
+        expect([listbox().getAttribute('role'), listbox().getAttribute('tabindex'), listbox().getAttribute('aria-label')]).toEqual(['listbox', '-1', 'Colors']);
+        expect(activeOf(listbox())).toBe('Red');
+        await press('ArrowDown');
+        expect(activeOf(listbox())).toBe('Green');
+        expect(combo.querySelector('button')).toBeNull();
+      });
+
+      it('a selection with Enter, or Escape, closes the list and gives the focus back to the element that had it', async () => {
+        const { combo, events, focused, opener, press, open } = await renderDropdown();
+
+        await open();
+        await press('ArrowDown');
+        await press('Enter');
+        expect([combo.firstElementChild.classList.contains('--open'), events.map(event => event.option.name)]).toEqual([false, ['Green']]);
+        expect(focused()).toBe(opener);
+
+        await open();
+        await press('Escape');
+        expect(combo.firstElementChild).not.toHaveClass('--open');
+        expect(focused()).toBe(opener);
+      });
+
+      it('Tab and close() give the focus back to the opener when it is in the list', async () => {
+        const { combo, focused, opener, page, open, press } = await renderDropdown();
+
+        await open();
+        await press('Tab');
+        expect(focused()).toBe(opener);
+
+        await open();
+        await combo.close();
+        await page.waitForChanges();
+        expect(focused()).toBe(opener);
+      });
+    });
+
+    it('image mode: the list, hidden while closed, is the listbox the combobox controls; its images are decorative', async () => {
+      const options = [
+        { name: 'Beach', value: 'beach', image: '/beach.jpg' },
+        { name: 'Forest', value: 'forest', image: '/forest.jpg' },
+      ];
+      const { page, press } = await renderFocused({ options, mode: 'image' });
+
+      expect(toggleButton(page).getAttribute('aria-controls')).toBe(listOf(page).id);
+      expect(Array.from(page.root.querySelectorAll('img')).map(image => image.getAttribute('alt'))).toEqual(['', '']);
+
+      await press('ArrowDown');
+      await press('ArrowDown');
+      await press('Enter');
+      expect(selectedNames(page)).toEqual(['Forest']);
+      expect(listOf(page)).toHaveClass('--hidden');
     });
   });
 });

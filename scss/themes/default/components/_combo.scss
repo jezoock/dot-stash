@@ -41,11 +41,6 @@ ds-combo {
     }
   }
 
-  & > menu {
-    margin: 0;
-    padding: 0;
-  }
-
   &__option-list {
     margin: 0;
     padding: ds-spacing(1) 0;
@@ -86,6 +81,13 @@ ds-combo {
       &:hover {
         background-color: transparent;
       }
+    }
+
+    // The active option, which the keys move and select (the combobox keeps the focus): the focus indicator, inside the
+    // option, as the list cuts what overflows it.
+    &.--active {
+      @include ds-focus-ring();
+      outline-offset: calc(-1 * #{ds-focus(width)});
     }
 
     & > img {

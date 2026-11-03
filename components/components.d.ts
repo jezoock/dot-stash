@@ -78,10 +78,14 @@ export namespace Components {
      * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
      * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
      * `ds-trigger`). A click outside the component closes the list.
+     * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+     * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+     * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+     * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
      */
     interface DsCombo {
         /**
-          * Closes the list.
+          * Closes the list. When the focus is in the list (`dropdown` mode), it goes back to the element that had it before.
          */
         "close": () => Promise<void>;
         /**
@@ -89,6 +93,14 @@ export namespace Components {
           * @default ''
          */
         "customLabel": string;
+        /**
+          * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
+         */
+        "label": string;
+        /**
+          * The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list.
+         */
+        "labelledby": string;
         /**
           * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
           * @default ''
@@ -109,7 +121,7 @@ export namespace Components {
          */
         "name": string;
         /**
-          * Opens the list.
+          * Opens the list. In `dropdown` mode, it moves the focus to the list.
          */
         "open": () => Promise<void>;
         /**
@@ -776,6 +788,10 @@ declare global {
      * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
      * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
      * `ds-trigger`). A click outside the component closes the list.
+     * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+     * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+     * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+     * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
      */
     interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsComboElementEventMap>(type: K, listener: (this: HTMLDsComboElement, ev: DsComboCustomEvent<HTMLDsComboElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1206,6 +1222,10 @@ declare namespace LocalJSX {
      * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
      * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
      * `ds-trigger`). A click outside the component closes the list.
+     * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+     * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+     * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+     * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
      */
     interface DsCombo {
         /**
@@ -1213,6 +1233,14 @@ declare namespace LocalJSX {
           * @default ''
          */
         "customLabel"?: string;
+        /**
+          * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
+         */
+        "label"?: string;
+        /**
+          * The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list.
+         */
+        "labelledby"?: string;
         /**
           * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
           * @default ''
@@ -1783,6 +1811,8 @@ declare namespace LocalJSX {
         "position": DSComboPosition;
         "selected": string | DSComboSelection;
         "mods": string | string[];
+        "label": string;
+        "labelledby": string;
     }
     interface DsGridAttributes {
         "dataUseRsp": boolean;
@@ -1987,6 +2017,10 @@ declare module "@stencil/core" {
              * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
              * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
              * `ds-trigger`). A click outside the component closes the list.
+             * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+             * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+             * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+             * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
              */
             "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
             "ds-grid": LocalJSX.IntrinsicElements["ds-grid"] & JSXBase.HTMLAttributes<HTMLDsGridElement>;
