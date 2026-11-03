@@ -27,6 +27,11 @@ ds-select {
     }
   }
 
+  // The native select, which has the focus, is transparent: the box draws its focus indicator.
+  &:has(> .ds-select__input:focus-visible) {
+    @include ds-focus-ring();
+  }
+
   &.--disabled {
     opacity: 0.5;
   }

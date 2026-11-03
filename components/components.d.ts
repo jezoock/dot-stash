@@ -375,15 +375,35 @@ export namespace Components {
          */
         "subscriberSelector": string;
     }
+    /**
+     * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+     * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+     * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+     * (the id of the select).
+     */
     interface DsSelect {
         "defaultValue": string;
+        /**
+          * Disables the native select: it cannot be focused or changed.
+         */
         "disabled": boolean;
         "getValue": () => Promise<{ value: string; label: string; }>;
+        /**
+          * The accessible name of the select (`aria-label`), without a visible label.
+         */
+        "label": string;
+        /**
+          * The ids of the elements that name the select (a visible label): its `aria-labelledby`.
+         */
+        "labelledby": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods": string | string[];
+        /**
+          * The `name` of the native select, and its `id` (a `<label for>` with it names the select).
+         */
         "name": string;
     }
     /**
@@ -936,6 +956,12 @@ declare global {
     interface HTMLDsSelectElementEventMap {
         "valueChange": any;
     }
+    /**
+     * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+     * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+     * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+     * (the id of the select).
+     */
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1485,14 +1511,34 @@ declare namespace LocalJSX {
          */
         "subscriberSelector"?: string;
     }
+    /**
+     * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+     * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+     * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+     * (the id of the select).
+     */
     interface DsSelect {
         "defaultValue"?: string;
+        /**
+          * Disables the native select: it cannot be focused or changed.
+         */
         "disabled"?: boolean;
+        /**
+          * The accessible name of the select (`aria-label`), without a visible label.
+         */
+        "label"?: string;
+        /**
+          * The ids of the elements that name the select (a visible label): its `aria-labelledby`.
+         */
+        "labelledby"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
          */
         "mods"?: string | string[];
+        /**
+          * The `name` of the native select, and its `id` (a `<label for>` with it names the select).
+         */
         "name"?: string;
         "onValueChange"?: (event: DsSelectCustomEvent<any>) => void;
     }
@@ -1882,6 +1928,8 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "mods": string | string[];
         "defaultValue": string;
+        "label": string;
+        "labelledby": string;
     }
     interface DsSidebarAttributes {
         "ctx": boolean;
@@ -2051,6 +2099,12 @@ declare module "@stencil/core" {
              * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
              */
             "ds-rsp": LocalJSX.IntrinsicElements["ds-rsp"] & JSXBase.HTMLAttributes<HTMLDsRspElement>;
+            /**
+             * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+             * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+             * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+             * (the id of the select).
+             */
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             /**
              * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
