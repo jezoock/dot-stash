@@ -101,4 +101,18 @@ describe('ds-block', () => {
     expect(stylesheet).toContain(":not(:has([slot='footer']))");
     expect(stylesheet).not.toMatch(/block-header|block-footer/);
   });
+
+  it.each([
+    ['<ds-block article></ds-block>', 'article', null],
+    ['<ds-block section label="Our offers"></ds-block>', 'region', 'Our offers'],
+    ['<ds-block section></ds-block>', null, null],
+    ['<ds-block label="Not a section"></ds-block>', null, null],
+    ['<ds-block form></ds-block>', null, null],
+    ['<ds-block section role="contentinfo" label="Footer"></ds-block>', 'contentinfo', 'Footer'],
+  ])('%s has the role %p, named %p', async (html, role, label) => {
+    const page = await newSpecPage({ components: [DSBlock], html });
+
+    expect(page.root.getAttribute('role')).toBe(role);
+    expect(page.root.getAttribute('aria-label')).toBe(label);
+  });
 });

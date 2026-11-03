@@ -15,14 +15,34 @@ Override them after the theme stylesheet (see [Styling a component](../../../REA
 }
 ```
 
+## Accessibility
+
+- **Decorative** (by default): the icon is hidden from assistive technologies (`aria-hidden="true"`): its glyph (a character of the private use area of the icon font) would be read as nothing, or as noise. The text next to it says what it means: in a button with a text, or with a visually hidden text (`.ds-visually-hidden`).
+- **Meaningful**: an icon that stands alone and means something (a status, an image link without text) gets a name: `label` makes it an image (`role="img"`, `aria-label`). An `aria-label` or `aria-labelledby` of its own on the element does too.
+
+```html
+<button type="button"><ds-icon type="cart"></ds-icon> Cart</button>
+
+<a href="/help"><ds-icon type="help" label="Help"></ds-icon></a>
+```
+
+**Changed**: the icon is `aria-hidden="true"` by default; `label` is new.
+
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
+(`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
+of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `type`   | `type`    |             | `string` | `undefined` |
+| Property | Attribute | Description                                                                                                                      | Type     | Default     |
+| -------- | --------- | -------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------- |
+| `label`  | `label`   | The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative. | `string` | `undefined` |
+| `type`   | `type`    |                                                                                                                                  | `string` | `undefined` |
 
 
 ## CSS Custom Properties

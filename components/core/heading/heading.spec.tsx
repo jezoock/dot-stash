@@ -1,5 +1,6 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { DSHeading } from './heading';
+import { DSTitle } from '../title/title';
 
 describe('ds-heading', () => {
   it('groups the titles in an hgroup', async () => {
@@ -23,5 +24,17 @@ describe('ds-heading', () => {
 
     expect(page.root.querySelector('.ds-heading__image')).not.toBeNull();
     expect(page.root.querySelector('.ds-heading__sub-title')).toBeNull();
+  });
+
+  it('its main title is the heading: a heading element, or a text with level', async () => {
+    const withHeading = await newSpecPage({ components: [DSHeading, DSTitle], html: '<ds-heading level="2"><h1>Title</h1><span slot="sub-title">Sub</span></ds-heading>' });
+    const [main, sub] = Array.from(withHeading.root.querySelectorAll('ds-title'));
+    expect(main).not.toHaveAttribute('role');
+    expect(sub).not.toHaveAttribute('role');
+
+    const withLevel = await newSpecPage({ components: [DSHeading, DSTitle], html: '<ds-heading level="2">Title<span slot="sub-title">Sub</span></ds-heading>' });
+    const [textMain, textSub] = Array.from(withLevel.root.querySelectorAll('ds-title'));
+    expect(textMain).toEqualAttributes({ 'role': 'heading', 'aria-level': '2' });
+    expect(textSub).not.toHaveAttribute('role');
   });
 });

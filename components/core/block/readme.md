@@ -21,6 +21,24 @@ ds-block {
 }
 ```
 
+## Accessibility
+
+- **Article** (`article`): the element is an article (`role="article"`): a self-contained part of the page (a post, a product card).
+- **Section** (`section`): a region landmark (`role="region"`) only when it is named, by `label` (`aria-label`): for a main section of the page that people go to from the list of landmarks. Without a name, a section has no role (a region without a name is not a landmark, and too many landmarks are noise).
+- **Other contexts** (`block`, `form`, `modal`): no role. A `form` block does not make a form: put a `<form>` in it. A `role` set on the element is kept (with its `label`).
+- Give the block a heading of its own in its header (`ds-heading`, `ds-title` with a heading).
+
+```html
+<ds-block section label="Our offers">
+  <ds-heading slot="header"><h2>Our offers</h2></ds-heading>
+  …
+</ds-block>
+
+<ds-block article name="post">…</ds-block>
+```
+
+**Changed**: the roles of the `article` and named `section` blocks, and `label`, are new.
+
 <!-- Auto Generated Below -->
 
 
@@ -29,19 +47,22 @@ ds-block {
 A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
 Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
 (`ds-home-hero__header`, `__body`, `__footer`).
+An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+(`role="region"`). The other blocks have no role. A `role` of the element is kept.
 
 ## Properties
 
-| Property  | Attribute | Description                                                                                        | Type                 | Default     |
-| --------- | --------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
-| `article` | `article` |                                                                                                    | `boolean`            | `undefined` |
-| `block`   | `block`   |                                                                                                    | `boolean`            | `undefined` |
-| `form`    | `form`    |                                                                                                    | `boolean`            | `undefined` |
-| `modal`   | `modal`   |                                                                                                    | `boolean`            | `undefined` |
-| `mods`    | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
-| `name`    | `name`    | Use to derivate the main class name                                                                | `string`             | `undefined` |
-| `section` | `section` |                                                                                                    | `boolean`            | `undefined` |
-| `type`    | `type`    | Block type classname ( also used to build block classname )                                        | `string`             | `undefined` |
+| Property  | Attribute | Description                                                                                                                                                                                                                                  | Type                 | Default     |
+| --------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `article` | `article` |                                                                                                                                                                                                                                              | `boolean`            | `undefined` |
+| `block`   | `block`   |                                                                                                                                                                                                                                              | `boolean`            | `undefined` |
+| `form`    | `form`    |                                                                                                                                                                                                                                              | `boolean`            | `undefined` |
+| `label`   | `label`   | The accessible name (`aria-label`) of a `section` block, which makes it a region landmark (`role="region"`): for a section people go to from the list of landmarks. Without it, a section has no role (an unnamed region is not a landmark). | `string`             | `undefined` |
+| `modal`   | `modal`   |                                                                                                                                                                                                                                              | `boolean`            | `undefined` |
+| `mods`    | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.                                                                                                                                           | `string \| string[]` | `[]`        |
+| `name`    | `name`    | Use to derivate the main class name                                                                                                                                                                                                          | `string`             | `undefined` |
+| `section` | `section` |                                                                                                                                                                                                                                              | `boolean`            | `undefined` |
+| `type`    | `type`    | Block type classname ( also used to build block classname )                                                                                                                                                                                  | `string`             | `undefined` |
 
 
 ## Methods

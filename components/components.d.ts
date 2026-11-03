@@ -59,12 +59,18 @@ export namespace Components {
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
      * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
      * (`ds-home-hero__header`, `__body`, `__footer`).
+     * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+     * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
      */
     interface DsBlock {
         "article": boolean;
         "block": boolean;
         "form": boolean;
         "getContext": () => Promise<DSBlockContext>;
+        /**
+          * The accessible name (`aria-label`) of a `section` block, which makes it a region landmark (`role="region"`): for a section people go to from the list of landmarks. Without it, a section has no role (an unnamed region is not a landmark).
+         */
+        "label": string;
         "modal": boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
@@ -207,12 +213,21 @@ export namespace Components {
          */
         "width": number;
     }
+    /**
+     * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+     * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+     * are not headings: put a text or a `p` in their slots.
+     */
     interface DsHeading {
         "block": boolean;
         /**
           * @default 'block-before'
          */
         "imagePosition": string;
+        /**
+          * The heading level (1 to 6) of a text main title, given to its `ds-title` (`level`).
+         */
+        "level": number | string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -221,7 +236,16 @@ export namespace Components {
         "section": boolean;
         "useContext": boolean;
     }
+    /**
+     * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
+     * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
+     * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     */
     interface DsIcon {
+        /**
+          * The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative.
+         */
+        "label": string;
         "type": string;
     }
     /**
@@ -636,10 +660,18 @@ export namespace Components {
         "type": 'p' | 'code' | 'quote';
         "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
+    /**
+     * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+     * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+     */
     interface DsTitle {
         "article": boolean;
         "block": boolean;
         "form": boolean;
+        /**
+          * The heading level (1 to 6) of a text title: the element is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element, which has its own level.
+         */
+        "level": number | string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -947,6 +979,8 @@ declare global {
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
      * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
      * (`ds-home-hero__header`, `__body`, `__footer`).
+     * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+     * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
      */
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
@@ -994,12 +1028,22 @@ declare global {
         prototype: HTMLDsGridItemElement;
         new (): HTMLDsGridItemElement;
     };
+    /**
+     * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+     * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+     * are not headings: put a text or a `p` in their slots.
+     */
     interface HTMLDsHeadingElement extends Components.DsHeading, HTMLStencilElement {
     }
     var HTMLDsHeadingElement: {
         prototype: HTMLDsHeadingElement;
         new (): HTMLDsHeadingElement;
     };
+    /**
+     * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
+     * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
+     * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     */
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
     var HTMLDsIconElement: {
@@ -1254,6 +1298,10 @@ declare global {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    /**
+     * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+     * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+     */
     interface HTMLDsTitleElement extends Components.DsTitle, HTMLStencilElement {
     }
     var HTMLDsTitleElement: {
@@ -1447,11 +1495,17 @@ declare namespace LocalJSX {
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
      * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
      * (`ds-home-hero__header`, `__body`, `__footer`).
+     * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+     * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
      */
     interface DsBlock {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
+        /**
+          * The accessible name (`aria-label`) of a `section` block, which makes it a region landmark (`role="region"`): for a section people go to from the list of landmarks. Without it, a section has no role (an unnamed region is not a landmark).
+         */
+        "label"?: string;
         "modal"?: boolean;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
@@ -1584,12 +1638,21 @@ declare namespace LocalJSX {
          */
         "width"?: number;
     }
+    /**
+     * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+     * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+     * are not headings: put a text or a `p` in their slots.
+     */
     interface DsHeading {
         "block"?: boolean;
         /**
           * @default 'block-before'
          */
         "imagePosition"?: string;
+        /**
+          * The heading level (1 to 6) of a text main title, given to its `ds-title` (`level`).
+         */
+        "level"?: number | string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -1598,7 +1661,16 @@ declare namespace LocalJSX {
         "section"?: boolean;
         "useContext"?: boolean;
     }
+    /**
+     * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
+     * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
+     * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     */
     interface DsIcon {
+        /**
+          * The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative.
+         */
+        "label"?: string;
         "type"?: string;
     }
     /**
@@ -1970,10 +2042,18 @@ declare namespace LocalJSX {
         "type"?: 'p' | 'code' | 'quote';
         "weight"?: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
+    /**
+     * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+     * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+     */
     interface DsTitle {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
+        /**
+          * The heading level (1 to 6) of a text title: the element is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element, which has its own level.
+         */
+        "level"?: number | string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -2198,6 +2278,7 @@ declare namespace LocalJSX {
         "type": string;
         "name": string;
         "mods": string | string[];
+        "label": string;
     }
     interface DsComboAttributes {
         "options": string | DSOption[];
@@ -2233,9 +2314,11 @@ declare namespace LocalJSX {
         "section": boolean;
         "block": boolean;
         "imagePosition": string;
+        "level": string;
     }
     interface DsIconAttributes {
         "type": string;
+        "label": string;
     }
     interface DsModalAttributes {
         "shown": boolean;
@@ -2328,6 +2411,7 @@ declare namespace LocalJSX {
         "block": boolean;
         "sub": boolean;
         "sup": boolean;
+        "level": string;
     }
     interface DsTitleBarAttributes {
         "ctx": boolean;
@@ -2424,6 +2508,8 @@ declare module "@stencil/core" {
              * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
              * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
              * (`ds-home-hero__header`, `__body`, `__footer`).
+             * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+             * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
              */
             "ds-block": LocalJSX.IntrinsicElements["ds-block"] & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
             /**
@@ -2440,7 +2526,17 @@ declare module "@stencil/core" {
             "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
             "ds-grid": LocalJSX.IntrinsicElements["ds-grid"] & JSXBase.HTMLAttributes<HTMLDsGridElement>;
             "ds-grid-item": LocalJSX.IntrinsicElements["ds-grid-item"] & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
+            /**
+             * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+             * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+             * are not headings: put a text or a `p` in their slots.
+             */
             "ds-heading": LocalJSX.IntrinsicElements["ds-heading"] & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
+            /**
+             * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
+             * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
+             * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+             */
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             /**
              * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
@@ -2535,6 +2631,10 @@ declare module "@stencil/core" {
              */
             "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            /**
+             * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+             * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+             */
             "ds-title": LocalJSX.IntrinsicElements["ds-title"] & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
             "ds-title-bar": LocalJSX.IntrinsicElements["ds-title-bar"] & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
             /**

@@ -21,28 +21,46 @@ ds-title {
 }
 ```
 
+## Accessibility
+
+- **Heading**: `ds-title` renders no heading element of its own, and its variants (`page`, `section`, `block`, `sub`) are its look only. Put a heading of the right level in it (`<ds-title section><h2>…</h2></ds-title>`): it keeps its semantics (the stylesheet resets its margins and typography). For a text title, `level` (1 to 6) makes the element a heading (`role="heading"`, `aria-level`); it is ignored when the title holds a heading element, which has its own level.
+- A title that is not a heading (a label, a tagline) needs neither.
+
+```html
+<ds-title page><h1>Our products</h1></ds-title>
+<ds-title block level="3">Delivery</ds-title>
+```
+
+**Changed**: `level` is new.
+
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+(`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+
 ## Properties
 
-| Property  | Attribute | Description                                                                                        | Type                 | Default     |
-| --------- | --------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
-| `article` | `article` |                                                                                                    | `boolean`            | `undefined` |
-| `block`   | `block`   |                                                                                                    | `boolean`            | `undefined` |
-| `form`    | `form`    |                                                                                                    | `boolean`            | `undefined` |
-| `mods`    | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
-| `page`    | `page`    |                                                                                                    | `boolean`            | `undefined` |
-| `section` | `section` |                                                                                                    | `boolean`            | `undefined` |
-| `sub`     | `sub`     |                                                                                                    | `boolean`            | `undefined` |
-| `sup`     | `sup`     |                                                                                                    | `boolean`            | `undefined` |
+| Property  | Attribute | Description                                                                                                                                                                         | Type                 | Default     |
+| --------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `article` | `article` |                                                                                                                                                                                     | `boolean`            | `undefined` |
+| `block`   | `block`   |                                                                                                                                                                                     | `boolean`            | `undefined` |
+| `form`    | `form`    |                                                                                                                                                                                     | `boolean`            | `undefined` |
+| `level`   | `level`   | The heading level (1 to 6) of a text title: the element is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element, which has its own level. | `number \| string`   | `undefined` |
+| `mods`    | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.                                                                                  | `string \| string[]` | `[]`        |
+| `page`    | `page`    |                                                                                                                                                                                     | `boolean`            | `undefined` |
+| `section` | `section` |                                                                                                                                                                                     | `boolean`            | `undefined` |
+| `sub`     | `sub`     |                                                                                                                                                                                     | `boolean`            | `undefined` |
+| `sup`     | `sup`     |                                                                                                                                                                                     | `boolean`            | `undefined` |
 
 
 ## Slots
 
-| Slot | Description      |
-| ---- | ---------------- |
-|      | The default slot |
+| Slot | Description                                                         |
+| ---- | ------------------------------------------------------------------- |
+|      | The title: a text, or a heading, a paragraph, a link or a `strong`. |
 
 
 ## CSS Custom Properties

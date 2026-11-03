@@ -17,6 +17,8 @@ type DsBlockTypeToTag = (typeof DsBlockTypeToTag)[keyof typeof DsBlockTypeToTag]
  * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
  * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
  * (`ds-home-hero__header`, `__body`, `__footer`).
+ * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+ * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
  */
 @Component({
   tag: 'ds-block',
@@ -50,6 +52,16 @@ export class DSBlock {
   /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
 
+  /**
+   * The accessible name (`aria-label`) of a `section` block, which makes it a region landmark (`role="region"`): for a
+   * section people go to from the list of landmarks. Without it, a section has no role (an unnamed region is not a
+   * landmark).
+   */
+  @Prop() label: string;
+
+  /** The `role` the element had before the first render: kept. */
+  private ownRole: string | null = null;
+
   /** The context given by the boolean properties: `article`, `section`, `form`, `modal`, else `block`. */
   get context(): DSBlockContext {
     return (this.article && 'article') || (this.section && 'section') || (this.form && 'form') || (this.modal && 'modal') || 'block';
@@ -65,7 +77,17 @@ export class DSBlock {
     return this.context;
   }
 
+  /** The role of the element: its own, else `article` for an article, `region` for a named section, else none. */
+  get role(): string | undefined {
+    if (this.ownRole) {
+      return this.ownRole;
+    }
+    const { context } = this;
+    return context === 'article' ? 'article' : context === 'section' && this.label ? 'region' : undefined;
+  }
+
   componentWillLoad() {
+    this.ownRole = this.hostContainer.getAttribute('role');
     // Before the first render the slotted elements are still children of the host: only its own, not those of nested blocks.
     const slots = Array.from(this.hostContainer.children).map(child => child.getAttribute('slot'));
     this.hasHeader = slots.includes('header');
@@ -76,7 +98,7 @@ export class DSBlock {
     const { blockName } = this;
 
     return (
-      <Host class={toClassList(blockName, this.mods)}>
+      <Host class={toClassList(blockName, this.mods)} role={this.role} aria-label={this.role ? this.label : undefined}>
         {this.hasHeader && (
           <div class={`${blockName}__header`}>
             <slot name="header" />

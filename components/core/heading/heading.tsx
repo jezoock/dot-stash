@@ -1,6 +1,16 @@
 import { Component, h, Prop, Element, Host } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 
+/**
+ * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+ * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+ * are not headings: put a text or a `p` in their slots.
+ *
+ * @slot - The main title: a heading (`h1`…`h6`), or a text with `level`.
+ * @slot image - An image, before or after the titles (`image-position`).
+ * @slot sub-title - The sub-title: a text or a `p`, not a heading.
+ * @slot description - The description: a text or paragraphs.
+ */
 @Component({
   tag: 'ds-heading',
   styleUrl: 'heading.scss',
@@ -25,6 +35,8 @@ export class DSHeading {
   @Prop({ reflect: true, mutable: true }) section: boolean;
   @Prop({ reflect: true, mutable: true }) block: boolean;
   @Prop({ reflect: true, mutable: true }) imagePosition: string = 'block-before';
+  /** The heading level (1 to 6) of a text main title, given to its `ds-title` (`level`). */
+  @Prop() level: number | string;
 
   connectedCallback() {
     this.hasImage = this.container.querySelector("[slot='image']") !== null;
@@ -54,7 +66,7 @@ export class DSHeading {
           </div>
         )}
         <hgroup class="ds-heading__content">
-          <ds-title sup class="ds-heading__main-title" {...this.titleProps}>
+          <ds-title sup class="ds-heading__main-title" {...this.titleProps} level={this.level}>
             <slot />
           </ds-title>
           {this.hasSubTitle && (
