@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
 
@@ -10,22 +11,27 @@ export const config: Config = {
     cloneNodeFix: true,
   },
   plugins: [sass()],
+  // npm start (scripts/dev.mjs): the theme stylesheets that the CSS watcher recompiles make a rebuild, which copies them
+  // to www/css/ (below), and the dev server reloads the page (Stencil's hot replacement does not see copied stylesheets).
+  watchExternalDirs: [join(__dirname, 'dist', 'css')],
+  devServer: {
+    excludeHmr: ['**/dist/css/**'],
+  },
   outputTargets: [
     {
       type: 'www',
       // No generated service worker: Workbox would load its runtime from a third-party CDN.
       serviceWorker: null,
-      // The theme stylesheets compiled by gulp (npm run build:css, run first): dist/css/<theme>.css → www/css/<theme>.css,
-      // for the dev page of www/ (components/index.html), served by npm start.
-      copy: [{ src: '../dist/css/*.css', dest: 'css' }],
+      // The stylesheets compiled by scripts/build-css.mjs (npm run build:css, run first): dist/css/ → www/css/
+      // (<theme>.css, pages/<theme>/<page>.css), for the dev page of www/ (components/index.html), served by npm start.
+      copy: [{ src: '../dist/css', dest: 'css' }],
     },
     {
       type: 'dist',
       dir: 'dist',
       // Matches the "loader/" entry of package.json "files".
       esmLoaderPath: '../loader',
-      // The gulp theme tasks write dist/css and dist/images:
-      // do not let Stencil empty dist/ before each build.
+      // scripts/build-css.mjs writes dist/css: do not let Stencil empty dist/ before each build.
       empty: false,
     },
   ],

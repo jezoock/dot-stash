@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { Logger } from 'sass';
 
-// Compiles the stylesheets with the Sass JS API (the Sass version of gulp-sass and @stencil/sass, see package-lock.json):
+// Compiles the stylesheets with the Sass JS API (the sass package of scripts/build-css.mjs, see package-lock.json):
 // a Sass warning, deprecations included, or error fails the tests instead of only being printed by the build.
 
 const root = path.resolve(__dirname, '..');
@@ -33,13 +33,13 @@ describe('Sass stylesheets', () => {
     }
   });
 
-  // The themes and their page stylesheets (gulp: dist/css/<theme>.css, dist/css/pages/<theme>/), and the component
+  // The themes and their page stylesheets (scripts/build-css.mjs: dist/css/<theme>.css, dist/css/pages/<theme>/), and the component
   // stylesheets (Stencil).
   const themes = fs
     .readdirSync(path.join(root, 'scss/themes'), { withFileTypes: true })
     .filter(entry => entry.isDirectory())
     .map(entry => entry.name);
-  // As gulp: the .scss files directly in pages/, except the partials (_*.scss).
+  // As scripts/build-css.mjs: the .scss files directly in pages/, except the partials (_*.scss).
   const pageFilesOf = (theme: string): string[] => {
     const pagesDir = path.join(root, 'scss/themes', theme, 'pages');
     return fs.existsSync(pagesDir) ? scssFilesIn(pagesDir).filter(file => path.dirname(file) === pagesDir && !path.basename(file).startsWith('_')) : [];

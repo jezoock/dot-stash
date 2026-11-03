@@ -3,13 +3,13 @@
 A standalone UI library made of two parts:
 
 - **Web components**: generic `ds-*` custom elements built with Stencil. They render in the light DOM (no shadow DOM) and use plain class names (`ds-block`, `ds-block__body`, `--modifier`), so a regular page stylesheet can style them.
-- **SCSS theming toolkit**: an engine (design tokens, functions and mixins) and a theme built on it, `default`, neutral, compiled by gulp into one global stylesheet (`dist/css/default.css`) that skins the components and the page. A project gets its own look by configuring the engine in a theme of its own (see [Creating a theme](#creating-a-theme)).
+- **SCSS theming toolkit**: an engine (design tokens, functions and mixins) and a theme built on it, `default`, neutral, compiled by a small Node script (`scripts/build-css.mjs`) into one global stylesheet (`dist/css/default.css`) that skins the components and the page. A project gets its own look by configuring the engine in a theme of its own (see [Creating a theme](#creating-a-theme)).
 
 Each component keeps its structure in its own stylesheet (`styleUrl`), which Stencil injects into the document, and gets its look from the theme stylesheet, through a few component custom properties (`--ds-tooltip-background`, `--ds-sidebar-width`…): see [Styling a component](#styling-a-component).
 
 ## Requirements
 
-- Node.js 22 or later (`.nvmrc`, `package.json` `engines`; required by `@stencil/sass`)
+- Node.js 22 or later (`.nvmrc`, `package.json` `engines`): `@stencil/sass` requires it, and the build scripts use its recursive `fs.watch` (Linux, macOS, Windows)
 - npm
 
 ## Install
@@ -25,27 +25,32 @@ npm run build:all
 
 | Script                 | What it does                                                                                                                                                                                             |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`            | Development: the CSS watcher and the Stencil dev server, in one terminal (`scripts/dev.mjs`, see [Tooling](#tooling)). Serves `www/` (page `components/index.html`) on `http://localhost:3333/`.         |
 | `npm run build`        | Stencil production build: the package in `dist/` and `loader/`, the dev page in `www/`. Also regenerates `components/components.d.ts` and the component `readme.md` files.                               |
-| `npm run build:css`    | Compiles every theme and its page stylesheets into `dist/css/` (gulp task `buildCSS`, see [Themes](#themes)).                                                                                            |
+| `npm run build:css`    | Compiles every theme and its page stylesheets into `dist/css/` (`scripts/build-css.mjs`, see [Tooling](#tooling)).                                                                                       |
 | `npm run build:all`    | Runs `clean`, `build:css`, then `build`.                                                                                                                                                                 |
 | `npm run clean`        | Deletes `dist/`, `www/`, `.stencil/` and `loader/`.                                                                                                                                                      |
-| `npm start`            | Runs `build:css`, then the Stencil development build in watch mode, with the Stencil dev server (serves `www/`, page `components/index.html`).                                                           |
-| `npm run dev`          | Runs `build:css`, then a one-off Stencil development build (no server, no watch).                                                                                                                        |
-| `npm run serve:theme`  | Theme live preview (gulp default task, BrowserSync). Serves the repository root (`index.html`) and recompiles the stylesheets when a file in `scss/` changes (see [Themes](#themes)).                    |
 | `npm test`             | Unit tests: Stencil spec tests (`stencil test --spec`, Jest), without a browser. See [Tests](#tests).                                                                                                    |
 | `npm run test.watch`   | Same as `npm test`, in watch mode.                                                                                                                                                                       |
 | `npm run test:e2e`     | Stencil end-to-end tests (`stencil test --e2e`, Puppeteer and Chromium). No end-to-end test exists yet, and CI does not run them.                                                                        |
 | `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                               |
-| `npm run lint`         | ESLint on `components/` (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                                                                                 |
+| `npm run lint`         | ESLint on the repository: the components, the scripts and the configuration files (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                       |
 | `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                |
 | `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files). |
 | `npm run format:check` | Checks the same files without writing.                                                                                                                                                                   |
 
-`serve:theme` only recompiles on change: run `npm run build:css` once first, and `npm start` or `npm run dev` to get the components in `www/build/`. The Stencil build copies `dist/css/*.css` to `www/css/` for its dev page: it takes the theme stylesheets compiled before it, and `npm start` does not recompile them on change (use `serve:theme` to work on a theme).
+## Tooling
 
-The two dev pages, `index.html` (`npm run serve:theme`) and `components/index.html` (`npm start`), only load the components (the module script of the Stencil build: `/www/build/dot-stash.esm.js`, or `/build/dot-stash.esm.js` on the Stencil dev server) and the `default` theme stylesheet (`/dist/css/default.css`, or `/css/default.css`, its copy in `www/css/`). Their body is empty: add `ds-*` markup there to try the components. The former demo (the `ds-main` component, the theme switcher and the runtime color control of these pages) is archived on `archive/propal` (see [Archived code](#archived-code)).
+The build uses Stencil for the components and the `sass` package for the theme stylesheets, run by two Node scripts, without a task runner:
 
-One gulp task has no npm script: `npx gulp generateImages` optimizes the files in `images/` and writes them, plus a WebP copy of each, to `dist/images/`.
+- **`scripts/build-css.mjs`** (`npm run build:css`) compiles the themes listed in `dot-stash.config.mjs`: it deletes `dist/css/`, then compiles each `scss/themes/<theme>/index.scss` to `dist/css/<theme>.css` and each page stylesheet, `scss/themes/<theme>/pages/<page>.scss` (not the `_partials`), to `dist/css/pages/<theme>/<page>.css`, compressed. It prints the Sass warnings; a Sass error fails the build (exit code 1). Options, after `--` (`npm run build:css -- --watch`):
+  - `--watch`: after the build, recompiles on each change in `scss/`: a file of the engine, every theme and its pages; a file of a theme, that theme and its pages; a page stylesheet, that page (deleted, its stylesheet too). A Sass error is printed, the last stylesheet that compiled stays, and the watch goes on.
+  - `--strict`: a Sass warning fails the compilation, as an error.
+  - `--source-map`: writes a source map, `<stylesheet>.css.map`, next to each stylesheet, with the SCSS sources in it.
+- **`scripts/dev.mjs`** (`npm start`) runs `build-css.mjs --watch` and, once the stylesheets are compiled, the Stencil dev server (`stencil build --dev --watch --serve`), in one terminal; Ctrl+C stops both, and when one of them stops, the other is stopped too. The dev server serves `www/`, with the dev page `components/index.html`: add `ds-*` markup there to try the components. The Stencil build copies `dist/css/` to `www/css/`, and watches `dist/css/` (`watchExternalDirs` in `stencil.config.ts`): a stylesheet the watcher recompiles makes a rebuild, which copies it, and the page reloads. A change of a component reloads it as before (Stencil's hot module replacement).
+- **`dot-stash.config.mjs`** is the configuration of the stylesheet build: `themes` (the folders of `scss/themes/` to compile), `paths` (`scss`, the sources; `css`, the output, `dist/css`) and `css` (`style`, `compressed` or `expanded`; `sourceMap`).
+
+The dev page only loads the components (`/build/dot-stash.esm.js`) and the `default` theme stylesheet (`/css/default.css`, the copy of `dist/css/default.css`); a page stylesheet is at `/css/pages/<theme>/<page>.css`. The former demo (the `ds-main` component, the theme switcher and the runtime color control of the dev pages) is archived on `archive/propal` (see [Archived code](#archived-code)).
 
 CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check`, `lint` and `npm test` on every push and pull request. Every step is blocking: a build, formatting, lint or test error fails the run.
 
@@ -70,10 +75,11 @@ scss/
   themes/
     default/       neutral theme: _tokens.scss (the engine defaults), _base.scss, layout/,
                    components/, pages/, index.scss (entry point)
-gulpfile.mjs           theme tasks and live-preview server
-dot-stash.config.mjs   theme list, source/destination paths and gulp settings
+scripts/
+  build-css.mjs        theme stylesheet build and watcher (npm run build:css)
+  dev.mjs              npm start: the CSS watcher and the Stencil dev server
+dot-stash.config.mjs   stylesheet build configuration: themes, paths, output style, source maps
 stencil.config.ts      Stencil configuration (srcDir: components)
-index.html             dev page served by serve:theme
 docs/                  project notes (archives)
 ```
 
@@ -88,15 +94,14 @@ docs/                  project notes (archives)
 | `dist/collection/`                   | Stencil collection, to use the components from another Stencil project                      |
 | `dist/types/`                        | Type declarations (`index.d.ts`, `components.d.ts`)                                         |
 | `loader/`                            | `defineCustomElements()` to register the components from a bundler                          |
-| `dist/css/<theme>.css`               | Theme stylesheets (gulp): `default.css`                                                     |
-| `dist/css/pages/<theme>/<page>.css`  | Page stylesheets of each theme (gulp)                                                       |
-| `dist/images/`                       | Optimized images (`npx gulp generateImages`)                                                |
+| `dist/css/<theme>.css`               | Theme stylesheets (`build:css`): `default.css`                                              |
+| `dist/css/pages/<theme>/<page>.css`  | Page stylesheets of each theme (`build:css`)                                                |
 
-Stencil runs with `empty: false`, so it does not delete the gulp output in `dist/`. The published package contains `dist/` and `loader/`. The dev page in `www/` gets a copy of the theme stylesheets in `www/css/`.
+Stencil runs with `empty: false`, so it does not delete the stylesheets of `build:css` in `dist/css/`. The published package contains `dist/` and `loader/`. The dev page in `www/` gets a copy of `dist/css/` in `www/css/`.
 
 ## Theming
 
-The SCSS uses the Sass module system (`@use` and `@forward`, no `@import`) and the built-in modules (`sass:map`, `sass:list`, `sass:string`, `sass:color`): compile it with Dart Sass, the `sass` or `sass-embedded` package, 1.107 or later (the version in `package-lock.json`, which compiles it without any warning). LibSass and `node-sass` do not support it. gulp (`gulp-sass`) compiles the themes with `sass`, Stencil (`@stencil/sass`) the component stylesheets with `sass-embedded`.
+The SCSS uses the Sass module system (`@use` and `@forward`, no `@import`) and the built-in modules (`sass:map`, `sass:list`, `sass:string`, `sass:color`): compile it with Dart Sass, the `sass` or `sass-embedded` package, 1.107 or later (the version in `package-lock.json`, which compiles it without any warning). LibSass and `node-sass` do not support it. `scripts/build-css.mjs` compiles the themes with `sass`, Stencil (`@stencil/sass`) the component stylesheets with `sass-embedded`.
 
 It has two layers:
 
@@ -109,18 +114,15 @@ The former `legacy` theme (the look of the site the library comes from: gold pri
 
 A theme folder holds:
 
-| File                     | Content                                                                                                                                                                                                 |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_tokens.scss`           | Loads the engine configured for the theme (`@forward '../../engine' with (…)`). The other files of the theme start with `@use '../tokens' as *;` (or `'./tokens'`): they all get the configured tokens. |
-| `index.scss`             | The entry point compiled by gulp: loads the tokens first, then the base styles and skins (the order of the `@use` rules is the order of the CSS output), and ends with `@include tokens.ds-tokens();`.  |
-| `_base.scss`             | Base element styles.                                                                                                                                                                                    |
-| `layout/`, `components/` | Skins, one partial per component.                                                                                                                                                                       |
-| `pages/`                 | The page stylesheets of the theme (see [Page stylesheets](#page-stylesheets)).                                                                                                                          |
+| File                     | Content                                                                                                                                                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_tokens.scss`           | Loads the engine configured for the theme (`@forward '../../engine' with (…)`). The other files of the theme start with `@use '../tokens' as *;` (or `'./tokens'`): they all get the configured tokens.       |
+| `index.scss`             | The entry point compiled by `build:css`: loads the tokens first, then the base styles and skins (the order of the `@use` rules is the order of the CSS output), and ends with `@include tokens.ds-tokens();`. |
+| `_base.scss`             | Base element styles.                                                                                                                                                                                          |
+| `layout/`, `components/` | Skins, one partial per component.                                                                                                                                                                             |
+| `pages/`                 | The page stylesheets of the theme (see [Page stylesheets](#page-stylesheets)).                                                                                                                                |
 
-`themes` in `dot-stash.config.mjs` lists the themes gulp builds, `['default']`.
-
-- `npm run build:css` deletes `dist/css/`, then compiles each `scss/themes/<theme>/index.scss` to `dist/css/<theme>.css` and each `scss/themes/<theme>/pages/<page>.scss` to `dist/css/pages/<theme>/<page>.css`, compressed. A Sass error fails the build.
-- `npm run serve:theme` recompiles on change: a file of the engine, every theme and its pages; a file of a theme, that theme and its pages; a page stylesheet, that page. A Sass error is logged and the watch goes on. BrowserSync injects the new CSS in the page.
+`themes` in `dot-stash.config.mjs` lists the themes `npm run build:css` compiles, `['default']`: each `scss/themes/<theme>/index.scss` to `dist/css/<theme>.css` and each `scss/themes/<theme>/pages/<page>.scss` to `dist/css/pages/<theme>/<page>.css`, compressed. `npm start` recompiles them on change (see [Tooling](#tooling)).
 
 ### Creating a theme
 
@@ -297,7 +299,7 @@ Or in a scope: `.promo { --ds-color-primary-base: #0d9488; }`. The rules that re
 
 ### Page stylesheets
 
-A page stylesheet belongs to a theme: create `scss/themes/<theme>/pages/<page>.scss` and start it with `@use '../tokens' as *;` to get the tokens, functions and mixins of the theme. As the engine outputs no CSS, the compiled file only holds the rules of the page. `npm run build:css` compiles it to `dist/css/pages/<theme>/<page>.css`, and `serve:theme` on each change; load it after the theme stylesheet. Partials (`_*.scss`) are not compiled.
+A page stylesheet belongs to a theme: create `scss/themes/<theme>/pages/<page>.scss` and start it with `@use '../tokens' as *;` to get the tokens, functions and mixins of the theme. As the engine outputs no CSS, the compiled file only holds the rules of the page. `npm run build:css` compiles it to `dist/css/pages/<theme>/<page>.css`, and the watcher of `npm start` on each change; load it after the theme stylesheet. Partials (`_*.scss`) are not compiled.
 
 ### Modifier classes
 

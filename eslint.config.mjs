@@ -28,7 +28,8 @@ export default defineConfig(
     },
   },
   {
-    files: ['*.mjs', 'stencil.config.ts'],
+    // The configuration files and the build scripts, run by Node.
+    files: ['*.mjs', 'scripts/**/*.mjs', 'stencil.config.ts'],
     languageOptions: {
       globals: globals.node,
     },
