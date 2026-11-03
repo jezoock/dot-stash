@@ -44,6 +44,22 @@
     height: 100%;
   }
 
+  // The live region that screen readers announce (role="status" or "alert"): hidden on the screen, where the toasts show
+  // the same messages, but in the accessibility tree while the toaster is hidden too (visible in a hidden toaster), so
+  // that it exists before the messages come.
+  &__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+    visibility: visible;
+  }
+
   // Position classes: --v-pos-<TOASTER_VERTICAL_POSITION> and --h-pos-<TOASTER_HORIZONTAL_POSITION>.
   &.--v-pos-top {
     top: 0;

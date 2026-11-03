@@ -144,6 +144,74 @@ describe('ds-toaster', () => {
     expect(events).toEqual(['toasterShown', 'toasterHidden']);
   });
 
+  describe('live region', () => {
+    const liveOf = (toaster: HTMLElement) => toaster.querySelector<HTMLElement>('.ds-toaster__live');
+    const announced = (toaster: HTMLElement) => Array.from(liveOf(toaster).children).map(child => child.textContent);
+
+    it('is rendered from the start, empty, as a polite status; the toasts are hidden from screen readers', async () => {
+      const { toaster } = await render('<ds-toaster messages="Saved"></ds-toaster>');
+
+      expect(liveOf(toaster)).toEqualAttributes({ 'role': 'status', 'aria-live': 'polite', 'aria-atomic': 'false' });
+      expect(announced(toaster)).toEqual([]);
+      expect(toaster.querySelector('.ds-toaster__container')).toEqualAttributes({ 'aria-hidden': 'true' });
+    });
+
+    it('gets the displayed messages when shown, in the same element, and is emptied when hidden', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="1,2,3,4"></ds-toaster>');
+      const live = liveOf(toaster);
+
+      await page.root.show();
+      await page.waitForChanges();
+      expect(liveOf(toaster)).toBe(live);
+      expect(announced(toaster)).toEqual(['2', '3', '4']);
+
+      await page.root.hide();
+      await page.waitForChanges();
+      expect(announced(toaster)).toEqual([]);
+
+      await page.root.displayToast();
+      await page.waitForChanges();
+      expect(announced(toaster)).toEqual(['2', '3', '4']);
+    });
+
+    it('adds a message that comes while shown, keeping the elements of the other ones', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved,Sent"></ds-toaster>');
+
+      await page.root.show();
+      await page.waitForChanges();
+      const [saved, sent] = Array.from(liveOf(toaster).children);
+
+      page.root.messages = ['Saved', 'Sent', 'Archived'];
+      await page.waitForChanges();
+      const children = Array.from(liveOf(toaster).children);
+      expect(children.map(child => child.textContent)).toEqual(['Saved', 'Sent', 'Archived']);
+      expect(children[0]).toBe(saved);
+      expect(children[1]).toBe(sent);
+    });
+
+    it('is an assertive alert with the error modifier', async () => {
+      const { page, toaster } = await render('<ds-toaster mods="error" messages="Payment refused"></ds-toaster>');
+
+      expect(liveOf(toaster)).toEqualAttributes({ 'role': 'alert', 'aria-live': 'assertive' });
+
+      page.root.mods = ['success'];
+      await page.waitForChanges();
+      expect(liveOf(toaster)).toEqualAttributes({ 'role': 'status', 'aria-live': 'polite' });
+    });
+
+    it('does not take the focus', async () => {
+      const { page } = await render('<ds-toaster messages="Saved" closing-delay="0"></ds-toaster>');
+      let owner = Object.getPrototypeOf(page.body);
+      while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
+      const focus = jest.spyOn(owner, 'focus');
+
+      await page.root.displayToast();
+      await page.waitForChanges();
+
+      expect(focus).not.toHaveBeenCalled();
+    });
+  });
+
   it('hides when clicked', async () => {
     const { page, toaster } = await render('<ds-toaster messages="Saved"></ds-toaster>');
 

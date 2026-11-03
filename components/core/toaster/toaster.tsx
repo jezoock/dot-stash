@@ -7,6 +7,11 @@ import { TransitionWait, waitForTransition } from '../../utils/transition';
  * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
  * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
  * at the end of that transition.
+ *
+ * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+ * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+ * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+ * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
  */
 @Component({
   tag: 'ds-toaster',
@@ -120,8 +125,18 @@ export class DSToaster {
     return max > 0 ? messages.slice(-max) : messages;
   }
 
+  /** Whether the messages are errors (the `error` modifier): the live region is then an assertive `alert`. */
+  isAlert(): boolean {
+    return toArray(this.mods ?? []).some(mod => String(mod).trim() === 'error');
+  }
+
   render() {
     const [verticalPosition, horizontalPosition] = toArray(this.position).map(position => position.trim());
+    const displayedMessages = this.getDisplayedMessages();
+    // The index of each displayed message among all of them: a message added while shown is a new element of the live
+    // region, the only one announced (the other ones do not change).
+    const firstIndex = toArray(this.messages ?? []).length - displayedMessages.length;
+    const isAlert = this.isAlert();
 
     return (
       <div
@@ -137,14 +152,17 @@ export class DSToaster {
         }}
         onClick={this.hide}
       >
-        <div class="ds-toaster__container">
-          {this.getDisplayedMessages().map(message => (
+        <div class="ds-toaster__container" aria-hidden="true">
+          {displayedMessages.map(message => (
             <div class="ds-toaster__toast">
               <div class="ds-toaster__content">
                 <span class="ds-toaster__message">{message}</span>
               </div>
             </div>
           ))}
+        </div>
+        <div class="ds-toaster__live" role={isAlert ? 'alert' : 'status'} aria-live={isAlert ? 'assertive' : 'polite'} aria-atomic="false">
+          {this.isShown && displayedMessages.map((message, index) => <p key={firstIndex + index}>{message}</p>)}
         </div>
       </div>
     );

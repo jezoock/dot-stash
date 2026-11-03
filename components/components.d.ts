@@ -493,6 +493,10 @@ export namespace Components {
      * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
      * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
      * at the end of that transition.
+     * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+     * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+     * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+     * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
      */
     interface DsToaster {
         /**
@@ -982,6 +986,10 @@ declare global {
      * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
      * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
      * at the end of that transition.
+     * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+     * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+     * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+     * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
      */
     interface HTMLDsToasterElement extends Components.DsToaster, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToasterElementEventMap>(type: K, listener: (this: HTMLDsToasterElement, ev: DsToasterCustomEvent<HTMLDsToasterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1511,6 +1519,10 @@ declare namespace LocalJSX {
      * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
      * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
      * at the end of that transition.
+     * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+     * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+     * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+     * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
      */
     interface DsToaster {
         /**
@@ -1932,6 +1944,10 @@ declare module "@stencil/core" {
              * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
              * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
              * at the end of that transition.
+             * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+             * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+             * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+             * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
              */
             "ds-toaster": LocalJSX.IntrinsicElements["ds-toaster"] & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
             /**

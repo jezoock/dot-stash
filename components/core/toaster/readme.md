@@ -3,9 +3,9 @@
 ## Styling
 
 - **Classes**: `<ds-toaster>` renders a `div` with the main class, `ds-toaster`, its modifiers (the default theme reads `--success`, `--warning` and `--error`), `--v-pos-<top|middle|bottom>` and `--h-pos-<left|center|right>` (`position`), and `--shown` or `--hidden`.
-- **Elements**: `__container` (the box of the toasts), `__toast` (one per displayed message), its `__content` and `__message`.
+- **Elements**: `__container` (the box of the toasts), `__toast` (one per displayed message), its `__content` and `__message`; `__live`, the live region (see [Accessibility](#accessibility)), a paragraph per displayed message while the toaster is shown.
 - **Attributes** (reflected): `position`, `messages`, `max-displayed-toast`, `mods`.
-- **Structure** (`toaster.scss`): a fixed box on the side and at the edge of its position, above the page (`--ds-toaster-z-index`), that slides in from its top or bottom edge when it is rendered. `--hidden` fades it out (opacity and visibility, 0.3 s): `show()` and `hide()` emit `toasterShown` and `toasterHidden` at the end of that transition, or at once when it does not run (durations of 0), or once its duration is over when the event does not come. With less motion (`prefers-reduced-motion: reduce`), it neither slides in nor fades. The pointer goes through the toaster, except on the box, which is at least `--ds-toaster-min-width` wide, at most half the screen.
+- **Structure** (`toaster.scss`): a fixed box on the side and at the edge of its position, above the page (`--ds-toaster-z-index`), that slides in from its top or bottom edge when it is rendered. `--hidden` fades it out (opacity and visibility, 0.3 s): `show()` and `hide()` emit `toasterShown` and `toasterHidden` at the end of that transition, or at once when it does not run (durations of 0), or once its duration is over when the event does not come. With less motion (`prefers-reduced-motion: reduce`), it neither slides in nor fades. The pointer goes through the toaster, except on the box, which is at least `--ds-toaster-min-width` wide, at most half the screen. The live region is hidden on the screen (a 1 px clipped box), but not from screen readers, even while the toaster is hidden.
 - **Look** (default theme, `components/_toaster.scss`): the box of the toasts (padding, colors, font, shadow) and the space between the toasts, from the custom properties below, set on `ds-toaster`. The `success`, `warning` and `error` modifiers set `--ds-toaster-background` to their status color.
 
 Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
@@ -20,6 +20,28 @@ ds-toaster {
 }
 ```
 
+## Accessibility
+
+The toaster announces its messages to screen readers through a live region (WAI-ARIA [alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/) and status messages, WCAG 4.1.3).
+
+- **Live region**: `.ds-toaster__live`, rendered from the first render of the component, empty, hidden on the screen only. It is `role="status"` with `aria-live="polite"` (announced when the screen reader is idle), or, with the `error` modifier (`mods="error"`), `role="alert"` with `aria-live="assertive"` (announced at once); `aria-atomic="false"`: only what changes is announced. `success`, `warning` and no modifier are polite.
+- **Announcements**: `show()` and `displayToast()` write the displayed messages in the live region, one paragraph each; `hide()` empties it. A message added while the toaster is shown is announced alone. So that the region exists before the messages come, put `<ds-toaster>` in the page when it loads, not right before a message, and give it its `mods` there: a region whose role changes is not announced reliably (use a toaster per level, `<ds-toaster mods="error">` for the errors).
+- **Toasts**: the box on the screen (`.ds-toaster__container`) is `aria-hidden="true"`: the live region has the same text, read once.
+- **Focus**: the toaster never takes the focus, and has no focusable element. A click hides it; on the keyboard, it hides after `closing-delay` (`displayToast()`). Keep that delay long enough to read the messages, or `0` and hide it from the page.
+
+```html
+<ds-toaster id="notices" position="bottom,right"></ds-toaster>
+<ds-toaster id="errors" mods="error" position="bottom,right"></ds-toaster>
+```
+
+```js
+const notices = document.querySelector('#notices');
+notices.messages = ['Changes saved'];
+notices.displayToast(); // "Changes saved", announced when the screen reader is idle
+```
+
+**Changed**: the live region and the `aria-hidden` box are new.
+
 <!-- Auto Generated Below -->
 
 
@@ -28,6 +50,11 @@ ds-toaster {
 Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
 The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
 at the end of that transition.
+
+Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+`aria-hidden`: the live region holds the same text. The toaster never takes the focus.
 
 ## Properties
 
