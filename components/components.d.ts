@@ -27,9 +27,18 @@ export namespace Components {
     /**
      * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
      * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+     * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+     * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+     * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+     * `ajaxError`; a load emits `ajaxLoaded`.
      * Version: 1.0
      */
     interface DsAjax {
+        /**
+          * The message shown (and announced: `role="alert"`) after the link when the content could not be loaded. Empty: no message (listen to `ajaxError`).
+          * @default 'The content could not be loaded.'
+         */
+        "errorMessage": string;
         /**
           * Event that will trigger the loading of the ajax content: `click` (default) or `load`
           * @default 'click'
@@ -854,6 +863,10 @@ export namespace Components {
         "type": 'button' | 'control' | 'link';
     }
 }
+export interface DsAjaxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAjaxElement;
+}
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
@@ -903,12 +916,28 @@ export interface DsToggleGroupCustomEvent<T> extends CustomEvent<T> {
     target: HTMLDsToggleGroupElement;
 }
 declare global {
+    interface HTMLDsAjaxElementEventMap {
+        "ajaxLoaded": { target: HTMLElement; url: string };
+        "ajaxError": { url: string; error: unknown };
+    }
     /**
      * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
      * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+     * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+     * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+     * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+     * `ajaxError`; a load emits `ajaxLoaded`.
      * Version: 1.0
      */
     interface HTMLDsAjaxElement extends Components.DsAjax, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAjaxElementEventMap>(type: K, listener: (this: HTMLDsAjaxElement, ev: DsAjaxCustomEvent<HTMLDsAjaxElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAjaxElementEventMap>(type: K, listener: (this: HTMLDsAjaxElement, ev: DsAjaxCustomEvent<HTMLDsAjaxElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsAjaxElement: {
         prototype: HTMLDsAjaxElement;
@@ -1378,14 +1407,31 @@ declare namespace LocalJSX {
     /**
      * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
      * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+     * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+     * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+     * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+     * `ajaxError`; a load emits `ajaxLoaded`.
      * Version: 1.0
      */
     interface DsAjax {
+        /**
+          * The message shown (and announced: `role="alert"`) after the link when the content could not be loaded. Empty: no message (listen to `ajaxError`).
+          * @default 'The content could not be loaded.'
+         */
+        "errorMessage"?: string;
         /**
           * Event that will trigger the loading of the ajax content: `click` (default) or `load`
           * @default 'click'
          */
         "on"?: 'load' | 'click';
+        /**
+          * Emitted when the content could not be loaded (`detail.url`, `detail.error`).
+         */
+        "onAjaxError"?: (event: DsAjaxCustomEvent<{ url: string; error: unknown }>) => void;
+        /**
+          * Emitted once the content is in the target (`detail.target`, `detail.url`).
+         */
+        "onAjaxLoaded"?: (event: DsAjaxCustomEvent<{ target: HTMLElement; url: string }>) => void;
         /**
           * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
           * @default ''
@@ -2141,6 +2187,7 @@ declare namespace LocalJSX {
         "on": 'load' | 'click';
         "target": 'self' | string;
         "suffix": string;
+        "errorMessage": string;
     }
     interface DsBlockAttributes {
         "section": boolean;
@@ -2366,6 +2413,10 @@ declare module "@stencil/core" {
             /**
              * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
              * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+             * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+             * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+             * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+             * `ajaxError`; a load emits `ajaxLoaded`.
              * Version: 1.0
              */
             "ds-ajax": LocalJSX.IntrinsicElements["ds-ajax"] & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;

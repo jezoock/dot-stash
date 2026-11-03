@@ -398,7 +398,7 @@ describe('Sass stylesheets', () => {
 
       expect(css).toMatch(/a\{font-family:"ds-icons";content:"([^"]+)";content:"\1"\/""\}/);
       expect(css).toMatch(/b\{content:"[^"]+"\}/);
-      for (const glyph of ['.ds-panel__title::after']) {
+      for (const glyph of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after']) {
         expect(themeCss.default).toMatch(new RegExp(`${glyph.replace(/[.]/g, '\\.')}\\{[^}]*content:"[^"]+";content:"[^"]+"/""`));
       }
     });

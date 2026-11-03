@@ -20,7 +20,8 @@ ds-ajax {
       color: var(--ds-ajax-spinner-color);
       font-size: var(--ds-ajax-spinner-size);
       line-height: 1;
-      @include ds-icon(arrows-cw);
+      // Decorative: the loading state is aria-busy on the content.
+      @include ds-icon(arrows-cw, $alt: '');
       @include spin();
     }
   }
