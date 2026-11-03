@@ -204,11 +204,20 @@ export namespace Components {
         "type": string;
     }
     /**
-     * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
-     * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
-     * the class is removed when the last shown modal is hidden or removed from the document.
+     * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+     * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+     * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+     * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+     * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+     * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+     * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+     * the document.
      */
     interface DsModal {
+        /**
+          * The accessible name of the dialog (`aria-label`), for a dialog without a `slot="title"` element.
+         */
+        "label": string;
         /**
           * @default { '--dialog': true }
          */
@@ -767,9 +776,14 @@ declare global {
         "modalOpen": any;
     }
     /**
-     * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
-     * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
-     * the class is removed when the last shown modal is hidden or removed from the document.
+     * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+     * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+     * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+     * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+     * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+     * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+     * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+     * the document.
      */
     interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1242,11 +1256,20 @@ declare namespace LocalJSX {
         "type"?: string;
     }
     /**
-     * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
-     * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
-     * the class is removed when the last shown modal is hidden or removed from the document.
+     * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+     * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+     * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+     * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+     * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+     * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+     * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+     * the document.
      */
     interface DsModal {
+        /**
+          * The accessible name of the dialog (`aria-label`), for a dialog without a `slot="title"` element.
+         */
+        "label"?: string;
         /**
           * @default { '--dialog': true }
          */
@@ -1685,6 +1708,7 @@ declare namespace LocalJSX {
         "overlay": boolean;
         "lightboxClass": string;
         "lightboxClassObject": string;
+        "label": string;
     }
     interface DsNavAttributes {
         "currentActiveItemId": string;
@@ -1861,9 +1885,14 @@ declare module "@stencil/core" {
             "ds-heading": LocalJSX.IntrinsicElements["ds-heading"] & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             /**
-             * A modal dialog in a lightbox, shown while `shown` is set. While at least one modal of the document is shown,
-             * the body has the `ds-js--modal-open` class, which locks the page scroll (`overflow: hidden`, no inline style):
-             * the class is removed when the last shown modal is hidden or removed from the document.
+             * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+             * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+             * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+             * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+             * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+             * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+             * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+             * the document.
              */
             "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
             "ds-nav": LocalJSX.IntrinsicElements["ds-nav"] & JSXBase.HTMLAttributes<HTMLDsNavElement>;

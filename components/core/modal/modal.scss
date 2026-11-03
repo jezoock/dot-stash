@@ -1,6 +1,55 @@
-// The structure of ds-modal: while a modal is shown, the page does not scroll. The lightbox itself (its position, a
-// backdrop, the dialog box, a hidden state) has no style yet, here or in the default theme: the content is rendered in
-// place, and the component has no custom property.
+// The structure of ds-modal: hidden, it is not rendered; shown, it covers the screen above the page (the lightbox, which
+// the theme turns into a backdrop), with the dialog in its center, at most as high as the screen (then its content
+// scrolls), and the page does not scroll. The backdrop and the dialog box are the look of the theme
+// (components/_modal.scss), from the custom properties below; the stack level and the maximum width of the dialog are read
+// here.
+
+/**
+ * @prop --ds-modal-z-index: Stack level of the shown modal, above the page.
+ * @prop --ds-modal-max-width: Maximum width of the dialog.
+ * @prop --ds-modal-margin: Smallest space between the dialog and the edges of the screen.
+ * @prop --ds-modal-backdrop: Background of the backdrop, which covers the page behind the dialog.
+ * @prop --ds-modal-background: Background of the dialog.
+ * @prop --ds-modal-color: Text color of the dialog.
+ * @prop --ds-modal-padding: Padding of the dialog.
+ * @prop --ds-modal-radius: Corner radius of the dialog.
+ * @prop --ds-modal-shadow: Shadow of the dialog.
+ */
+
+// Hidden: its content is neither shown, nor focusable, nor read by screen readers.
+ds-modal:not([shown]) {
+  display: none;
+}
+
+// Shown (the reflected shown property): the lightbox covers the screen; a mouse down on it, outside the dialog, hides the
+// modal.
+ds-modal[shown] {
+  position: fixed;
+  inset: 0;
+  z-index: var(--ds-modal-z-index, 1000);
+  display: block;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+// Child combinators: the main class of a ds-block in the `modal` context is ds-modal too.
+ds-modal > .ds-lightbox__container {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
+  & > .ds-modal {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--ds-modal-max-width, 100%);
+    max-height: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+}
 
 // Set on the body while a modal is shown (see modal.tsx): the page does not scroll behind the modal.
 body.ds-js--modal-open {
