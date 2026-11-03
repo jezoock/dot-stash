@@ -471,7 +471,7 @@ describe('Sass stylesheets', () => {
     const colorNames = new Map<string, boolean>();
     const isColorName = (word: string): boolean => {
       if (!colorNames.has(word)) {
-        let isColor = false;
+        let isColor: boolean;
         try {
           isColor = sass.compileString(`@use 'sass:meta'; a { b: meta.type-of(${word}); }`).css.includes('b: color');
         } catch {
