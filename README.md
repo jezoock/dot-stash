@@ -9,8 +9,9 @@ Each component keeps its structure in its own stylesheet (`styleUrl`), which Ste
 
 ## Requirements
 
-- Node.js 22 or later (`.nvmrc`, `package.json` `engines`): `@stencil/sass` requires it, and the build scripts use its recursive `fs.watch` (Linux, macOS, Windows)
-- npm
+- Node.js 22 or later (`.nvmrc`, `package.json` `engines`): `@stencil/sass` requires it, and the build scripts use its recursive `fs.watch` (Linux, macOS, Windows); 22.12 or later for the tests (Vitest)
+- npm (the lockfile installs with npm 10 and 11; adding a test dependency with npm 10 can fail on the optional peer dependencies of Vitest, which npm 11 resolves)
+- for the browser tests: the Chromium of Playwright (`npx playwright install chromium`), see [Tests](#tests)
 
 ## Install
 
@@ -23,22 +24,23 @@ npm run build:all
 
 ## npm scripts
 
-| Script                 | What it does                                                                                                                                                                                             |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm start`            | Development: the CSS watcher and the Stencil dev server, in one terminal (`scripts/dev.mjs`, see [Tooling](#tooling)). Serves `www/` (page `components/index.html`) on `http://localhost:3333/`.         |
-| `npm run build`        | Stencil production build: the package in `dist/` and `loader/`, the dev page in `www/`. Also regenerates `components/components.d.ts` and the component `readme.md` files.                               |
-| `npm run build:css`    | Compiles every theme and its page stylesheets into `dist/css/` (`scripts/build-css.mjs`, see [Tooling](#tooling)).                                                                                       |
-| `npm run build:all`    | Runs `clean`, `build:css`, then `build`.                                                                                                                                                                 |
-| `npm run clean`        | Deletes `dist/`, `www/`, `.stencil/` and `loader/`.                                                                                                                                                      |
-| `npm test`             | Unit tests: Stencil spec tests (`stencil test --spec`, Jest), without a browser. See [Tests](#tests).                                                                                                    |
-| `npm run test.watch`   | Same as `npm test`, in watch mode.                                                                                                                                                                       |
-| `npm run test:e2e`     | Stencil end-to-end tests (`stencil test --e2e`, Puppeteer and Chromium). No end-to-end test exists yet, and CI does not run them.                                                                        |
-| `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                               |
-| `npm run lint`         | ESLint on the repository: the components, the scripts and the configuration files (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                       |
-| `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                |
-| `npm run lint:css`     | Stylelint on the `.scss` files of `scss/` and `components/` (`stylelint.config.mjs`, see [Tooling](#tooling)).                                                                                           |
-| `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files). |
-| `npm run format:check` | Checks the same files without writing.                                                                                                                                                                   |
+| Script                 | What it does                                                                                                                                                                                                    |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`            | Development: the CSS watcher and the Stencil dev server, in one terminal (`scripts/dev.mjs`, see [Tooling](#tooling)). Serves `www/` (page `components/index.html`) on `http://localhost:3333/`.                |
+| `npm run build`        | Stencil production build: the package in `dist/` and `loader/`, the dev page in `www/`. Also regenerates `components/components.d.ts` and the component `readme.md` files.                                      |
+| `npm run build:css`    | Compiles every theme and its page stylesheets into `dist/css/` (`scripts/build-css.mjs`, see [Tooling](#tooling)).                                                                                              |
+| `npm run build:all`    | Runs `clean`, `build:css`, then `build`.                                                                                                                                                                        |
+| `npm run clean`        | Deletes `dist/`, `www/`, `.stencil/` and `loader/`.                                                                                                                                                             |
+| `npm test`             | Unit tests: the spec files (`*.spec.ts`, `*.spec.tsx`) with Vitest, the `unit` and `styles` projects of `vitest.config.mts`, without a browser and without a build. See [Tests](#tests).                        |
+| `npm run test:watch`   | Same as `npm test`, in watch mode.                                                                                                                                                                              |
+| `npm run test:browser` | Browser tests: the `*.browser.ts` files in Chromium (Vitest browser mode, Playwright), on the build: run `npm run build:all` first. See [Tests](#tests).                                                        |
+| `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                                      |
+| `npm run lint`         | ESLint on the repository: the components, the scripts and the configuration files (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                              |
+| `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                       |
+| `npm run lint:css`     | Stylelint on the `.scss` files of `scss/` and `components/` (`stylelint.config.mjs`, see [Tooling](#tooling)).                                                                                                  |
+| `npm run typecheck`    | `tsc --noEmit`: type-checks the components and the tests (`tsconfig.json`; the build only compiles the components, `tsconfig.build.json`).                                                                      |
+| `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `mts`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files). |
+| `npm run format:check` | Checks the same files without writing.                                                                                                                                                                          |
 
 ## Tooling
 
@@ -51,11 +53,11 @@ The build uses Stencil for the components and the `sass` package for the theme s
 - **`scripts/dev.mjs`** (`npm start`) runs `build-css.mjs --watch` and, once the stylesheets are compiled, the Stencil dev server (`stencil build --dev --watch --serve`), in one terminal; Ctrl+C stops both, and when one of them stops, the other is stopped too. The dev server serves `www/`, with the dev page `components/index.html`: add `ds-*` markup there to try the components. The Stencil build copies `dist/css/` to `www/css/`, and watches `dist/css/` (`watchExternalDirs` in `stencil.config.ts`): a stylesheet the watcher recompiles makes a rebuild, which copies it, and the page reloads. A change of a component reloads it as before (Stencil's hot module replacement).
 - **`dot-stash.config.mjs`** is the configuration of the stylesheet build: `themes` (the folders of `scss/themes/` to compile), `paths` (`scss`, the sources; `css`, the output, `dist/css`) and `css` (`style`, `compressed` or `expanded`; `sourceMap`).
 - **Stylelint** (`npm run lint:css`, `stylelint.config.mjs`) checks the SCSS with the standard SCSS configuration (`stylelint-config-standard-scss`), adapted to the conventions of the project, each change explained in the configuration: the class names `ds-<block>__<element>--<modifier>` and `--<modifier>`, the custom properties `--ds-…`, the blank lines that group the lines of a block, the explicit `== null` tests of the engine, and the values the compiled theme writes as they are (six-digit colors, font names, the quoted icon font). Prettier formats the files (Stylelint has no formatting rule left).
-- **TypeScript** (`typescript`, `~5.8.3`) is the version Stencil 4.45 compiles with (it bundles its own copy): typescript-eslint and the editors use this one, and `npx tsc --noEmit` type-checks `components/` with it.
+- **TypeScript** (`typescript`, `~5.8.3`) is the version Stencil 4.45 compiles with (it bundles its own copy): typescript-eslint and the editors use this one. `tsconfig.json` covers the components and the tests (`components/`, `test/`), with the module resolution of Vite (`bundler`): the editors and `npm run typecheck` (`tsc --noEmit`) use it. The Stencil build uses `tsconfig.build.json` (`tsconfig` in `stencil.config.ts`): the same options, the module resolution of the build (`node`), and only the components, without the test files (`*.spec.ts(x)`, `*.browser.ts`): the build compiles every file of its program, and would publish the test helpers they import.
 
 The dev page only loads the components (`/build/dot-stash.esm.js`) and the `default` theme stylesheet (`/css/default.css`, the copy of `dist/css/default.css`); a page stylesheet is at `/css/pages/<theme>/<page>.css`. The former demo (the `ds-main` component, the theme switcher and the runtime color control of the dev pages) is archived on `archive/propal` (see [Archived code](#archived-code)).
 
-CI (`.github/workflows/ci.yml`, GitHub Actions) runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check`, `lint`, `lint:css` and `npm test` on every push and pull request. Every step is blocking: a build, formatting, lint or test error fails the run.
+CI (`.github/workflows/ci.yml`, GitHub Actions) runs two jobs on every push and pull request. The first one runs `npm ci`, `build:all` (then checks that the main build outputs exist), `format:check`, `lint`, `typecheck`, `lint:css` and `npm test`; the second one, in parallel, `npm ci`, `build:all`, `npx playwright install --with-deps chromium` (the Chromium of the Playwright version of the lockfile) and `npm run test:browser`. Every step is blocking: a build, formatting, lint, type or test error fails the run.
 
 ## Project structure
 
@@ -64,11 +66,14 @@ components/
   core/            ds-* components, one folder each (.tsx, structural .scss with the documented
                    custom properties, type, enum and constant modules, readme.md: generated, below a
                    hand-written Styling section and, for the components that have roles, keys or
-                   labels, an Accessibility section)
+                   labels, an Accessibility section), and its tests: <name>.spec.tsx (unit), <name>.browser.ts
+                   (browser)
   utils/           shared TypeScript: utility modules (props, css, dom, ajax, responsive, tokens, env,
                    form, context), the `ds` object grouping them (dot-stash.ts), debounce, throttle,
                    uuid, the internal focus, transition, label and form helpers of the components (focus.ts,
-                   transition.ts, labels.ts, form-control.ts), and shared types and enums (interfaces/)
+                   transition.ts, labels.ts, form-control.ts), and shared types and enums (interfaces/); their
+                   unit tests (<module>.spec.ts) and transition.browser.ts
+  sass.spec.ts     the stylesheet tests (npm test)
   index.ts         package entry point
   index.html       dev page served by the Stencil dev server (npm start)
   components.d.ts  component typings, generated by Stencil
@@ -83,8 +88,14 @@ scss/
 scripts/
   build-css.mjs        theme stylesheet build and watcher (npm run build:css)
   dev.mjs              npm start: the CSS watcher and the Stencil dev server
+test/
+  helpers/             shared helpers of the tests: the unit tests (index.ts) and the browser tests (browser.ts)
+  setup/               setup files of the Vitest projects: unit.ts (simulated DOM), browser.ts (Chromium)
 dot-stash.config.mjs   stylesheet build configuration: themes, paths, output style, source maps
 stencil.config.ts      Stencil configuration (srcDir: components)
+tsconfig.json          TypeScript configuration of the editors and of npm run typecheck (components and tests)
+tsconfig.build.json    TypeScript configuration of the Stencil build (the components only)
+vitest.config.mts      Vitest configuration: the unit, styles and browser projects (npm test, npm run test:browser)
 eslint.config.mjs      ESLint configuration (npm run lint)
 stylelint.config.mjs   Stylelint configuration (npm run lint:css)
 docs/                  project notes (archives)
@@ -616,7 +627,7 @@ A theme gives each component its skin, a partial of its `components/` folder loa
 
 ## Accessibility
 
-The components follow the [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/) patterns. The spec tests check their roles, attributes, keyboard handling (simulated key events) and focus moves, and the stylesheet tests the focus indicator and less motion (see [Tests](#tests)); the behavior is also checked in a browser with the keyboard (Tab, Shift+Tab, Escape, Enter, Space). The library uses no accessibility audit library or service. The readme of each component describes its roles, keyboard support and required labelling in an Accessibility section: the overlays, [`ds-modal`](components/core/modal/readme.md#accessibility), [`ds-sidebar`](components/core/sidebar/readme.md#accessibility), [`ds-tooltip`](components/core/tooltip/readme.md#accessibility), [`ds-toaster`](components/core/toaster/readme.md#accessibility), and the form controls, [`ds-toggle`](components/core/toggle/readme.md#accessibility), [`ds-toggle-group`](components/core/toggle-group/readme.md#accessibility), [`ds-combo`](components/core/combo/readme.md#accessibility), [`ds-select`](components/core/select/readme.md#accessibility), [`ds-trigger`](components/core/trigger/readme.md#accessibility), the navigation and content components, [`ds-panel-group`](components/core/panel-group/readme.md#accessibility), [`ds-panel`](components/core/panel/readme.md#accessibility), [`ds-slider`](components/core/slider/readme.md#accessibility) (and [`ds-slider-menu`](components/core/slider/slider-menu/readme.md#accessibility), [`ds-slider-item`](components/core/slider/slider-item/readme.md#accessibility)), [`ds-nav`](components/core/nav/readme.md#accessibility), [`ds-nav-item`](components/core/nav/nav-item/readme.md#accessibility), [`ds-ajax`](components/core/ajax/readme.md#accessibility), and [`ds-icon`](components/core/icon/readme.md#accessibility), [`ds-title`](components/core/title/readme.md#accessibility), [`ds-heading`](components/core/heading/readme.md#accessibility), [`ds-block`](components/core/block/readme.md#accessibility). `ds-grid`, `ds-grid-item`, `ds-text`, `ds-title-bar` and `ds-rsp` are layout and text: no role, no keyboard, no focus. The form controls take part in a native `<form>` (`ds-toggle`, `ds-toggle-group` and `ds-combo` are form-associated, `ds-select` has a native `select`): a `<label>` names them, a disabled fieldset disables them, and their required state and errors are given to assistive technologies when the user should see them (see [Forms](#forms)).
+The components follow the [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/) patterns. The unit tests check their roles, attributes, keyboard handling (simulated key events) and focus moves, the stylesheet tests the focus indicator and less motion, and the browser tests the keys, the Tab order and the focus moves with the keyboard of Chromium (Tab, Shift+Tab, Escape, Enter, Space, the arrow keys…; see [Tests](#tests)). The library uses no accessibility audit library or service. The readme of each component describes its roles, keyboard support and required labelling in an Accessibility section: the overlays, [`ds-modal`](components/core/modal/readme.md#accessibility), [`ds-sidebar`](components/core/sidebar/readme.md#accessibility), [`ds-tooltip`](components/core/tooltip/readme.md#accessibility), [`ds-toaster`](components/core/toaster/readme.md#accessibility), and the form controls, [`ds-toggle`](components/core/toggle/readme.md#accessibility), [`ds-toggle-group`](components/core/toggle-group/readme.md#accessibility), [`ds-combo`](components/core/combo/readme.md#accessibility), [`ds-select`](components/core/select/readme.md#accessibility), [`ds-trigger`](components/core/trigger/readme.md#accessibility), the navigation and content components, [`ds-panel-group`](components/core/panel-group/readme.md#accessibility), [`ds-panel`](components/core/panel/readme.md#accessibility), [`ds-slider`](components/core/slider/readme.md#accessibility) (and [`ds-slider-menu`](components/core/slider/slider-menu/readme.md#accessibility), [`ds-slider-item`](components/core/slider/slider-item/readme.md#accessibility)), [`ds-nav`](components/core/nav/readme.md#accessibility), [`ds-nav-item`](components/core/nav/nav-item/readme.md#accessibility), [`ds-ajax`](components/core/ajax/readme.md#accessibility), and [`ds-icon`](components/core/icon/readme.md#accessibility), [`ds-title`](components/core/title/readme.md#accessibility), [`ds-heading`](components/core/heading/readme.md#accessibility), [`ds-block`](components/core/block/readme.md#accessibility). `ds-grid`, `ds-grid-item`, `ds-text`, `ds-title-bar` and `ds-rsp` are layout and text: no role, no keyboard, no focus. The form controls take part in a native `<form>` (`ds-toggle`, `ds-toggle-group` and `ds-combo` are form-associated, `ds-select` has a native `select`): a `<label>` names them, a disabled fieldset disables them, and their required state and errors are given to assistive technologies when the user should see them (see [Forms](#forms)).
 
 ### Focus indicator
 
@@ -696,33 +707,81 @@ The components give the roles, states and keys; the page gives the names and the
 
 ## Tests
 
-Unit tests are Stencil spec tests: Stencil's test runner drives Jest 29 (the `jest`, `jest-cli` and `@types/jest` dev dependencies; Stencil 4 supports Jest 24 to 29) in Stencil's simulated DOM, without a browser:
+The tests run with Vitest 5 and `@stencil/vitest`, the test tooling of Stencil that replaces its integrated test runner (`stencil test`, Jest), deprecated since Stencil 4.43 and dropped by Stencil 5. `vitest.config.mts` defines three projects:
 
-- A spec file sits next to its source: `components/utils/props.spec.ts`, `components/core/toggle/toggle.spec.tsx`.
-- Utility modules are tested with plain Jest (`describe`, `it`, `expect`, `jest.fn()`).
-- Components are rendered with `newSpecPage` from `@stencil/core/testing`:
+| Project   | Files                                                        | Where                                                                                                                                                                                            | Script                 |
+| --------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| `unit`    | `components/**/*.spec.ts`, `*.spec.tsx` (but `sass.spec.ts`) | Stencil's simulated DOM (mock-doc, the `stencil` environment of `@stencil/vitest`), in Node: the plugin of `@stencil/vitest` compiles the components from their sources as the tests import them | `npm test`             |
+| `styles`  | `components/sass.spec.ts`                                    | Node: the stylesheets compiled with the Sass JavaScript API                                                                                                                                      | `npm test`             |
+| `browser` | `components/**/*.browser.ts`                                 | Chromium, driven by Playwright (Vitest browser mode), on the build of the components and of the theme                                                                                            | `npm run test:browser` |
+
+`npm test` runs the unit and stylesheet tests once, without a browser and without a build; `npm run test:watch` runs them again on every change. `npm run test:browser` runs the browser tests on the build: run `npm run build:all` first, and again after a change of a component or of the theme (the setup stops with that message when the build is missing). `npm test` does not run the browser tests, which need a build and a browser; CI runs both (see [Tooling](#tooling)). The test files and the helpers are not part of the build output (`dist/`, `www/`, `loader/`, the types) nor of the generated readmes: the Stencil build compiles the components only (`tsconfig.build.json`), and `npm run typecheck` type-checks the tests too.
+
+### Unit tests
+
+- A spec file sits next to its source: `components/utils/props.spec.ts`, `components/core/toggle/toggle.spec.tsx`. It imports what it uses from `vitest` (`describe`, `it`, `expect`, `vi`…): there are no globals.
+- A component is defined when the test file imports it (`import './toggle'`): the plugin of `@stencil/vitest` compiles it as a custom element. `renderPage()` (`test/helpers`) renders HTML, or a JSX template for props that are not strings, in the body of a fresh page and waits for its components: `page.root` is the first component of the body, `page.waitForChanges()` waits for them to render a change. The DOM matchers of `@stencil/vitest` are installed: `toHaveClass()`, `toHaveClasses()`, `toHaveAttribute()`, `toEqualAttribute()`, `toEqualAttributes()`.
 
 ```tsx
-import { newSpecPage } from '@stencil/core/testing';
-import { DSToggle } from './toggle';
+import { describe, expect, it } from 'vitest';
+import './toggle';
+import { renderPage } from '../../../test/helpers';
 
-it('toggles a checkbox', async () => {
-  const page = await newSpecPage({ components: [DSToggle], html: '<ds-toggle type="checkbox"></ds-toggle>' });
-  page.root.click();
-  await page.waitForChanges();
-  expect(page.root.checked).toBe(true);
+describe('ds-toggle', () => {
+  it('toggles a checkbox', async () => {
+    const page = await renderPage('<ds-toggle type="checkbox"></ds-toggle>');
+    page.root.click();
+    await page.waitForChanges();
+    expect(page.root.checked).toBe(true);
+  });
 });
 ```
 
-`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test`, so CI. It also checks that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that its `--ds-bp-labels` lists its `--ds-bp-*` breakpoints by width (and that no JSON is written in a `content` any more), the errors on breakpoint labels, that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`. It also checks that no stylesheet writes a function call Sass does not know (`color(…)`, `ds-…(…)`: Sass writes them as plain CSS, which browsers drop), and that the component stylesheets read no token. For the [styling contract](#styling-a-component), it checks that each `.scss` file of `components/core/` is the stylesheet of a component; that the component stylesheets write no color (hexadecimal, color function or color name, `transparent` aside) and no `font`, `font-family` or `font-size`, but for the resets it lists (`font-size: inherit`…); that they read no other custom property than the documented ones of their component; that each component documents its custom properties once, named after it (`--ds-<component>-…`); that the default theme sets each documented property but those a component writes from its props (the layout of `ds-grid`, which the theme does not set: the test pins that list), that its skins or a component stylesheet read it, and that it declares or reads no other `--ds-…` property than the tokens and the documented ones; and that the readme of each component has a Styling section and lists its documented properties (regenerated by `npm run build`). For [accessibility](#accessibility), it checks that the default theme draws the focus indicator from the focus tokens, that no stylesheet removes the outline (`outline: none`, `0`), the rules of less motion (and the loading indicators that keep turning), the visually hidden class, and the empty alternative text of the decorative glyphs (`$alt` of the icon mixins).
+The simulated DOM has no focus, no layout, no computed style, no viewport and no `ElementInternals`. The shared helpers of `test/helpers/` (imported from `test/helpers`) give what a test needs of them:
 
-Stencil's simulated DOM has no `ElementInternals` (its `attachInternals()` gives an object without methods, and the components then leave the form alone): the spec tests of the form-associated components give the elements a fake one, which records the form value, the state and the validity and dispatches `invalid`, and call the form callbacks (`formResetCallback()`…) as a browser does. What the simulated DOM cannot do (the submission, `FormData`, the labels, a disabled fieldset, the history) was checked in Chromium.
+| Helper (module)                                                                        | What it gives                                                                                                                                                               |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `renderPage()`, `waitForChanges()`, `wait()`, `componentClass()` (`page.ts`)           | a page and its components; a wait for a time (the timers are real); the class of a component, to spy on a method of its prototype                                           |
+| `trackFocus()` (`focus.ts`)                                                            | `document.activeElement`, which `focus()` sets, dispatching `focusout` and `focusin`; returns the function that gives the focused element, with the spy of `focus()`        |
+| `keydown()`, `keyup()`, `dispatchKey()` (`keyboard.ts`)                                | key events that bubble and can be cancelled, as a browser dispatches them                                                                                                   |
+| `mockTransition()`, `mockComputedStyle()`, `mockTokens()`, `mockLayout()` (`style.ts`) | the computed transition, the computed style or the theme custom properties that `getComputedStyle()` gives, and the sizes of the elements (`offsetWidth`, `offsetHeight`)   |
+| `fakeMatchMedia()` (`media.ts`)                                                        | a `matchMedia()` that evaluates the width media queries at a width and, when the test resizes, dispatches `change` on the lists whose state changes, as a browser does      |
+| `mockElementInternals()`, `formCallbacks()` (`form.ts`)                                | a fake `ElementInternals` that records the form value, the state and the validity and dispatches `invalid`, and the form callbacks a browser calls (`formResetCallback()`…) |
 
-Stencil's simulated DOM has no viewport either: its `matchMedia()` never matches. The spec tests of the responsive helpers, `ds-rsp` and `ds-nav-item` give the window a fake one, which evaluates the width media queries at a width and, when the test resizes, dispatches `change` on the lists whose state changes, as a browser does. The rest (a real resize, a zoomed page, the layout of `ds-grid`) was checked in Chromium.
+`test/setup/unit.ts` gives each test a fresh page (a new body, no listeners), and `vitest.config.mts` restores the spies (`vi.spyOn()`) and the globals of `vi.stubGlobal()` before each test. The setup also gives the runtime the build flags of Stencil's former spec pages (the development mode, form association, no `hydrated` class) and the window the `on…` properties and the event listeners of a browser window, which the components rely on.
 
-`npm test` runs them once, `npm run test.watch` on every change. Spec files are not part of the build output (`dist/`, `www/`, `loader/`). End-to-end tests (`*.e2e.ts`, `npm run test:e2e`) run in Chromium with Puppeteer 25: `npm ci` downloads its browser unless `PUPPETEER_SKIP_DOWNLOAD` is set, or `PUPPETEER_EXECUTABLE_PATH` points to another Chromium; as root (a container), add `-- --ci` (Chromium without its sandbox).
+`components/sass.spec.ts` compiles every theme (`scss/themes/<theme>/index.scss`), every theme page stylesheet and every `.scss` file of `components/` with the Sass JavaScript API: a Sass warning (a deprecation included) or error fails `npm test` (the `styles` project, in Node), so CI. It also checks that the tokens can be configured with `@use … with (…)`. For the custom properties, it checks that each theme writes one per token of its maps (names and values, references resolved), that its `--ds-bp-labels` lists its `--ds-bp-*` breakpoints by width (and that no JSON is written in a `content` any more), the errors on breakpoint labels, that every `var(--ds-…)` of a theme has its property, that the accessors return `var()` and the `-value` functions the values, the errors on unknown tokens, `null` values, configured engines and the scoped `ds-tokens()`. It also checks that no stylesheet writes a function call Sass does not know (`color(…)`, `ds-…(…)`: Sass writes them as plain CSS, which browsers drop), and that the component stylesheets read no token. For the [styling contract](#styling-a-component), it checks that each `.scss` file of `components/core/` is the stylesheet of a component; that the component stylesheets write no color (hexadecimal, color function or color name, `transparent` aside) and no `font`, `font-family` or `font-size`, but for the resets it lists (`font-size: inherit`…); that they read no other custom property than the documented ones of their component; that each component documents its custom properties once, named after it (`--ds-<component>-…`); that the default theme sets each documented property but those a component writes from its props (the layout of `ds-grid`, which the theme does not set: the test pins that list), that its skins or a component stylesheet read it, and that it declares or reads no other `--ds-…` property than the tokens and the documented ones; and that the readme of each component has a Styling section and lists its documented properties (regenerated by `npm run build`). For [accessibility](#accessibility), it checks that the default theme draws the focus indicator from the focus tokens, that no stylesheet removes the outline (`outline: none`, `0`), the rules of less motion (and the loading indicators that keep turning), the visually hidden class, and the empty alternative text of the decorative glyphs (`$alt` of the icon mixins).
 
-Stencil 4.43 deprecated its integrated test runner (`stencil test`, which prints a deprecation warning): Stencil 5 drops it, for `@stencil/vitest` (spec and browser tests) or `@stencil/playwright` (end-to-end tests).
+### Browser tests
+
+The browser tests check in Chromium what the simulated DOM can only imitate. A browser test file sits next to its source too (`components/core/toggle/toggle.browser.ts`), and runs on the build that the package publishes: the browser build (`dist/dot-stash/dot-stash.esm.js`) and the default theme (`dist/css/default.css`), loaded by `test/setup/browser.ts`. The tests use the keyboard and the pointer of Playwright (`userEvent` of `vitest/browser`: `keyboard()`, `tab()`, `click()`, `hover()`…), the viewport (`page.viewport()`), and the media features (`setReducedMotion()`); the helpers of `test/helpers/browser.ts` mount a page and wait for its components (`mount()`), and collect events (`nextEvent()`, `recordEvents()`). They wait for events and conditions (`expect.poll()`), not for fixed times. After each test, the page is emptied, back to 1280 × 800 px, without emulated media, and the pointer is in a corner.
+
+- **Keyboard and focus**: `ds-panel-group` (tabs: the arrows, reversed from right to left, Home, End, Tab into the panel; collapsible panels), `ds-slider` (the buttons, the dots, the rotation stopped by the focus and paused under the pointer, less motion), `ds-nav` (disclosure and Escape in both modes), `ds-combo` (the keys of the select-only combobox, type-ahead, Escape), `ds-toggle-group` (roving tabindex), `ds-toggle` (Space, Enter), `ds-modal` (focus moved in and given back, Tab trapped, Escape), `ds-sidebar`, `ds-tooltip`.
+- **Forms**: `new FormData(form)` with `ds-toggle`, `ds-toggle-group`, `ds-combo` (`multiple`) and `ds-select` (its value submitted once), a form reset, a `<fieldset>` disabled at runtime, `required` (`checkValidity()`, a blocked submission, the focus), when `aria-invalid` shows, a click on a `<label>` and the name it gives.
+- **Responsive**: the breakpoint of `ds-rsp` at the boundary widths, at once when the viewport crosses one and never within a breakpoint; the boxes of the items of `ds-grid`; the switch of mode of `ds-nav-item` across `md`.
+- **Transitions**: `panelShown` and `panelHidden` of `ds-panel`, the end of a slide of `ds-slider` without `transitionend`, `waitForTransition()` with less motion.
+
+Playwright (`playwright`, pinned) runs the Chromium of its version: download it once with `npx playwright install chromium` (CI: `--with-deps`, with the system libraries). Without that download, `CHROMIUM_PATH` makes the tests run an installed Chromium of a close version instead: `CHROMIUM_PATH=/path/to/chromium npm run test:browser`.
+
+### Testing a new component
+
+1. Unit tests, `<name>.spec.tsx` next to the component: import it (`import './<name>'`), render it with `renderPage()`, check its classes, attributes, events and methods; give it what the simulated DOM lacks with the helpers above.
+2. Browser tests, `<name>.browser.ts`, for what needs a browser: the keyboard and the focus, a form, the layout, the viewport, the transitions. Run `npm run build:all`, then `npm run test:browser`.
+
+```ts
+import { expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
+import { focused, mount } from '../../../test/helpers/browser';
+
+it('Space checks a toggle', async () => {
+  const toggle = await mount<HTMLDsToggleElement>('<ds-toggle type="checkbox" label="Terms"></ds-toggle>');
+  toggle.focus();
+  await userEvent.keyboard(' ');
+  expect([toggle.checked, focused()]).toEqual([true, toggle]);
+});
+```
+
+**Changed** (tests): the tests run with Vitest and `@stencil/vitest` instead of Stencil's test runner (Jest); `npm run test.watch` is now `npm run test:watch`; `npm run test:e2e` (Stencil end-to-end tests, Puppeteer, no test) is removed, for `npm run test:browser`; `npm run typecheck` is new, and `format` and `format:check` cover the `.mts` files. Dev dependencies: `jest`, `jest-cli`, `@types/jest` and `puppeteer` are removed; `vitest`, `vite`, `@stencil/vitest`, `@vitest/browser-playwright`, `playwright` and `@types/node` are added, at exact versions.
 
 ## Archived code
 
