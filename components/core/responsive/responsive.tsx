@@ -1,25 +1,17 @@
-import { Component, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
-import debounce from '../../utils/debounce';
+import { Component, Element, Event, EventEmitter, h, Host, Method, Prop, Watch } from '@stencil/core';
 import { fromJSON } from '../../utils/props';
-import { getBreakpoint, getParamsForBreakpoint, processBreakpoints } from '../../utils/responsive';
+import { BreakpointWatch, getBreakpoint, getParamsForBreakpoint, isSameBreakpoint, isStylesheetLoad, processBreakpoints, watchBreakpoint } from '../../utils/responsive';
 import { getBreakpoints as getThemeBreakpoints, getToken } from '../../utils/tokens';
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from '../../utils/interfaces/breakpoints';
 
 /** `hGap` → `h-gap`: the attribute of a camelCase property. */
 const toKebabCase = (name: string): string => name.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 
-/** Whether two breakpoints have the same label and limits. */
-const isSameBreakpoint = (a: Breakpoint | undefined, b: Breakpoint | undefined): boolean => a?.label === b?.label && String(a?.limits) === String(b?.limits);
-
-/** Whether an event is the `load` event of a stylesheet `<link>`. */
-const isStylesheetLoad = (event: Event): boolean => {
-  const target = event.target as Element;
-  return target?.nodeName?.toLowerCase() === 'link' && /(^|\s)stylesheet(\s|$)/i.test(target.getAttribute?.('rel') ?? '');
-};
-
 /**
  * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
  * attribute the properties their `data-rsp` attribute declares for it (see the README).
+ * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+ * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
  * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
  * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
  * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
@@ -29,23 +21,32 @@ const isStylesheetLoad = (event: Event): boolean => {
   tag: 'ds-rsp',
 })
 export class DSRsp {
+  @Element() host: HTMLElement;
+
   breakpoints: Breakpoints = {};
   currentBreakpoint: Breakpoint;
   subscribers: Element[] = [];
   waitingSubscribers: Element[] = [];
-  /** The debounced `resize` listener, kept so that the same function is removed. */
-  resizeHandler: () => void;
+  /** The media queries of the breakpoint boundaries, while it has started; built again when the breakpoints change. */
+  breakpointWatch: BreakpointWatch;
   /** Subscribes the matching elements inserted in the document later (when the browser has MutationObserver). */
   observer: MutationObserver;
   /** Whether componentDidLoad ran. */
   loaded = false;
   /** Whether the element is in the document. */
   connected = false;
-  /** Whether it tracks the breakpoints: it has some, listens to `resize` and has initialised its subscribers. */
+  /** Whether it tracks the breakpoints: it has some, watches their media queries and has initialised its subscribers. */
   started = false;
   /** Whether the "no breakpoints" warning was logged since breakpoints were last found, so that it is logged once. */
   warnedNoBreakpoints = false;
+  /** Whether the deprecation warning of `debounce-delay` was logged. */
+  warnedDebounceDelay = false;
 
+  /**
+   * The delay, in ms, of the debounced `resize` listener ds-rsp used before. ds-rsp now follows the breakpoints with media
+   * queries (`matchMedia()`) and applies a change at once: it is ignored, with a console warning.
+   * @deprecated Ignored: remove it.
+   */
   @Prop() debounceDelay = 500;
   @Prop() subscriberSelector = '[data-use-rsp]:not([data-rsp-init])';
   @Prop() propertyName = 'data-rsp';
@@ -58,6 +59,11 @@ export class DSRsp {
   @Watch('breakpointsFromProp')
   breakpointsFromPropChanged() {
     this.update();
+  }
+
+  @Watch('debounceDelay')
+  debounceDelayChanged() {
+    this.warnDebounceDelay();
   }
 
   /**
@@ -114,7 +120,8 @@ export class DSRsp {
   }
 
   /**
-   * Get the current breakpoint
+   * Get the current breakpoint: the breakpoint of the viewport, from the media queries of the minimums, as ds-rsp sees it
+   * (`responsive.getBreakpoint()`).
    * @param rawBreakpoints JSON Object containings all breakpoints
    * @returns current breakpoint ( label & limits )
    */
@@ -150,6 +157,12 @@ export class DSRsp {
     }
   }
 
+  componentWillLoad() {
+    if (this.host.hasAttribute('debounce-delay')) {
+      this.warnDebounceDelay();
+    }
+  }
+
   componentDidLoad() {
     this.loaded = true;
     this.listenToStylesheets();
@@ -160,6 +173,14 @@ export class DSRsp {
     this.connected = false;
     document.removeEventListener('load', this.stylesheetLoadHandler, true);
     this.stop();
+  }
+
+  /** Logs, once, that `debounce-delay` is deprecated. */
+  warnDebounceDelay() {
+    if (!this.warnedDebounceDelay) {
+      this.warnedDebounceDelay = true;
+      console.warn('[ds-rsp] debounce-delay is deprecated and ignored: ds-rsp follows the breakpoints with media queries (matchMedia) and applies a change at once.');
+    }
   }
 
   /** The breakpoints, as limits: from the `breakpoints` property, else from the theme; `{}` without any. */
@@ -198,11 +219,17 @@ export class DSRsp {
     }
 
     this.warnedNoBreakpoints = false;
+    const changed = JSON.stringify(breakpoints) !== JSON.stringify(this.breakpoints);
     this.breakpoints = breakpoints;
 
     if (!this.started) {
       this.start();
       return;
+    }
+
+    // New breakpoints: the media queries of their boundaries.
+    if (changed) {
+      this.watchBreakpoints();
     }
 
     this.addSubscribers(Array.from(document.querySelectorAll(this.subscriberSelector)));
@@ -224,24 +251,29 @@ export class DSRsp {
     document.addEventListener('load', this.stylesheetLoadHandler, true);
   }
 
-  /** Collects the subscribers, listens to `resize` and to the insertions in the document, and applies the current breakpoint. */
+  /**
+   * Collects the subscribers, watches the media queries of the breakpoints and the insertions in the document, and applies
+   * the current breakpoint.
+   */
   start() {
     this.started = true;
-    if (!this.resizeHandler) {
-      this.resizeHandler = debounce(this.notifySubscribers, this.debounceDelay);
-    }
     const subscribers = Array.from(document.querySelectorAll(this.subscriberSelector));
     this.waitingSubscribers = Array.from(new Set([...this.waitingSubscribers, ...subscribers]));
-    window.addEventListener('resize', this.resizeHandler, false);
+    this.watchBreakpoints();
     this.observe();
     this.notifySubscribers();
   }
 
+  /** Watches one media query per boundary of the breakpoints (`(min-width: 768px)`…), instead of the former ones if any. */
+  watchBreakpoints() {
+    this.breakpointWatch?.stop();
+    this.breakpointWatch = watchBreakpoint(this.breakpoints, this.notifySubscribers);
+  }
+
   /** Stops listening, and lets the subscribers go (they keep their current params). */
   stop() {
-    if (this.resizeHandler) {
-      window.removeEventListener('resize', this.resizeHandler, false);
-    }
+    this.breakpointWatch?.stop();
+    this.breakpointWatch = undefined;
     this.observer?.disconnect();
     this.observer = undefined;
     this.subscribers.forEach(subscriber => {
@@ -355,10 +387,10 @@ export class DSRsp {
     this.waitingSubscribers = [];
   };
 
-  /** Applies the breakpoint of the window width when it changed (label or limits): returns whether it did. */
+  /** Applies the breakpoint of the viewport (its media queries) when it changed (label or limits): returns whether it did. */
   notifySubscribers(): boolean {
     const { currentBreakpoint: previousBreakpoint } = this;
-    const newBreakpoint = getBreakpoint(this.breakpoints, window.innerWidth);
+    const newBreakpoint = this.breakpointWatch?.current ?? getBreakpoint(this.breakpoints);
 
     if (isSameBreakpoint(newBreakpoint, previousBreakpoint)) {
       return false;

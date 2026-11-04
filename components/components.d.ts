@@ -10,6 +10,7 @@ import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
+import { Element } from "@stencil/core";
 import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
@@ -19,6 +20,7 @@ export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
+export { Element } from "@stencil/core";
 export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
@@ -478,6 +480,8 @@ export namespace Components {
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+     * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
      * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
      * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
      * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
@@ -489,11 +493,13 @@ export namespace Components {
          */
         "breakpointsFromProp": string | RawBreakpoint;
         /**
+          * The delay, in ms, of the debounced `resize` listener ds-rsp used before. ds-rsp now follows the breakpoints with media queries (`matchMedia()`) and applies a change at once: it is ignored, with a console warning.
+          * @deprecated Ignored: remove it.
           * @default 500
          */
         "debounceDelay": number;
         /**
-          * Get the current breakpoint
+          * Get the current breakpoint: the breakpoint of the viewport, from the media queries of the minimums, as ds-rsp sees it (`responsive.getBreakpoint()`).
           * @param rawBreakpoints JSON Object containings all breakpoints
           * @returns current breakpoint ( label & limits )
          */
@@ -1303,6 +1309,8 @@ declare global {
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+     * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
      * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
      * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
      * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
@@ -2041,6 +2049,8 @@ declare namespace LocalJSX {
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+     * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
      * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
      * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
      * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
@@ -2052,6 +2062,8 @@ declare namespace LocalJSX {
          */
         "breakpointsFromProp"?: string | RawBreakpoint;
         /**
+          * The delay, in ms, of the debounced `resize` listener ds-rsp used before. ds-rsp now follows the breakpoints with media queries (`matchMedia()`) and applies a change at once: it is ignored, with a console warning.
+          * @deprecated Ignored: remove it.
           * @default 500
          */
         "debounceDelay"?: number;
@@ -2866,6 +2878,8 @@ declare module "@stencil/core" {
             /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
+             * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+             * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
              * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
              * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
              * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
