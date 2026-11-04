@@ -738,15 +738,25 @@ export namespace Components {
      * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
      * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
      * cannot be focused.
+     * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+     * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+     * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
      */
     interface DsToggle {
+        /**
+          * Whether the toggle is valid; an invalid toggle gets an `invalid` event (as the `checkValidity()` of a native control, but asynchronous).
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Whether the toggle is checked (pressed, for an `icon` toggle). Its value at the load is the default one, which a form reset gives back.
+         */
         "checked": boolean;
         /**
-          * A disabled toggle ignores clicks and keys, and cannot be focused (`aria-disabled="true"`, no `tabindex`).
+          * A disabled toggle ignores clicks and keys, cannot be focused (`aria-disabled="true"`, no `tabindex`) and submits nothing. A disabled `<fieldset>` or `ds-toggle-group` disables it too, without changing this prop.
          */
         "disabled": boolean;
         /**
-          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with `aria-labelledby` (its id) on the element instead.
+          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with a `<label>` element (`<label for="<id>">`, or around it) or with `aria-labelledby` (its id) on the element instead.
          */
         "label": string;
         /**
@@ -754,8 +764,27 @@ export namespace Components {
           * @default []
          */
         "mods": string | string[];
+        /**
+          * The name of the value in the form data (a toggle without a name submits nothing). A `ds-toggle-group` with a `name` gives it its own.
+         */
         "name": string;
+        /**
+          * As `checkValidity()`, and the browser shows the message of an invalid toggle, which takes the focus.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * The toggle must be checked for its form to be submitted (`valueMissing`, `aria-required` on a checkbox or a switch). A radio of a `ds-toggle-group` makes its group required instead.
+         */
+        "required": boolean;
+        /**
+          * The message of a required toggle left unchecked, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage": string;
         "setChecked": (checked: boolean) => Promise<void>;
+        /**
+          * Disables the toggle while its parent is disabled (`ds-toggle-group` calls it), without changing its own `disabled`: `true` disables it, `false` or `undefined` gives it its own state back.
+         */
+        "setGroupDisabled": (isDisabled?: boolean) => Promise<void>;
         "setName": (name: string) => Promise<void>;
         /**
           * Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored.
@@ -773,7 +802,25 @@ export namespace Components {
           * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins.
          */
         "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        /**
+          * The message of an invalid toggle, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage": string;
+        /**
+          * The validity of the toggle, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity": ValidityState;
+        /**
+          * The value the toggle submits with its form while it is checked: `on` without one (as a native checkbox). Also sent in the `toggle` event.
+         */
         "value": DSToggleValue;
+        /**
+          * Whether the form validates the toggle (read-only), as the browser tells it: not while its `disabled` or a disabled fieldset disables it (a toggle its group disables is valid).
+          * @readonly
+         */
+        "willValidate": boolean;
     }
     /**
      * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
@@ -1353,6 +1400,9 @@ declare global {
      * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
      * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
      * cannot be focused.
+     * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+     * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+     * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
      */
     interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2118,15 +2168,25 @@ declare namespace LocalJSX {
      * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
      * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
      * cannot be focused.
+     * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+     * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+     * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
      */
     interface DsToggle {
+        /**
+          * Whether the toggle is checked (pressed, for an `icon` toggle). Its value at the load is the default one, which a form reset gives back.
+         */
         "checked"?: boolean;
         /**
-          * A disabled toggle ignores clicks and keys, and cannot be focused (`aria-disabled="true"`, no `tabindex`).
+          * A disabled toggle ignores clicks and keys, cannot be focused (`aria-disabled="true"`, no `tabindex`) and submits nothing. A disabled `<fieldset>` or `ds-toggle-group` disables it too, without changing this prop.
          */
         "disabled"?: boolean;
         /**
-          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with `aria-labelledby` (its id) on the element instead.
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with a `<label>` element (`<label for="<id>">`, or around it) or with `aria-labelledby` (its id) on the element instead.
          */
         "label"?: string;
         /**
@@ -2134,13 +2194,42 @@ declare namespace LocalJSX {
           * @default []
          */
         "mods"?: string | string[];
+        /**
+          * The name of the value in the form data (a toggle without a name submits nothing). A `ds-toggle-group` with a `name` gives it its own.
+         */
         "name"?: string;
         "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
+        /**
+          * The toggle must be checked for its form to be submitted (`valueMissing`, `aria-required` on a checkbox or a switch). A radio of a `ds-toggle-group` makes its group required instead.
+         */
+        "required"?: boolean;
+        /**
+          * The message of a required toggle left unchecked, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage"?: string;
         /**
           * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins.
          */
         "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        /**
+          * The message of an invalid toggle, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage"?: string;
+        /**
+          * The validity of the toggle, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity"?: ValidityState;
+        /**
+          * The value the toggle submits with its form while it is checked: `on` without one (as a native checkbox). Also sent in the `toggle` event.
+         */
         "value"?: DSToggleValue;
+        /**
+          * Whether the form validates the toggle (read-only), as the browser tells it: not while its `disabled` or a disabled fieldset disables it (a toggle its group disables is valid).
+          * @readonly
+         */
+        "willValidate"?: boolean;
     }
     /**
      * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
@@ -2431,7 +2520,11 @@ declare namespace LocalJSX {
         "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
         "disabled": boolean;
         "checked": boolean;
+        "required": boolean;
+        "requiredMessage": string;
         "label": string;
+        "validationMessage": string;
+        "willValidate": boolean;
     }
     interface DsToggleGroupAttributes {
         "name": string;
@@ -2654,6 +2747,9 @@ declare module "@stencil/core" {
              * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
              * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
              * cannot be focused.
+             * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+             * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+             * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
              */
             "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
             /**

@@ -1,5 +1,73 @@
-import { newSpecPage } from '@stencil/core/testing';
+import { newSpecPage, SpecPage } from '@stencil/core/testing';
 import { DSToggle } from './toggle';
+
+/** The form callbacks the browser calls on a form-associated element (not in the element types). */
+type FormCallbacks = { formResetCallback(): void; formStateRestoreCallback(state: unknown, mode: string): void; formDisabledCallback(isDisabled: boolean): void };
+const formCallbacks = (element: Element) => element as unknown as FormCallbacks;
+
+/** What the fake ElementInternals below records, read by the tests. */
+type FakeInternals = ElementInternals & { value: unknown; state: unknown; anchor: HTMLElement | undefined; states: Set<string> };
+
+/**
+ * The simulated DOM of the spec tests has no ElementInternals (its `attachInternals()` gives an object without methods,
+ * and the components then leave the form alone). This gives the elements a fake one, which records the form value, the
+ * state and the validity, dispatches `invalid` as a browser does and gives the `<label>` elements of the document. Returns
+ * the internals of an element.
+ */
+const mockElementInternals = () => {
+  const internalsOf = new WeakMap<Element, FakeInternals>();
+  let owner = Object.getPrototypeOf(document.createElement('div'));
+  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'attachInternals')) owner = Object.getPrototypeOf(owner);
+
+  const createInternals = (host: HTMLElement) => {
+    let flags: ValidityStateFlags = {};
+    let message = '';
+    const internals = {
+      value: null,
+      state: null,
+      anchor: undefined,
+      states: new Set<string>(),
+      setFormValue(value: unknown, state: unknown = value) {
+        Object.assign(internals, { value, state });
+      },
+      setValidity(newFlags: ValidityStateFlags = {}, newMessage = '', anchor?: HTMLElement) {
+        flags = newFlags;
+        message = newMessage;
+        internals.anchor = anchor;
+      },
+      get validity() {
+        return { valid: !Object.values(flags).some(Boolean), ...flags };
+      },
+      get validationMessage() {
+        return internals.validity.valid ? '' : message;
+      },
+      get willValidate() {
+        return !host.hasAttribute('disabled');
+      },
+      get labels() {
+        const labels = Array.from(host.ownerDocument.querySelectorAll('label')) as HTMLLabelElement[];
+        return labels.filter(label => (label.hasAttribute('for') ? !!host.id && label.getAttribute('for') === host.id : label.contains(host)));
+      },
+      checkValidity() {
+        const { valid } = internals.validity;
+        if (!valid) host.dispatchEvent(new Event('invalid', { cancelable: true }));
+        return valid;
+      },
+      reportValidity() {
+        const valid = internals.checkValidity();
+        if (!valid) (internals.anchor ?? host).focus();
+        return valid;
+      },
+    };
+    internalsOf.set(host, internals as unknown as FakeInternals);
+    return internals as unknown as ElementInternals;
+  };
+  jest.spyOn(owner, 'attachInternals').mockImplementation(function (this: HTMLElement) {
+    return createInternals(this);
+  });
+
+  return (element: Element) => internalsOf.get(element);
+};
 
 const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
   const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
@@ -133,6 +201,177 @@ describe('ds-toggle', () => {
     await page.waitForChanges();
     expect(renderedType(page.root)).toEqual(['radio']);
   });
+  describe('form', () => {
+    let internalsOf: (element: Element) => FakeInternals;
+    beforeEach(() => (internalsOf = mockElementInternals()));
+    afterEach(() => jest.restoreAllMocks());
+
+    const internals = (page: SpecPage) => internalsOf(page.root);
+
+    it.each([
+      ['switch', 'value="v"', 'v'],
+      ['checkbox', '', 'on'],
+      ['icon', 'value="5"', '5'],
+      ['radio', 'value="a"', 'a'],
+    ])('a %s submits its value (%s) while it is checked, and saves its state', async (type, attributes, submitted) => {
+      const { page } = await render(`<ds-toggle type="${type}" name="n" ${attributes}></ds-toggle>`);
+
+      expect([internals(page).value, internals(page).state]).toEqual([null, 'unchecked']);
+
+      await click(page);
+      expect([internals(page).value, internals(page).state]).toEqual([submitted, 'checked']);
+    });
+
+    it('submits nothing while disabled: its own prop, its group or its form (fieldset), which leave its own prop alone', async () => {
+      const { page } = await render('<ds-toggle type="checkbox" name="n" checked></ds-toggle>');
+      const state = () => [
+        internals(page).value,
+        page.root.disabled,
+        page.root.getAttribute('aria-disabled'),
+        page.root.getAttribute('tabindex'),
+        page.root.classList.contains('--disabled'),
+      ];
+
+      expect(state()).toEqual(['on', undefined, null, '0', false]);
+
+      // A disabled fieldset around it (the browser calls formDisabledCallback).
+      formCallbacks(page.root).formDisabledCallback(true);
+      await page.waitForChanges();
+      expect(state()).toEqual([null, undefined, 'true', null, true]);
+      await click(page);
+      expect(page.root.checked).toBe(true);
+
+      formCallbacks(page.root).formDisabledCallback(false);
+      await page.waitForChanges();
+      expect(state()).toEqual(['on', undefined, null, '0', false]);
+
+      await page.root.setGroupDisabled(true);
+      await page.waitForChanges();
+      expect(state()).toEqual([null, undefined, 'true', null, true]);
+
+      await page.root.setGroupDisabled();
+      page.root.disabled = true;
+      await page.waitForChanges();
+      expect(state()).toEqual([null, true, 'true', null, true]);
+    });
+
+    it('a form reset gives back the checked state of the load', async () => {
+      const { page } = await render('<ds-toggle type="checkbox" name="n" checked></ds-toggle><ds-toggle type="switch" name="s"></ds-toggle>');
+      const [checkedAtLoad, uncheckedAtLoad] = Array.from(page.body.querySelectorAll('ds-toggle'));
+
+      checkedAtLoad.click();
+      uncheckedAtLoad.click();
+      await page.waitForChanges();
+      expect([checkedAtLoad.checked, uncheckedAtLoad.checked]).toEqual([false, true]);
+
+      formCallbacks(checkedAtLoad).formResetCallback();
+      formCallbacks(uncheckedAtLoad).formResetCallback();
+      await page.waitForChanges();
+      expect([checkedAtLoad.checked, uncheckedAtLoad.checked]).toEqual([true, false]);
+      expect([checkedAtLoad.hasAttribute('checked'), uncheckedAtLoad.hasAttribute('checked')]).toEqual([true, false]);
+    });
+
+    it('takes back the state the browser restores, without a toggle event', async () => {
+      const { page, events } = await render('<ds-toggle type="checkbox" name="n"></ds-toggle>');
+
+      formCallbacks(page.root).formStateRestoreCallback('checked', 'restore');
+      await page.waitForChanges();
+      expect([page.root.checked, internals(page).value]).toEqual([true, 'on']);
+
+      formCallbacks(page.root).formStateRestoreCallback('something else', 'autocomplete');
+      await page.waitForChanges();
+      expect(page.root.checked).toBe(true);
+
+      formCallbacks(page.root).formStateRestoreCallback('unchecked', 'restore');
+      await page.waitForChanges();
+      expect(page.root.checked).toBe(false);
+      expect(events).toEqual([]);
+    });
+
+    it('required: valueMissing until it is checked, with the message of the browser at the toggle, or its required-message', async () => {
+      const { page } = await render('<ds-toggle type="checkbox" name="n" required></ds-toggle>');
+
+      expect([page.root.validity.valueMissing, page.root.validationMessage, internals(page).anchor]).toEqual([true, 'Please check this box if you want to proceed.', page.root]);
+      expect(page.root.willValidate).toBe(true);
+
+      page.root.requiredMessage = 'Accept the terms';
+      await page.waitForChanges();
+      expect(page.root.validationMessage).toBe('Accept the terms');
+
+      await click(page);
+      expect([page.root.validity.valid, page.root.validationMessage]).toEqual([true, '']);
+
+      // Disabled: barred from the validation.
+      await click(page);
+      page.root.disabled = true;
+      await page.waitForChanges();
+      expect(page.root.validity.valid).toBe(true);
+    });
+
+    it.each([
+      ['checkbox', 'true'],
+      ['switch', 'true'],
+      ['radio', null],
+      ['icon', null],
+    ])('a required %s has aria-required %s (the roles that support it)', async (type, ariaRequired) => {
+      const { page } = await render(`<ds-toggle type="${type}" required></ds-toggle>`);
+
+      expect(page.root.getAttribute('aria-required')).toBe(ariaRequired);
+    });
+
+    it('shows its invalid state (aria-invalid, --invalid, :state(user-invalid)) after an invalid event, until it is valid', async () => {
+      const { page } = await render('<ds-toggle type="checkbox" name="n" required></ds-toggle>');
+      const shown = () => [page.root.getAttribute('aria-invalid'), page.root.classList.contains('--invalid'), internals(page).states.has('user-invalid')];
+
+      // Invalid at the load, but not shown: the user has done nothing yet ("false": the browser would tell it at once).
+      expect(shown()).toEqual(['false', false, false]);
+
+      expect(await page.root.checkValidity()).toBe(false);
+      await page.waitForChanges();
+      expect(shown()).toEqual(['true', true, true]);
+
+      await click(page);
+      expect(shown()).toEqual([null, false, false]);
+
+      // Unchecked by the user: shown again (as :user-invalid).
+      await click(page);
+      expect(shown()).toEqual(['true', true, true]);
+
+      // A form reset hides it.
+      formCallbacks(page.root).formResetCallback();
+      await page.waitForChanges();
+      expect(shown()).toEqual(['false', false, false]);
+    });
+
+    it('shows its invalid state once the user unchecks it', async () => {
+      const { page } = await render('<ds-toggle type="switch" name="n" required checked></ds-toggle>');
+
+      await click(page);
+      expect(page.root.getAttribute('aria-invalid')).toBe('true');
+    });
+
+    it('reportValidity() gives the focus to an invalid toggle (the anchor of its message)', async () => {
+      const { page } = await render('<ds-toggle type="checkbox" required></ds-toggle>');
+      const focus = jest.spyOn(page.root, 'focus').mockImplementation(() => undefined);
+
+      expect(await page.root.reportValidity()).toBe(false);
+      expect(focus).toHaveBeenCalled();
+    });
+
+    it('a radio of a ds-toggle-group leaves its validation to the group', async () => {
+      const { page } = await render('<ds-toggle-group><ds-toggle type="radio" required></ds-toggle></ds-toggle-group>');
+      const radio = page.body.querySelector('ds-toggle');
+
+      expect(radio.validity.valid).toBe(true);
+    });
+
+    it('a boolean attribute is true when present, as on a native control: checked="false" is checked', async () => {
+      const { page } = await render('<ds-toggle type="checkbox" checked="false"></ds-toggle>');
+
+      expect(page.root.checked).toBe(true);
+    });
+  });
+
   describe('accessibility', () => {
     /** The ARIA attributes of the toggle element. */
     const aria = (toggle: HTMLElement) =>

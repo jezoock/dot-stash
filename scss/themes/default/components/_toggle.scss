@@ -2,7 +2,8 @@
 
 // ds-toggle: the borders, radii and colors of the radios, checkboxes and switches (the `icon` type has none). The custom
 // properties are documented in components/core/toggle/readme.md; the sizes and the place of the mark and of the knob are in
-// the component stylesheet.
+// the component stylesheet. A disabled toggle has the `--disabled` class: its own `disabled`, or a disabled
+// ds-toggle-group or fieldset around it.
 
 ds-toggle {
   --ds-toggle-color: #{ds-color(input, unchecked)};
@@ -39,7 +40,7 @@ ds-toggle {
     }
   }
 
-  &:not([disabled]):not([checked]) {
+  &:not(.--disabled):not([checked]) {
     &.--radio,
     &.--checkbox {
       border-color: var(--ds-toggle-color);
@@ -50,7 +51,7 @@ ds-toggle {
     }
   }
 
-  &[checked]:not([disabled]) {
+  &[checked]:not(.--disabled) {
     &.--radio,
     &.--checkbox {
       border-color: var(--ds-toggle-checked-color);
@@ -61,7 +62,7 @@ ds-toggle {
     }
   }
 
-  &[disabled] {
+  &.--disabled {
     &.--radio,
     &.--checkbox {
       border-color: var(--ds-toggle-disabled-color);
@@ -81,25 +82,25 @@ ds-toggle {
     }
   }
 
-  &:not([disabled]) {
+  &:not(.--disabled) {
     &.--switch {
       background: var(--ds-toggle-track-color);
     }
   }
 
-  &:not([disabled]):not([checked]) {
+  &:not(.--disabled):not([checked]) {
     &.--switch::after {
       background-color: var(--ds-toggle-knob-color);
     }
   }
 
-  &[checked]:not([disabled]) {
+  &[checked]:not(.--disabled) {
     &.--switch::after {
       background-color: var(--ds-toggle-knob-checked-color);
     }
   }
 
-  &[disabled] {
+  &.--disabled {
     &.--switch {
       background: var(--ds-toggle-track-disabled-color);
 
