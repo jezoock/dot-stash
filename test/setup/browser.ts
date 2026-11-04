@@ -1,5 +1,5 @@
 import { afterEach } from 'vitest';
-import { page } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { DEFAULT_VIEWPORT, setReducedMotion } from '../helpers/browser';
 
 // The browser tests run the components as they are published: the browser build of the package (dist/dot-stash/) and
@@ -19,10 +19,16 @@ await new Promise((resolve, reject) => {
 const loader = '/dist/dot-stash/dot-stash.esm.js';
 await import(/* @vite-ignore */ loader);
 
-// Each test starts on an empty page, at the default size, without the media features a test emulated.
+// Each test starts on an empty page, at the default size, without the media features a test emulated, and with the
+// pointer in the bottom right corner (the page keeps it where the last test left it: over an element, it would be :hover).
 afterEach(async () => {
   document.body.replaceChildren();
   document.documentElement.removeAttribute('dir');
   await setReducedMotion(false);
   await page.viewport(DEFAULT_VIEWPORT.width, DEFAULT_VIEWPORT.height);
+  const corner = document.createElement('div');
+  corner.style.cssText = 'position: fixed; right: 0; bottom: 0; z-index: 2147483647; width: 2px; height: 2px';
+  document.body.append(corner);
+  await userEvent.hover(corner, { force: true });
+  corner.remove();
 });
