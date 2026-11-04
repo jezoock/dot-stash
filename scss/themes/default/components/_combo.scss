@@ -41,6 +41,12 @@ ds-combo {
     }
   }
 
+  // A disabled combo (its `disabled`, or a disabled fieldset around it): the toggle button dimmed, as a disabled option.
+  &.--disabled > &__selected-option {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   &__option-list {
     margin: 0;
     padding: ds-spacing(1) 0;

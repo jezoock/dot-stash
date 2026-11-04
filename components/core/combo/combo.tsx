@@ -1,7 +1,21 @@
-import { Component, Element, Event, EventEmitter, h, Method, Prop, State, Watch } from '@stencil/core';
+import { AttachInternals, Component, Element, Event, EventEmitter, h, Listen, Method, Prop, State, Watch } from '@stencil/core';
 import uuid from '../../utils/uuid';
 import { toClassList } from '../../utils/props';
 import { getFocusedElement } from '../../utils/focus';
+import {
+  checkValidity,
+  getLabelIds,
+  getLabels,
+  getLabelText,
+  getValidationMessage,
+  getValidity,
+  getValueMissingMessage,
+  getWillValidate,
+  reportValidity,
+  setCustomState,
+  setFormValue,
+  setValueMissing,
+} from '../../utils/form-control';
 import { COMBO_PAGE_SIZE, COMBO_TYPE_AHEAD_DELAY } from './combo.constants';
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from './combo.types';
 
@@ -26,6 +40,9 @@ const isSameJSON = (value: unknown, otherValue: unknown): boolean => {
   const serialize = (prop: unknown) => (typeof prop === 'string' ? prop : JSON.stringify(prop));
   return value === otherValue || serialize(value) === serialize(otherValue);
 };
+
+/** The custom state of a combo whose invalid state the user should see (`:state(user-invalid)`). */
+const USER_INVALID_STATE = 'user-invalid';
 
 /** An option can be selected unless it is disabled or its value is an empty string (a placeholder). */
 const isSelectable = (option: DSOption | undefined): boolean => !!option && !option.disabled && option.value !== '';
@@ -56,10 +73,14 @@ const findOptionIndex = (options: DSOption[], selection: DSComboSelection): numb
  * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
  * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
  * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+ * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+ * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+ * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
  */
 @Component({
   tag: 'ds-combo',
   styleUrl: 'combo.scss',
+  formAssociated: true,
 })
 export class DSCombo {
   /** Id of the root element: unique, and stable for the life of the element. */
@@ -68,12 +89,23 @@ export class DSCombo {
 
   @Element() host: HTMLElement;
 
+  @AttachInternals({
+    states: {
+      /** The combo is invalid (`required`, no option selected) and the user should see it: after an `invalid` event or a change by the user, until a form reset. */
+      'user-invalid': false,
+    },
+  })
+  internals: ElementInternals;
+
   /**
    * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string:
    * `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
    */
   @Prop() options: string | DSOption[] = [];
-  /** Name of the combo: sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`. */
+  /**
+   * Name of the combo: the name of its value in the form data (a combo without a name submits nothing), sent in the
+   * `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+   */
   @Prop({ reflect: true }) name: string;
   /**
    * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`,
@@ -107,11 +139,39 @@ export class DSCombo {
   @Prop() label: string;
   /** The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list. */
   @Prop() labelledby: string;
+  /**
+   * Disables the combo: its button cannot be focused nor opened, an open list closes, and it submits nothing. A
+   * disabled `<fieldset>` around it disables it too, without changing this prop.
+   */
+  @Prop({ reflect: true }) disabled: boolean;
+  /** An option must be selected for the form to be submitted (`valueMissing`, `aria-required` on the combobox). */
+  @Prop({ reflect: true }) required: boolean;
+  /** The message of a required combo without a selected option, instead of the browser's own (`validationMessage`). */
+  @Prop() requiredMessage: string;
+
+  /** The validity of the combo, as the `validity` of a native select (read-only; once the component is loaded). */
+  @Prop() get validity(): ValidityState {
+    return getValidity(this.internals);
+  }
+
+  /** The message of an invalid combo, as the `validationMessage` of a native select (read-only): `required-message`, else the browser's own. */
+  @Prop() get validationMessage(): string {
+    return getValidationMessage(this.internals);
+  }
+
+  /** Whether the form validates the combo (read-only): not while it is disabled. */
+  @Prop() get willValidate(): boolean {
+    return getWillValidate(this.internals);
+  }
 
   @State() isOpen = false;
   @State() optionsArray: DSOption[] = [];
   /** The option the keys move and select (`aria-activedescendant`, `--active`) while the list is open; -1 for none. */
   @State() activeIndex = -1;
+  /** Disabled by its form: a disabled `<fieldset>` around it, or its own `disabled` attribute (`formDisabledCallback`). */
+  @State() formDisabled = false;
+  /** Whether the validity is shown (`aria-invalid`, `--invalid`): after an `invalid` event or a change by the user, until a form reset. */
+  @State() isValidityShown = false;
 
   /** The combobox (the toggle button) and the list, once rendered. */
   private button: HTMLButtonElement;
@@ -131,7 +191,7 @@ export class DSCombo {
 
   //#region METHODS
 
-  /** Opens the list. In `dropdown` mode, it moves the focus to the list. */
+  /** Opens the list (not while the combo is disabled). In `dropdown` mode, it moves the focus to the list. */
   @Method()
   async open() {
     this.openList();
@@ -155,6 +215,20 @@ export class DSCombo {
     }
   }
 
+  /** Whether the combo is valid; an invalid combo gets an `invalid` event (as the `checkValidity()` of a native select, but asynchronous). */
+  @Method()
+  async checkValidity(): Promise<boolean> {
+    this.updateFormState();
+    return checkValidity(this.internals);
+  }
+
+  /** As `checkValidity()`, and the browser shows the message of an invalid combo at its combobox, which takes the focus. */
+  @Method()
+  async reportValidity(): Promise<boolean> {
+    this.updateFormState();
+    return reportValidity(this.internals);
+  }
+
   //#endregion
 
   //#region LIFECYCLE
@@ -175,6 +249,7 @@ export class DSCombo {
 
   componentWillLoad() {
     this.loadOptions();
+    this.updateFormState();
   }
 
   connectedCallback() {
@@ -190,11 +265,119 @@ export class DSCombo {
   }
 
   componentDidRender() {
+    // After the render: the combobox, the anchor of the validation message, is there.
+    this.updateFormState();
     if (this.needsListFocus && this.isOpen && this.list) {
       this.needsListFocus = false;
       this.list.focus({ preventScroll: true });
     }
     this.scrollToActiveOption();
+  }
+
+  //#endregion
+
+  //#region FORM
+
+  /** Disabled by its own prop or its form. */
+  get isDisabled(): boolean {
+    return !!(this.disabled || this.formDisabled);
+  }
+
+  /** Required, enabled, and no option selected. */
+  get isValueMissing(): boolean {
+    return !!this.required && !this.isDisabled && this.selectedOptions.length === 0;
+  }
+
+  @Watch('selectedOptions')
+  @Watch('name')
+  @Watch('required')
+  @Watch('requiredMessage')
+  @Watch('isValidityShown')
+  formStateWatcher() {
+    this.updateFormState();
+  }
+
+  @Watch('disabled')
+  @Watch('formDisabled')
+  disabledWatcher() {
+    // A disabled combo cannot stay open.
+    if (this.isDisabled && this.isOpen) {
+      this.closeList(false);
+    }
+    this.updateFormState();
+  }
+
+  /**
+   * The form value: the value of the selected option (a single combo), or an entry per selected option (a multiple
+   * one), none while disabled or without a name; the state the browser restores: the selected values (JSON). Then the
+   * validity (its message at the combobox) and the custom state.
+   */
+  updateFormState() {
+    const values = this.selectedOptions.map(option => String(option.value));
+    const isMissing = this.isValueMissing;
+    let value: string | FormData | null = null;
+
+    if (!this.isDisabled && this.name && values.length) {
+      if (this.multiple) {
+        value = new FormData();
+        values.forEach(optionValue => (value as FormData).append(this.name, optionValue));
+      } else {
+        value = values[0];
+      }
+    }
+    setFormValue(this.internals, value, JSON.stringify(values));
+    setValueMissing(this.internals, this.host, isMissing, this.requiredMessage || getValueMissingMessage('select'), this.button);
+    setCustomState(this.internals, USER_INVALID_STATE, this.isValidityShown && isMissing);
+  }
+
+  /** A form reset: the selection of the load (from `options` and `selected`), and the validity no longer shown. */
+  formResetCallback() {
+    this.loadOptions();
+    this.isValidityShown = false;
+  }
+
+  /** The browser gives back the selected values (history navigation), without an `optionSelected` event. */
+  formStateRestoreCallback(state: unknown) {
+    let values: unknown;
+    try {
+      values = typeof state === 'string' ? JSON.parse(state) : undefined;
+    } catch {
+      return;
+    }
+    if (!Array.isArray(values)) {
+      return;
+    }
+    const restored = values.map(String);
+    // A single combo selects one option: the first one with a restored value.
+    const restoredIndex = this.optionsArray.findIndex(option => isSelectable(option) && restored.includes(String(option.value)));
+
+    this.setOptions(
+      this.optionsArray.map(option => ({
+        ...option,
+        selected: isSelectable(option) && (this.multiple ? restored.includes(String(option.value)) : option.index === restoredIndex),
+      })),
+    );
+  }
+
+  /** A disabled `<fieldset>` around the combo, or its own `disabled` attribute. */
+  formDisabledCallback(isDisabled: boolean) {
+    this.formDisabled = isDisabled;
+  }
+
+  /** `checkValidity()` or `reportValidity()` of the combo or of its form, or a submission, found it invalid: it shows it. */
+  @Listen('invalid')
+  invalidHandler({ target }: { target: EventTarget | null }) {
+    if (target === this.host) {
+      this.isValidityShown = true;
+    }
+  }
+
+  /** A click on the element itself, not on its content: its `<label>` was clicked. The combobox takes the focus, as a native select. */
+  @Listen('click')
+  hostClickHandler(event: MouseEvent) {
+    if (event.target === this.host && !this.isDisabled) {
+      this.button?.focus();
+    }
   }
 
   //#endregion
@@ -253,6 +436,8 @@ export class DSCombo {
         selected: option.index === index ? !this.multiple || !option.selected : this.multiple && option.selected,
       })),
     );
+    // Changed by the user: its validity shows (as :user-invalid).
+    this.isValidityShown = true;
     this.optionSelected.emit({
       name: this.name,
       option: { ...this.optionsArray[index] },
@@ -267,6 +452,9 @@ export class DSCombo {
 
   /** Opens the list (once), its active option on the selected one; `activeIndex` moves the active option. */
   openList(activeIndex?: number) {
+    if (this.isDisabled) {
+      return;
+    }
     if (!this.isOpen) {
       if (this.mode === 'dropdown') {
         const focused = getFocusedElement();
@@ -534,7 +722,7 @@ export class DSCombo {
   };
 
   optionClickHandler(event: MouseEvent, option: DSOption) {
-    if (option.disabled) {
+    if (option.disabled || this.isDisabled) {
       event.preventDefault();
       return;
     }
@@ -578,9 +766,23 @@ export class DSCombo {
     const isListRendered = this.isOpen || isImageMode;
     const listId = `${this.rootId}-listbox`;
     const activeId = this.isOpen && this.optionsArray[this.activeIndex] ? this.optionId(this.activeIndex) : undefined;
-    // The name of the combobox and of the list: labelledby, else label, else custom-label, else name.
-    const labelledby = this.labelledby || undefined;
-    const label = labelledby ? undefined : this.label || this.customLabel || this.name || undefined;
+    // The name of the combobox and of the list: labelledby, else label, else its <label> elements (which label the
+    // element, not its combobox: their ids, or the text of a label around it without the combo's own), else
+    // custom-label, else name.
+    const labels = this.labelledby || this.label ? [] : getLabels(this.internals);
+    const isInLabel = labels.some(labelElement => labelElement.contains(this.host));
+    const labelIds = isInLabel ? undefined : getLabelIds(labels, this.rootId);
+    const labelText = isInLabel
+      ? labels
+          .map(labelElement => getLabelText(labelElement, this.host))
+          .join(' ')
+          .trim()
+      : undefined;
+    const labelledby = this.labelledby || labelIds;
+    const label = labelledby ? undefined : this.label || labelText || this.customLabel || this.name || undefined;
+    const isDisabled = this.isDisabled;
+    const isMissing = this.isValueMissing;
+    const isInvalidShown = this.isValidityShown && isMissing;
 
     return (
       <div
@@ -591,6 +793,8 @@ export class DSCombo {
           [`--position-${this.position}`]: !!this.position,
           [`--${this.mode}`]: !!this.mode,
           '--with-overlay': this.overlay,
+          '--disabled': isDisabled,
+          '--invalid': isInvalidShown,
         }}
       >
         {this.overlay && this.isOpen && <div class="ds-combo__overlay" onClick={this.overlayClickHandler} />}
@@ -605,6 +809,10 @@ export class DSCombo {
             aria-activedescendant={activeId}
             aria-label={label}
             aria-labelledby={labelledby}
+            aria-required={this.required && !isDisabled ? 'true' : undefined}
+            // Invalid but not shown yet: "false", as the browser would tell assistive technologies it is invalid from the start.
+            aria-invalid={isInvalidShown ? 'true' : isMissing ? 'false' : undefined}
+            disabled={isDisabled}
             ref={element => (this.button = element)}
             onClick={this.toggleButtonClickHandler}
             onKeyDown={this.keyDownHandler}

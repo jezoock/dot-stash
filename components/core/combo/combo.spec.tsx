@@ -25,6 +25,74 @@ const trackFocus = (page: SpecPage) => {
   return () => page.doc.activeElement as HTMLElement;
 };
 
+/** The form callbacks the browser calls on a form-associated element (not in the element types). */
+type FormCallbacks = { formResetCallback(): void; formStateRestoreCallback(state: unknown, mode: string): void; formDisabledCallback(isDisabled: boolean): void };
+const formCallbacks = (element: Element) => element as unknown as FormCallbacks;
+
+/** What the fake ElementInternals below records, read by the tests. */
+type FakeInternals = ElementInternals & { value: unknown; state: unknown; anchor: HTMLElement | undefined; states: Set<string> };
+
+/**
+ * The simulated DOM of the spec tests has no ElementInternals (its `attachInternals()` gives an object without methods,
+ * and the components then leave the form alone). This gives the elements a fake one, which records the form value, the
+ * state and the validity, dispatches `invalid` as a browser does and gives the `<label>` elements of the document. Returns
+ * the internals of an element.
+ */
+const mockElementInternals = () => {
+  const internalsOf = new WeakMap<Element, FakeInternals>();
+  let owner = Object.getPrototypeOf(document.createElement('div'));
+  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'attachInternals')) owner = Object.getPrototypeOf(owner);
+
+  const createInternals = (host: HTMLElement) => {
+    let flags: ValidityStateFlags = {};
+    let message = '';
+    const internals = {
+      value: null,
+      state: null,
+      anchor: undefined,
+      states: new Set<string>(),
+      setFormValue(value: unknown, state: unknown = value) {
+        Object.assign(internals, { value, state });
+      },
+      setValidity(newFlags: ValidityStateFlags = {}, newMessage = '', anchor?: HTMLElement) {
+        flags = newFlags;
+        message = newMessage;
+        internals.anchor = anchor;
+      },
+      get validity() {
+        return { valid: !Object.values(flags).some(Boolean), ...flags };
+      },
+      get validationMessage() {
+        return internals.validity.valid ? '' : message;
+      },
+      get willValidate() {
+        return !host.hasAttribute('disabled');
+      },
+      get labels() {
+        const labels = Array.from(host.ownerDocument.querySelectorAll('label')) as HTMLLabelElement[];
+        return labels.filter(label => (label.hasAttribute('for') ? !!host.id && label.getAttribute('for') === host.id : label.contains(host)));
+      },
+      checkValidity() {
+        const { valid } = internals.validity;
+        if (!valid) host.dispatchEvent(new Event('invalid', { cancelable: true }));
+        return valid;
+      },
+      reportValidity() {
+        const valid = internals.checkValidity();
+        if (!valid) (internals.anchor ?? host).focus();
+        return valid;
+      },
+    };
+    internalsOf.set(host, internals as unknown as FakeInternals);
+    return internals as unknown as ElementInternals;
+  };
+  jest.spyOn(owner, 'attachInternals').mockImplementation(function (this: HTMLElement) {
+    return createInternals(this);
+  });
+
+  return (element: Element) => internalsOf.get(element);
+};
+
 const dispatchKey = (target: EventTarget, key: string, options: KeyboardEventInit = {}, type = 'keydown') => {
   const event = new KeyboardEvent(type, { key, bubbles: true, cancelable: true, ...options });
   target.dispatchEvent(event);
@@ -564,6 +632,186 @@ describe('ds-combo', () => {
       expect(page.root.getAttribute('position')).toBe('top');
     });
   });
+  describe('form', () => {
+    let internalsOf: (element: Element) => FakeInternals;
+    beforeEach(() => (internalsOf = mockElementInternals()));
+
+    const internals = (page: SpecPage) => internalsOf(page.root);
+    /** The entries of a FormData value, `name=value`. */
+    const entries = (value: unknown) => {
+      const list: string[] = [];
+      (value as FormData).forEach((entry, name) => list.push(`${name}=${entry}`));
+      return list;
+    };
+
+    it('a single combo submits the value of its selected option, nothing without one, and saves the selected values', async () => {
+      const { page } = await render(`<ds-combo name="color" options='${colorsJSON}'></ds-combo>`);
+
+      expect([internals(page).value, internals(page).state]).toEqual([null, '[]']);
+
+      await click(page, toggleButton(page));
+      await click(page, items(page)[2]);
+      expect([internals(page).value, internals(page).state]).toEqual(['blue', '["blue"]']);
+    });
+
+    it('a multiple combo submits an entry per selected option, under its name', async () => {
+      const { page } = await render(`<ds-combo name="colors" multiple options='${colorsJSON}' selected='{"value": "green"}'></ds-combo>`);
+
+      expect(entries(internals(page).value)).toEqual(['colors=green']);
+
+      await click(page, toggleButton(page));
+      await click(page, items(page)[0]);
+      expect(entries(internals(page).value)).toEqual(['colors=red', 'colors=green']);
+      expect(internals(page).state).toBe('["red","green"]');
+    });
+
+    it('submits nothing without a name, or while disabled (its prop or its form), which leaves its prop alone', async () => {
+      const { page: unnamed } = await render(`<ds-combo options='${colorsJSON}' selected='{"index": 0}'></ds-combo>`);
+      expect(internalsOf(unnamed.root).value).toBeNull();
+
+      const { page } = await render(`<ds-combo name="color" options='${colorsJSON}' selected='{"index": 0}'></ds-combo>`);
+      const state = () => [internals(page).value, page.root.disabled, toggleButton(page).hasAttribute('disabled'), root(page).classList.contains('--disabled')];
+      expect(state()).toEqual(['red', undefined, false, false]);
+
+      await click(page, toggleButton(page));
+      expect(isOpen(page)).toBe(true);
+      // A disabled fieldset around it (the browser calls formDisabledCallback): an open list closes.
+      formCallbacks(page.root).formDisabledCallback(true);
+      await page.waitForChanges();
+      expect(state()).toEqual([null, undefined, true, true]);
+      expect(isOpen(page)).toBe(false);
+
+      await page.root.open();
+      await page.waitForChanges();
+      expect(isOpen(page)).toBe(false);
+
+      formCallbacks(page.root).formDisabledCallback(false);
+      page.root.disabled = true;
+      await page.waitForChanges();
+      expect(state()).toEqual([null, true, true, true]);
+    });
+
+    it('a form reset gives back the selection of the load, without an event', async () => {
+      const { page, events } = await render(`<ds-combo name="color" options='${colorsJSON}' selected='{"value": "green"}'></ds-combo>`);
+
+      await click(page, toggleButton(page));
+      await click(page, items(page)[0]);
+      expect(selectedNames(page)).toEqual(['Red']);
+
+      formCallbacks(page.root).formResetCallback();
+      await page.waitForChanges();
+      expect([selectedNames(page), internals(page).value, label(page)]).toEqual([['Green'], 'green', 'Green']);
+      expect(events).toHaveLength(1);
+    });
+
+    it('takes back the values the browser restores, without an event', async () => {
+      const { page, events } = await render(`<ds-combo name="colors" multiple options='${colorsJSON}'></ds-combo>`);
+
+      formCallbacks(page.root).formStateRestoreCallback('["blue","red"]', 'restore');
+      await page.waitForChanges();
+      expect(selectedNames(page)).toEqual(['Red', 'Blue']);
+
+      formCallbacks(page.root).formStateRestoreCallback('not JSON', 'restore');
+      formCallbacks(page.root).formStateRestoreCallback('"blue"', 'autocomplete');
+      await page.waitForChanges();
+      expect(selectedNames(page)).toEqual(['Red', 'Blue']);
+
+      const { page: single } = await render(`<ds-combo name="color" options='${colorsJSON}'></ds-combo>`);
+      formCallbacks(single.root).formStateRestoreCallback('["green","blue"]', 'restore');
+      await single.waitForChanges();
+      expect(selectedNames(single)).toEqual(['Green']);
+      expect(events).toEqual([]);
+    });
+
+    it('required: valueMissing until an option is selected, with the message of the browser at the combobox, or its required-message', async () => {
+      const { page } = await render(`<ds-combo name="color" required options='${colorsJSON}'></ds-combo>`);
+
+      expect([page.root.validity.valueMissing, page.root.validationMessage, internals(page).anchor]).toEqual([true, 'Please select an item in the list.', toggleButton(page)]);
+      expect(toggleButton(page).getAttribute('aria-required')).toBe('true');
+
+      page.root.requiredMessage = 'Choose a color';
+      await page.waitForChanges();
+      expect(page.root.validationMessage).toBe('Choose a color');
+
+      await click(page, toggleButton(page));
+      await click(page, items(page)[1]);
+      expect([page.root.validity.valid, page.root.validationMessage]).toEqual([true, '']);
+    });
+
+    it('a placeholder (an option with an empty value) is no value', async () => {
+      const options = JSON.stringify([{ name: 'Choose…', value: '' }, ...colors]);
+      const { page } = await render(`<ds-combo name="color" required options='${options}'></ds-combo>`);
+
+      expect([internals(page).value, page.root.validity.valueMissing, label(page)]).toEqual([null, true, 'Choose…']);
+    });
+
+    it('shows its invalid state (aria-invalid on the combobox, --invalid, :state(user-invalid)) after an invalid event, until it is valid or reset', async () => {
+      const { page } = await render(`<ds-combo name="color" required options='${colorsJSON}'></ds-combo>`);
+      const shown = () => [toggleButton(page).getAttribute('aria-invalid'), root(page).classList.contains('--invalid'), internals(page).states.has('user-invalid')];
+
+      // Not shown before the user does something: "false" (the browser would tell it at once).
+      expect(shown()).toEqual(['false', false, false]);
+
+      expect(await page.root.checkValidity()).toBe(false);
+      await page.waitForChanges();
+      expect(shown()).toEqual(['true', true, true]);
+
+      await click(page, toggleButton(page));
+      await click(page, items(page)[0]);
+      expect(shown()).toEqual([null, false, false]);
+
+      formCallbacks(page.root).formResetCallback();
+      await page.waitForChanges();
+      expect(shown()).toEqual(['false', false, false]);
+    });
+
+    it('reportValidity() gives the focus to the combobox', async () => {
+      const { page } = await render(`<ds-combo required options='${colorsJSON}'></ds-combo>`);
+      const focused = trackFocus(page);
+
+      expect(await page.root.reportValidity()).toBe(false);
+      expect(focused()).toBe(toggleButton(page));
+    });
+
+    it('is named by its <label> elements (labelledby and label first), and a click on a label focuses the combobox', async () => {
+      const page = await newSpecPage({
+        components: [DSCombo],
+        html: `<label for="color">Color</label><ds-combo id="color" options='${colorsJSON}' name="c"></ds-combo>`,
+      });
+      pages.push(page);
+      const combo = page.body.querySelector('ds-combo');
+      const button = combo.querySelector('.ds-combo__selected-option');
+      const labelElement = page.body.querySelector('label');
+      const focused = trackFocus(page);
+
+      expect([button.getAttribute('aria-labelledby'), button.hasAttribute('aria-label'), labelElement.id]).toEqual([
+        labelElement.id,
+        false,
+        expect.stringMatching(/^ds-combo-.+-label-1$/),
+      ]);
+
+      // The label activates the element itself (a click on the host).
+      combo.click();
+      expect(focused()).toBe(button);
+
+      combo.label = 'Colour';
+      await page.waitForChanges();
+      expect([button.getAttribute('aria-labelledby'), button.getAttribute('aria-label')]).toEqual([null, 'Colour']);
+
+      combo.labelledby = 'other';
+      await page.waitForChanges();
+      expect([button.getAttribute('aria-labelledby'), button.getAttribute('aria-label')]).toEqual(['other', null]);
+    });
+
+    it('a <label> around it names it with its text, without the text of the combo (its value)', async () => {
+      const page = await newSpecPage({ components: [DSCombo], html: `<label>Sizes <ds-combo name="sizes" multiple options='${colorsJSON}'></ds-combo></label>` });
+      pages.push(page);
+      const button = page.body.querySelector('.ds-combo__selected-option');
+
+      expect([button.getAttribute('aria-label'), button.hasAttribute('aria-labelledby'), page.body.querySelector('label').hasAttribute('id')]).toEqual(['Sizes', false, false]);
+    });
+  });
+
   describe('accessibility', () => {
     const listOf = (page: SpecPage) => list(page) as HTMLElement;
     /** The options as [name, aria-selected, aria-disabled], and whether the --active one is the active descendant. */

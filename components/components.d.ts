@@ -97,8 +97,15 @@ export namespace Components {
      * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
      * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
      * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+     * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+     * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+     * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
      */
     interface DsCombo {
+        /**
+          * Whether the combo is valid; an invalid combo gets an `invalid` event (as the `checkValidity()` of a native select, but asynchronous).
+         */
+        "checkValidity": () => Promise<boolean>;
         /**
           * Closes the list. When the focus is in the list (`dropdown` mode), it goes back to the element that had it before.
          */
@@ -108,6 +115,10 @@ export namespace Components {
           * @default ''
          */
         "customLabel": string;
+        /**
+          * Disables the combo: its button cannot be focused nor opened, an open list closes, and it submits nothing. A disabled `<fieldset>` around it disables it too, without changing this prop.
+         */
+        "disabled": boolean;
         /**
           * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
          */
@@ -132,11 +143,11 @@ export namespace Components {
          */
         "multiple": boolean;
         /**
-          * Name of the combo: sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+          * Name of the combo: the name of its value in the form data (a combo without a name submits nothing), sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
          */
         "name": string;
         /**
-          * Opens the list. In `dropdown` mode, it moves the focus to the list.
+          * Opens the list (not while the combo is disabled). In `dropdown` mode, it moves the focus to the list.
          */
         "open": () => Promise<void>;
         /**
@@ -155,6 +166,18 @@ export namespace Components {
          */
         "position": DSComboPosition;
         /**
+          * As `checkValidity()`, and the browser shows the message of an invalid combo at its combobox, which takes the focus.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * An option must be selected for the form to be submitted (`valueMissing`, `aria-required` on the combobox).
+         */
+        "required": boolean;
+        /**
+          * The message of a required combo without a selected option, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage": string;
+        /**
           * Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing).
          */
         "selected": string | DSComboSelection;
@@ -167,6 +190,21 @@ export namespace Components {
           * Opens the list if it is closed and closes it if it is open, or opens (`true`) or closes (`false`) it.
          */
         "toggle": (forceDisplay?: boolean) => Promise<void>;
+        /**
+          * The message of an invalid combo, as the `validationMessage` of a native select (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage": string;
+        /**
+          * The validity of the combo, as the `validity` of a native select (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity": ValidityState;
+        /**
+          * Whether the form validates the combo (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate": boolean;
     }
     interface DsGrid {
         /**
@@ -1088,6 +1126,9 @@ declare global {
      * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
      * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
      * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+     * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+     * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+     * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
      */
     interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsComboElementEventMap>(type: K, listener: (this: HTMLDsComboElement, ev: DsComboCustomEvent<HTMLDsComboElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1625,6 +1666,9 @@ declare namespace LocalJSX {
      * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
      * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
      * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+     * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+     * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+     * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
      */
     interface DsCombo {
         /**
@@ -1632,6 +1676,14 @@ declare namespace LocalJSX {
           * @default ''
          */
         "customLabel"?: string;
+        /**
+          * Disables the combo: its button cannot be focused nor opened, an open list closes, and it submits nothing. A disabled `<fieldset>` around it disables it too, without changing this prop.
+         */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
         /**
           * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
          */
@@ -1656,7 +1708,7 @@ declare namespace LocalJSX {
          */
         "multiple"?: boolean;
         /**
-          * Name of the combo: sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+          * Name of the combo: the name of its value in the form data (a combo without a name submits nothing), sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
          */
         "name"?: string;
         /**
@@ -1679,6 +1731,14 @@ declare namespace LocalJSX {
          */
         "position"?: DSComboPosition;
         /**
+          * An option must be selected for the form to be submitted (`valueMissing`, `aria-required` on the combobox).
+         */
+        "required"?: boolean;
+        /**
+          * The message of a required combo without a selected option, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage"?: string;
+        /**
           * Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing).
          */
         "selected"?: string | DSComboSelection;
@@ -1687,6 +1747,21 @@ declare namespace LocalJSX {
           * @default []
          */
         "selectedOptions"?: DSOption[];
+        /**
+          * The message of an invalid combo, as the `validationMessage` of a native select (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage"?: string;
+        /**
+          * The validity of the combo, as the `validity` of a native select (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity"?: ValidityState;
+        /**
+          * Whether the form validates the combo (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate"?: boolean;
     }
     interface DsGrid {
         /**
@@ -2460,6 +2535,11 @@ declare namespace LocalJSX {
         "mods": string | string[];
         "label": string;
         "labelledby": string;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "validationMessage": string;
+        "willValidate": boolean;
     }
     interface DsGridAttributes {
         "dataUseRsp": boolean;
@@ -2698,6 +2778,9 @@ declare module "@stencil/core" {
              * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
              * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
              * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+             * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+             * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+             * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
              */
             "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
             "ds-grid": LocalJSX.IntrinsicElements["ds-grid"] & JSXBase.HTMLAttributes<HTMLDsGridElement>;

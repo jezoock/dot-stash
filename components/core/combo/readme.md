@@ -37,11 +37,12 @@ the `options` data only.
 
 ## Styling
 
-- **Classes**: `<ds-combo>` renders a `div` with the main class, `ds-combo`, its modifiers, and `--open` (while the list is open), `--position-<position>` (`left` by default, `right`, `top`, `bottom`), `--<mode>` (`--dropdown`, `--image`) and `--with-overlay` (`overlay`).
+- **Classes**: `<ds-combo>` renders a `div` with the main class, `ds-combo`, its modifiers, and `--open` (while the list is open), `--position-<position>` (`left` by default, `right`, `top`, `bottom`), `--<mode>` (`--dropdown`, `--image`), `--with-overlay` (`overlay`), `--disabled` (its own `disabled`, or a disabled `<fieldset>` around it) and `--invalid` (required and no option selected, shown after an `invalid` event or a change by the user, see [Forms](#forms)).
+- **Custom state**: `:state(user-invalid)` on `<ds-combo>`, the same as `--invalid`.
 - **Elements**: `__selected-option` (the toggle button, a native `button` with `role="combobox"`, not rendered in `dropdown` mode), `__menu` (a `div` that holds the list), `__option-list` (a `ul`, the listbox, `--hidden` while it is closed in `image` mode), `__option` (an `li`, `--selected`, `--disabled`, `--active` for the option the keys move while the list is open; it holds a `span`, or an `a` with a `url`, after its `img` in `image` mode) and `__overlay` (with `overlay`, while the list is open).
-- **Attributes** (reflected): `name`, `mode`, `position`, `mods`.
+- **Attributes** (reflected): `name`, `mode`, `position`, `disabled`, `required`, `mods`.
 - **Structure** (`combo.scss`): an inline block. The browser styles of the toggle button are reset (with `:where()`: zero specificity, any skin wins) and its label stays on one line. The list is positioned below the button (above it with `top`), `--ds-combo-list-offset` away (against it with `bottom`), above the page (`z-index: 100`), at least as wide as the button and as its options; in `image` mode, the options are a wrapping row, each name over its image. The overlay covers the page. The `default` modifier puts the list at 3.25rem from the top of `__menu`.
-- **Look** (default theme, `components/_combo.scss`): the toggle button (border, radius, padding, a chevron turned while open), the list (border, radius, shadow, at most half the screen high, then it scrolls) and the options (padding, hover, selected and disabled states, and the focus indicator inside the active option: `ds-focus-ring()`, its offset the negative focus width, as the list cuts what overflows it), from the custom properties below, set on `ds-combo`. The toggle button has the focus indicator of the base styles (`:focus-visible`).
+- **Look** (default theme, `components/_combo.scss`): the toggle button (border, radius, padding, a chevron turned while open), the list (border, radius, shadow, at most half the screen high, then it scrolls) and the options (padding, hover, selected and disabled states, and the focus indicator inside the active option: `ds-focus-ring()`, its offset the negative focus width, as the list cuts what overflows it), and a dimmed toggle button while the combo is disabled (`--disabled`), from the custom properties below, set on `ds-combo`. The toggle button has the focus indicator of the base styles (`:focus-visible`).
 
 Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
 
@@ -62,7 +63,9 @@ ds-combo {
 The combo follows the WAI-ARIA [select-only combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-select-only/): the focus stays on the toggle button, which points to the active option of the list.
 
 - **Roles and attributes**: the toggle button is a native `button` with `role="combobox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls` (the id of the list, while it is in the DOM: open, or in `image` mode) and, while the list is open, `aria-activedescendant` (the id of the active option). Its text is the value: the name of the selected option (single, or `custom-label`), the `name` and the count (multiple). The list is a `ul` with `role="listbox"` (`aria-multiselectable="true"` with `multiple`), the id `<id of the root>-listbox` and `tabindex="-1"` (out of the Tab order: a list that scrolls is a Tab stop in some browsers). The options are `li` elements with `role="option"`, the id `<id of the root>-option-<index>`, `aria-selected="true"` or `"false"`, and `aria-disabled="true"` when they cannot be chosen: disabled, or a placeholder (an empty `value`) without a link.
-- **Name** (required), on the combobox and on the listbox: `labelledby`, the ids of a visible label (`aria-labelledby`); else `label` (`aria-label`); else `custom-label`; else `name`. A `<label>` element does not name it (the toggle button is not a form control of the label).
+- **Name** (required), on the combobox and on the listbox: `labelledby`, the ids of a visible label (`aria-labelledby`); else `label` (`aria-label`); else its `<label>` elements: `<label for="<id of the combo>">` (`aria-labelledby` with their ids: a label without an id gets one, `<id of the root>-label-<n>`), or a `<label>` around the combo (`aria-label`, the text of the label without the text of the combo, its value); else `custom-label`; else `name`. A click on a label gives the focus to the combobox, as to a native select. The labels are read when the combo renders: a label added later names it from its next render.
+- **Disabled**: `disabled`, or a disabled `<fieldset>` around the combo: the toggle button is disabled (no focus, no click), an open list closes, `open()` and `toggle()` do nothing.
+- **Required**: `aria-required="true"` on the combobox. `aria-invalid="true"` on the combobox once the user should see that no option is selected: after an `invalid` event (a submission, `checkValidity()` or `reportValidity()` of the combo or of its form) or after the user deselected the last option, until an option is selected or the form is reset; `aria-invalid="false"` before that, for a required combo without a selected option (the browser would otherwise announce it as invalid from the start).
 - **Keyboard**, on the combobox (on the listbox in `dropdown` mode). Closed:
 
   | Key                                                 | Action                                                                                             |
@@ -101,7 +104,29 @@ The combo follows the WAI-ARIA [select-only combobox pattern](https://www.w3.org
 <ds-combo id="menu" mode="dropdown" label="Menu" options='[{"name": "Docs", "value": "docs", "url": "/docs"}]'></ds-combo>
 ```
 
-**Changed**: the list hangs from a `div` with the `__menu` class, not from a `menu` element (a `menu` holding a `ul` is not valid HTML): a stylesheet that targets `.ds-combo > menu` targets `.ds-combo__menu` now. The roles, ids and ARIA states, the keyboard, the active option (`--active`), the focus of the `dropdown` mode, `label` and `labelledby` are new; the list and the links of the options have `tabindex="-1"`; a click on an option of a single combo gives the focus back to the combobox.
+## Forms
+
+`ds-combo` is a form-associated custom element: in a `<form>`, it behaves as a native select.
+
+- **Value**: a single combo submits `<name>=<value of the selected option>`; a multiple combo submits one entry per selected option, `<name>=<value>`, in the order of the options; without a selected option (a placeholder, an empty `value`, is not one), without a `name`, or disabled, it submits nothing. Unlike a native select, a single combo without a selected option has no value: pre-select an option (`selected`, or the `selected` flag of an option) for a value by default.
+- **Disabled**: `disabled`, or a disabled `<fieldset>` around it: it submits nothing and is not validated.
+- **Reset**: a form reset gives it back its selection of the load, from `options` and `selected` (as the `defaultSelected` of native options), without an `optionSelected` event.
+- **Restore**: the browser gives back its selected values when the page comes back from the history without its cache (`formStateRestoreCallback`), without an `optionSelected` event.
+- **Required**: `required` makes it invalid without a selected option (`valueMissing`): the form is not submitted, and the browser shows its message at the combobox, which gets the focus. The message is the browser's own, that of a native required select, or `required-message`.
+- **Validity**: `validity`, `validationMessage` and `willValidate` (read-only), `checkValidity()` and `reportValidity()` (asynchronous), the `invalid` event, `:invalid` and `:valid`, as on a native control.
+- **Attributes**: as on a native control, a boolean attribute is true when it is present: `multiple="false"` is multiple.
+
+```html
+<form action="/search">
+  <label for="color">Color</label>
+  <ds-combo id="color" name="color" required options='[{"name": "Choose a color", "value": ""}, {"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue"}]'></ds-combo>
+  <ds-combo name="sizes" label="Sizes" multiple options='[{"name": "S", "value": "s", "selected": true}, {"name": "M", "value": "m", "selected": true}]'></ds-combo>
+  <button>Search</button>
+</form>
+<!-- Not submitted until a color is selected; then color=red&sizes=s&sizes=m -->
+```
+
+**Changed**: the list hangs from a `div` with the `__menu` class, not from a `menu` element (a `menu` holding a `ul` is not valid HTML): a stylesheet that targets `.ds-combo > menu` targets `.ds-combo__menu` now. The roles, ids and ARIA states, the keyboard, the active option (`--active`), the focus of the `dropdown` mode, `label` and `labelledby` are new; the list and the links of the options have `tabindex="-1"`; a click on an option of a single combo gives the focus back to the combobox. It is form-associated (new `disabled`, `required` and `required-message` props, `validity`, `validationMessage` and `willValidate` properties, `checkValidity()` and `reportValidity()` methods, the `--disabled` and `--invalid` classes), and its `<label>` elements name it.
 
 <!-- Auto Generated Below -->
 
@@ -117,23 +142,32 @@ It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `co
 points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
 Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
 `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
 
 ## Properties
 
-| Property          | Attribute      | Description                                                                                                                                                                                                                                                                                                                                                      | Type                                     | Default     |
-| ----------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ----------- |
-| `customLabel`     | `custom-label` | Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).                                                                                                                                                                                                                                                  | `string`                                 | `''`        |
-| `label`           | `label`        | The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.                                                                                                                                                      | `string`                                 | `undefined` |
-| `labelledby`      | `labelledby`   | The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list.                                                                                                                                                                                                                                            | `string`                                 | `undefined` |
-| `mode`            | `mode`         | `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.                                                                                                          | `string`                                 | `''`        |
-| `mods`            | `mods`         | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.                                                                                                                                                                                                                                                               | `string \| string[]`                     | `[]`        |
-| `multiple`        | `multiple`     | Several options can be selected: a click toggles an option and keeps the list open.                                                                                                                                                                                                                                                                              | `boolean`                                | `false`     |
-| `name`            | `name`         | Name of the combo: sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.                                                                                                                                                                                                                                | `string`                                 | `undefined` |
-| `options`         | `options`      | The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.                                                                                                                                                 | `DSOption[] \| string`                   | `[]`        |
-| `overlay`         | `overlay`      | Renders a full-page overlay behind the open list: a click on it closes the list.                                                                                                                                                                                                                                                                                 | `boolean`                                | `false`     |
-| `position`        | `position`     | Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).                                                                                                                                                                                                                                   | `"bottom" \| "left" \| "right" \| "top"` | `'left'`    |
-| `selected`        | `selected`     | Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing). | `DSComboSelection \| string`             | `undefined` |
-| `selectedOptions` | --             | The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.                                                                                                                                                                                                                         | `DSOption[]`                             | `[]`        |
+| Property            | Attribute            | Description                                                                                                                                                                                                                                                                                                                                                      | Type                                     | Default     |
+| ------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ----------- |
+| `customLabel`       | `custom-label`       | Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).                                                                                                                                                                                                                                                  | `string`                                 | `''`        |
+| `disabled`          | `disabled`           | Disables the combo: its button cannot be focused nor opened, an open list closes, and it submits nothing. A disabled `<fieldset>` around it disables it too, without changing this prop.                                                                                                                                                                         | `boolean`                                | `undefined` |
+| `label`             | `label`              | The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.                                                                                                                                                      | `string`                                 | `undefined` |
+| `labelledby`        | `labelledby`         | The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list.                                                                                                                                                                                                                                            | `string`                                 | `undefined` |
+| `mode`              | `mode`               | `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.                                                                                                          | `string`                                 | `''`        |
+| `mods`              | `mods`               | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.                                                                                                                                                                                                                                                               | `string \| string[]`                     | `[]`        |
+| `multiple`          | `multiple`           | Several options can be selected: a click toggles an option and keeps the list open.                                                                                                                                                                                                                                                                              | `boolean`                                | `false`     |
+| `name`              | `name`               | Name of the combo: the name of its value in the form data (a combo without a name submits nothing), sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.                                                                                                                                               | `string`                                 | `undefined` |
+| `options`           | `options`            | The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.                                                                                                                                                 | `DSOption[] \| string`                   | `[]`        |
+| `overlay`           | `overlay`            | Renders a full-page overlay behind the open list: a click on it closes the list.                                                                                                                                                                                                                                                                                 | `boolean`                                | `false`     |
+| `position`          | `position`           | Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).                                                                                                                                                                                                                                   | `"bottom" \| "left" \| "right" \| "top"` | `'left'`    |
+| `required`          | `required`           | An option must be selected for the form to be submitted (`valueMissing`, `aria-required` on the combobox).                                                                                                                                                                                                                                                       | `boolean`                                | `undefined` |
+| `requiredMessage`   | `required-message`   | The message of a required combo without a selected option, instead of the browser's own (`validationMessage`).                                                                                                                                                                                                                                                   | `string`                                 | `undefined` |
+| `selected`          | `selected`           | Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing). | `DSComboSelection \| string`             | `undefined` |
+| `selectedOptions`   | --                   | The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.                                                                                                                                                                                                                         | `DSOption[]`                             | `[]`        |
+| `validationMessage` | `validation-message` | The message of an invalid combo, as the `validationMessage` of a native select (read-only): `required-message`, else the browser's own.                                                                                                                                                                                                                          | `string`                                 | `undefined` |
+| `validity`          | --                   | The validity of the combo, as the `validity` of a native select (read-only; once the component is loaded).                                                                                                                                                                                                                                                       | `ValidityState`                          | `undefined` |
+| `willValidate`      | `will-validate`      | Whether the form validates the combo (read-only): not while it is disabled.                                                                                                                                                                                                                                                                                      | `boolean`                                | `undefined` |
 
 
 ## Events
@@ -144,6 +178,16 @@ Down and the typed characters move the active option, Enter and Space select it,
 
 
 ## Methods
+
+### `checkValidity() => Promise<boolean>`
+
+Whether the combo is valid; an invalid combo gets an `invalid` event (as the `checkValidity()` of a native select, but asynchronous).
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
 
 ### `close() => Promise<void>`
 
@@ -157,11 +201,21 @@ Type: `Promise<void>`
 
 ### `open() => Promise<void>`
 
-Opens the list. In `dropdown` mode, it moves the focus to the list.
+Opens the list (not while the combo is disabled). In `dropdown` mode, it moves the focus to the list.
 
 #### Returns
 
 Type: `Promise<void>`
+
+
+
+### `reportValidity() => Promise<boolean>`
+
+As `checkValidity()`, and the browser shows the message of an invalid combo at its combobox, which takes the focus.
+
+#### Returns
+
+Type: `Promise<boolean>`
 
 
 
@@ -180,6 +234,13 @@ Opens the list if it is closed and closes it if it is open, or opens (`true`) or
 Type: `Promise<void>`
 
 
+
+
+## Custom States
+
+| State                  | Initial Value | Description                                                                                                                                             |
+| ---------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:state(user-invalid)` | `false`       | The combo is invalid (`required`, no option selected) and the user should see it: after an `invalid` event or a change by the user, until a form reset. |
 
 
 ## CSS Custom Properties
