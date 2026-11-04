@@ -19,6 +19,7 @@ export default defineVitestConfig({
             'components/utils/**/*.spec.ts',
             'components/core/mods.spec.tsx',
             'components/core/{ajax,block,grid,heading,icon,select,title,toaster,tooltip,trigger}/*.spec.tsx',
+            'components/core/{combo,toggle,toggle-group}/*.spec.tsx',
           ],
           environment: 'stencil',
           setupFiles: ['./test/setup/unit.ts'],

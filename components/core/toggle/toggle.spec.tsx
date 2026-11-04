@@ -1,83 +1,10 @@
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSToggle } from './toggle';
-
-/** The form callbacks the browser calls on a form-associated element (not in the element types). */
-type FormCallbacks = { formResetCallback(): void; formStateRestoreCallback(state: unknown, mode: string): void; formDisabledCallback(isDisabled: boolean): void };
-const formCallbacks = (element: Element) => element as unknown as FormCallbacks;
-
-/** What the fake ElementInternals below records, read by the tests. */
-type FakeInternals = ElementInternals & { value: unknown; state: unknown; anchor: HTMLElement | undefined; states: Set<string> };
-
-/**
- * The simulated DOM of the spec tests has no ElementInternals (its `attachInternals()` gives an object without methods,
- * and the components then leave the form alone). This gives the elements a fake one, which records the form value, the
- * state and the validity, dispatches `invalid` as a browser does and gives the `<label>` elements of the document. Returns
- * the internals of an element.
- */
-const mockElementInternals = () => {
-  const internalsOf = new WeakMap<Element, FakeInternals>();
-  let owner = Object.getPrototypeOf(document.createElement('div'));
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'attachInternals')) owner = Object.getPrototypeOf(owner);
-
-  const createInternals = (host: HTMLElement) => {
-    let flags: ValidityStateFlags = {};
-    let message = '';
-    const internals = {
-      value: null,
-      state: null,
-      anchor: undefined,
-      states: new Set<string>(),
-      setFormValue(value: unknown, state: unknown = value) {
-        Object.assign(internals, { value, state });
-      },
-      setValidity(newFlags: ValidityStateFlags = {}, newMessage = '', anchor?: HTMLElement) {
-        flags = newFlags;
-        message = newMessage;
-        internals.anchor = anchor;
-      },
-      get validity() {
-        return { valid: !Object.values(flags).some(Boolean), ...flags };
-      },
-      get validationMessage() {
-        return internals.validity.valid ? '' : message;
-      },
-      get willValidate() {
-        return !host.hasAttribute('disabled');
-      },
-      get labels() {
-        const labels = Array.from(host.ownerDocument.querySelectorAll('label')) as HTMLLabelElement[];
-        return labels.filter(label => (label.hasAttribute('for') ? !!host.id && label.getAttribute('for') === host.id : label.contains(host)));
-      },
-      checkValidity() {
-        const { valid } = internals.validity;
-        if (!valid) host.dispatchEvent(new Event('invalid', { cancelable: true }));
-        return valid;
-      },
-      reportValidity() {
-        const valid = internals.checkValidity();
-        if (!valid) (internals.anchor ?? host).focus();
-        return valid;
-      },
-    };
-    internalsOf.set(host, internals as unknown as FakeInternals);
-    return internals as unknown as ElementInternals;
-  };
-  jest.spyOn(owner, 'attachInternals').mockImplementation(function (this: HTMLElement) {
-    return createInternals(this);
-  });
-
-  return (element: Element) => internalsOf.get(element);
-};
-
-const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import './toggle';
+import { type FakeInternals, formCallbacks, keydown, mockElementInternals, renderPage, type SpecPage } from '../../../test/helpers';
 
 describe('ds-toggle', () => {
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSToggle], html });
+    const page = await renderPage(html);
     const events: { name: string; value: unknown; checked: boolean }[] = [];
     page.root.addEventListener('toggle', (event: CustomEvent) => events.push(event.detail));
     return { page, events };
@@ -143,7 +70,7 @@ describe('ds-toggle', () => {
     expect(page.root.type).toBe('radio');
     expect(page.root.checked).toBe(true);
     expect(page.root.mods).toBe('small');
-    expect(page.rootInstance.unknown).toBeUndefined();
+    expect(page.root.unknown).toBeUndefined();
 
     await page.root.setProps({ checked: false });
     expect(page.root.checked).toBe(false);
@@ -204,7 +131,7 @@ describe('ds-toggle', () => {
   describe('form', () => {
     let internalsOf: (element: Element) => FakeInternals;
     beforeEach(() => (internalsOf = mockElementInternals()));
-    afterEach(() => jest.restoreAllMocks());
+    afterEach(() => vi.restoreAllMocks());
 
     const internals = (page: SpecPage) => internalsOf(page.root);
 
@@ -352,7 +279,7 @@ describe('ds-toggle', () => {
 
     it('reportValidity() gives the focus to an invalid toggle (the anchor of its message)', async () => {
       const { page } = await render('<ds-toggle type="checkbox" required></ds-toggle>');
-      const focus = jest.spyOn(page.root, 'focus').mockImplementation(() => undefined);
+      const focus = vi.spyOn(page.root, 'focus').mockImplementation(() => undefined);
 
       expect(await page.root.reportValidity()).toBe(false);
       expect(focus).toHaveBeenCalled();
@@ -421,7 +348,7 @@ describe('ds-toggle', () => {
 
     it.each(['checkbox', 'switch', 'icon'])('Space toggles a %s with a click event, without scrolling the page, and does not repeat', async type => {
       const { page, events } = await render(`<ds-toggle type="${type}" value="v"></ds-toggle>`);
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       page.root.addEventListener('click', onClick);
 
       expect(keydown(page.root, ' ').defaultPrevented).toBe(true);

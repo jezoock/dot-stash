@@ -32,6 +32,7 @@ export const config: Config = {
       '/components/sass\\.spec\\.ts$',
       '/components/core/mods\\.spec\\.tsx$',
       '/components/core/(ajax|block|grid|heading|icon|select|title|toaster|tooltip|trigger)/',
+      '/components/core/(combo|toggle|toggle-group)/',
     ],
   },
   outputTargets: [

@@ -1,103 +1,9 @@
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { h } from '@stencil/core';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSCombo } from './combo';
+import './combo';
 import { DSComboSelectedEventDetail, DSOption } from './combo.types';
 import { COMBO_TYPE_AHEAD_DELAY } from './combo.constants';
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets, dispatching `focusout` and `focusin` as a browser does.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    const previous = focus.active;
-    if (previous === this) return;
-    focus.active = this;
-    previous?.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: this }));
-    this.dispatchEvent(new FocusEvent('focusin', { bubbles: true, relatedTarget: previous }));
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
-
-/** The form callbacks the browser calls on a form-associated element (not in the element types). */
-type FormCallbacks = { formResetCallback(): void; formStateRestoreCallback(state: unknown, mode: string): void; formDisabledCallback(isDisabled: boolean): void };
-const formCallbacks = (element: Element) => element as unknown as FormCallbacks;
-
-/** What the fake ElementInternals below records, read by the tests. */
-type FakeInternals = ElementInternals & { value: unknown; state: unknown; anchor: HTMLElement | undefined; states: Set<string> };
-
-/**
- * The simulated DOM of the spec tests has no ElementInternals (its `attachInternals()` gives an object without methods,
- * and the components then leave the form alone). This gives the elements a fake one, which records the form value, the
- * state and the validity, dispatches `invalid` as a browser does and gives the `<label>` elements of the document. Returns
- * the internals of an element.
- */
-const mockElementInternals = () => {
-  const internalsOf = new WeakMap<Element, FakeInternals>();
-  let owner = Object.getPrototypeOf(document.createElement('div'));
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'attachInternals')) owner = Object.getPrototypeOf(owner);
-
-  const createInternals = (host: HTMLElement) => {
-    let flags: ValidityStateFlags = {};
-    let message = '';
-    const internals = {
-      value: null,
-      state: null,
-      anchor: undefined,
-      states: new Set<string>(),
-      setFormValue(value: unknown, state: unknown = value) {
-        Object.assign(internals, { value, state });
-      },
-      setValidity(newFlags: ValidityStateFlags = {}, newMessage = '', anchor?: HTMLElement) {
-        flags = newFlags;
-        message = newMessage;
-        internals.anchor = anchor;
-      },
-      get validity() {
-        return { valid: !Object.values(flags).some(Boolean), ...flags };
-      },
-      get validationMessage() {
-        return internals.validity.valid ? '' : message;
-      },
-      get willValidate() {
-        return !host.hasAttribute('disabled');
-      },
-      get labels() {
-        const labels = Array.from(host.ownerDocument.querySelectorAll('label')) as HTMLLabelElement[];
-        return labels.filter(label => (label.hasAttribute('for') ? !!host.id && label.getAttribute('for') === host.id : label.contains(host)));
-      },
-      checkValidity() {
-        const { valid } = internals.validity;
-        if (!valid) host.dispatchEvent(new Event('invalid', { cancelable: true }));
-        return valid;
-      },
-      reportValidity() {
-        const valid = internals.checkValidity();
-        if (!valid) (internals.anchor ?? host).focus();
-        return valid;
-      },
-    };
-    internalsOf.set(host, internals as unknown as FakeInternals);
-    return internals as unknown as ElementInternals;
-  };
-  jest.spyOn(owner, 'attachInternals').mockImplementation(function (this: HTMLElement) {
-    return createInternals(this);
-  });
-
-  return (element: Element) => internalsOf.get(element);
-};
-
-const dispatchKey = (target: EventTarget, key: string, options: KeyboardEventInit = {}, type = 'keydown') => {
-  const event = new KeyboardEvent(type, { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { type FakeInternals, formCallbacks, keydown, keyup, mockElementInternals, renderPage, type SpecPage, trackFocus } from '../../../test/helpers';
 
 const colors: DSOption[] = [
   { name: 'Red', value: 'red' },
@@ -117,12 +23,12 @@ describe('ds-combo', () => {
   };
 
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSCombo], html });
+    const page = await renderPage(html);
     return { page, events: listen(page) };
   };
 
   const renderWith = async (props: Record<string, unknown>) => {
-    const page = await newSpecPage({ components: [DSCombo], template: () => <ds-combo {...props}></ds-combo> });
+    const page = await renderPage(() => <ds-combo {...props}></ds-combo>);
     return { page, events: listen(page) };
   };
 
@@ -146,7 +52,7 @@ describe('ds-combo', () => {
     // Removes the combos, which stops their document listeners: the document outlives the spec pages.
     pages.forEach(page => page.body.querySelectorAll('ds-combo').forEach(combo => combo.remove()));
     pages = [];
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('options', () => {
@@ -173,7 +79,7 @@ describe('ds-combo', () => {
     });
 
     it('logs and ignores an invalid JSON', async () => {
-      const consoleError = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
       const { page } = await render(`<ds-combo options='[{"name": '></ds-combo>`);
 
       await click(page, toggleButton(page));
@@ -324,7 +230,7 @@ describe('ds-combo', () => {
     });
 
     it.each(['{"index": 5}', '{"index": -1}', '{"value": "pink"}', '{"name": "Pink"}', '{}', 'not JSON'])('selects nothing for selected=%s', async selected => {
-      jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
       const { page } = await render(`<ds-combo options='${colorsJSON}' selected='${selected}'></ds-combo>`);
 
       expect(page.root.selectedOptions).toEqual([]);
@@ -564,9 +470,9 @@ describe('ds-combo', () => {
 
     it('stops listening to the document once closed or removed', async () => {
       const { page, combo } = await renderInPage();
-      const addEventListener = jest.spyOn(page.doc, 'addEventListener');
-      const removeEventListener = jest.spyOn(page.doc, 'removeEventListener');
-      const clickListeners = (spy: jest.SpyInstance) => spy.mock.calls.filter(([type]) => type === 'click').map(([, listener]) => listener);
+      const addEventListener = vi.spyOn(page.doc, 'addEventListener');
+      const removeEventListener = vi.spyOn(page.doc, 'removeEventListener');
+      const clickListeners = (spy: MockInstance) => spy.mock.calls.filter(([type]) => type === 'click').map(([, listener]) => listener);
 
       await combo.open();
       await flushTimers();
@@ -767,22 +673,19 @@ describe('ds-combo', () => {
 
     it('reportValidity() gives the focus to the combobox', async () => {
       const { page } = await render(`<ds-combo required options='${colorsJSON}'></ds-combo>`);
-      const focused = trackFocus(page);
+      const focused = trackFocus();
 
       expect(await page.root.reportValidity()).toBe(false);
       expect(focused()).toBe(toggleButton(page));
     });
 
     it('is named by its <label> elements (labelledby and label first), and a click on a label focuses the combobox', async () => {
-      const page = await newSpecPage({
-        components: [DSCombo],
-        html: `<label for="color">Color</label><ds-combo id="color" options='${colorsJSON}' name="c"></ds-combo>`,
-      });
+      const page = await renderPage(`<label for="color">Color</label><ds-combo id="color" options='${colorsJSON}' name="c"></ds-combo>`);
       pages.push(page);
       const combo = page.body.querySelector('ds-combo');
       const button = combo.querySelector('.ds-combo__selected-option');
       const labelElement = page.body.querySelector('label');
-      const focused = trackFocus(page);
+      const focused = trackFocus();
 
       expect([button.getAttribute('aria-labelledby'), button.hasAttribute('aria-label'), labelElement.id]).toEqual([
         labelElement.id,
@@ -804,7 +707,7 @@ describe('ds-combo', () => {
     });
 
     it('a <label> around it names it with its text, without the text of the combo (its value)', async () => {
-      const page = await newSpecPage({ components: [DSCombo], html: `<label>Sizes <ds-combo name="sizes" multiple options='${colorsJSON}'></ds-combo></label>` });
+      const page = await renderPage(`<label>Sizes <ds-combo name="sizes" multiple options='${colorsJSON}'></ds-combo></label>`);
       pages.push(page);
       const button = page.body.querySelector('.ds-combo__selected-option');
 
@@ -827,10 +730,10 @@ describe('ds-combo', () => {
     /** A combo with the focus on its combobox; `press()` dispatches a key on the focused element. */
     const renderFocused = async (props: Record<string, unknown>) => {
       const { page, events } = await renderWith(props);
-      const focused = trackFocus(page);
+      const focused = trackFocus();
       toggleButton(page)?.focus();
       const press = async (key: string, options: KeyboardEventInit = {}) => {
-        const event = dispatchKey(focused(), key, options);
+        const event = keydown(focused(), key, options);
         await page.waitForChanges();
         return event;
       };
@@ -909,7 +812,7 @@ describe('ds-combo', () => {
       }
     });
 
-    it.each(['Enter', ' ', 'ArrowDown', 'ArrowUp'])('%p opens the list on the selected option, without selecting', async key => {
+    it.each(['Enter', ' ', 'ArrowDown', 'ArrowUp'])('%j opens the list on the selected option, without selecting', async key => {
       const { page, events, press } = await renderFocused({ options: palette, selected: { value: 'blue' } });
 
       expect((await press(key)).defaultPrevented).toBe(true);
@@ -936,7 +839,7 @@ describe('ds-combo', () => {
     it('Space on the combobox does not click it on keyup (the native button would toggle the list again)', async () => {
       const { page } = await renderFocused({ options: colors });
 
-      expect(dispatchKey(toggleButton(page), ' ', {}, 'keyup').defaultPrevented).toBe(true);
+      expect(keyup(toggleButton(page), ' ').defaultPrevented).toBe(true);
     });
 
     it('Down, Up, Home and End move the active option over the options that can be chosen, and stop at the ends', async () => {
@@ -994,7 +897,7 @@ describe('ds-combo', () => {
       await press('E');
       expect(activeName(page)).toBe('Green');
 
-      page.rootInstance.clearTypeAhead();
+      page.root.clearTypeAhead();
       await press('b');
       expect(activeName(page)).toBe('Black');
       await press('b');
@@ -1018,7 +921,7 @@ describe('ds-combo', () => {
       expect(activeName(page)).toBe('Red');
     });
 
-    it.each(['Enter', ' '])('%p selects the active option of a single combo, closes the list and keeps the focus on the combobox', async key => {
+    it.each(['Enter', ' '])('%j selects the active option of a single combo, closes the list and keeps the focus on the combobox', async key => {
       const { page, events, press, focused } = await renderFocused({ name: 'color', options: palette });
 
       await press('ArrowDown');
@@ -1173,25 +1076,22 @@ describe('ds-combo', () => {
 
     describe('dropdown mode', () => {
       const renderDropdown = async (props: Record<string, unknown> = {}) => {
-        const page = await newSpecPage({
-          components: [DSCombo],
-          template: () => (
-            <div>
-              <button id="opener">Menu</button>
-              <ds-combo mode="dropdown" label="Colors" options={colors} {...props}></ds-combo>
-            </div>
-          ),
-        });
+        const page = await renderPage(() => (
+          <div>
+            <button id="opener">Menu</button>
+            <ds-combo mode="dropdown" label="Colors" options={colors} {...props}></ds-combo>
+          </div>
+        ));
         pages.push(page);
         const combo = page.body.querySelector('ds-combo');
         const events: DSComboSelectedEventDetail[] = [];
         combo.addEventListener('optionSelected', (event: CustomEvent<DSComboSelectedEventDetail>) => events.push(event.detail));
-        const focused = trackFocus(page);
+        const focused = trackFocus();
         const opener = page.body.querySelector('#opener') as HTMLElement;
         opener.focus();
         const listbox = () => combo.querySelector('.ds-combo__option-list') as HTMLElement;
         const press = async (key: string) => {
-          const event = dispatchKey(focused(), key);
+          const event = keydown(focused(), key);
           await page.waitForChanges();
           return event;
         };

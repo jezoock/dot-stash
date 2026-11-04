@@ -6,9 +6,11 @@ import { MockWindow } from '@stencil/core/mock-doc';
 import '@stencil/vitest';
 import { resetPage } from '../helpers/page';
 
-// As in Stencil's spec pages: no CSS annotations, so no `hydrated` class on the components once they have loaded (the
-// tests compare their class lists with those they render).
-BUILD.cssAnnotations = false;
+// The build flags of the runtime, as in Stencil's spec pages: the development mode (and its warnings, which some tests
+// check there are none of), the form-associated components (as the build of the components has them), and no CSS
+// annotations, so no `hydrated` class on the components once they have loaded (the tests compare their class lists with
+// those they render).
+Object.assign(BUILD, { isDev: true, formAssociated: true, cssAnnotations: false });
 
 // Stencil names the event of a JSX listener after the `on…` property of the window, as a browser has them: `onKeyDown`
 // listens to `keydown` because the window has `onkeydown`, else to `keyDown`. The window of the environment is the global

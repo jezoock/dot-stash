@@ -1,110 +1,17 @@
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSToggle } from '../toggle/toggle';
-import { DSToggleGroup } from './toggle-group';
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    focus.active = this;
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
-
-/** The form callbacks the browser calls on a form-associated element (not in the element types). */
-type FormCallbacks = { formResetCallback(): void; formStateRestoreCallback(state: unknown, mode: string): void; formDisabledCallback(isDisabled: boolean): void };
-const formCallbacks = (element: Element) => element as unknown as FormCallbacks;
-
-/** What the fake ElementInternals below records, read by the tests. */
-type FakeInternals = ElementInternals & { value: unknown; state: unknown; anchor: HTMLElement | undefined; states: Set<string> };
-
-/**
- * The simulated DOM of the spec tests has no ElementInternals (its `attachInternals()` gives an object without methods,
- * and the components then leave the form alone). This gives the elements a fake one, which records the form value, the
- * state and the validity, dispatches `invalid` as a browser does and gives the `<label>` elements of the document. Returns
- * the internals of an element.
- */
-const mockElementInternals = () => {
-  const internalsOf = new WeakMap<Element, FakeInternals>();
-  let owner = Object.getPrototypeOf(document.createElement('div'));
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'attachInternals')) owner = Object.getPrototypeOf(owner);
-
-  const createInternals = (host: HTMLElement) => {
-    let flags: ValidityStateFlags = {};
-    let message = '';
-    const internals = {
-      value: null,
-      state: null,
-      anchor: undefined,
-      states: new Set<string>(),
-      setFormValue(value: unknown, state: unknown = value) {
-        Object.assign(internals, { value, state });
-      },
-      setValidity(newFlags: ValidityStateFlags = {}, newMessage = '', anchor?: HTMLElement) {
-        flags = newFlags;
-        message = newMessage;
-        internals.anchor = anchor;
-      },
-      get validity() {
-        return { valid: !Object.values(flags).some(Boolean), ...flags };
-      },
-      get validationMessage() {
-        return internals.validity.valid ? '' : message;
-      },
-      get willValidate() {
-        return !host.hasAttribute('disabled');
-      },
-      get labels() {
-        const labels = Array.from(host.ownerDocument.querySelectorAll('label')) as HTMLLabelElement[];
-        return labels.filter(label => (label.hasAttribute('for') ? !!host.id && label.getAttribute('for') === host.id : label.contains(host)));
-      },
-      checkValidity() {
-        const { valid } = internals.validity;
-        if (!valid) host.dispatchEvent(new Event('invalid', { cancelable: true }));
-        return valid;
-      },
-      reportValidity() {
-        const valid = internals.checkValidity();
-        if (!valid) (internals.anchor ?? host).focus();
-        return valid;
-      },
-    };
-    internalsOf.set(host, internals as unknown as FakeInternals);
-    return internals as unknown as ElementInternals;
-  };
-  jest.spyOn(owner, 'attachInternals').mockImplementation(function (this: HTMLElement) {
-    return createInternals(this);
-  });
-
-  return (element: Element) => internalsOf.get(element);
-};
-
-const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import '../toggle/toggle';
+import './toggle-group';
+import { type FakeInternals, formCallbacks, keydown, mockElementInternals, renderPage, type SpecPage, trackFocus } from '../../../test/helpers';
 
 describe('ds-toggle-group', () => {
   afterEach(() => {
-    delete global.MutationObserver;
-    delete window.MutationObserver;
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   const render = async (groupAttributes: string, toggleAttributes = '') => {
-    const page = await newSpecPage({
-      components: [DSToggleGroup, DSToggle],
-      html: `<ds-toggle-group ${groupAttributes}>${['a', 'b', 'c'].map(value => `<ds-toggle value="${value}" ${toggleAttributes}></ds-toggle>`).join('')}</ds-toggle-group>`,
-    });
+    const page = await renderPage(
+      `<ds-toggle-group ${groupAttributes}>${['a', 'b', 'c'].map(value => `<ds-toggle value="${value}" ${toggleAttributes}></ds-toggle>`).join('')}</ds-toggle-group>`,
+    );
     const changes: unknown[] = [];
     page.root.addEventListener('toggleValueChange', (event: CustomEvent) => changes.push(event.detail.value));
 
@@ -114,7 +21,7 @@ describe('ds-toggle-group', () => {
       await page.waitForChanges();
     };
     const checked = () => toggles.filter(toggle => toggle.checked).map(toggle => toggle.value);
-    const value = () => page.rootInstance.value;
+    const value = () => page.root.value;
 
     return { page, changes, click, checked, value };
   };
@@ -204,19 +111,13 @@ describe('ds-toggle-group', () => {
   });
 
   it("a toggle's own type wins over the group's", async () => {
-    const page = await newSpecPage({
-      components: [DSToggleGroup, DSToggle],
-      html: '<ds-toggle-group type="checkbox"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" type="radio"></ds-toggle></ds-toggle-group>',
-    });
+    const page = await renderPage('<ds-toggle-group type="checkbox"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" type="radio"></ds-toggle></ds-toggle-group>');
 
     expect(renderedTypes(page)).toEqual(['checkbox', 'radio']);
   });
 
   it('passes on its name, type and mods when they change after the load, and gives the toggles their own back', async () => {
-    const page = await newSpecPage({
-      components: [DSToggleGroup, DSToggle],
-      html: '<ds-toggle-group><ds-toggle value="a"></ds-toggle><ds-toggle value="b" name="own" mods="small" type="radio"></ds-toggle></ds-toggle-group>',
-    });
+    const page = await renderPage('<ds-toggle-group><ds-toggle value="a"></ds-toggle><ds-toggle value="b" name="own" mods="small" type="radio"></ds-toggle></ds-toggle-group>');
     const group = page.root;
     const toggles = Array.from(group.querySelectorAll('ds-toggle'));
     // Sorted: Stencil appends the classes it adds.
@@ -250,16 +151,16 @@ describe('ds-toggle-group', () => {
   });
 
   it('registers the toggles added after the load', async () => {
-    const observers: { callback: MutationCallback; observe: jest.Mock; disconnect: jest.Mock }[] = [];
+    const observers: { callback: MutationCallback; observe: Mock; disconnect: Mock }[] = [];
     class FakeMutationObserver {
-      observe = jest.fn();
-      disconnect = jest.fn();
+      observe = vi.fn();
+      disconnect = vi.fn();
       constructor(public callback: MutationCallback) {
         observers.push(this);
       }
     }
-    const page = await newSpecPage({ components: [DSToggleGroup, DSToggle], html: '' });
-    global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
+    const page = await renderPage('');
+    vi.stubGlobal('MutationObserver', FakeMutationObserver);
     await page.setContent('<ds-toggle-group name="size" type="checkbox" mods="large" count="[0, 3]"><ds-toggle value="a"></ds-toggle></ds-toggle-group>');
     const group = page.root;
     const [observer] = observers;
@@ -282,7 +183,7 @@ describe('ds-toggle-group', () => {
       ['size', 'ds-toggle --large --checkbox'],
       ['size', 'ds-toggle --large --checkbox'],
     ]);
-    expect(page.rootInstance.value).toEqual(['b']);
+    expect(page.root.value).toEqual(['b']);
 
     c.click();
     await page.waitForChanges();
@@ -310,13 +211,13 @@ describe('ds-toggle-group', () => {
     const fakeObservers = () => {
       const observers: { callback: MutationCallback }[] = [];
       class FakeMutationObserver {
-        observe = jest.fn();
-        disconnect = jest.fn();
+        observe = vi.fn();
+        disconnect = vi.fn();
         constructor(public callback: MutationCallback) {
           observers.push(this);
         }
       }
-      global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
+      vi.stubGlobal('MutationObserver', FakeMutationObserver);
       /** The `checked` attributes of these toggles changed: the records a browser gives. */
       return (toggles: Element[]) =>
         observers.forEach(({ callback }) =>
@@ -374,16 +275,10 @@ describe('ds-toggle-group', () => {
     });
 
     it('a radio with required makes its group required; a group of checkboxes has no aria-required (not a property of the group role)', async () => {
-      const page = await newSpecPage({
-        components: [DSToggleGroup, DSToggle],
-        html: '<ds-toggle-group type="radio"><ds-toggle value="a" required></ds-toggle><ds-toggle value="b"></ds-toggle></ds-toggle-group>',
-      });
+      const page = await renderPage('<ds-toggle-group type="radio"><ds-toggle value="a" required></ds-toggle><ds-toggle value="b"></ds-toggle></ds-toggle-group>');
       expect([page.root.validity.valueMissing, page.root.getAttribute('aria-required')]).toEqual([true, 'true']);
 
-      const checkboxes = await newSpecPage({
-        components: [DSToggleGroup, DSToggle],
-        html: '<ds-toggle-group type="checkbox" count="[0, 3]" required><ds-toggle value="a"></ds-toggle></ds-toggle-group>',
-      });
+      const checkboxes = await renderPage('<ds-toggle-group type="checkbox" count="[0, 3]" required><ds-toggle value="a"></ds-toggle></ds-toggle-group>');
       expect([checkboxes.root.validity.valueMissing, checkboxes.root.getAttribute('role'), checkboxes.root.getAttribute('aria-required')]).toEqual([true, 'group', null]);
     });
 
@@ -418,7 +313,7 @@ describe('ds-toggle-group', () => {
     it('reportValidity() gives the focus to the anchor of its message', async () => {
       const { page } = await render('type="radio" required');
       const [a] = Array.from(page.root.querySelectorAll('ds-toggle'));
-      const focus = jest.spyOn(a, 'focus').mockImplementation(() => undefined);
+      const focus = vi.spyOn(a, 'focus').mockImplementation(() => undefined);
 
       expect(await page.root.reportValidity()).toBe(false);
       expect(focus).toHaveBeenCalled();
@@ -471,7 +366,7 @@ describe('ds-toggle-group', () => {
 
     it('a click on the group itself (from its <label>) moves the focus to the radio Tab reaches, without selecting it', async () => {
       const { page, click, checked } = await render('type="radio"');
-      const focused = trackFocus(page);
+      const focused = trackFocus();
       const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
 
       page.root.click();
@@ -501,10 +396,7 @@ describe('ds-toggle-group', () => {
     });
 
     it('is a group when one of its toggles has another type of its own, a radio group with radios of their own type', async () => {
-      const mixed = await newSpecPage({
-        components: [DSToggleGroup, DSToggle],
-        html: '<ds-toggle-group type="radio"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" type="checkbox"></ds-toggle></ds-toggle-group>',
-      });
+      const mixed = await renderPage('<ds-toggle-group type="radio"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" type="checkbox"></ds-toggle></ds-toggle-group>');
       expect(mixed.root.getAttribute('role')).toBe('group');
 
       const { page } = await render('', 'type="radio"');
@@ -529,10 +421,9 @@ describe('ds-toggle-group', () => {
       await page.waitForChanges();
       expect(tabindexes(page)).toEqual(['-1', '-1', '0']);
 
-      const disabledFirst = await newSpecPage({
-        components: [DSToggleGroup, DSToggle],
-        html: '<ds-toggle-group type="radio"><ds-toggle value="a" disabled></ds-toggle><ds-toggle value="b"></ds-toggle><ds-toggle value="c"></ds-toggle></ds-toggle-group>',
-      });
+      const disabledFirst = await renderPage(
+        '<ds-toggle-group type="radio"><ds-toggle value="a" disabled></ds-toggle><ds-toggle value="b"></ds-toggle><ds-toggle value="c"></ds-toggle></ds-toggle-group>',
+      );
       expect(tabindexes(disabledFirst)).toEqual([null, '0', '-1']);
     });
 
@@ -550,7 +441,7 @@ describe('ds-toggle-group', () => {
 
     it('the arrow keys move the focus and the selection between the radios, round the group; Home and End to the ends', async () => {
       const { page, checked, changes } = await render('type="radio"');
-      const focused = trackFocus(page);
+      const focused = trackFocus();
       const [a, b, c] = Array.from(page.root.querySelectorAll('ds-toggle'));
       const press = async (key: string, from = focused()) => {
         const event = keydown(from, key);
@@ -579,11 +470,10 @@ describe('ds-toggle-group', () => {
     });
 
     it('the arrow keys skip the disabled radios, and leave the keys with a modifier and the other groups alone', async () => {
-      const page = await newSpecPage({
-        components: [DSToggleGroup, DSToggle],
-        html: '<ds-toggle-group type="radio"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle><ds-toggle value="c"></ds-toggle></ds-toggle-group>',
-      });
-      const focused = trackFocus(page);
+      const page = await renderPage(
+        '<ds-toggle-group type="radio"><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle><ds-toggle value="c"></ds-toggle></ds-toggle-group>',
+      );
+      const focused = trackFocus();
       const [a, , c] = Array.from(page.root.querySelectorAll('ds-toggle'));
 
       keydown(a, 'ArrowDown');
@@ -601,10 +491,9 @@ describe('ds-toggle-group', () => {
     });
 
     it('disabled, disables its toggles (aria-disabled on the group and on each) and leaves their own disabled as it is', async () => {
-      const page = await newSpecPage({
-        components: [DSToggleGroup, DSToggle],
-        html: '<ds-toggle-group type="checkbox" count="[0, 3]" disabled><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle></ds-toggle-group>',
-      });
+      const page = await renderPage(
+        '<ds-toggle-group type="checkbox" count="[0, 3]" disabled><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle></ds-toggle-group>',
+      );
       const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
       const states = () =>
         toggles.map(toggle => [!!toggle.disabled, toggle.getAttribute('aria-disabled'), toggle.getAttribute('tabindex'), toggle.classList.contains('--disabled')]);
