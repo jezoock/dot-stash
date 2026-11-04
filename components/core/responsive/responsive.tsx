@@ -358,7 +358,7 @@ export class DSRsp {
   /** Applies the breakpoint of the window width when it changed (label or limits): returns whether it did. */
   notifySubscribers(): boolean {
     const { currentBreakpoint: previousBreakpoint } = this;
-    const newBreakpoint = getBreakpoint(this.breakpoints);
+    const newBreakpoint = getBreakpoint(this.breakpoints, window.innerWidth);
 
     if (isSameBreakpoint(newBreakpoint, previousBreakpoint)) {
       return false;

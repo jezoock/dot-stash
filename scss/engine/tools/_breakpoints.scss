@@ -2,13 +2,15 @@
 @use 'sass:math';
 @use '../variables' as *;
 
-// A media query from $breakpoints, mobile first: min-width for `$breakpoint-min`, max-width (its width - 1px) for
-// `$breakpoint-max`, both for a range.
+// A media query from $breakpoints, mobile first: from the width of `$breakpoint-min` (min-width), below the width of
+// `$breakpoint-max` (the range syntax of Media Queries level 4, `width <`), both for a range.
 //
 //   @include break-p(md) { … }          @media (min-width: 992px)
-//   @include break-p(null, md) { … }    @media (max-width: 991px)
-//   @include break-p(sm, md) { … }      @media (min-width: 768px) and (max-width: 991px)
+//   @include break-p(null, md) { … }    @media (width < 992px)
+//   @include break-p(sm, md) { … }      @media (min-width: 768px) and (width < 992px)
 //
+// Two ranges that meet leave no gap: at the fractional widths of a zoomed page (991.5px), `max-width: 991px` and
+// `min-width: 992px` would both fail. They are the media queries of the JavaScript helpers (responsive.widthQuery()).
 // An unknown label, or no label at all, is an error. Below the first breakpoint is break-p(null, <first label>).
 @mixin break-p($breakpoint-min: null, $breakpoint-max: null) {
   @if $breakpoint-min == null and $breakpoint-max == null {
@@ -20,11 +22,11 @@
       @content;
     }
   } @else if $breakpoint-min == null {
-    @media (max-width: ds-breakpoint($breakpoint-max) - 1px) {
+    @media (width < ds-breakpoint($breakpoint-max)) {
       @content;
     }
   } @else {
-    @media (min-width: ds-breakpoint($breakpoint-min)) and (max-width: ds-breakpoint($breakpoint-max) - 1px) {
+    @media (min-width: ds-breakpoint($breakpoint-min)) and (width < ds-breakpoint($breakpoint-max)) {
       @content;
     }
   }
