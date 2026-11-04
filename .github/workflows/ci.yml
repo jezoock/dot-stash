@@ -30,10 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        env:
-          # The spec tests run without a browser and the end-to-end tests are not run in CI,
-          # so the Chromium download is not needed.
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Build
         run: npm run build:all
