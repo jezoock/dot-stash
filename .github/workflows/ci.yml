@@ -58,5 +58,33 @@ jobs:
       - name: Lint stylesheets
         run: npm run lint:css
 
-      - name: Test
+      - name: Unit tests
         run: npm test
+
+  browser:
+    name: Browser tests (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The browser tests load the build of the components and of the theme (test/setup/browser.ts).
+      - name: Build
+        run: npm run build:all
+
+      # The Chromium of the Playwright version of package-lock.json, with the system libraries it needs.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm run test:browser
