@@ -8,6 +8,7 @@ ds-select {
   --ds-select-border-color: #{ds-color(gray, base)};
   --ds-select-radius: #{ds-radius(sm)};
   --ds-select-padding: #{ds-spacing(2) ds-spacing(7) ds-spacing(2) ds-spacing(3)};
+  --ds-select-invalid-color: #{ds-color(status, error)};
 }
 
 .ds-select {
@@ -25,6 +26,11 @@ ds-select {
       transform: translateY(-50%);
       @include ds-icon(angle-down);
     }
+  }
+
+  // Invalid (its native select, once the user should see it): the border of the box in the error color.
+  &.--invalid {
+    border-color: var(--ds-select-invalid-color);
   }
 
   // The native select, which has the focus, is transparent: the box draws its focus indicator.

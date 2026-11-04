@@ -6,7 +6,7 @@
 - **Custom state**: `:state(user-invalid)`, the same as `--invalid`.
 - **Attributes** (reflected): `name`, `type` (given to its toggles without a type of their own), `disabled` (it disables its toggles, which get the `--disabled` class: the theme styles them), `required`, `mods`.
 - **Structure**: none (no stylesheet): an inline wrapper of its `ds-toggle` elements.
-- **Look**: none, and no custom property: the `ds-toggle` elements carry the look. Set their `--ds-toggle-*` properties on them (`.filters ds-toggle { … }`, see `ds-toggle`).
+- **Look**: none, and no custom property: the `ds-toggle` elements carry the look. Set their `--ds-toggle-*` properties on them (`.filters ds-toggle { … }`, see `ds-toggle`). The default theme gives the toggles of an invalid group (`--invalid`) the invalid look of `ds-toggle`.
 
 ## Accessibility
 

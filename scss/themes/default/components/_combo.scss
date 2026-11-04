@@ -12,6 +12,7 @@ ds-combo {
   --ds-combo-selected-background: #{ds-color(primary, light)};
   --ds-combo-selected-color: #{ds-color(primary, darker)};
   --ds-combo-list-offset: 0.5rem;
+  --ds-combo-invalid-color: #{ds-color(status, error)};
 }
 
 .ds-combo {
@@ -39,6 +40,11 @@ ds-combo {
     &::after {
       transform: rotate(180deg);
     }
+  }
+
+  // Invalid (required, no option selected, once the user should see it): the border of the toggle button in the error color.
+  &.--invalid > &__selected-option {
+    border-color: var(--ds-combo-invalid-color);
   }
 
   // A disabled combo (its `disabled`, or a disabled fieldset around it): the toggle button dimmed, as a disabled option.

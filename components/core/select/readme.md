@@ -6,7 +6,7 @@
 - **Elements**: `__label` (the label of the selected option, `aria-hidden`: the select gives its value) and `__input` (the native `select`; the default slot holds its `option` elements).
 - **Attributes** (reflected): `disabled`, `required`, `default-value`, `mods`.
 - **Structure** (`select.scss`): a block, covered by the native select, which is transparent: a click opens the native list.
-- **Look** (default theme, `components/_select.scss`): the box (border, radius, background), the padding of the label, a chevron on the right and a dimmed disabled select (its `disabled`, or a disabled fieldset), from the custom properties below, set on `ds-select`. The native select is transparent: the box draws its focus indicator (`.ds-select:has(> .ds-select__input:focus-visible)`, with `ds-focus-ring()`).
+- **Look** (default theme, `components/_select.scss`): the box (border, radius, background), the padding of the label, a chevron on the right, a dimmed disabled select (its `disabled`, or a disabled fieldset) and the border of the box in the error color while invalid (`--invalid`), from the custom properties below, set on `ds-select`. The native select is transparent: the box draws its focus indicator (`.ds-select:has(> .ds-select__input:focus-visible)`, with `ds-focus-ring()`).
 
 Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
 
@@ -126,12 +126,13 @@ Type: `Promise<{ value: string; label: string; }>`
 
 ## CSS Custom Properties
 
-| Name                       | Description                                                           |
-| -------------------------- | --------------------------------------------------------------------- |
-| `--ds-select-background`   | Background of the box.                                                |
-| `--ds-select-border-color` | Border color of the box.                                              |
-| `--ds-select-padding`      | Padding of the label (its right padding leaves room for the chevron). |
-| `--ds-select-radius`       | Corner radius of the box.                                             |
+| Name                        | Description                                                           |
+| --------------------------- | --------------------------------------------------------------------- |
+| `--ds-select-background`    | Background of the box.                                                |
+| `--ds-select-border-color`  | Border color of the box.                                              |
+| `--ds-select-invalid-color` | Border color of the box of an invalid select (`--invalid`).           |
+| `--ds-select-padding`       | Padding of the label (its right padding leaves room for the chevron). |
+| `--ds-select-radius`        | Corner radius of the box.                                             |
 
 
 ----------------------------------------------

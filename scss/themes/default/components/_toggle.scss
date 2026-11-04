@@ -14,6 +14,7 @@ ds-toggle {
   --ds-toggle-knob-color: #{ds-color(input, knob)};
   --ds-toggle-knob-checked-color: #{ds-color(input, knob-checked)};
   --ds-toggle-knob-disabled-color: #{ds-color(input, knob-disabled)};
+  --ds-toggle-invalid-color: #{ds-color(status, error)};
 }
 
 .ds-toggle {
@@ -107,6 +108,21 @@ ds-toggle {
       &::after {
         background-color: var(--ds-toggle-knob-disabled-color);
       }
+    }
+  }
+
+  // Invalid (required and not checked, once the user should see it): the toggle, or its ds-toggle-group, has `--invalid`.
+  // The border of a radio or a checkbox, a ring around a switch or a toggle button, in the error color.
+  &.--invalid:not(.--disabled),
+  .ds-toggle-group.--invalid &:not(.--disabled) {
+    &.--radio,
+    &.--checkbox {
+      border-color: var(--ds-toggle-invalid-color);
+    }
+
+    &.--switch,
+    &.--icon {
+      box-shadow: 0 0 0 2px var(--ds-toggle-invalid-color);
     }
   }
 }
