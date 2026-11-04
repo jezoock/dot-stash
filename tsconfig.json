@@ -10,9 +10,10 @@
     "target": "es2017",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "skipLibCheck": true,
     "jsx": "react",
     "jsxFactory": "h"
   },
-  "include": ["components"],
+  "include": ["components", "test"],
   "exclude": ["node_modules"]
 }

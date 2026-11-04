@@ -1,3 +1,4 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { focusFirstElement, getFocusedElement, getTabbableElements, isTabbable } from './focus';
 
 describe('focus', () => {
@@ -10,7 +11,7 @@ describe('focus', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('lists the elements Tab reaches, in the document order', () => {
@@ -47,10 +48,10 @@ describe('focus', () => {
   });
 
   it('focuses an autofocus element first, else the first tabbable element, else the fallback', () => {
-    const focus = jest.fn();
+    const focus = vi.fn();
     const withAutofocus = root('<button id="a">A</button><span tabindex="-1" autofocus id="b">B</span>');
     const fallback = document.createElement('div');
-    jest.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(fallback)), 'focus').mockImplementation(function (this: HTMLElement) {
+    vi.spyOn(Object.getPrototypeOf(Object.getPrototypeOf(fallback)), 'focus').mockImplementation(function (this: HTMLElement) {
       focus(this.id || this.tagName);
     });
 

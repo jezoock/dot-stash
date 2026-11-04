@@ -55,6 +55,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # The components and the tests: the build only compiles the components (tsconfig.build.json).
+      - name: Type-check
+        run: npm run typecheck
+
       - name: Lint stylesheets
         run: npm run lint:css
 

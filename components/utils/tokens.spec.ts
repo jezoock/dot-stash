@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { getBreakpoints, getToken } from './tokens';
 
 /** The custom properties the themes declare for their breakpoints (dist/css/<theme>.css, :root). */
@@ -15,8 +16,8 @@ const THEME_BREAKPOINT_TOKENS = {
 const THEME_BREAKPOINTS = { xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 };
 
 describe('tokens', () => {
-  let getComputedStyleSpy: jest.SpyInstance;
-  let warnSpy: jest.SpyInstance;
+  let getComputedStyleSpy: MockInstance;
+  let warnSpy: MockInstance;
 
   const root = () => document.documentElement;
 
@@ -27,7 +28,7 @@ describe('tokens', () => {
   beforeEach(() => {
     // The mock DOM computes no style: the computed value of a custom property is the inline one of the element or of its
     // nearest ancestor that has one (custom properties are inherited).
-    getComputedStyleSpy = jest.spyOn(window, 'getComputedStyle').mockImplementation(
+    getComputedStyleSpy = vi.spyOn(window, 'getComputedStyle').mockImplementation(
       (element: Element) =>
         ({
           getPropertyValue: (name: string) => {
@@ -39,7 +40,7 @@ describe('tokens', () => {
           },
         }) as CSSStyleDeclaration,
     );
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
   afterEach(() => {

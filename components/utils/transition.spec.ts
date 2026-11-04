@@ -1,13 +1,9 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getTransitionTime, TRANSITION_END_MARGIN, waitForTransition } from './transition';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { mockComputedStyle, mockTransition, wait } from '../../test/helpers';
 
 describe('transition', () => {
-  // The spec tests have no CSS engine: the computed style of an element is given here.
-  const mockTransition = (transitionDuration: string, transitionDelay = '0s') =>
-    jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay } as CSSStyleDeclaration);
-
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   describe('getTransitionTime()', () => {
     it.each([
@@ -18,14 +14,14 @@ describe('transition', () => {
       ['0.3s, 0.1s', '0s', 300],
       ['0.2s', '0s, 0.5s', 700], // the shorter list is repeated
       ['0.01ms', '0s', 0.01], // reduced motion: the base styles of the theme
-    ])('reads %s (delay %s) as %p ms', (duration, delay, time) => {
+    ])('reads %s (delay %s) as %j ms', (duration, delay, time) => {
       mockTransition(duration, delay);
 
       expect(getTransitionTime(document.createElement('div'))).toBeCloseTo(time);
     });
 
     it('returns 0 without a transition property', () => {
-      jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration: '0.4s', transitionDelay: '0s', transitionProperty: 'none' } as CSSStyleDeclaration);
+      mockComputedStyle({ transitionDuration: '0.4s', transitionDelay: '0s', transitionProperty: 'none' });
 
       expect(getTransitionTime(document.createElement('div'))).toBe(0);
     });
@@ -39,7 +35,7 @@ describe('transition', () => {
     it('ends on the transitionend event of the element, not on the ones of its content, once', () => {
       const element = document.createElement('div');
       const child = element.appendChild(document.createElement('span'));
-      const done = jest.fn();
+      const done = vi.fn();
 
       const transition = waitForTransition(element, done);
       transition.measure();
@@ -53,7 +49,7 @@ describe('transition', () => {
 
     it('ends at once when no transition runs (durations of 0)', () => {
       const element = document.createElement('div');
-      const done = jest.fn();
+      const done = vi.fn();
       mockTransition('0s, 0s', '0s');
 
       waitForTransition(element, done).measure();
@@ -64,7 +60,7 @@ describe('transition', () => {
     });
 
     it('ends after the longest transition when the event does not come', async () => {
-      const done = jest.fn();
+      const done = vi.fn();
       mockTransition('0.02s');
 
       waitForTransition(document.createElement('div'), done).measure();
@@ -77,7 +73,7 @@ describe('transition', () => {
 
     it('does not end once cancelled', async () => {
       const element = document.createElement('div');
-      const done = jest.fn();
+      const done = vi.fn();
       mockTransition('0.01s');
 
       const transition = waitForTransition(element, done);
@@ -92,7 +88,7 @@ describe('transition', () => {
 
     it('waits for the event only, without a computed transition', async () => {
       const element = document.createElement('div');
-      const done = jest.fn();
+      const done = vi.fn();
 
       waitForTransition(element, done).measure();
       await wait(TRANSITION_END_MARGIN + 10);

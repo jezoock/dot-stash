@@ -39,13 +39,14 @@
     "build:all": "npm run clean && npm run build:css && npm run build",
     "clean": "node -e \"for (const dir of ['dist', 'www', '.stencil', 'loader']) require('fs').rmSync(dir, { recursive: true, force: true })\"",
     "start": "node scripts/dev.mjs",
-    "test": "stencil test --spec",
+    "test": "stencil test --spec && vitest run --project unit --project styles",
     "test.watch": "stencil test --spec --watchAll",
     "test:e2e": "stencil test --e2e",
     "generate": "stencil generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:css": "stylelint \"scss/**/*.scss\" \"components/**/*.scss\"",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,scss,json,html,yml,yaml,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,scss,json,html,yml,yaml,md}\""
   },
@@ -53,6 +54,7 @@
     "@eslint/js": "^10.0.1",
     "@stencil/core": "^4.45.2",
     "@stencil/sass": "^3.3.3",
+    "@stencil/vitest": "1.16.1",
     "@types/jest": "^29.5.14",
     "eslint": "^10.14.0",
     "globals": "^17.14.0",
@@ -64,7 +66,9 @@
     "stylelint": "^17.16.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.1",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
   },
   "license": "MIT"
 }

@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import {
   getBreakpoint,
   getParamsForBreakpoint,
@@ -13,70 +14,10 @@ import {
   watchThemeBreakpoint,
   widthQuery,
 } from './responsive';
+import { fakeMatchMedia, mockTokens } from '../../test/helpers';
 
 /** The theme breakpoints (scss/engine/variables/_breakpoints.scss), as tokens.getBreakpoints() reads them. */
 const THEME_BREAKPOINTS = { xxs: 360, xs: 576, sm: 768, md: 992, lg: 1200, xl: 1400, xxl: 1600 };
-
-/** A media query list of the fake matchMedia: its query, its change listeners, and its state when it last notified them. */
-interface FakeMediaQueryList {
-  media: string;
-  readonly matches: boolean;
-  listeners: Set<(event: { matches: boolean; media: string }) => void>;
-  notified: boolean;
-  addEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
-  removeEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
-}
-
-/**
- * The spec tests have no viewport: a matchMedia that evaluates the width queries of utils/responsive (`(min-width: …px)`,
- * `(width < …px)`, `all`, joined by `and`) at a width, and that dispatches `change`, as a browser does, on each list whose
- * state changes when the width does (every list is up to date when the first listener runs).
- */
-const fakeMatchMedia = (initialWidth = 1000) => {
-  let width = initialWidth;
-  const lists: FakeMediaQueryList[] = [];
-  const evaluate = (query: string): boolean =>
-    query.split(' and ').every(part => {
-      const min = /^\(min-width: ([\d.]+)px\)$/.exec(part);
-      const max = /^\(width < ([\d.]+)px\)$/.exec(part);
-      if (min) return width >= Number(min[1]);
-      if (max) return width < Number(max[1]);
-      if (part === 'all') return true;
-      throw new Error(`unexpected media query: ${query}`);
-    });
-
-  const matchMedia = jest.fn((query: string) => {
-    const list: FakeMediaQueryList = {
-      media: query,
-      get matches() {
-        return evaluate(query);
-      },
-      listeners: new Set(),
-      notified: evaluate(query),
-      addEventListener: (type, listener) => type === 'change' && list.listeners.add(listener),
-      removeEventListener: (type, listener) => type === 'change' && list.listeners.delete(listener),
-    };
-    lists.push(list);
-    return list as unknown as MediaQueryList;
-  });
-  window.matchMedia = matchMedia;
-
-  return {
-    matchMedia,
-    lists,
-    /** The lists that have a change listener. */
-    watched: () => lists.filter(list => list.listeners.size).map(list => list.media),
-    resize(newWidth: number) {
-      width = newWidth;
-      lists.forEach(list => {
-        if (list.matches !== list.notified) {
-          list.notified = list.matches;
-          list.listeners.forEach(listener => listener({ matches: list.matches, media: list.media }));
-        }
-      });
-    },
-  };
-};
 
 describe('responsive', () => {
   let tokens: Record<string, string>;
@@ -86,12 +27,12 @@ describe('responsive', () => {
     matchMedia = window.matchMedia;
     tokens = {};
     // The theme custom properties: the mock DOM computes no style.
-    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ getPropertyValue: (name: string) => tokens[name] ?? '' }) as CSSStyleDeclaration);
+    mockTokens(() => tokens);
   });
 
   afterEach(() => {
     window.matchMedia = matchMedia;
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('widthQuery', () => {
@@ -104,7 +45,7 @@ describe('responsive', () => {
       [[undefined, undefined], 'all'],
       [[0, undefined], 'all'],
       [[NaN, Infinity], 'all'],
-    ])('%p gives %p', ([min, max], query) => {
+    ])('%o gives %j', ([min, max], query) => {
       expect(widthQuery(min, max)).toBe(query);
     });
   });
@@ -146,7 +87,7 @@ describe('responsive', () => {
       [991, [false, true, false]],
       [991.9, [false, true, false]],
       [992, [false, false, true]],
-    ])('without the theme, uses 768 and 992 px: width %p', (width, expected) => {
+    ])('without the theme, uses 768 and 992 px: width %j', (width, expected) => {
       expect(at(width)).toEqual(expected);
     });
 
@@ -155,7 +96,7 @@ describe('responsive', () => {
       [600, [false, true, false]],
       [1023, [false, true, false]],
       [1024, [false, false, true]],
-    ])('uses the sm and md breakpoints of the theme (--ds-bp-sm: 600px, --ds-bp-md: 1024px): width %p', (width, expected) => {
+    ])('uses the sm and md breakpoints of the theme (--ds-bp-sm: 600px, --ds-bp-md: 1024px): width %j', (width, expected) => {
       tokens = { '--ds-bp-sm': '600px', '--ds-bp-md': ' 1024px' };
       expect(at(width)).toEqual(expected);
     });
@@ -175,7 +116,7 @@ describe('responsive', () => {
   describe('watchMedia', () => {
     it('calls the listener each time the media query starts or stops matching, until stop()', () => {
       const media = fakeMatchMedia(500);
-      const listener = jest.fn();
+      const listener = vi.fn();
       const watch = watchMedia('(min-width: 768px)', listener);
 
       expect(watch.matches).toBe(false);
@@ -196,7 +137,7 @@ describe('responsive', () => {
 
     it('never matches without matchMedia', () => {
       (window as { matchMedia?: unknown }).matchMedia = undefined;
-      const watch = watchMedia('(min-width: 768px)', jest.fn());
+      const watch = watchMedia('(min-width: 768px)', vi.fn());
 
       expect(watch.matches).toBe(false);
       expect(() => watch.stop()).not.toThrow();
@@ -215,7 +156,7 @@ describe('responsive', () => {
 
     it('watches the viewport from the theme breakpoint, or from the fallback without the theme', () => {
       const media = fakeMatchMedia(1000);
-      const listener = jest.fn();
+      const listener = vi.fn();
 
       const fallback = watchThemeBreakpoint('md', 992, listener);
       expect([fallback.width, fallback.matches]).toEqual([992, true]);
@@ -233,7 +174,7 @@ describe('responsive', () => {
 
     it('reads the breakpoint again when a stylesheet <link> loads, and tells when it changes the state', () => {
       const media = fakeMatchMedia(1000);
-      const listener = jest.fn();
+      const listener = vi.fn();
       const watch = watchThemeBreakpoint('md', 992, listener);
 
       // A theme with md at 1024 px: from desktop (1000 >= 992) to below it.
@@ -305,7 +246,7 @@ describe('responsive', () => {
       [1599, 'xl', [1400, 1599]],
       [1600, 'xxl', [1600]],
       [3000, 'xxl', [1600]],
-    ])('width %p is %p %p', (width, label, limits) => {
+    ])('width %j is %j %j', (width, label, limits) => {
       expect(getBreakpoint(breakpoints, width)).toEqual({ label, limits });
     });
 
@@ -317,7 +258,7 @@ describe('responsive', () => {
       [992, 'md'],
       [1599.99, 'xl'],
       [1600, 'xxl'],
-    ])('without a width, reads the viewport with the media queries of the minimums: %p is %p', (width, label) => {
+    ])('without a width, reads the viewport with the media queries of the minimums: %j is %j', (width, label) => {
       const media = fakeMatchMedia(width);
 
       expect(getBreakpoint(breakpoints).label).toBe(label);
@@ -347,7 +288,7 @@ describe('responsive', () => {
 
     it('watches one media query per boundary: the minimum of each breakpoint but the first one', () => {
       const media = fakeMatchMedia(1000);
-      const watch = watchBreakpoint(breakpoints, jest.fn());
+      const watch = watchBreakpoint(breakpoints, vi.fn());
 
       expect(media.watched()).toEqual(['(min-width: 576px)', '(min-width: 768px)', '(min-width: 992px)', '(min-width: 1200px)', '(min-width: 1400px)', '(min-width: 1600px)']);
       expect(watch.current).toEqual({ label: 'md', limits: [992, 1199] });
@@ -370,9 +311,9 @@ describe('responsive', () => {
       [1400, 'xl'],
       [1599, 'xl'],
       [1600, 'xxl'],
-    ])('gives the breakpoint of getBreakpoint() at each boundary: %p is %p', (width, label) => {
+    ])('gives the breakpoint of getBreakpoint() at each boundary: %j is %j', (width, label) => {
       fakeMatchMedia(width);
-      const watch = watchBreakpoint(breakpoints, jest.fn());
+      const watch = watchBreakpoint(breakpoints, vi.fn());
 
       expect(watch.current.label).toBe(label);
       expect(watch.current).toEqual(getBreakpoint(breakpoints, width));
@@ -381,7 +322,7 @@ describe('responsive', () => {
 
     it('calls the listener at once when the breakpoint changes, once when several boundaries are crossed, and never within a breakpoint', () => {
       const media = fakeMatchMedia(1000);
-      const listener = jest.fn();
+      const listener = vi.fn();
       const watch = watchBreakpoint(breakpoints, listener);
 
       media.resize(1100);
@@ -405,7 +346,7 @@ describe('responsive', () => {
 
     it('shares the media query of equal minimums, and handles breakpoints that do not start at 0', () => {
       const media = fakeMatchMedia(300);
-      const listener = jest.fn();
+      const listener = vi.fn();
       const watch = watchBreakpoint({ a: [100, 199], b: [200, 199], c: [200] }, listener);
 
       expect(media.watched()).toEqual(['(min-width: 100px)', '(min-width: 200px)']);
@@ -420,7 +361,7 @@ describe('responsive', () => {
 
     it('does nothing without breakpoints', () => {
       const media = fakeMatchMedia(300);
-      const watch = watchBreakpoint({}, jest.fn());
+      const watch = watchBreakpoint({}, vi.fn());
 
       expect(media.matchMedia).not.toHaveBeenCalled();
       expect(watch.current).toEqual({ label: '', limits: [] });
@@ -451,10 +392,10 @@ describe('responsive', () => {
   describe('getParamsForBreakpoint', () => {
     const breakpoints = processBreakpoints(THEME_BREAKPOINTS);
     const at = (width: number) => getBreakpoint(breakpoints, width);
-    let warnSpy: jest.SpyInstance;
+    let warnSpy: MockInstance;
 
     beforeEach(() => {
-      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+      warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     });
 
     const params = { sm: { width: 3 }, lg: { width: 5 } };
@@ -466,7 +407,7 @@ describe('responsive', () => {
       [1000, { width: 3 }],
       [1200, { width: 5 }],
       [2000, { width: 5 }],
-    ])('width %p gives %p (current label, else nearest lower one)', (width, expected) => {
+    ])('width %j gives %j (current label, else nearest lower one)', (width, expected) => {
       expect(getParamsForBreakpoint(at(width), params, breakpoints)).toEqual(expected);
     });
 

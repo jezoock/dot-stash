@@ -1,3 +1,4 @@
+import { afterEach, describe, expect, it } from 'vitest';
 import { touchSupport } from './env';
 
 describe('env', () => {

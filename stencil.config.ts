@@ -5,6 +5,10 @@ import { sass } from '@stencil/sass';
 export const config: Config = {
   namespace: 'dot-stash',
   srcDir: './components',
+  // tsconfig.json without the tests (tsconfig.build.json): the build compiles every TypeScript file of the program it gets,
+  // and would publish the test helpers (test/) that the test files import. tsconfig.json, which covers the tests too, is
+  // the one of the editors and of `npm run typecheck`.
+  tsconfig: 'tsconfig.build.json',
   minifyJs: true,
   extras: {
     appendChildSlotFix: true,
@@ -16,6 +20,10 @@ export const config: Config = {
   watchExternalDirs: [join(__dirname, 'dist', 'css')],
   devServer: {
     excludeHmr: ['**/dist/css/**'],
+  },
+  // While the unit tests move to Vitest (vitest.config.mts), Stencil's test runner skips the spec files already moved.
+  testing: {
+    testPathIgnorePatterns: ['/node_modules/', '/.stencil/', '/dist/', '/www/', '/components/utils/', '/components/sass\\.spec\\.ts$'],
   },
   outputTargets: [
     {

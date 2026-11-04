@@ -1,3 +1,4 @@
+import { afterEach, describe, expect, it, vi, type Mock } from 'vitest';
 import {
   checkValidity,
   DEFAULT_VALUE_MISSING_MESSAGES,
@@ -18,10 +19,10 @@ import {
 /** The methods of a browser's ElementInternals that the helpers call, as mocks. */
 const fakeInternals = () =>
   ({
-    setFormValue: jest.fn(),
-    setValidity: jest.fn(),
-    checkValidity: jest.fn(() => false),
-    reportValidity: jest.fn(() => false),
+    setFormValue: vi.fn(),
+    setValidity: vi.fn(),
+    checkValidity: vi.fn(() => false),
+    reportValidity: vi.fn(() => false),
     validity: { valid: false, valueMissing: true },
     validationMessage: 'Missing',
     willValidate: true,
@@ -32,7 +33,7 @@ const fakeInternals = () =>
 describe('form-control', () => {
   afterEach(() => {
     document.body.innerHTML = '';
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('gives the English message of a required control left empty where the DOM has no message of its own', () => {
@@ -43,7 +44,7 @@ describe('form-control', () => {
   });
 
   it('tells the internals of a browser from those of the simulated DOM, without reading them', () => {
-    const errors = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const simulated = document.createElement('div').attachInternals();
 
     expect(isFormInternals(simulated)).toBe(false);
@@ -55,7 +56,7 @@ describe('form-control', () => {
 
   it('does nothing, and gives a valid state, without form internals', () => {
     const host = document.createElement('div');
-    const errors = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const simulated = host.attachInternals();
 
     setFormValue(simulated, 'on');
@@ -81,7 +82,7 @@ describe('form-control', () => {
     setFormValue(internals, null, 'unchecked');
     setFormValue(internals, entries, '["a"]');
 
-    expect((internals.setFormValue as jest.Mock).mock.calls).toEqual([
+    expect((internals.setFormValue as Mock).mock.calls).toEqual([
       ['on', 'on'],
       [null, 'unchecked'],
       [entries, '["a"]'],
@@ -100,7 +101,7 @@ describe('form-control', () => {
     setValueMissing(internals, host, true, 'Check it', outside);
     setValueMissing(internals, host, false, 'Pick one', button);
 
-    expect((internals.setValidity as jest.Mock).mock.calls).toEqual([
+    expect((internals.setValidity as Mock).mock.calls).toEqual([
       [{ valueMissing: true }, 'Pick one', button],
       [{ valueMissing: true }, 'Check it', host],
       // An anchor that is not in the element would make the browser throw.
@@ -129,7 +130,7 @@ describe('form-control', () => {
     setCustomState(internals, 'user-invalid', false);
     expect(internals.states.has('user-invalid')).toBe(false);
 
-    jest.spyOn(internals.states, 'add').mockImplementation(() => {
+    vi.spyOn(internals.states, 'add').mockImplementation(() => {
       throw new DOMException('The name must start with --', 'SyntaxError');
     });
     expect(() => setCustomState(internals, 'user-invalid', true)).not.toThrow();

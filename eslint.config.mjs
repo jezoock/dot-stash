@@ -21,15 +21,15 @@ export default defineConfig(
     },
   },
   {
-    // Unit tests, run by Jest through `stencil test --spec`.
-    files: ['**/*.spec.{ts,tsx}'],
+    // Unit tests run by Jest through `stencil test --spec` (the others import the Vitest functions they use).
+    files: ['components/core/**/*.spec.{ts,tsx}'],
     languageOptions: {
       globals: { ...globals.browser, ...globals.jest },
     },
   },
   {
     // The configuration files and the build scripts, run by Node.
-    files: ['*.mjs', 'scripts/**/*.mjs', 'stencil.config.ts'],
+    files: ['*.mjs', '*.mts', 'scripts/**/*.mjs', 'stencil.config.ts'],
     languageOptions: {
       globals: globals.node,
     },

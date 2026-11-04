@@ -1,5 +1,7 @@
+import { beforeAll, describe, expect, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as sass from 'sass';
 import type { Logger } from 'sass';
 
 // Compiles the stylesheets with the Sass JS API (the sass package of scripts/build-css.mjs, see package-lock.json):
@@ -19,20 +21,6 @@ const collectingLogger = (messages: string[]): Logger => ({
 });
 
 describe('Sass stylesheets', () => {
-  let sass: typeof import('sass');
-
-  // The Stencil test setup defines a mock `document`: with one, the JavaScript build of Dart Sass waits for a <script> load event
-  // that never comes, and exports nothing. Load it as in Node, without `document`.
-  beforeAll(async () => {
-    const { document } = globalThis;
-    delete (globalThis as { document?: Document }).document;
-    try {
-      sass = await import('sass');
-    } finally {
-      globalThis.document = document;
-    }
-  });
-
   // The themes and their page stylesheets (scripts/build-css.mjs: dist/css/<theme>.css, dist/css/pages/<theme>/), and the component
   // stylesheets (Stencil).
   const themes = fs

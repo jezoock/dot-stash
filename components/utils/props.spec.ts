@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { fromJSON, isTrue, toArray, toClassList, toFloat, toNumber, toString } from './props';
 
 describe('props', () => {
@@ -14,7 +15,7 @@ describe('props', () => {
       ['false', false],
       ['0', false],
       ['yes', false],
-    ])('isTrue(%p) is %p', (prop, expected) => {
+    ])('isTrue(%j) is %j', (prop, expected) => {
       expect(isTrue(prop as string | boolean)).toBe(expected);
     });
   });

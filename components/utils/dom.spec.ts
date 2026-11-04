@@ -1,13 +1,14 @@
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { cleanHTML, getFileExtension, scrollTo } from './dom';
 
 describe('dom', () => {
   describe('scrollTo', () => {
-    let scrollSpy: jest.SpyInstance;
-    let warnSpy: jest.SpyInstance;
+    let scrollSpy: MockInstance;
+    let warnSpy: MockInstance;
 
     beforeEach(() => {
-      scrollSpy = jest.spyOn(window, 'scroll').mockImplementation(() => undefined);
-      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+      scrollSpy = vi.spyOn(window, 'scroll').mockImplementation(() => undefined);
+      warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     });
 
     afterEach(() => {

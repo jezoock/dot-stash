@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { buildQuery, get, post } from './ajax';
 
 interface FakeBody {
@@ -9,21 +10,17 @@ interface FakeBody {
 /** A minimal `Response`: only what the ajax helpers read. */
 const fakeResponse = ({ ok = true, json, text = '' }: FakeBody) => ({
   ok,
-  json: jest.fn(() => (json === undefined ? Promise.reject(new SyntaxError('Unexpected token')) : Promise.resolve(json))),
-  text: jest.fn(() => Promise.resolve(text)),
+  json: vi.fn(() => (json === undefined ? Promise.reject(new SyntaxError('Unexpected token')) : Promise.resolve(json))),
+  text: vi.fn(() => Promise.resolve(text)),
 });
 
 describe('ajax', () => {
-  let fetchMock: jest.Mock;
-  const originalFetch = global.fetch;
+  let fetchMock: Mock;
 
+  // The window gets back its own fetch after each test (unstubGlobals).
   beforeEach(() => {
-    fetchMock = jest.fn();
-    global.fetch = fetchMock;
-  });
-
-  afterEach(() => {
-    global.fetch = originalFetch;
+    fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
   });
 
   describe('buildQuery', () => {
