@@ -1,6 +1,6 @@
 import { afterEach } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
-import { DEFAULT_VIEWPORT, setReducedMotion } from '../helpers/browser';
+import { DEFAULT_VIEWPORT, setForcedColors, setReducedMotion } from '../helpers/browser';
 
 // The browser tests run the components as they are published: the browser build of the package (dist/dot-stash/) and
 // the default theme (dist/css/default.css), both made by `npm run build:all`, loaded once per test file.
@@ -25,6 +25,7 @@ afterEach(async () => {
   document.body.replaceChildren();
   document.documentElement.removeAttribute('dir');
   await setReducedMotion(false);
+  await setForcedColors(false);
   await page.viewport(DEFAULT_VIEWPORT.width, DEFAULT_VIEWPORT.height);
   const corner = document.createElement('div');
   corner.style.cssText = 'position: fixed; right: 0; bottom: 0; z-index: 2147483647; width: 2px; height: 2px';

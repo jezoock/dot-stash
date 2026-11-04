@@ -5,7 +5,9 @@ import { commands } from 'vitest/browser';
 declare module 'vitest/browser' {
   interface BrowserCommands {
     /** Emulates media features of the page, as Playwright's `page.emulateMedia()` (vitest.config.mts). */
-    emulateMedia: (options: { reducedMotion?: 'reduce' | 'no-preference' | null }) => Promise<void>;
+    emulateMedia: (options: { reducedMotion?: 'reduce' | 'no-preference' | null; forcedColors?: 'active' | 'none' | null }) => Promise<void>;
+    /** Compiles SCSS with the Sass of the project, `scss/` on its load path (`@use 'engine' as *;`), in Node: the CSS. */
+    compileScss: (source: string) => Promise<string>;
   }
 }
 
@@ -52,6 +54,12 @@ export const focused = () => document.activeElement;
 
 /** Asks for less motion (`prefers-reduced-motion: reduce`), as the system setting of the user does, or not. */
 export const setReducedMotion = (reduce: boolean) => commands.emulateMedia({ reducedMotion: reduce ? 'reduce' : 'no-preference' });
+
+/**
+ * Emulates forced colors (`forced-colors: active`, a high contrast theme of the system), as Chromium renders them: the
+ * colors of the page replaced with the system colors. Or not.
+ */
+export const setForcedColors = (active: boolean) => commands.emulateMedia({ forcedColors: active ? 'active' : 'none' });
 
 /** The text of the elements an `aria-labelledby` or `aria-describedby` references, as their accessible name or description. */
 export const textOfIds = (ids: string | null) =>
