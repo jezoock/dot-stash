@@ -208,21 +208,34 @@ export namespace Components {
          */
         "willValidate": boolean;
     }
+    /**
+     * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+     * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+     * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+     * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+     */
     interface DsGrid {
         /**
+          * Where the items of a row that does not fill the grid go: `start`, `center` or `end`.
           * @default 'start'
          */
         "align": string | DSGridAlignment;
+        /**
+          * The height of the items as a ratio of their width (`0.75`: 4:3), their content filling it; an item's own `ratio` wins.
+         */
         "cellRatio": string | number;
         /**
+          * The number of columns (a whole number).
           * @default 1
          */
         "cols": string | number;
         /**
+          * A subscriber of `ds-rsp`: its `data-rsp` attribute can change its props per breakpoint.
           * @default true
          */
         "dataUseRsp": boolean;
         /**
+          * The space between the columns: a CSS length (`20px`, `1rem`, `5%`); a unitless number is in px.
           * @default '0'
          */
         "hGap": string;
@@ -232,23 +245,39 @@ export namespace Components {
          */
         "mods": string | string[];
         /**
+          * `fixed`: `v-gap` separates the rows, and is kept below the last one; `fluid`: the rows have no gap (`v-gap` is not used).
           * @default 'fixed'
          */
         "type": string | DSGridType;
         /**
+          * The alignment of the items in the height of their row: `start`, `center` or `end`.
           * @default 'start'
          */
         "vAlign": string | DSGridAlignment;
         /**
+          * The space between the rows of a `fixed` grid, and below its last row: a CSS length; a unitless number is in px.
           * @default '0'
          */
         "vGap": string;
     }
+    /**
+     * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+     * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+     * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+     */
     interface DsGridItem {
         "getWidth": () => Promise<number>;
+        /**
+          * The height of the item as a ratio of its width (`0.5625`: 16:9), its content filling it.
+         */
         "ratioFromProps": number | string;
+        /**
+          * Writes inline styles on the item.
+          * @deprecated ds-grid no longer calls it: the grid lays its items out with CSS Grid, from the `width` of each item. It still writes the given styles, which apply over the layout of the grid.
+         */
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
         /**
+          * The number of columns the item spans: a whole number (a fractional one is rounded), at most the `cols` of the grid.
           * @default 1
          */
         "width": number;
@@ -1156,12 +1185,23 @@ declare global {
         prototype: HTMLDsComboElement;
         new (): HTMLDsComboElement;
     };
+    /**
+     * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+     * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+     * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+     * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+     */
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
     var HTMLDsGridElement: {
         prototype: HTMLDsGridElement;
         new (): HTMLDsGridElement;
     };
+    /**
+     * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+     * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+     * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+     */
     interface HTMLDsGridItemElement extends Components.DsGridItem, HTMLStencilElement {
     }
     var HTMLDsGridItemElement: {
@@ -1779,21 +1819,34 @@ declare namespace LocalJSX {
          */
         "willValidate"?: boolean;
     }
+    /**
+     * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+     * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+     * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+     * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+     */
     interface DsGrid {
         /**
+          * Where the items of a row that does not fill the grid go: `start`, `center` or `end`.
           * @default 'start'
          */
         "align"?: string | DSGridAlignment;
+        /**
+          * The height of the items as a ratio of their width (`0.75`: 4:3), their content filling it; an item's own `ratio` wins.
+         */
         "cellRatio"?: string | number;
         /**
+          * The number of columns (a whole number).
           * @default 1
          */
         "cols"?: string | number;
         /**
+          * A subscriber of `ds-rsp`: its `data-rsp` attribute can change its props per breakpoint.
           * @default true
          */
         "dataUseRsp"?: boolean;
         /**
+          * The space between the columns: a CSS length (`20px`, `1rem`, `5%`); a unitless number is in px.
           * @default '0'
          */
         "hGap"?: string;
@@ -1803,21 +1856,33 @@ declare namespace LocalJSX {
          */
         "mods"?: string | string[];
         /**
+          * `fixed`: `v-gap` separates the rows, and is kept below the last one; `fluid`: the rows have no gap (`v-gap` is not used).
           * @default 'fixed'
          */
         "type"?: string | DSGridType;
         /**
+          * The alignment of the items in the height of their row: `start`, `center` or `end`.
           * @default 'start'
          */
         "vAlign"?: string | DSGridAlignment;
         /**
+          * The space between the rows of a `fixed` grid, and below its last row: a CSS length; a unitless number is in px.
           * @default '0'
          */
         "vGap"?: string;
     }
+    /**
+     * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+     * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+     * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+     */
     interface DsGridItem {
+        /**
+          * The height of the item as a ratio of its width (`0.5625`: 16:9), its content filling it.
+         */
         "ratioFromProps"?: number | string;
         /**
+          * The number of columns the item spans: a whole number (a fractional one is rounded), at most the `cols` of the grid.
           * @default 1
          */
         "width"?: number;
@@ -2810,7 +2875,18 @@ declare module "@stencil/core" {
              * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
              */
             "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
+            /**
+             * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+             * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+             * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+             * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+             */
             "ds-grid": LocalJSX.IntrinsicElements["ds-grid"] & JSXBase.HTMLAttributes<HTMLDsGridElement>;
+            /**
+             * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+             * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+             * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+             */
             "ds-grid-item": LocalJSX.IntrinsicElements["ds-grid-item"] & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
             /**
              * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is

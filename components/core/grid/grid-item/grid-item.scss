@@ -1,23 +1,23 @@
-// The structure of ds-grid-item: a cell of ds-grid, its width and paddings set by the grid (inline styles); with a
-// `ratio`, its content fills a box of that ratio. No look of its own, and no custom property.
+// The structure of ds-grid-item: a cell of ds-grid, which places and sizes it (its width sets --ds-grid-span, see the
+// stylesheet of ds-grid); with a `ratio`, it is as high as that ratio of its width, and its content fills it.
+
+/**
+ * @prop --ds-grid-item-ratio: Height of the item as a ratio of its width (`0.5625`: 16:9), with `ratio`. Set by ds-grid-item from `ratio`.
+ */
 
 ds-grid-item {
   display: inline-block;
   box-sizing: border-box;
   position: relative;
-  flex: 0 0 auto;
 }
 
 .ds-grid-item {
   &.--with-ratio {
-    padding: 100% 0 0;
-    position: relative;
+    aspect-ratio: 1 / var(--ds-grid-item-ratio);
 
-    & .ds-grid-item {
-      &__content {
-        position: absolute;
-        inset: 0;
-      }
+    & > .ds-grid-item__content {
+      position: absolute;
+      inset: 0;
     }
   }
 }

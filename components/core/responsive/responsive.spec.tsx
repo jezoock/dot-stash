@@ -324,6 +324,27 @@ describe('ds-rsp', () => {
     expect(callsOnGrid()).toBe(0);
   });
 
+  it('changes the props of ds-grid and ds-grid-item per breakpoint: their custom properties follow, at once', async () => {
+    const page = await render(
+      `<ds-rsp></ds-rsp><ds-grid cols="2" h-gap="10px" data-use-rsp data-rsp='{"md": {"cols": 4, "hGap": "20px"}, "xl": {"cols": 6}}'><ds-grid-item width="1" data-use-rsp data-rsp='{"md": {"width": 2}}'></ds-grid-item></ds-grid>`,
+      [DSGrid, DSGridItem],
+    );
+    const grid = page.body.querySelector<HTMLElement>('.ds-grid');
+    const item = page.body.querySelector<HTMLElement>('ds-grid-item');
+    const layout = async () => {
+      await page.waitForChanges();
+      return [grid.style.getPropertyValue('--ds-grid-cols'), grid.style.getPropertyValue('--ds-grid-h-gap'), item.style.getPropertyValue('--ds-grid-span')];
+    };
+
+    // 1000 px: md.
+    expect(await layout()).toEqual(['4', '20px', '2']);
+    resizeTo(1500);
+    expect(await layout()).toEqual(['6', '20px', '2']);
+    resizeTo(400);
+    expect(await layout()).toEqual(['2', '10px', '1']);
+    expect(item.getAttribute('style')).toBe('--ds-grid-span: 1;');
+  });
+
   it('reads the initial value of a camelCase property from the property, not from a lowercase attribute', async () => {
     const page = await render(`<ds-rsp></ds-rsp><ds-grid h-gap="10px" data-use-rsp data-rsp='{"lg": {"hGap": "30px"}}'></ds-grid>`, [DSGrid]);
     const grid = page.body.querySelector('ds-grid');

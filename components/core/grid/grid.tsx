@@ -1,152 +1,63 @@
-import { Component, Element, Prop, Watch, h, Listen } from '@stencil/core';
-import { toClassList, toNumber } from '../../utils/props';
-import { DSGridAlignment, DSGridItemStyles, DSGridParams, DSGridType } from './grid.types';
+import { Component, Element, Prop, h } from '@stencil/core';
+import { toClassList } from '../../utils/props';
+import { DSGridAlignment, DSGridType } from './grid.types';
+import { toColumnCount, toGap, toRatio } from './grid.values';
 
+/**
+ * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+ * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+ * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+ * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+ *
+ * @slot - The items: `ds-grid-item` elements (any child takes a cell, one column unless it sets `--ds-grid-span`).
+ */
 @Component({
   tag: 'ds-grid',
   styleUrl: 'grid.scss',
 })
 export class DSGrid {
-  options: DSGridParams;
-
   @Element() container: HTMLDivElement;
 
+  /** A subscriber of `ds-rsp`: its `data-rsp` attribute can change its props per breakpoint. */
   @Prop({ reflect: true }) dataUseRsp = true;
   /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
+  /** `fixed`: `v-gap` separates the rows, and is kept below the last one; `fluid`: the rows have no gap (`v-gap` is not used). */
   @Prop({ mutable: true, reflect: true }) type: string | DSGridType = 'fixed';
+  /** The number of columns (a whole number). */
   @Prop({ mutable: true, reflect: true }) cols: string | number = 1;
+  /** The space between the columns: a CSS length (`20px`, `1rem`, `5%`); a unitless number is in px. */
   @Prop({ mutable: true, reflect: true }) hGap = '0';
+  /** The space between the rows of a `fixed` grid, and below its last row: a CSS length; a unitless number is in px. */
   @Prop({ mutable: true, reflect: true }) vGap = '0';
+  /** Where the items of a row that does not fill the grid go: `start`, `center` or `end`. */
   @Prop({ mutable: true, reflect: true }) align: string | DSGridAlignment = 'start';
+  /** The alignment of the items in the height of their row: `start`, `center` or `end`. */
   @Prop({ mutable: true, reflect: true }) vAlign: string | DSGridAlignment = 'start';
+  /** The height of the items as a ratio of their width (`0.75`: 4:3), their content filling it; an item's own `ratio` wins. */
   @Prop({ mutable: true, reflect: true }) cellRatio: string | number;
 
-  /** ds-rsp dispatches `breakpointChange` on its subscribers; the one it emits itself bubbles up to a grid that contains it, and is ignored. */
-  @Listen('breakpointChange')
-  onBreakpointChange(event: CustomEvent) {
-    if (event.target === this.container) {
-      this.processChildren();
-    }
-  }
-
-  @Watch('mods')
-  modsChangeHandler() {
-    this.processChildren();
-  }
-
-  @Watch('type')
-  typeWatcher(type: DSGridType) {
-    this.options = { ...this.options, type };
-    this.processChildren();
-  }
-
-  @Watch('cols')
-  colsWatcher(cols: string | number) {
-    this.options = { ...this.options, cols: toNumber(cols) };
-    this.processChildren();
-  }
-
-  @Watch('hGap')
-  hGapWatcher(hGap: string) {
-    this.options = { ...this.options, hGap };
-    this.processChildren();
-  }
-
-  @Watch('vGap')
-  vGapWatcher(vGap: string) {
-    this.options = { ...this.options, vGap };
-    this.processChildren();
-  }
-
-  @Watch('align')
-  alignWatcher(align: DSGridAlignment) {
-    this.options = { ...this.options, align };
-    this.processChildren();
-  }
-
-  @Watch('vAlign')
-  vAlignWatcher(vAlign: DSGridAlignment) {
-    this.options = { ...this.options, vAlign };
-    this.processChildren();
-  }
-
-  @Watch('cellRatio')
-  cellRatioWatcher(cellRatio: string | number) {
-    this.options = { ...this.options, cellRatio: toNumber(cellRatio) };
-    this.processChildren();
-  }
-
-  componentWillLoad() {
-    const { type: typeFromProps, hGap, vGap, align: alignFromProps, vAlign: vAlignFromProps, cols: colsFromProps } = this;
-    const cols = toNumber(colsFromProps);
-    const type = typeFromProps as DSGridType;
-    const align = alignFromProps as DSGridAlignment;
-    const vAlign = vAlignFromProps as DSGridAlignment;
-    const options: DSGridParams = { type, hGap, vGap, align, vAlign, cols };
-    if (this.cellRatio) {
-      options.cellRatio = toNumber(this.cellRatio);
-    }
-    this.options = options;
-  }
-
-  componentDidLoad() {
-    this.processChildren();
-  }
-
-  async processChildren(): Promise<void> {
-    const children = Array.from(this.container.querySelectorAll('ds-grid-item'));
-    let offset = 0;
-    for (let i = 0; i < children.length; i++) {
-      const child = children[i];
-      const styles = await this.processCols(offset, child);
-      offset = offset + child.width;
-      await child.setStyles(styles);
-    }
-  }
-
-  async processCols(index: number, gridItem: HTMLDsGridItemElement): Promise<DSGridItemStyles> {
-    const { type, hGap, vGap, cols } = this.options;
-    const styles: DSGridItemStyles = {};
-    const colWidth = gridItem.width;
-
-    if (type === 'fixed') {
-      styles.width = `${((100 * colWidth) / cols).toFixed(4)}%`;
-
-      if (hGap) {
-        styles.paddingInlineStart = `calc((${hGap} / ${cols}) * ${index % cols})`;
-        styles.paddingInlineEnd = `calc((${hGap} / ${cols}) * ${cols - (((index + colWidth - 1) % cols) + 1)})`;
-      }
-
-      if (vGap) {
-        styles.paddingBlockEnd = `calc(${vGap})`;
-      }
-    } else if (type === 'fluid') {
-      const width = `100% / ${cols / gridItem.width}`;
-
-      // A unitless or zero gap ('0', the default) would make the calc() invalid: no gap then.
-      if (hGap && parseFloat(hGap) !== 0) {
-        const rowContainer = this.container.querySelector('.ds-grid__row') as HTMLDivElement;
-        rowContainer.style.columnGap = `${hGap}`;
-
-        styles.width = `calc(${width} - calc((${cols - 1} * ${hGap}) / ${cols}))`;
-      } else {
-        styles.width = `calc(${width})`;
-      }
-    }
-
-    return styles;
-  }
-
   render() {
+    const cellRatio = toRatio(this.cellRatio);
+    const style: Record<string, string> = {
+      '--ds-grid-cols': String(toColumnCount(this.cols)),
+      '--ds-grid-h-gap': toGap(this.hGap),
+      '--ds-grid-v-gap': toGap(this.vGap),
+    };
+    if (cellRatio !== undefined) {
+      style['--ds-grid-cell-ratio'] = String(cellRatio);
+    }
+
     return (
       <div
         class={{
           ...toClassList('ds-grid', this.mods),
-          [`--${this.options.type}`]: true,
-          [`--align-${this.options.align}`]: true,
-          [`--v-align-${this.options.vAlign}`]: true,
+          [`--${this.type}`]: true,
+          [`--align-${this.align}`]: true,
+          [`--v-align-${this.vAlign}`]: true,
+          '--with-cell-ratio': cellRatio !== undefined,
         }}
+        style={style}
       >
         <div class="ds-grid__row">
           <slot />

@@ -470,7 +470,8 @@ describe('Sass stylesheets', () => {
   // The styling contract (README.md, "Styling a component"): a component stylesheet holds what the component needs to
   // work, the theme its look. The component custom properties (--ds-<component>-…) are documented with @prop in the
   // component stylesheet (Stencil lists them in the readme), set by the default theme, and read by its skins or by the
-  // component stylesheet. The default theme compiles without any warning (above).
+  // component stylesheet. A few are set by the components themselves, from their props, instead of the theme: the layout
+  // of ds-grid. The default theme compiles without any warning (above).
   describe('styling contract', () => {
     const coreDir = path.join(root, 'components/core');
     const relative = (file: string) => path.relative(root, file);
@@ -504,6 +505,11 @@ describe('Sass stylesheets', () => {
       [...read(file).matchAll(/\/\*\*[\s\S]*?\*\//g)].flatMap(([comment]) => [...comment.matchAll(/@prop\s+(--[\w-]+)\s*:\s*\S/g)].map(([, name]) => name));
     const documentedBy = (component: (typeof components)[number]) => component.sheets.flatMap(documentedIn).sort();
     const documented = new Set(components.flatMap(documentedBy));
+
+    // The custom properties a component writes itself, from its props (`'--ds-grid-cols': …` in its source): the theme
+    // does not set them.
+    const componentSources = tsxFilesIn(coreDir).map(read).join('\n');
+    const isSetByComponent = (name: string) => componentSources.includes(`'${name}'`);
 
     // The declarations of a compiled stylesheet, comments left out: [property, value].
     const declarationsIn = (css: string): [string, string][] =>
@@ -593,14 +599,27 @@ describe('Sass stylesheets', () => {
       expect(names.filter(name => ownerOf(name) !== tag)).toEqual([]);
     });
 
-    it('the default theme sets every documented custom property, and its skins or a component stylesheet read it', () => {
+    it('the default theme sets every documented custom property but those a component sets from its props, and its skins or a component stylesheet read it', () => {
       const declared = new Set([...themeCss.matchAll(/[{;](--ds-[\w-]+):/g)].map(([, name]) => name));
       const readByTheme = [...themeCss.matchAll(/var\((--ds-[\w-]+)/g)].map(([, name]) => name);
       const readBySheets = componentSheets.flatMap(file => [...read(file).matchAll(/var\(\s*(--[\w-]+)/g)].map(([, name]) => name));
 
       expect(documented.size).toBeGreaterThan(50);
-      expect([...documented].filter(name => !declared.has(name))).toEqual([]);
+      expect([...documented].filter(name => !isSetByComponent(name) && !declared.has(name))).toEqual([]);
+      expect([...documented].filter(name => isSetByComponent(name) && declared.has(name))).toEqual([]);
       expect([...documented].filter(name => !readByTheme.includes(name) && !readBySheets.includes(name))).toEqual([]);
+    });
+
+    // The layout of ds-grid comes from the props of ds-grid and ds-grid-item (and their values per breakpoint, ds-rsp).
+    it('documents the custom properties ds-grid and ds-grid-item set from their props, and only those are set by a component', () => {
+      expect([...documented].filter(isSetByComponent).sort()).toEqual([
+        '--ds-grid-cell-ratio',
+        '--ds-grid-cols',
+        '--ds-grid-h-gap',
+        '--ds-grid-item-ratio',
+        '--ds-grid-span',
+        '--ds-grid-v-gap',
+      ]);
     });
 
     it('the default theme declares and reads no undocumented component custom property, and no token is named after a component', () => {
