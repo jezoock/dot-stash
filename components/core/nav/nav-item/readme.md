@@ -5,7 +5,7 @@
 - **Classes**: `<ds-nav-item>` renders a `div` with the main class, `ds-nav-item`, and `--with-children` (`has-children`), `--active` (`is-active`, or its sub-navigation is open), `--open` (its sub-navigation was opened by its expand button), `--dismissed` (its drop-down sub-navigation was hidden by Escape), `--depth-<depth>` and `--<type>-<item-id>` (`--page-home`).
 - **Elements**: `__link` (the default slot: the link), and with `has-children`, `__expand-button` (a `ds-trigger` with the `ds-button --menu-item` classes) and `__sub-nav` (slot `children`: a `ds-nav`).
 - **Attributes** (reflected): `type`, `depth`, `has-children`, `is-active`, `is-animated`. The component sets `role="listitem"` on `<ds-nav-item>` in a `ds-nav`, `aria-current` on its link, and the name and ARIA attributes of its expand button (see [Accessibility](#accessibility)).
-- **Structure** (`nav-item.scss`): the item is the containing block of its expand button and sub-navigation. How the sub-navigation opens depends on the breakpoints, which the component stylesheets cannot read: the theme writes it (`components/_nav.scss`, to copy into a new theme). Below `md`, the sub-navigation is collapsed (`height: 0`, `overflow: hidden`) and hidden once it has collapsed (`visibility: hidden`, after its height transition: out of the Tab order and of the accessibility tree); the expand button opens it (`--open`: visible at once). `ds-nav-item` animates its height and sets it to `auto` at the end of the `height` transition (at once without one, or once its duration is over without `transitionend`); with `is-animated="false"`, the theme opens it at once (`height: auto`). From `md`, the expand button is hidden and the sub-navigation drops down on hover or focus (to the right for a nested one), but with `--dismissed`.
+- **Structure** (`nav-item.scss`): the item is the containing block of its expand button and sub-navigation. How the sub-navigation opens depends on the breakpoints, which the component stylesheets cannot read: the theme writes it (`components/_nav.scss`, to copy into a new theme). Below `md`, the sub-navigation is collapsed (`height: 0`, `overflow: hidden`) and hidden once it has collapsed (`visibility: hidden`, after its height transition: out of the Tab order and of the accessibility tree); the expand button opens it (`--open`: visible at once). `ds-nav-item` animates its height and sets it to `auto` at the end of the `height` transition (at once without one, or once its duration is over without `transitionend`); with `is-animated="false"`, the theme opens it at once (`height: auto`). From `md`, the expand button is hidden and the sub-navigation drops down on hover or focus (to the right for a nested one), but with `--dismissed`. The component knows the mode from the same breakpoint: it watches the media query `(min-width: <--ds-bp-md>)` (`matchMedia()`, 992 px without the theme, read again when a stylesheet `<link>` loads), the one the theme's `break-p(md)` writes.
 - **Look** (default theme, `components/_nav.scss`): the links, the lines between the items and the drop-down sub-navigations, from the custom properties below, set on every `ds-nav-item` (a nested item does not inherit them from its parent). The expand button is the `--menu-item` button skin: a plus, a minus once open; the focus indicator of the theme draws around it.
 
 Override them after the theme stylesheet (see [Styling a component](../../../../README.md#styling-a-component)):
@@ -39,7 +39,8 @@ An item with a sub-navigation follows the WAI-ARIA [disclosure navigation patter
 
   A drop-down sub-navigation hidden by Escape shows again when the focus moves into it, or once the focus and the pointer have left the item; under the pointer, with the focus elsewhere, Escape hides it too (the content shown on hover can be dismissed without moving the pointer). Escape goes on to the parent item when there is nothing to close, and stops once it has closed one.
 
-- **Events**: `dsMenuItemClick` (`{ isSelected }`: the new state of the sub-navigation) when the expand button or Escape opens or closes it.
+- **Crossing `md`**: when the viewport crosses the breakpoint (a resize, a rotation, a zoom), the item starts again as at load in the new mode, with the keys of that mode: its sub-navigation is closed (collapsed and hidden below `md`), and no longer dismissed; below `md`, the sub-navigation that has the focus stays open, so that the focus is not hidden.
+- **Events**: `dsMenuItemClick` (`{ isSelected }`: the new state of the sub-navigation) when the expand button or Escape opens or closes it (not when crossing `md`).
 
 ```html
 <ds-nav-item has-children toggle-label="Sous-menu {label}"
@@ -48,7 +49,7 @@ An item with a sub-navigation follows the WAI-ARIA [disclosure navigation patter
 </ds-nav-item>
 ```
 
-**Changed**: the list item role, `aria-current`, the name, `aria-expanded` and `aria-controls` of the expand button, Escape, `label`, `toggle-label` and the `--dismissed` class are new; the expand button opens and closes the sub-navigation without changing `is-active` (which marks the current page), and an open item still has the `--active` class; the collapsed sub-navigation is hidden (its links could be reached with Tab); the height transition ends with `waitForTransition` (it waited for `transitionend` only).
+**Changed**: the list item role, `aria-current`, the name, `aria-expanded` and `aria-controls` of the expand button, Escape, `label`, `toggle-label` and the `--dismissed` class are new; the expand button opens and closes the sub-navigation without changing `is-active` (which marks the current page), and an open item still has the `--active` class; the collapsed sub-navigation is hidden (its links could be reached with Tab); the height transition ends with `waitForTransition` (it waited for `transitionend` only). The mode, collapsible or drop-down, comes from the media query of `md` (`matchMedia()`), no longer from the computed `display` of the expand button; crossing `md` closes the sub-navigation and ends `--dismissed` (an open sub-navigation stayed `--open` and `--active` in the drop-down mode, and one closed below `md` kept an inline `height: 0` that flattened its drop-down box).
 
 <!-- Auto Generated Below -->
 
@@ -62,6 +63,8 @@ assistive technologies while it is collapsed (the theme: `visibility: hidden` on
 sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
 down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
 the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+(`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
 
 ## Properties
 

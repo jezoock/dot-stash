@@ -372,6 +372,8 @@ export namespace Components {
      * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
      * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
      * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+     * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
      */
     interface DsNavItem {
         /**
@@ -1280,6 +1282,8 @@ declare global {
      * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
      * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
      * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+     * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
      */
     interface HTMLDsNavItemElement extends Components.DsNavItem, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsNavItemElementEventMap>(type: K, listener: (this: HTMLDsNavItemElement, ev: DsNavItemCustomEvent<HTMLDsNavItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1978,6 +1982,8 @@ declare namespace LocalJSX {
      * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
      * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
      * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+     * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
      */
     interface DsNavItem {
         /**
@@ -2925,6 +2931,8 @@ declare module "@stencil/core" {
              * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
              * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
              * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+             * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+             * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
              */
             "ds-nav-item": LocalJSX.IntrinsicElements["ds-nav-item"] & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
             /**

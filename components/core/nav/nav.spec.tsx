@@ -35,11 +35,76 @@ const keydown = (target: EventTarget, key: string) => {
 };
 
 /**
- * The spec tests have no CSS engine: the computed style the components read. `display` of the expand button (none: the
- * theme drops the sub-navigations down, from md), the transition of the sub-navigation.
+ * The spec tests have no CSS engine: the computed style the components read. The transition of the sub-navigation, and
+ * the theme tokens (`--ds-bp-md`), none by default: the mode then comes from the fallback width, 992 px. `display` is
+ * `none`, as the expand button from md: the mode does not come from it.
  */
-const mockStyle = (display = 'block', transitionDuration = '0s') =>
-  jest.spyOn(window, 'getComputedStyle').mockReturnValue({ display, transitionDuration, transitionDelay: '0s' } as CSSStyleDeclaration);
+const mockStyle = (transitionDuration = '0s', tokens: Record<string, string> = {}) =>
+  jest
+    .spyOn(window, 'getComputedStyle')
+    .mockReturnValue({ display: 'none', transitionDuration, transitionDelay: '0s', getPropertyValue: (name: string) => tokens[name] ?? '' } as unknown as CSSStyleDeclaration);
+
+/** A media query list of the fake matchMedia: its query, its change listeners, and its state when it last notified them. */
+interface FakeMediaQueryList {
+  media: string;
+  readonly matches: boolean;
+  listeners: Set<(event: { matches: boolean; media: string }) => void>;
+  notified: boolean;
+  addEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
+  removeEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
+}
+
+/**
+ * The spec tests have no viewport: a matchMedia that evaluates the width queries of utils/responsive (`(min-width: …px)`,
+ * `(width < …px)`, `all`, joined by `and`) at a width, and that dispatches `change`, as a browser does, on each list whose
+ * state changes when the width does.
+ */
+const fakeMatchMedia = (initialWidth: number) => {
+  let width = initialWidth;
+  const lists: FakeMediaQueryList[] = [];
+  const evaluate = (query: string): boolean =>
+    query.split(' and ').every(part => {
+      const min = /^\(min-width: ([\d.]+)px\)$/.exec(part);
+      const max = /^\(width < ([\d.]+)px\)$/.exec(part);
+      if (min) return width >= Number(min[1]);
+      if (max) return width < Number(max[1]);
+      if (part === 'all') return true;
+      throw new Error(`unexpected media query: ${query}`);
+    });
+
+  window.matchMedia = jest.fn((query: string) => {
+    const list: FakeMediaQueryList = {
+      media: query,
+      get matches() {
+        return evaluate(query);
+      },
+      listeners: new Set(),
+      notified: evaluate(query),
+      addEventListener: (type, listener) => type === 'change' && list.listeners.add(listener),
+      removeEventListener: (type, listener) => type === 'change' && list.listeners.delete(listener),
+    };
+    lists.push(list);
+    return list as unknown as MediaQueryList;
+  });
+
+  return {
+    /** The media queries that have a change listener, one entry per listener. */
+    watched: () => lists.flatMap(list => Array.from(list.listeners, () => list.media)),
+    resize(newWidth: number) {
+      width = newWidth;
+      lists.forEach(list => {
+        if (list.matches !== list.notified) {
+          list.notified = list.matches;
+          list.listeners.forEach(listener => listener({ matches: list.matches, media: list.media }));
+        }
+      });
+    },
+  };
+};
+
+/** Widths below and from md (992 px, the fallback): the collapsible and the drop-down sub-navigations. */
+const COLLAPSIBLE = 800;
+const DROP_DOWN = 1280;
 
 const NAV = `<ds-nav mods="main" label="Main">
   <ds-nav-item is-active><a href="/">Home</a></ds-nav-item>
@@ -56,10 +121,11 @@ const NAV = `<ds-nav mods="main" label="Main">
 describe('ds-nav', () => {
   afterEach(() => jest.restoreAllMocks());
 
-  const render = async (html = NAV, { display = 'block', transitionDuration = '0s' } = {}) => {
+  const render = async (html = NAV, { width = COLLAPSIBLE, transitionDuration = '0s', tokens = {} } = {}) => {
     const page = await newSpecPage({ components: [DSNav, DSNavMenuItem, DSTrigger], html: '' });
-    // newSpecPage resets the window: its getComputedStyle is mocked once the page exists.
-    mockStyle(display, transitionDuration);
+    // newSpecPage resets the window: its getComputedStyle and matchMedia are mocked once the page exists.
+    mockStyle(transitionDuration, tokens);
+    const media = fakeMatchMedia(width);
     await page.setContent(html);
     await page.waitForChanges();
     const item = (text: string) => Array.from(page.body.querySelectorAll('ds-nav-item')).find(element => element.querySelector('a').textContent.startsWith(text));
@@ -68,7 +134,11 @@ describe('ds-nav', () => {
     const subNav = (text: string) => item(text).querySelector<HTMLElement>('.ds-nav-item__sub-nav');
     const events: boolean[] = [];
     page.body.addEventListener('dsMenuItemClick', (event: CustomEvent) => events.push(event.detail.isSelected));
-    return { page, item, toggle, link, subNav, events };
+    const resizeTo = async (newWidth: number) => {
+      media.resize(newWidth);
+      await page.waitForChanges();
+    };
+    return { page, item, toggle, link, subNav, events, media, resizeTo };
   };
 
   it('a main navigation is a navigation landmark named by label, and a list of its items', async () => {
@@ -217,7 +287,7 @@ describe('ds-nav', () => {
   });
 
   it('where the sub-navigation drops down (no expand button), Escape hides it until the focus and the pointer leave the item', async () => {
-    const { page, item, link } = await render(NAV, { display: 'none' });
+    const { page, item, link } = await render(NAV, { width: DROP_DOWN });
     const getFocused = trackFocus(page);
     const about = item('About').querySelector('.ds-nav-item');
 
@@ -243,7 +313,7 @@ describe('ds-nav', () => {
   });
 
   it('where the sub-navigation drops down, Escape hides the one under the pointer while the focus is elsewhere', async () => {
-    const { page, item } = await render(NAV, { display: 'none' });
+    const { page, item } = await render(NAV, { width: DROP_DOWN });
     const about = item('About');
     const matches = about.matches.bind(about);
     jest.spyOn(about, 'matches').mockImplementation((selector: string) => selector === ':hover' || matches(selector));
@@ -255,6 +325,111 @@ describe('ds-nav', () => {
     about.dispatchEvent(new MouseEvent('mouseleave'));
     await page.waitForChanges();
     expect(about.querySelector('.ds-nav-item')).not.toHaveClass('--dismissed');
+  });
+
+  describe('the mode of the theme (md)', () => {
+    /** Escape in the link of Team (in the sub-navigation of About): closed (collapsible) or dismissed (drop-down). */
+    const escapeInTeam = async ({ page, link }: Awaited<ReturnType<typeof render>>) => {
+      link('Team').focus();
+      const event = keydown(link('Team'), 'Escape');
+      await page.waitForChanges();
+      return event.defaultPrevented;
+    };
+
+    it('watches the media query of the md breakpoint of the theme, not the display of the expand button', async () => {
+      const { media } = await render(NAV, { tokens: { '--ds-bp-md': '1024px' } });
+
+      // One per item: the five items of NAV.
+      expect(media.watched()).toEqual(Array(5).fill('(min-width: 1024px)'));
+    });
+
+    it('is collapsible below md and drop-down from md, at the fallback width without the theme (992 px)', async () => {
+      const collapsible = await render(NAV, { width: 991.5 });
+      collapsible.toggle('About').click();
+      await collapsible.page.waitForChanges();
+      expect(await escapeInTeam(collapsible)).toBe(true);
+      expect(collapsible.toggle('About')).toEqualAttribute('aria-expanded', 'false');
+      expect(collapsible.item('About').querySelector('.ds-nav-item')).not.toHaveClass('--dismissed');
+
+      const dropDown = await render(NAV, { width: 992 });
+      expect(await escapeInTeam(dropDown)).toBe(true);
+      expect(dropDown.item('About').querySelector('.ds-nav-item')).toHaveClass('--dismissed');
+    });
+
+    it('closes an open sub-navigation when the viewport reaches md, without dsMenuItemClick, and leaves its height to the theme', async () => {
+      const nav = await render();
+      const { page, item, toggle, subNav, events, resizeTo } = nav;
+      const elementPrototype = Object.getPrototypeOf(Object.getPrototypeOf(page.doc.createElement('div')));
+      Object.defineProperty(elementPrototype, 'offsetHeight', { configurable: true, get: () => 80 });
+
+      try {
+        toggle('About').click();
+        await page.waitForChanges();
+        expect(subNav('About').style.height).toBe('auto');
+
+        await resizeTo(DROP_DOWN);
+        expect(toggle('About')).toEqualAttribute('aria-expanded', 'false');
+        expect(item('About').querySelector('.ds-nav-item')).not.toHaveClasses(['--open', '--active']);
+        expect(subNav('About').style.height).toBe('');
+        expect(events).toEqual([true]);
+
+        // Back below md: still closed, its links hidden by the theme (no inline height).
+        await resizeTo(COLLAPSIBLE);
+        expect(toggle('About')).toEqualAttribute('aria-expanded', 'false');
+        expect(subNav('About').style.height).toBe('');
+      } finally {
+        delete elementPrototype.offsetHeight;
+      }
+    });
+
+    it('drops the height a closing sub-navigation was going to get when the viewport reaches md', async () => {
+      const { page, toggle, subNav, resizeTo } = await render();
+
+      toggle('About').click();
+      await page.waitForChanges();
+      toggle('About').click();
+      await resizeTo(DROP_DOWN);
+      await wait(10);
+
+      expect(subNav('About').style.height).toBe('');
+    });
+
+    it('shows a dismissed drop-down again below md, and keeps open there the sub-navigation that has the focus', async () => {
+      const nav = await render(NAV, { width: DROP_DOWN });
+      const { page, item, toggle, link, resizeTo } = nav;
+      const getFocused = trackFocus(page);
+
+      expect(await escapeInTeam(nav)).toBe(true);
+      expect(item('About').querySelector('.ds-nav-item')).toHaveClass('--dismissed');
+      link('Team').focus();
+      await page.waitForChanges();
+
+      await resizeTo(COLLAPSIBLE);
+      expect(item('About').querySelector('.ds-nav-item')).not.toHaveClass('--dismissed');
+      // The focus is in the sub-navigation of About: it is open, so that its link stays shown.
+      expect(getFocused()).toBe(link('Team'));
+      expect(toggle('About')).toEqualAttribute('aria-expanded', 'true');
+      expect(toggle('Jobs')).toEqualAttribute('aria-expanded', 'false');
+
+      // The Escape of the collapsible mode: it closes it, and gives the focus to its expand button.
+      expect(await escapeInTeam(nav)).toBe(true);
+      expect(toggle('About')).toEqualAttribute('aria-expanded', 'false');
+      expect(getFocused()).toBe(toggle('About'));
+    });
+
+    it('stops watching the media query when it leaves the document, and watches it again when it is put back', async () => {
+      const { page, media, item } = await render(NAV, { width: DROP_DOWN });
+      const nav = page.body.querySelector('ds-nav');
+
+      nav.remove();
+      await page.waitForChanges();
+      expect(media.watched()).toEqual([]);
+
+      page.body.appendChild(nav);
+      await page.waitForChanges();
+      expect(media.watched()).toHaveLength(5);
+      expect(item('About').querySelector('.ds-nav-item')).not.toHaveClass('--dismissed');
+    });
   });
 
   it('waits for the sub-navigation with waitForTransition', () => {

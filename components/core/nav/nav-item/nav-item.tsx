@@ -1,9 +1,17 @@
 import { Component, Event, EventEmitter, h, Host, Listen, Prop, Element, State, Fragment } from '@stencil/core';
 import { formatLabel } from '../../../utils/labels';
 import { isTrue, toNumber } from '../../../utils/props';
+import { ThemeBreakpointWatch, watchThemeBreakpoint } from '../../../utils/responsive';
 import { TransitionWait, waitForTransition } from '../../../utils/transition';
 
 let navItemIds = 0;
+
+/**
+ * The breakpoint from which the theme drops the sub-navigations down (`break-p(md)` in components/_nav.scss), and its width
+ * without the theme.
+ */
+const DROP_DOWN_BREAKPOINT = 'md';
+const DROP_DOWN_FALLBACK_WIDTH = 992;
 
 const isEscape = (event: KeyboardEvent) => event.key === 'Escape' || event.key === 'Esc';
 
@@ -15,6 +23,8 @@ const isEscape = (event: KeyboardEvent) => event.key === 'Escape' || event.key =
  * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
  * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
  * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+ * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+ * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
  *
  * @slot - The link of the item.
  * @slot children - The sub-navigation: a `ds-nav` of `ds-nav-item` elements.
@@ -48,13 +58,21 @@ export class DSNavMenuItem {
 
   private uid: string;
   private linkWrapper: HTMLElement;
-  private toggleWrapper: HTMLElement;
   private toggleButton: HTMLElement;
   private subNav: HTMLElement;
   /** The wait for the end of the height transition of the sub-navigation, while it runs. */
   private subNavTransition: TransitionWait;
   /** The link that got `aria-current="page"` from the component (it had none of its own). */
   private currentLink: HTMLElement | null = null;
+  /** The delay before the height of a closing sub-navigation goes to 0. */
+  private hideTimer: ReturnType<typeof setTimeout>;
+  /** The media query of the theme's `md` breakpoint, while the item is in the document. */
+  private dropDownWatch: ThemeBreakpointWatch;
+  /**
+   * Whether the theme drops the sub-navigation down on hover and focus (from `md`: no expand button), rather than
+   * collapsing it under the expand button (below `md`).
+   */
+  private isDropDown = false;
 
   constructor() {
     this.itemClickHandler = this.itemClickHandler.bind(this);
@@ -62,6 +80,9 @@ export class DSNavMenuItem {
 
   connectedCallback() {
     this.uid ??= `ds-nav-item-${++navItemIds}`;
+    this.dropDownWatch?.stop();
+    this.dropDownWatch = watchThemeBreakpoint(DROP_DOWN_BREAKPOINT, DROP_DOWN_FALLBACK_WIDTH, isDropDown => this.setDropDown(isDropDown));
+    this.setDropDown(this.dropDownWatch.matches);
   }
 
   componentWillLoad() {
@@ -78,6 +99,28 @@ export class DSNavMenuItem {
   disconnectedCallback() {
     this.subNavTransition?.cancel();
     this.subNavTransition = undefined;
+    clearTimeout(this.hideTimer);
+    this.dropDownWatch?.stop();
+    this.dropDownWatch = undefined;
+  }
+
+  /**
+   * The theme switches the sub-navigation from collapsed under the expand button (below `md`) to drop-down (from `md`), or
+   * back: the item starts again as at load in the new mode. Its sub-navigation is closed, not dismissed, and its height is
+   * left to the theme (the collapsed sub-navigation is hidden, `visibility: hidden`); below `md`, it stays open while the
+   * focus is in it, so that the focus is not hidden. No `dsMenuItemClick`: the user did not open nor close it.
+   */
+  setDropDown(isDropDown: boolean) {
+    if (isDropDown === this.isDropDown) {
+      return;
+    }
+    this.isDropDown = isDropDown;
+    this.subNavTransition?.cancel();
+    this.subNavTransition = undefined;
+    clearTimeout(this.hideTimer);
+    this.isDismissed = false;
+    this.isOpened = !isDropDown && !!this.subNav?.contains(document.activeElement);
+    this.subNav?.style.removeProperty('height');
   }
 
   /** The link of the item: the first link of its default slot. */
@@ -151,8 +194,9 @@ export class DSNavMenuItem {
       return;
     }
     this.subNavTransition?.cancel();
+    clearTimeout(this.hideTimer);
     subNav.style.height = `${subNav.offsetHeight}px`;
-    setTimeout(() => {
+    this.hideTimer = setTimeout(() => {
       // The height in px is computed before it changes to 0, so that it transitions.
       void subNav.offsetHeight;
       const transition = this.waitForSubNav(subNav);
@@ -187,11 +231,6 @@ export class DSNavMenuItem {
     this.toggleIsSelected();
   }
 
-  /** Whether the expand button is rendered: the theme collapses the sub-navigation (below `md`), else it drops down. */
-  isToggleRendered(): boolean {
-    return !!this.toggleWrapper && window.getComputedStyle(this.toggleWrapper).display !== 'none';
-  }
-
   /**
    * Escape in the item (on its link, its expand button or in its sub-navigation): closes the open sub-navigation and
    * gives the focus to its expand button; where the sub-navigation drops down (no expand button), hides it and gives the
@@ -204,7 +243,7 @@ export class DSNavMenuItem {
       return;
     }
 
-    if (this.isToggleRendered()) {
+    if (!this.isDropDown) {
       if (this.isOpened) {
         event.preventDefault();
         event.stopPropagation();
@@ -229,7 +268,7 @@ export class DSNavMenuItem {
   @Listen('keydown', { target: 'document' })
   documentKeyDownHandler(event: KeyboardEvent) {
     if (isEscape(event) && this.hasChildren && !event.defaultPrevented && !this.isDismissed && !this.host.contains(event.target as Node) && this.isHovered()) {
-      if (!this.isToggleRendered()) {
+      if (this.isDropDown) {
         this.isDismissed = true;
       }
     }
@@ -291,7 +330,7 @@ export class DSNavMenuItem {
           </div>
           {this.hasChildren && (
             <Fragment>
-              <div class="ds-nav-item__expand-button" ref={element => (this.toggleWrapper = element)}>
+              <div class="ds-nav-item__expand-button">
                 <ds-trigger
                   type="button"
                   mods="menu-item"
