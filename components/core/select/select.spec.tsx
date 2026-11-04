@@ -77,4 +77,79 @@ describe('ds-select', () => {
     expect(await page.root.getValue()).toEqual({ value: 'red', label: 'Red' });
     expect(onChange).toHaveBeenCalledTimes(1);
   });
+
+  describe('form', () => {
+    it('is not form-associated: its native select is the only form control, which submits the value once', async () => {
+      const page = await newSpecPage({ components: [DSSelect], html: `<form><ds-select name="color">${options}</ds-select></form>` });
+
+      expect((page.win.customElements.get('ds-select') as unknown as { formAssociated?: boolean }).formAssociated).toBeFalsy();
+      expect(Array.from(page.body.querySelectorAll('select, [name]')).filter(element => element.tagName !== 'DS-SELECT')).toEqual([page.root.querySelector('select')]);
+    });
+
+    it('makes its native select required', async () => {
+      const { page, select } = await render('name="color" required');
+
+      expect(select.hasAttribute('required')).toBe(true);
+
+      page.root.required = false;
+      await page.waitForChanges();
+      expect(select.hasAttribute('required')).toBe(false);
+    });
+
+    it('shows the option the native select selects again after a reset of its form', async () => {
+      const page = await newSpecPage({ components: [DSSelect], html: `<form><ds-select name="color">${options}</ds-select></form><form id="other"></form>` });
+      const select = page.root.querySelector('select');
+      const label = page.root.querySelector('.ds-select__label');
+      const [red, blue] = Array.from(select.querySelectorAll('option'));
+      /** The browser resets the controls after the reset event: the component reads the select after a timeout. */
+      const afterTimeout = () => new Promise(resolve => setTimeout(resolve));
+
+      // The user selected Red, then the form is reset: the browser selects Blue again after the reset event.
+      Object.defineProperty(red, 'value', { value: 'red' });
+      Object.defineProperty(select, 'selectedOptions', { configurable: true, value: [red] });
+      select.dispatchEvent(new Event('change'));
+      await page.waitForChanges();
+      expect(label.textContent).toBe('Red');
+
+      Object.defineProperty(blue, 'value', { value: 'blue' });
+      Object.defineProperty(select, 'selectedOptions', { configurable: true, value: [blue] });
+      // The reset of another form changes nothing.
+      page.body.querySelector('#other').dispatchEvent(new Event('reset', { bubbles: true }));
+      await afterTimeout();
+      await page.waitForChanges();
+      expect(label.textContent).toBe('Red');
+
+      page.body.querySelector('form').dispatchEvent(new Event('reset', { bubbles: true }));
+      expect(label.textContent).toBe('Red');
+      await afterTimeout();
+      await page.waitForChanges();
+      expect(label.textContent).toBe('Blue');
+      expect(await page.root.getValue()).toEqual({ value: 'blue', label: 'Blue' });
+    });
+
+    it('shows the invalid state of its native select (aria-invalid, --invalid) after an invalid event or a change, until it is valid', async () => {
+      const { page, select } = await render('name="color" required', '<option value="">Choose</option><option value="red">Red</option>');
+      // The simulated DOM has no constraint validation: the validity a browser gives.
+      const validity = { valid: false };
+      Object.defineProperty(select, 'validity', { configurable: true, get: () => validity });
+      const shown = () => [select.getAttribute('aria-invalid'), page.root.classList.contains('--invalid')];
+
+      page.root.required = true;
+      page.root.label = 'Color';
+      await page.waitForChanges();
+      await page.waitForChanges();
+      // Invalid, not shown yet: "false" (the browser would tell it at once).
+      expect(shown()).toEqual(['false', false]);
+
+      select.dispatchEvent(new Event('invalid'));
+      await page.waitForChanges();
+      expect(shown()).toEqual(['true', true]);
+
+      validity.valid = true;
+      Object.defineProperty(select, 'selectedOptions', { configurable: true, value: [select.querySelectorAll('option')[1]] });
+      select.dispatchEvent(new Event('change'));
+      await page.waitForChanges();
+      expect(shown()).toEqual([null, false]);
+    });
+  });
 });

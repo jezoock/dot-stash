@@ -529,11 +529,13 @@ export namespace Components {
      * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
      * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
      * (the id of the select).
+     * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+     * a disabled fieldset disables it, and the box follows a form reset.
      */
     interface DsSelect {
         "defaultValue": string;
         /**
-          * Disables the native select: it cannot be focused or changed.
+          * Disables the native select: it cannot be focused or changed, and submits nothing. A disabled `<fieldset>` around it does the same.
          */
         "disabled": boolean;
         "getValue": () => Promise<{ value: string; label: string; }>;
@@ -554,6 +556,10 @@ export namespace Components {
           * The `name` of the native select, and its `id` (a `<label for>` with it names the select).
          */
         "name": string;
+        /**
+          * Makes the native select required: the form is not submitted while its selected option is a placeholder (a first option with an empty value), and the browser shows its own message.
+         */
+        "required": boolean;
     }
     /**
      * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
@@ -1324,6 +1330,8 @@ declare global {
      * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
      * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
      * (the id of the select).
+     * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+     * a disabled fieldset disables it, and the box follows a form reset.
      */
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2065,11 +2073,13 @@ declare namespace LocalJSX {
      * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
      * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
      * (the id of the select).
+     * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+     * a disabled fieldset disables it, and the box follows a form reset.
      */
     interface DsSelect {
         "defaultValue"?: string;
         /**
-          * Disables the native select: it cannot be focused or changed.
+          * Disables the native select: it cannot be focused or changed, and submits nothing. A disabled `<fieldset>` around it does the same.
          */
         "disabled"?: boolean;
         /**
@@ -2090,6 +2100,10 @@ declare namespace LocalJSX {
          */
         "name"?: string;
         "onValueChange"?: (event: DsSelectCustomEvent<any>) => void;
+        /**
+          * Makes the native select required: the form is not submitted while its selected option is a placeholder (a first option with an empty value), and the browser shows its own message.
+         */
+        "required"?: boolean;
     }
     /**
      * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
@@ -2615,6 +2629,7 @@ declare namespace LocalJSX {
     interface DsSelectAttributes {
         "name": string;
         "disabled": boolean;
+        "required": boolean;
         "mods": string | string[];
         "defaultValue": string;
         "label": string;
@@ -2862,6 +2877,8 @@ declare module "@stencil/core" {
              * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
              * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
              * (the id of the select).
+             * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+             * a disabled fieldset disables it, and the box follows a form reset.
              */
             "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
             /**

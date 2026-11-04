@@ -32,7 +32,9 @@ ds-select {
     @include ds-focus-ring();
   }
 
-  &.--disabled {
+  // Disabled: its `disabled` (`--disabled`), or a disabled fieldset around it, which disables the native select.
+  &.--disabled,
+  &:has(> .ds-select__input:disabled) {
     opacity: 0.5;
   }
 }
