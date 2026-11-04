@@ -19,6 +19,74 @@ const trackFocus = (page: SpecPage) => {
   return () => page.doc.activeElement as HTMLElement;
 };
 
+/** The form callbacks the browser calls on a form-associated element (not in the element types). */
+type FormCallbacks = { formResetCallback(): void; formStateRestoreCallback(state: unknown, mode: string): void; formDisabledCallback(isDisabled: boolean): void };
+const formCallbacks = (element: Element) => element as unknown as FormCallbacks;
+
+/** What the fake ElementInternals below records, read by the tests. */
+type FakeInternals = ElementInternals & { value: unknown; state: unknown; anchor: HTMLElement | undefined; states: Set<string> };
+
+/**
+ * The simulated DOM of the spec tests has no ElementInternals (its `attachInternals()` gives an object without methods,
+ * and the components then leave the form alone). This gives the elements a fake one, which records the form value, the
+ * state and the validity, dispatches `invalid` as a browser does and gives the `<label>` elements of the document. Returns
+ * the internals of an element.
+ */
+const mockElementInternals = () => {
+  const internalsOf = new WeakMap<Element, FakeInternals>();
+  let owner = Object.getPrototypeOf(document.createElement('div'));
+  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'attachInternals')) owner = Object.getPrototypeOf(owner);
+
+  const createInternals = (host: HTMLElement) => {
+    let flags: ValidityStateFlags = {};
+    let message = '';
+    const internals = {
+      value: null,
+      state: null,
+      anchor: undefined,
+      states: new Set<string>(),
+      setFormValue(value: unknown, state: unknown = value) {
+        Object.assign(internals, { value, state });
+      },
+      setValidity(newFlags: ValidityStateFlags = {}, newMessage = '', anchor?: HTMLElement) {
+        flags = newFlags;
+        message = newMessage;
+        internals.anchor = anchor;
+      },
+      get validity() {
+        return { valid: !Object.values(flags).some(Boolean), ...flags };
+      },
+      get validationMessage() {
+        return internals.validity.valid ? '' : message;
+      },
+      get willValidate() {
+        return !host.hasAttribute('disabled');
+      },
+      get labels() {
+        const labels = Array.from(host.ownerDocument.querySelectorAll('label')) as HTMLLabelElement[];
+        return labels.filter(label => (label.hasAttribute('for') ? !!host.id && label.getAttribute('for') === host.id : label.contains(host)));
+      },
+      checkValidity() {
+        const { valid } = internals.validity;
+        if (!valid) host.dispatchEvent(new Event('invalid', { cancelable: true }));
+        return valid;
+      },
+      reportValidity() {
+        const valid = internals.checkValidity();
+        if (!valid) (internals.anchor ?? host).focus();
+        return valid;
+      },
+    };
+    internalsOf.set(host, internals as unknown as FakeInternals);
+    return internals as unknown as ElementInternals;
+  };
+  jest.spyOn(owner, 'attachInternals').mockImplementation(function (this: HTMLElement) {
+    return createInternals(this);
+  });
+
+  return (element: Element) => internalsOf.get(element);
+};
+
 const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
   const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
   target.dispatchEvent(event);
@@ -195,7 +263,7 @@ describe('ds-toggle-group', () => {
     await page.setContent('<ds-toggle-group name="size" type="checkbox" mods="large" count="[0, 3]"><ds-toggle value="a"></ds-toggle></ds-toggle-group>');
     const group = page.root;
     const [observer] = observers;
-    expect(observer.observe).toHaveBeenCalledWith(group, { childList: true, subtree: true });
+    expect(observer.observe).toHaveBeenCalledWith(group, { childList: true, subtree: true, attributes: true, attributeFilter: ['checked'] });
     const changes: unknown[] = [];
     group.addEventListener('toggleValueChange', (event: CustomEvent) => changes.push(event.detail.value));
 
@@ -234,6 +302,189 @@ describe('ds-toggle-group', () => {
 
     expect(value()).toEqual(['a', 'b']);
   });
+  describe('form', () => {
+    let internals: (element: Element) => FakeInternals;
+    beforeEach(() => (internals = mockElementInternals()));
+
+    /** Records the observers of the group, to give them mutation records (the simulated DOM has no MutationObserver). */
+    const fakeObservers = () => {
+      const observers: { callback: MutationCallback }[] = [];
+      class FakeMutationObserver {
+        observe = jest.fn();
+        disconnect = jest.fn();
+        constructor(public callback: MutationCallback) {
+          observers.push(this);
+        }
+      }
+      global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
+      /** The `checked` attributes of these toggles changed: the records a browser gives. */
+      return (toggles: Element[]) =>
+        observers.forEach(({ callback }) =>
+          callback(
+            toggles.map(target => ({ type: 'attributes', attributeName: 'checked', target }) as unknown as MutationRecord),
+            undefined,
+          ),
+        );
+    };
+
+    it('submits nothing itself: each toggle submits its value under the name of the group, as native checkboxes or radios', async () => {
+      const { page, click } = await render('name="size" type="checkbox" count="[0, 3]"');
+      const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
+
+      await click('a');
+      await click('c');
+
+      expect(internals(page.root).value).toBeNull();
+      expect(toggles.map(toggle => [toggle.getAttribute('name'), internals(toggle).value])).toEqual([
+        ['size', 'a'],
+        ['size', null],
+        ['size', 'c'],
+      ]);
+
+      const radios = await render('name="color" type="radio"');
+      await radios.click('b');
+      await radios.click('c');
+      expect(Array.from(radios.page.root.querySelectorAll('ds-toggle')).map(toggle => internals(toggle).value)).toEqual([null, null, 'c']);
+    });
+
+    it('its toggles submit nothing while it is disabled', async () => {
+      const { page, click } = await render('name="size" type="checkbox" count="[0, 3]"');
+      const [a] = Array.from(page.root.querySelectorAll('ds-toggle'));
+
+      await click('a');
+      page.root.disabled = true;
+      await page.waitForChanges();
+
+      expect([a.checked, internals(a).value]).toEqual([true, null]);
+    });
+
+    it('required: valueMissing until a toggle is checked, with the message of the browser at the radio Tab reaches, or its required-message', async () => {
+      const { page, click } = await render('name="size" type="radio" required');
+      const [a] = Array.from(page.root.querySelectorAll('ds-toggle'));
+
+      expect([page.root.validity.valueMissing, page.root.validationMessage, internals(page.root).anchor]).toEqual([true, 'Please select one of these options.', a]);
+      expect(page.root.getAttribute('aria-required')).toBe('true');
+
+      page.root.requiredMessage = 'Choose a size';
+      await page.waitForChanges();
+      expect(page.root.validationMessage).toBe('Choose a size');
+
+      await click('b');
+      expect([page.root.validity.valid, page.root.validationMessage]).toEqual([true, '']);
+    });
+
+    it('a radio with required makes its group required; a group of checkboxes has no aria-required (not a property of the group role)', async () => {
+      const page = await newSpecPage({
+        components: [DSToggleGroup, DSToggle],
+        html: '<ds-toggle-group type="radio"><ds-toggle value="a" required></ds-toggle><ds-toggle value="b"></ds-toggle></ds-toggle-group>',
+      });
+      expect([page.root.validity.valueMissing, page.root.getAttribute('aria-required')]).toEqual([true, 'true']);
+
+      const checkboxes = await newSpecPage({
+        components: [DSToggleGroup, DSToggle],
+        html: '<ds-toggle-group type="checkbox" count="[0, 3]" required><ds-toggle value="a"></ds-toggle></ds-toggle-group>',
+      });
+      expect([checkboxes.root.validity.valueMissing, checkboxes.root.getAttribute('role'), checkboxes.root.getAttribute('aria-required')]).toEqual([true, 'group', null]);
+    });
+
+    it('a disabled group is not validated', async () => {
+      const { page } = await render('type="radio" required disabled');
+
+      expect([page.root.validity.valid, page.root.hasAttribute('aria-required')]).toEqual([true, false]);
+    });
+
+    it('shows its invalid state (aria-invalid, --invalid, :state(user-invalid)) after an invalid event or a change by the user, until it is valid or reset', async () => {
+      const { page, click } = await render('type="checkbox" count="[0, 3]" required');
+      const shown = () => [page.root.getAttribute('aria-invalid'), page.root.classList.contains('--invalid'), internals(page.root).states.has('user-invalid')];
+
+      expect(shown()).toEqual(['false', false, false]);
+
+      expect(await page.root.checkValidity()).toBe(false);
+      await page.waitForChanges();
+      expect(shown()).toEqual(['true', true, true]);
+
+      await click('a');
+      expect(shown()).toEqual([null, false, false]);
+
+      // Unchecked by the user: none checked, shown again.
+      await click('a');
+      expect(shown()).toEqual(['true', true, true]);
+
+      formCallbacks(page.root).formResetCallback();
+      await page.waitForChanges();
+      expect(shown()).toEqual(['false', false, false]);
+    });
+
+    it('reportValidity() gives the focus to the anchor of its message', async () => {
+      const { page } = await render('type="radio" required');
+      const [a] = Array.from(page.root.querySelectorAll('ds-toggle'));
+      const focus = jest.spyOn(a, 'focus').mockImplementation(() => undefined);
+
+      expect(await page.root.reportValidity()).toBe(false);
+      expect(focus).toHaveBeenCalled();
+    });
+
+    it('follows its toggles checked otherwise than by a click (form reset, restored state, script), without toggleValueChange', async () => {
+      const changed = fakeObservers();
+      const { page, changes, click, value } = await render('name="size" type="checkbox" count="[0, 3]"');
+      const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
+
+      await click('b');
+      expect(value()).toEqual(['b']);
+
+      // A form reset: each toggle takes back its state of the load (none checked), then the observer tells the group.
+      toggles.forEach(toggle => formCallbacks(toggle).formResetCallback());
+      await page.waitForChanges();
+      changed(toggles);
+      await page.waitForChanges();
+      expect(value()).toEqual([]);
+
+      formCallbacks(toggles[2]).formStateRestoreCallback('checked', 'restore');
+      toggles[0].checked = true;
+      await page.waitForChanges();
+      changed([toggles[2], toggles[0]]);
+      await page.waitForChanges();
+      expect(value()).toEqual(['a', 'c']);
+      expect(changes).toEqual([['b']]);
+    });
+
+    it('saves its value as its state (and submits nothing), and gives the restored state back to its toggles, without events', async () => {
+      const { page, changes, click, checked, value } = await render('name="size" type="checkbox" count="[0, 3]"');
+      await click('b');
+      expect([internals(page.root).value, internals(page.root).state]).toEqual([null, '["b"]']);
+      const toggleEvents: string[] = [];
+      page.root.addEventListener('toggle', event => toggleEvents.push(event.type));
+
+      formCallbacks(page.root).formStateRestoreCallback('["c","a"]', 'restore');
+      await page.waitForChanges();
+      expect([checked(), value()]).toEqual([
+        ['a', 'c'],
+        ['a', 'c'],
+      ]);
+      expect(internals(page.root).state).toBe('["a","c"]');
+
+      formCallbacks(page.root).formStateRestoreCallback('not JSON', 'restore');
+      await page.waitForChanges();
+      expect(checked()).toEqual(['a', 'c']);
+      expect([changes, toggleEvents]).toEqual([[['b']], []]);
+    });
+
+    it('a click on the group itself (from its <label>) moves the focus to the radio Tab reaches, without selecting it', async () => {
+      const { page, click, checked } = await render('type="radio"');
+      const focused = trackFocus(page);
+      const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
+
+      page.root.click();
+      expect(focused()).toBe(toggles[0]);
+      expect(checked()).toEqual([]);
+
+      await click('c');
+      page.root.click();
+      expect(focused()).toBe(toggles[2]);
+      expect(checked()).toEqual(['c']);
+    });
+  });
+
   describe('accessibility', () => {
     const tabindexes = (page: SpecPage) => Array.from(page.root.querySelectorAll('ds-toggle')).map(toggle => toggle.getAttribute('tabindex'));
 
@@ -349,18 +600,19 @@ describe('ds-toggle-group', () => {
       expect(Array.from(checkboxes.root.querySelectorAll('ds-toggle')).some(toggle => toggle.checked)).toBe(false);
     });
 
-    it('disabled, disables its toggles (aria-disabled on the group); enabled, gives them their own disabled back', async () => {
+    it('disabled, disables its toggles (aria-disabled on the group and on each) and leaves their own disabled as it is', async () => {
       const page = await newSpecPage({
         components: [DSToggleGroup, DSToggle],
         html: '<ds-toggle-group type="checkbox" count="[0, 3]" disabled><ds-toggle value="a"></ds-toggle><ds-toggle value="b" disabled></ds-toggle></ds-toggle-group>',
       });
       const toggles = Array.from(page.root.querySelectorAll('ds-toggle'));
-      const states = () => toggles.map(toggle => [toggle.disabled, toggle.getAttribute('tabindex')]);
+      const states = () =>
+        toggles.map(toggle => [!!toggle.disabled, toggle.getAttribute('aria-disabled'), toggle.getAttribute('tabindex'), toggle.classList.contains('--disabled')]);
 
-      expect(page.root.getAttribute('aria-disabled')).toBe('true');
+      expect([page.root.getAttribute('aria-disabled'), page.root.classList.contains('--disabled')]).toEqual(['true', true]);
       expect(states()).toEqual([
-        [true, null],
-        [true, null],
+        [false, 'true', null, true],
+        [true, 'true', null, true],
       ]);
       toggles[0].click();
       await page.waitForChanges();
@@ -370,15 +622,17 @@ describe('ds-toggle-group', () => {
       await page.waitForChanges();
       expect(page.root.hasAttribute('aria-disabled')).toBe(false);
       expect(states()).toEqual([
-        [false, '0'],
-        [true, null],
+        [false, null, '0', false],
+        [true, 'true', null, true],
       ]);
 
-      page.root.disabled = true;
+      // A disabled fieldset around the group (the browser calls formDisabledCallback).
+      formCallbacks(page.root).formDisabledCallback(true);
       await page.waitForChanges();
+      expect(page.root.getAttribute('aria-disabled')).toBe('true');
       expect(states()).toEqual([
-        [true, null],
-        [true, null],
+        [false, 'true', null, true],
+        [true, 'true', null, true],
       ]);
     });
   });

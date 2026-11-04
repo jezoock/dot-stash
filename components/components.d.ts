@@ -831,19 +831,26 @@ export namespace Components {
      * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
      * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
      * focus and the selection between the enabled radios.
+     * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+     * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+     * it, and a disabled fieldset disables it with its toggles.
      */
     interface DsToggleGroup {
+        /**
+          * Whether the group is valid; an invalid group gets an `invalid` event (as the `checkValidity()` of a native control, but asynchronous).
+         */
+        "checkValidity": () => Promise<boolean>;
         /**
           * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
           * @default [1, 1]
          */
         "count": number[] | string;
         /**
-          * Disables all the toggles of the group (`disabled` on each, `aria-disabled` on the group). Enabled again, the toggles get back the `disabled` they had when the group was disabled.
+          * Disables the group and all its toggles (`aria-disabled` on the group, and on each toggle, which leaves the toggles' own `disabled` as it is). A disabled `<fieldset>` around it does the same.
          */
         "disabled": boolean;
         /**
-          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element instead.
+          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element, or a `<label>` element (`<label for="<id of the group>">`) instead.
          */
         "label": string;
         /**
@@ -851,8 +858,41 @@ export namespace Components {
           * @default []
          */
         "mods": string | string[];
+        /**
+          * The name of its toggles, which submit their values under it with their form (it replaces their own).
+         */
         "name": string;
+        /**
+          * As `checkValidity()`, and the browser shows the message of an invalid group at its first enabled toggle (the checked radio of a radio group), which takes the focus.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * At least one toggle must be checked for the form to be submitted (`valueMissing`; `aria-required` on a radio group). A radio of the group with `required` makes it required too, as a native radio.
+         */
+        "required": boolean;
+        /**
+          * The message of a required group without a checked toggle, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage": string;
+        /**
+          * The type of its toggles that have none of their own (`radio`, `checkbox`, `switch`, `icon`).
+         */
         "type": string;
+        /**
+          * The message of an invalid group, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage": string;
+        /**
+          * The validity of the group, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity": ValidityState;
+        /**
+          * Whether the form validates the group (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate": boolean;
     }
     /**
      * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
@@ -1430,6 +1470,9 @@ declare global {
      * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
      * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
      * focus and the selection between the enabled radios.
+     * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+     * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+     * it, and a disabled fieldset disables it with its toggles.
      */
     interface HTMLDsToggleGroupElement extends Components.DsToggleGroup, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleGroupElement, ev: DsToggleGroupCustomEvent<HTMLDsToggleGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -2240,6 +2283,9 @@ declare namespace LocalJSX {
      * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
      * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
      * focus and the selection between the enabled radios.
+     * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+     * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+     * it, and a disabled fieldset disables it with its toggles.
      */
     interface DsToggleGroup {
         /**
@@ -2248,11 +2294,15 @@ declare namespace LocalJSX {
          */
         "count"?: number[] | string;
         /**
-          * Disables all the toggles of the group (`disabled` on each, `aria-disabled` on the group). Enabled again, the toggles get back the `disabled` they had when the group was disabled.
+          * Disables the group and all its toggles (`aria-disabled` on the group, and on each toggle, which leaves the toggles' own `disabled` as it is). A disabled `<fieldset>` around it does the same.
          */
         "disabled"?: boolean;
         /**
-          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element instead.
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element, or a `<label>` element (`<label for="<id of the group>">`) instead.
          */
         "label"?: string;
         /**
@@ -2260,9 +2310,38 @@ declare namespace LocalJSX {
           * @default []
          */
         "mods"?: string | string[];
+        /**
+          * The name of its toggles, which submit their values under it with their form (it replaces their own).
+         */
         "name"?: string;
         "onToggleValueChange"?: (event: DsToggleGroupCustomEvent<any>) => void;
+        /**
+          * At least one toggle must be checked for the form to be submitted (`valueMissing`; `aria-required` on a radio group). A radio of the group with `required` makes it required too, as a native radio.
+         */
+        "required"?: boolean;
+        /**
+          * The message of a required group without a checked toggle, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage"?: string;
+        /**
+          * The type of its toggles that have none of their own (`radio`, `checkbox`, `switch`, `icon`).
+         */
         "type"?: string;
+        /**
+          * The message of an invalid group, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage"?: string;
+        /**
+          * The validity of the group, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity"?: ValidityState;
+        /**
+          * Whether the form validates the group (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate"?: boolean;
     }
     /**
      * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
@@ -2532,7 +2611,11 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "count": number[] | string;
         "mods": string | string[];
+        "required": boolean;
+        "requiredMessage": string;
         "label": string;
+        "validationMessage": string;
+        "willValidate": boolean;
     }
     interface DsTooltipAttributes {
         "icon": string;
@@ -2761,6 +2844,9 @@ declare module "@stencil/core" {
              * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
              * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
              * focus and the selection between the enabled radios.
+             * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+             * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+             * it, and a disabled fieldset disables it with its toggles.
              */
             "ds-toggle-group": LocalJSX.IntrinsicElements["ds-toggle-group"] & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
