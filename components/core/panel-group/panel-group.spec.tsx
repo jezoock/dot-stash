@@ -1,39 +1,17 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSPanel } from '../panel/panel';
-import { DSPanelGroup } from './panel-group';
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    focus.active = this;
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
-
-const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import '../panel/panel';
+import './panel-group';
+import { keydown, renderPage, trackFocus } from '../../../test/helpers';
 
 const panel = (title: string, attributes = '', content = `<p>${title} content</p>`) => `<ds-panel ${attributes}><span slot="title">${title}</span>${content}</ds-panel>`;
 
 describe('ds-panel-group', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSPanelGroup, DSPanel], html });
+    const page = await renderPage(html);
     await page.waitForChanges();
     const group = page.body.querySelector('ds-panel-group');
     const panels = Array.from(group.children).filter((child): child is HTMLDsPanelElement => child.tagName === 'DS-PANEL');
@@ -106,7 +84,7 @@ describe('ds-panel-group', () => {
       ['End', 0, 2],
     ])('%s on tab %i moves the focus to tab %i and selects it', async (key, from, to) => {
       const { page, tabs, selected } = await render(tabGroup());
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
 
       tabs[from].click();
       await page.waitForChanges();

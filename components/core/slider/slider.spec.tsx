@@ -1,58 +1,26 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSSlider } from './slider';
-import { DSSliderItem } from './slider-item/slider-item';
-import { DSSliderMenu } from './slider-menu/slider-menu';
-import { DSTrigger } from '../trigger/trigger';
+import type { DSSlider } from './slider';
+import './slider';
+import './slider-item/slider-item';
+import './slider-menu/slider-menu';
+import '../trigger/trigger';
 import { DSSliderParams } from './slider.types';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-/**
- * The spec DOM has no layout: the slider items are 100 x 50 px and the slider 250 px wide (three slides in view), so the
- * list scrolls. Returns the function that removes the sizes.
- */
-const mockLayout = (page: SpecPage) => {
-  const elementPrototype = Object.getPrototypeOf(Object.getPrototypeOf(page.doc.createElement('div')));
-  const size = (element: HTMLElement, dimension: 'width' | 'height') =>
-    element.tagName === 'DS-SLIDER-ITEM' ? (dimension === 'width' ? 100 : 50) : element.classList?.contains('ds-slider') && dimension === 'width' ? 250 : 0;
-  for (const [name, dimension] of [
-    ['offsetWidth', 'width'],
-    ['offsetHeight', 'height'],
-  ] as const) {
-    Object.defineProperty(elementPrototype, name, {
-      configurable: true,
-      get: function () {
-        return size(this, dimension);
-      },
-    });
-  }
-  return () => {
-    delete elementPrototype.offsetWidth;
-    delete elementPrototype.offsetHeight;
-  };
-};
+import { componentClass, mockLayout, mockTransition, renderPage, trackFocus, wait } from '../../../test/helpers';
 
 /**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets.
+ * The simulated DOM has no layout: the slider items are 100 x 50 px and the slider 250 px wide (three slides in view), so
+ * the list scrolls. Returns the function that removes the sizes.
  */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    focus.active = this;
+const mockSliderLayout = () =>
+  mockLayout({
+    offsetWidth: element => (element.tagName === 'DS-SLIDER-ITEM' ? 100 : element.classList?.contains('ds-slider') ? 250 : 0),
+    offsetHeight: element => (element.tagName === 'DS-SLIDER-ITEM' ? 50 : 0),
   });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
 
 describe('ds-slider', () => {
-  // `menu` is a flag: this assignment is type-checked by the build (`npm run build` type-checks the spec files).
+  // `menu` is a flag: this assignment is type-checked (`npm run typecheck` type-checks the spec files).
   const withMenu: DSSliderParams = { menu: true, controls: false };
   let removeLayout: () => void;
   // The sliders of a test are removed after it: their rotation timers stop (disconnectedCallback).
@@ -63,7 +31,7 @@ describe('ds-slider', () => {
     sliders = [];
     removeLayout?.();
     removeLayout = undefined;
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   /**
@@ -71,9 +39,9 @@ describe('ds-slider', () => {
    * no CSS engine).
    */
   const render = async (attributes = '', { slides = 4, transitionDuration = '0s', items = '' } = {}) => {
-    const page = await newSpecPage({ components: [DSSlider, DSSliderItem, DSSliderMenu, DSTrigger], html: '' });
-    removeLayout = mockLayout(page);
-    jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay: '0s' } as CSSStyleDeclaration);
+    const page = await renderPage('');
+    removeLayout = mockSliderLayout();
+    mockTransition(transitionDuration);
     const events: { slide: string; currentIndex?: number }[] = [];
     page.doc.addEventListener('sliderEvent', (event: CustomEvent) => events.push(event.detail));
 
@@ -93,7 +61,7 @@ describe('ds-slider', () => {
   };
 
   it('renders the slider menu when the menu flag is set', async () => {
-    const page = await newSpecPage({ components: [DSSlider], html: '<ds-slider><ds-slider-item>1</ds-slider-item></ds-slider>' });
+    const page = await renderPage('<ds-slider><ds-slider-item>1</ds-slider-item></ds-slider>');
 
     expect(page.root.querySelector('ds-slider-menu')).toBeNull();
 
@@ -104,16 +72,20 @@ describe('ds-slider', () => {
   });
 
   it('renders the measured state (prev/next triggers, classes) once after the load, without Stencil warning', async () => {
-    const warnSpy = jest.spyOn(console, 'warn');
-    const renderSpy = jest.spyOn(DSSlider.prototype, 'render');
-    const page = await newSpecPage({ components: [DSSlider], html: '' });
-    removeLayout = mockLayout(page);
+    const warnSpy = vi.spyOn(console, 'warn');
+    const renderSpy = vi.spyOn(componentClass<DSSlider>('ds-slider').prototype, 'render');
+    const page = await renderPage('');
+    removeLayout = mockSliderLayout();
 
     await page.setContent(`<ds-slider>${'<ds-slider-item>item</ds-slider-item>'.repeat(4)}</ds-slider>`);
     const slider = page.root.querySelector('.ds-slider');
 
     expect(slider).toHaveClasses(['--scrollable', '--isReady']);
-    expect(Array.from(page.root.querySelectorAll('ds-trigger')).map(trigger => trigger.className)).toEqual(['ds-slider__prev-button', 'ds-slider__next-button']);
+    // The classes the slider gives its triggers (ds-trigger, defined in this file, adds its own).
+    expect(Array.from(page.root.querySelectorAll('ds-trigger')).map(trigger => trigger.className.split(' ').filter(name => name.startsWith('ds-slider__')))).toEqual([
+      ['ds-slider__prev-button'],
+      ['ds-slider__next-button'],
+    ]);
     expect(renderSpy).toHaveBeenCalledTimes(2);
     expect(warnSpy.mock.calls.filter(args => String(args[0]).includes('changed during'))).toEqual([]);
   });
@@ -217,7 +189,7 @@ describe('ds-slider', () => {
 
   it('gives the focus to the other button when the focused one is removed (no loop, first slide)', async () => {
     const { page, button } = await render(`params='{"loop": false}'`);
-    const getFocused = trackFocus(page);
+    const getFocused = trackFocus();
 
     await page.root.next();
     await wait(80);
@@ -298,9 +270,9 @@ describe('ds-slider', () => {
     });
 
     it('does not start with less motion', async () => {
-      const page = await newSpecPage({ components: [DSSlider, DSSliderItem, DSTrigger], html: '' });
-      removeLayout = mockLayout(page);
-      jest.spyOn(window, 'matchMedia').mockImplementation(media => ({ media, matches: media === '(prefers-reduced-motion: reduce)' }) as MediaQueryList);
+      const page = await renderPage('');
+      removeLayout = mockSliderLayout();
+      vi.spyOn(window, 'matchMedia').mockImplementation(media => ({ media, matches: media === '(prefers-reduced-motion: reduce)' }) as MediaQueryList);
       const events: unknown[] = [];
       page.doc.addEventListener('sliderEvent', event => events.push(event));
 

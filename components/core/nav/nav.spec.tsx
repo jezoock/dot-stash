@@ -1,38 +1,10 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSNav } from './nav';
-import { DSNavMenuItem } from './nav-item/nav-item';
-import { DSTrigger } from '../trigger/trigger';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets, dispatching `focusout` and `focusin` as a browser does.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    const previous = focus.active;
-    if (previous === this) return;
-    focus.active = this;
-    previous?.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: this }));
-    this.dispatchEvent(new FocusEvent('focusin', { bubbles: true, relatedTarget: previous }));
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
-
-const keydown = (target: EventTarget, key: string) => {
-  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
-  target.dispatchEvent(event);
-  return event;
-};
+import './nav';
+import './nav-item/nav-item';
+import '../trigger/trigger';
+import { fakeMatchMedia, keydown, mockComputedStyle, mockLayout, renderPage, trackFocus, wait } from '../../../test/helpers';
 
 /**
  * The spec tests have no CSS engine: the computed style the components read. The transition of the sub-navigation, and
@@ -40,67 +12,7 @@ const keydown = (target: EventTarget, key: string) => {
  * `none`, as the expand button from md: the mode does not come from it.
  */
 const mockStyle = (transitionDuration = '0s', tokens: Record<string, string> = {}) =>
-  jest
-    .spyOn(window, 'getComputedStyle')
-    .mockReturnValue({ display: 'none', transitionDuration, transitionDelay: '0s', getPropertyValue: (name: string) => tokens[name] ?? '' } as unknown as CSSStyleDeclaration);
-
-/** A media query list of the fake matchMedia: its query, its change listeners, and its state when it last notified them. */
-interface FakeMediaQueryList {
-  media: string;
-  readonly matches: boolean;
-  listeners: Set<(event: { matches: boolean; media: string }) => void>;
-  notified: boolean;
-  addEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
-  removeEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
-}
-
-/**
- * The spec tests have no viewport: a matchMedia that evaluates the width queries of utils/responsive (`(min-width: …px)`,
- * `(width < …px)`, `all`, joined by `and`) at a width, and that dispatches `change`, as a browser does, on each list whose
- * state changes when the width does.
- */
-const fakeMatchMedia = (initialWidth: number) => {
-  let width = initialWidth;
-  const lists: FakeMediaQueryList[] = [];
-  const evaluate = (query: string): boolean =>
-    query.split(' and ').every(part => {
-      const min = /^\(min-width: ([\d.]+)px\)$/.exec(part);
-      const max = /^\(width < ([\d.]+)px\)$/.exec(part);
-      if (min) return width >= Number(min[1]);
-      if (max) return width < Number(max[1]);
-      if (part === 'all') return true;
-      throw new Error(`unexpected media query: ${query}`);
-    });
-
-  window.matchMedia = jest.fn((query: string) => {
-    const list: FakeMediaQueryList = {
-      media: query,
-      get matches() {
-        return evaluate(query);
-      },
-      listeners: new Set(),
-      notified: evaluate(query),
-      addEventListener: (type, listener) => type === 'change' && list.listeners.add(listener),
-      removeEventListener: (type, listener) => type === 'change' && list.listeners.delete(listener),
-    };
-    lists.push(list);
-    return list as unknown as MediaQueryList;
-  });
-
-  return {
-    /** The media queries that have a change listener, one entry per listener. */
-    watched: () => lists.flatMap(list => Array.from(list.listeners, () => list.media)),
-    resize(newWidth: number) {
-      width = newWidth;
-      lists.forEach(list => {
-        if (list.matches !== list.notified) {
-          list.notified = list.matches;
-          list.listeners.forEach(listener => listener({ matches: list.matches, media: list.media }));
-        }
-      });
-    },
-  };
-};
+  mockComputedStyle({ display: 'none', transitionDuration, transitionDelay: '0s', getPropertyValue: (name: string) => tokens[name] ?? '' });
 
 /** Widths below and from md (992 px, the fallback): the collapsible and the drop-down sub-navigations. */
 const COLLAPSIBLE = 800;
@@ -119,11 +31,11 @@ const NAV = `<ds-nav mods="main" label="Main">
 </ds-nav>`;
 
 describe('ds-nav', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const render = async (html = NAV, { width = COLLAPSIBLE, transitionDuration = '0s', tokens = {} } = {}) => {
-    const page = await newSpecPage({ components: [DSNav, DSNavMenuItem, DSTrigger], html: '' });
-    // newSpecPage resets the window: its getComputedStyle and matchMedia are mocked once the page exists.
+    const page = await renderPage('');
+    // The page is reset first, then getComputedStyle and matchMedia are mocked for its content.
     mockStyle(transitionDuration, tokens);
     const media = fakeMatchMedia(width);
     await page.setContent(html);
@@ -230,8 +142,7 @@ describe('ds-nav', () => {
 
   it('animates the height of the sub-navigation, and lets it follow its content once open, without waiting for transitionend', async () => {
     const { page, toggle, subNav } = await render();
-    const elementPrototype = Object.getPrototypeOf(Object.getPrototypeOf(page.doc.createElement('div')));
-    Object.defineProperty(elementPrototype, 'offsetHeight', { configurable: true, get: () => 80 });
+    const removeLayout = mockLayout({ offsetHeight: () => 80 });
 
     try {
       toggle('About').click();
@@ -243,14 +154,14 @@ describe('ds-nav', () => {
       await wait(10);
       expect(subNav('About').style.height).toBe('0');
     } finally {
-      delete elementPrototype.offsetHeight;
+      removeLayout();
     }
   });
 
   it('Escape in an open sub-navigation closes it and gives the focus to its expand button; the key press goes no further', async () => {
     const { page, toggle, link, events } = await render();
-    const getFocused = trackFocus(page);
-    const outer = jest.fn();
+    const getFocused = trackFocus();
+    const outer = vi.fn();
     page.body.addEventListener('keydown', outer);
 
     toggle('About').click();
@@ -272,7 +183,7 @@ describe('ds-nav', () => {
 
   it('Escape closes the innermost open sub-navigation only', async () => {
     const { page, toggle, link } = await render();
-    const getFocused = trackFocus(page);
+    const getFocused = trackFocus();
 
     toggle('About').click();
     await page.waitForChanges();
@@ -288,7 +199,7 @@ describe('ds-nav', () => {
 
   it('where the sub-navigation drops down (no expand button), Escape hides it until the focus and the pointer leave the item', async () => {
     const { page, item, link } = await render(NAV, { width: DROP_DOWN });
-    const getFocused = trackFocus(page);
+    const getFocused = trackFocus();
     const about = item('About').querySelector('.ds-nav-item');
 
     link('Team').focus();
@@ -316,7 +227,7 @@ describe('ds-nav', () => {
     const { page, item } = await render(NAV, { width: DROP_DOWN });
     const about = item('About');
     const matches = about.matches.bind(about);
-    jest.spyOn(about, 'matches').mockImplementation((selector: string) => selector === ':hover' || matches(selector));
+    vi.spyOn(about, 'matches').mockImplementation((selector: string) => selector === ':hover' || matches(selector));
 
     keydown(page.body, 'Escape');
     await page.waitForChanges();
@@ -340,7 +251,7 @@ describe('ds-nav', () => {
       const { media } = await render(NAV, { tokens: { '--ds-bp-md': '1024px' } });
 
       // One per item: the five items of NAV.
-      expect(media.watched()).toEqual(Array(5).fill('(min-width: 1024px)'));
+      expect(media.listened()).toEqual(Array(5).fill('(min-width: 1024px)'));
     });
 
     it('is collapsible below md and drop-down from md, at the fallback width without the theme (992 px)', async () => {
@@ -359,8 +270,7 @@ describe('ds-nav', () => {
     it('closes an open sub-navigation when the viewport reaches md, without dsMenuItemClick, and leaves its height to the theme', async () => {
       const nav = await render();
       const { page, item, toggle, subNav, events, resizeTo } = nav;
-      const elementPrototype = Object.getPrototypeOf(Object.getPrototypeOf(page.doc.createElement('div')));
-      Object.defineProperty(elementPrototype, 'offsetHeight', { configurable: true, get: () => 80 });
+      const removeLayout = mockLayout({ offsetHeight: () => 80 });
 
       try {
         toggle('About').click();
@@ -378,7 +288,7 @@ describe('ds-nav', () => {
         expect(toggle('About')).toEqualAttribute('aria-expanded', 'false');
         expect(subNav('About').style.height).toBe('');
       } finally {
-        delete elementPrototype.offsetHeight;
+        removeLayout();
       }
     });
 
@@ -397,7 +307,7 @@ describe('ds-nav', () => {
     it('shows a dismissed drop-down again below md, and keeps open there the sub-navigation that has the focus', async () => {
       const nav = await render(NAV, { width: DROP_DOWN });
       const { page, item, toggle, link, resizeTo } = nav;
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
 
       expect(await escapeInTeam(nav)).toBe(true);
       expect(item('About').querySelector('.ds-nav-item')).toHaveClass('--dismissed');
@@ -423,11 +333,11 @@ describe('ds-nav', () => {
 
       nav.remove();
       await page.waitForChanges();
-      expect(media.watched()).toEqual([]);
+      expect(media.listened()).toEqual([]);
 
       page.body.appendChild(nav);
       await page.waitForChanges();
-      expect(media.watched()).toHaveLength(5);
+      expect(media.listened()).toHaveLength(5);
       expect(item('About').querySelector('.ds-nav-item')).not.toHaveClass('--dismissed');
     });
   });

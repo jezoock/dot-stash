@@ -1,46 +1,15 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSSidebar } from './sidebar';
+import './sidebar';
 import { TRANSITION_END_MARGIN } from '../../utils/transition';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-// The spec tests have no CSS engine: the computed transition of the sidebar is given here.
-const mockTransition = (transitionDuration: string, transitionDelay = '0s') =>
-  jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay } as CSSStyleDeclaration);
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets, dispatching `focusout` and `focusin` as a browser does.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  const spy = jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    const previous = focus.active;
-    if (previous === this) return;
-    focus.active = this;
-    previous?.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: this }));
-    this.dispatchEvent(new FocusEvent('focusin', { bubbles: true, relatedTarget: previous }));
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return { getFocused: () => page.doc.activeElement as HTMLElement, spy };
-};
-
-const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { keydown, mockTransition, renderPage, trackFocus, wait } from '../../../test/helpers';
 
 describe('ds-sidebar', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const render = async (html = '<ds-sidebar><nav>Menu</nav></ds-sidebar>') => {
-    const page = await newSpecPage({ components: [DSSidebar], html });
+    const page = await renderPage(html);
     const events: string[] = [];
     ['sidebarShow', 'sidebarShown', 'sidebarHide', 'sidebarHidden'].forEach(name => page.root.addEventListener(name, () => events.push(name)));
     return { page, events };
@@ -160,7 +129,7 @@ describe('ds-sidebar', () => {
 
     it('moves the focus into the sidebar on show(), and gives it back to the opener on hide()', async () => {
       const { page } = await render('<ds-sidebar><p>Text</p><a href="#a" id="first">First</a><button>Second</button></ds-sidebar>');
-      const { getFocused } = trackFocus(page);
+      const getFocused = trackFocus();
       const opener = page.doc.createElement('button');
       page.body.appendChild(opener);
       opener.focus();
@@ -176,14 +145,14 @@ describe('ds-sidebar', () => {
 
     it('focuses an autofocus element first, else the sidebar itself without focusable content', async () => {
       const { page } = await render('<ds-sidebar><a href="#a">First</a><input autofocus id="search" /></ds-sidebar>');
-      const { getFocused } = trackFocus(page);
+      const getFocused = trackFocus();
 
       await page.root.show();
       await page.waitForChanges();
       expect(getFocused().id).toBe('search');
 
       const { page: empty } = await render('<ds-sidebar label="Notes"><p>Text only</p></ds-sidebar>');
-      const { getFocused: getEmptyFocused } = trackFocus(empty);
+      const getEmptyFocused = trackFocus();
       await empty.root.show();
       await empty.waitForChanges();
       expect(getEmptyFocused()).toBe(empty.root);
@@ -191,7 +160,7 @@ describe('ds-sidebar', () => {
 
     it('leaves the focus where it is on hide() when it is no longer in the sidebar', async () => {
       const { page } = await render('<ds-sidebar><a href="#a">First</a></ds-sidebar>');
-      const { getFocused } = trackFocus(page);
+      const getFocused = trackFocus();
       const [opener, other] = ['opener', 'other'].map(id => Object.assign(page.body.appendChild(page.doc.createElement('button')), { id }));
       opener.focus();
 
@@ -205,10 +174,10 @@ describe('ds-sidebar', () => {
     });
 
     it('hides on Escape while the focus is in it; the key press goes no further', async () => {
-      const page = await newSpecPage({ components: [DSSidebar], html: '<div id="page"><ds-sidebar><a href="#a">First</a></ds-sidebar></div>' });
-      const { getFocused } = trackFocus(page);
+      const page = await renderPage('<div id="page"><ds-sidebar><a href="#a">First</a></ds-sidebar></div>');
+      const getFocused = trackFocus();
       const sidebar = page.body.querySelector('ds-sidebar');
-      const outer = jest.fn();
+      const outer = vi.fn();
       page.body.querySelector('#page').addEventListener('keydown', outer);
       const opener = page.body.appendChild(page.doc.createElement('button'));
       opener.focus();
@@ -227,8 +196,8 @@ describe('ds-sidebar', () => {
     });
 
     it('does not take the focus when rendered shown', async () => {
-      const page = await newSpecPage({ components: [DSSidebar], html: '<div></div>' });
-      const { spy } = trackFocus(page);
+      const page = await renderPage('<div></div>');
+      const { spy } = trackFocus();
       page.body.innerHTML = '<ds-sidebar is-shown><a href="#a">First</a></ds-sidebar>';
       await page.waitForChanges();
 

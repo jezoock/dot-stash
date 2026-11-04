@@ -1,7 +1,9 @@
-import { newSpecPage } from '@stencil/core/testing';
-import { DSGrid } from '../grid/grid';
-import { DSGridItem } from '../grid/grid-item/grid-item';
-import { DSRsp } from './responsive';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock, type MockInstance } from 'vitest';
+import '../grid/grid';
+import '../grid/grid-item/grid-item';
+import type { DSRsp } from './responsive';
+import './responsive';
+import { componentClass, fakeMatchMedia, mockTokens, renderPage } from '../../../test/helpers';
 
 /** The breakpoint custom properties of the compiled themes, on :root. */
 const THEME_TOKENS: Record<string, string> = {
@@ -21,81 +23,23 @@ const NO_THEME: Record<string, string> = {};
 /** The media queries of the boundaries of the theme breakpoints, which ds-rsp watches. */
 const THEME_QUERIES = ['(min-width: 576px)', '(min-width: 768px)', '(min-width: 992px)', '(min-width: 1200px)', '(min-width: 1400px)', '(min-width: 1600px)'];
 
-/** A media query list of the fake matchMedia: its query, its change listeners, and its state when it last notified them. */
-interface FakeMediaQueryList {
-  media: string;
-  readonly matches: boolean;
-  listeners: Set<(event: { matches: boolean; media: string }) => void>;
-  notified: boolean;
-  addEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
-  removeEventListener: (type: string, listener: (event: { matches: boolean; media: string }) => void) => void;
-}
-
-/**
- * The spec tests have no viewport: a matchMedia that evaluates the width queries of utils/responsive (`(min-width: …px)`,
- * `(width < …px)`, `all`, joined by `and`) at a width, and that dispatches `change`, as a browser does, on each list whose
- * state changes when the width does (every list is up to date when the first listener runs).
- */
-const fakeMatchMedia = (initialWidth = 1000) => {
-  let width = initialWidth;
-  const lists: FakeMediaQueryList[] = [];
-  const evaluate = (query: string): boolean =>
-    query.split(' and ').every(part => {
-      const min = /^\(min-width: ([\d.]+)px\)$/.exec(part);
-      const max = /^\(width < ([\d.]+)px\)$/.exec(part);
-      if (min) return width >= Number(min[1]);
-      if (max) return width < Number(max[1]);
-      if (part === 'all') return true;
-      throw new Error(`unexpected media query: ${query}`);
-    });
-
-  window.matchMedia = jest.fn((query: string) => {
-    const list: FakeMediaQueryList = {
-      media: query,
-      get matches() {
-        return evaluate(query);
-      },
-      listeners: new Set(),
-      notified: evaluate(query),
-      addEventListener: (type, listener) => type === 'change' && list.listeners.add(listener),
-      removeEventListener: (type, listener) => type === 'change' && list.listeners.delete(listener),
-    };
-    lists.push(list);
-    return list as unknown as MediaQueryList;
-  });
-
-  return {
-    /** The media queries that have a change listener. */
-    watched: () => lists.filter(list => list.listeners.size).map(list => list.media),
-    resize(newWidth: number) {
-      width = newWidth;
-      lists.forEach(list => {
-        if (list.matches !== list.notified) {
-          list.notified = list.matches;
-          list.listeners.forEach(listener => listener({ matches: list.matches, media: list.media }));
-        }
-      });
-    },
-  };
-};
-
 describe('ds-rsp', () => {
   /** The custom properties the stubbed getComputedStyle returns: the mock DOM computes no style. */
   let themeTokens: Record<string, string>;
-  let warnSpy: jest.SpyInstance;
+  let warnSpy: MockInstance;
   let media: ReturnType<typeof fakeMatchMedia>;
 
-  const stubTheme = () => jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({ getPropertyValue: (name: string) => themeTokens[name] ?? '' }) as CSSStyleDeclaration);
+  const stubTheme = () => mockTokens(() => themeTokens);
 
   /** Resizes the viewport: the media queries that change dispatch their change event, at once. */
   const resizeTo = (width: number) => media.resize(width);
 
-  /** newSpecPage resets the window: the spies and the fake matchMedia are installed once the page exists, then the content is rendered. */
-  const render = async (html: string, components: unknown[] = []) => {
-    const page = await newSpecPage({ components: [DSRsp, ...components], html: '' });
+  /** The page is reset first, then the spies and the fake matchMedia are installed, then the content is rendered. */
+  const render = async (html: string) => {
+    const page = await renderPage('');
 
     stubTheme();
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     media = fakeMatchMedia(1000);
 
     await page.setContent(html);
@@ -107,9 +51,7 @@ describe('ds-rsp', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
-    delete global.MutationObserver;
-    delete window.MutationObserver;
+    vi.restoreAllMocks();
   });
 
   it('sets the data-rsp params of the current breakpoint, or of the nearest smaller one', async () => {
@@ -135,7 +77,7 @@ describe('ds-rsp', () => {
   it('watches one media query per boundary of the breakpoints, and applies a change at once, only when the breakpoint changes', async () => {
     const page = await render(`<ds-rsp></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"sm": {"width": 3}, "lg": {"width": 5}}'></div>`);
     const item = page.body.querySelector('#item');
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     item.addEventListener('breakpointChange', onChange);
 
     expect(media.watched()).toEqual(THEME_QUERIES);
@@ -170,7 +112,7 @@ describe('ds-rsp', () => {
     [1200, 'lg'],
     [1599.9, 'xl'],
     [1600, 'xxl'],
-  ])('at %p px, the breakpoint is %p (the media queries of the minimums, at a fractional width too)', async (width, label) => {
+  ])('at %j px, the breakpoint is %j (the media queries of the minimums, at a fractional width too)', async (width, label) => {
     const page = await render(`<ds-rsp></ds-rsp>`);
 
     resizeTo(width);
@@ -228,7 +170,7 @@ describe('ds-rsp', () => {
     themeTokens = NO_THEME;
     const page = await render(`<div id="item" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
     const item = page.body.querySelector('#item');
-    const onBreakpointChange = jest.fn();
+    const onBreakpointChange = vi.fn();
     item.addEventListener('breakpointChange', onBreakpointChange);
 
     page.body.appendChild(page.doc.createElement('ds-rsp'));
@@ -294,7 +236,7 @@ describe('ds-rsp', () => {
   });
 
   it('emits breakpointChange when it starts, with the breakpoints', async () => {
-    const page = await newSpecPage({ components: [DSRsp], html: '' });
+    const page = await renderPage('');
     stubTheme();
     media = fakeMatchMedia(1000);
     const details = [];
@@ -306,8 +248,8 @@ describe('ds-rsp', () => {
   });
 
   it('a subscriber that contains ds-rsp handles each change once', async () => {
-    const applyParams = jest.spyOn(DSRsp.prototype, 'applyParams');
-    const page = await render(`<ds-grid id="grid" cols="2" data-rsp='{"lg": {"cols": 4}}'><ds-grid-item></ds-grid-item><ds-rsp></ds-rsp></ds-grid>`, [DSGrid, DSGridItem]);
+    const applyParams = vi.spyOn(componentClass<DSRsp>('ds-rsp').prototype, 'applyParams');
+    const page = await render(`<ds-grid id="grid" cols="2" data-rsp='{"lg": {"cols": 4}}'><ds-grid-item></ds-grid-item><ds-rsp></ds-rsp></ds-grid>`);
     const grid = page.body.querySelector('ds-grid');
     const callsOnGrid = () => applyParams.mock.calls.filter(([element]) => element === grid).length;
     applyParams.mockClear();
@@ -327,7 +269,6 @@ describe('ds-rsp', () => {
   it('changes the props of ds-grid and ds-grid-item per breakpoint: their custom properties follow, at once', async () => {
     const page = await render(
       `<ds-rsp></ds-rsp><ds-grid cols="2" h-gap="10px" data-use-rsp data-rsp='{"md": {"cols": 4, "hGap": "20px"}, "xl": {"cols": 6}}'><ds-grid-item width="1" data-use-rsp data-rsp='{"md": {"width": 2}}'></ds-grid-item></ds-grid>`,
-      [DSGrid, DSGridItem],
     );
     const grid = page.body.querySelector<HTMLElement>('.ds-grid');
     const item = page.body.querySelector<HTMLElement>('ds-grid-item');
@@ -346,7 +287,7 @@ describe('ds-rsp', () => {
   });
 
   it('reads the initial value of a camelCase property from the property, not from a lowercase attribute', async () => {
-    const page = await render(`<ds-rsp></ds-rsp><ds-grid h-gap="10px" data-use-rsp data-rsp='{"lg": {"hGap": "30px"}}'></ds-grid>`, [DSGrid]);
+    const page = await render(`<ds-rsp></ds-rsp><ds-grid h-gap="10px" data-use-rsp data-rsp='{"lg": {"hGap": "30px"}}'></ds-grid>`);
     const grid = page.body.querySelector('ds-grid');
 
     expect(JSON.parse(grid.getAttribute('data-rsp'))).toEqual({ xxs: { hGap: '10px' }, lg: { hGap: '30px' } });
@@ -386,17 +327,17 @@ describe('ds-rsp', () => {
   });
 
   it('subscribes the matching elements inserted in the document later, at once', async () => {
-    const observers: { callback: MutationCallback; observe: jest.Mock; disconnect: jest.Mock }[] = [];
+    const observers: { callback: MutationCallback; observe: Mock; disconnect: Mock }[] = [];
     class FakeMutationObserver {
-      observe = jest.fn();
-      disconnect = jest.fn();
+      observe = vi.fn();
+      disconnect = vi.fn();
       constructor(public callback: MutationCallback) {
         observers.push(this);
       }
     }
-    const page = await newSpecPage({ components: [DSRsp], html: '' });
+    const page = await renderPage('');
     stubTheme();
-    global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
+    vi.stubGlobal('MutationObserver', FakeMutationObserver);
     media = fakeMatchMedia(1000);
     await page.setContent(`<ds-rsp subscriber-selector=".rsp"></ds-rsp>`);
     const [observer] = observers;
@@ -501,7 +442,7 @@ describe('ds-rsp', () => {
       // Removed from the document, it no longer listens.
       page.root.remove();
       await page.waitForChanges();
-      const refresh = jest.spyOn(DSRsp.prototype, 'update');
+      const refresh = vi.spyOn(componentClass<DSRsp>('ds-rsp').prototype, 'update');
       load(stylesheet);
       expect(refresh).not.toHaveBeenCalled();
     });
@@ -509,7 +450,7 @@ describe('ds-rsp', () => {
     it('sets the params again without any event when nothing changed', async () => {
       const page = await render(`<ds-rsp></ds-rsp><div id="item" width="1" data-use-rsp data-rsp='{"sm": {"width": 3}}'></div>`);
       const item = page.body.querySelector('#item');
-      const onItemChange = jest.fn();
+      const onItemChange = vi.fn();
       item.addEventListener('breakpointChange', onItemChange);
       const events = recordEvents(page);
       item['width'] = 99;

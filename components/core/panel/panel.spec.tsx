@@ -1,43 +1,15 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSPanel } from './panel';
+import './panel';
 import { TRANSITION_END_MARGIN } from '../../utils/transition';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-// The spec tests have no CSS engine: the computed transition of the content is given here.
-const mockTransition = (transitionDuration: string, transitionDelay = '0s') =>
-  jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay } as CSSStyleDeclaration);
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    focus.active = this;
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
-
-const key = (target: EventTarget, type: 'keydown' | 'keyup', name: string, options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent(type, { key: name, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { dispatchKey, mockTransition, renderPage, trackFocus, wait } from '../../../test/helpers';
 
 describe('ds-panel', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const render = async (type: 'tab' | 'collapsible', title = '<span slot="title">Title</span>', attributes = '', transitionDuration?: string) => {
-    const page = await newSpecPage({ components: [DSPanel], html: `<ds-panel type="${type}" index="0" ${attributes}>${title}<p>Content</p></ds-panel>` });
-    // newSpecPage resets the window: its getComputedStyle is mocked once the page exists.
+    const page = await renderPage(`<ds-panel type="${type}" index="0" ${attributes}>${title}<p>Content</p></ds-panel>`);
     if (transitionDuration) {
       mockTransition(transitionDuration);
     }
@@ -136,7 +108,7 @@ describe('ds-panel', () => {
   });
 
   it('a tabpanel with a focusable element is not focusable itself', async () => {
-    const page = await newSpecPage({ components: [DSPanel], html: '<ds-panel type="tab" expanded><span slot="title">Title</span><a href="/a">Link</a></ds-panel>' });
+    const page = await renderPage('<ds-panel type="tab" expanded><span slot="title">Title</span><a href="/a">Link</a></ds-panel>');
 
     await page.root.setTab(true);
     await page.waitForChanges();
@@ -165,20 +137,20 @@ describe('ds-panel', () => {
   it('Enter (keydown) and Space (keyup) toggle a collapsible panel, without scrolling or repeating', async () => {
     const { page, control } = await render('collapsible');
 
-    const enter = key(control, 'keydown', 'Enter');
+    const enter = dispatchKey(control, 'keydown', 'Enter');
     await page.waitForChanges();
     expect(enter.defaultPrevented).toBe(true);
     expect(page.root.expanded).toBe(true);
 
-    key(control, 'keydown', 'Enter', { repeat: true });
+    dispatchKey(control, 'keydown', 'Enter', { repeat: true });
     await page.waitForChanges();
     expect(page.root.expanded).toBe(true);
 
-    const space = key(control, 'keydown', ' ');
+    const space = dispatchKey(control, 'keydown', ' ');
     expect(space.defaultPrevented).toBe(true);
     await page.waitForChanges();
     expect(page.root.expanded).toBe(true);
-    key(control, 'keyup', ' ');
+    dispatchKey(control, 'keyup', ' ');
     await page.waitForChanges();
     expect(page.root.expanded).toBe(false);
   });
@@ -186,16 +158,16 @@ describe('ds-panel', () => {
   it('ignores the keys with a modifier, and those of the elements in the title', async () => {
     const { page, control } = await render('collapsible', '<span slot="title">Title <a href="/more">more</a></span>');
 
-    expect(key(control, 'keydown', 'Enter', { ctrlKey: true }).defaultPrevented).toBe(false);
-    expect(key(control.querySelector('a'), 'keydown', 'Enter').defaultPrevented).toBe(false);
+    expect(dispatchKey(control, 'keydown', 'Enter', { ctrlKey: true }).defaultPrevented).toBe(false);
+    expect(dispatchKey(control.querySelector('a'), 'keydown', 'Enter').defaultPrevented).toBe(false);
     await page.waitForChanges();
 
     expect(page.root.expanded).toBe(false);
   });
 
   it('moves the focus from its content to its button when it collapses', async () => {
-    const page = await newSpecPage({ components: [DSPanel], html: '<ds-panel type="collapsible" expanded><span slot="title">Title</span><a href="/a">Link</a></ds-panel>' });
-    const getFocused = trackFocus(page);
+    const page = await renderPage('<ds-panel type="collapsible" expanded><span slot="title">Title</span><a href="/a">Link</a></ds-panel>');
+    const getFocused = trackFocus();
 
     page.root.querySelector('a').focus();
     await page.root.hide();

@@ -1,40 +1,14 @@
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSModal } from './modal';
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets, dispatching `focusout` and `focusin` as a browser does.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    const previous = focus.active;
-    if (previous === this) return;
-    focus.active = this;
-    previous?.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: this }));
-    this.dispatchEvent(new FocusEvent('focusin', { bubbles: true, relatedTarget: previous }));
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => focus.active ?? page.body });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
-
-const keydown = (target: EventTarget, key: string, options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import './modal';
+import { keydown, renderPage, trackFocus } from '../../../test/helpers';
 
 describe('ds-modal', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const render = async (html = '<ds-modal><p>Content</p></ds-modal>') => {
-    const page = await newSpecPage({ components: [DSModal], html });
-    const onOpen = jest.fn();
-    const onClose = jest.fn();
+    const page = await renderPage(html);
+    const onOpen = vi.fn();
+    const onClose = vi.fn();
     page.root.addEventListener('modalOpen', onOpen);
     page.root.addEventListener('modalClose', onClose);
     return { page, onOpen, onClose };
@@ -123,7 +97,7 @@ describe('ds-modal', () => {
   });
 
   it('keeps the body class until the last shown modal is hidden', async () => {
-    const page = await newSpecPage({ components: [DSModal], html: '<ds-modal id="a"></ds-modal><ds-modal id="b"></ds-modal>' });
+    const page = await renderPage('<ds-modal id="a"></ds-modal><ds-modal id="b"></ds-modal>');
     const [a, b] = Array.from(page.body.querySelectorAll('ds-modal'));
 
     a.shown = true;
@@ -140,7 +114,7 @@ describe('ds-modal', () => {
   });
 
   it('releases the body when it is removed while shown, but not while another modal is shown', async () => {
-    const page = await newSpecPage({ components: [DSModal], html: '<ds-modal id="a" shown></ds-modal><ds-modal id="b" shown></ds-modal><ds-modal id="c"></ds-modal>' });
+    const page = await renderPage('<ds-modal id="a" shown></ds-modal><ds-modal id="b" shown></ds-modal><ds-modal id="c"></ds-modal>');
     const [a, b, c] = Array.from(page.body.querySelectorAll('ds-modal'));
     expect(page.body).toHaveClass('ds-js--modal-open');
 
@@ -218,7 +192,7 @@ describe('ds-modal', () => {
 
     it('moves the focus to the first focusable element when shown, and gives it back to the opener when hidden', async () => {
       const { page } = await render('<ds-modal><h2 slot="title">Title</h2><p>Text</p><a href="#a">Link</a><button>OK</button></ds-modal>');
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
       const opener = page.doc.createElement('button');
       page.body.appendChild(opener);
       opener.focus();
@@ -235,22 +209,22 @@ describe('ds-modal', () => {
 
     it('focuses an autofocus element first, else the dialog itself when it has no focusable element', async () => {
       const { page } = await render('<ds-modal><a href="#a">Link</a><input autofocus /></ds-modal>');
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
 
       page.root.shown = true;
       await page.waitForChanges();
       expect(getFocused()).toBe(page.root.querySelector('input'));
 
       const { page: empty } = await render('<ds-modal label="Notice"><p>Nothing to focus</p><button disabled>Off</button></ds-modal>');
-      const getEmptyFocused = trackFocus(empty);
+      const getEmptyFocused = trackFocus();
       empty.root.shown = true;
       await empty.waitForChanges();
       expect(getEmptyFocused()).toBe(dialogOf(empty.root));
     });
 
     it('moves the focus into a modal rendered open', async () => {
-      const page = await newSpecPage({ components: [DSModal], html: '<div></div>' });
-      const getFocused = trackFocus(page);
+      const page = await renderPage('<div></div>');
+      const getFocused = trackFocus();
       page.body.innerHTML = '<ds-modal shown><button>OK</button></ds-modal>';
       await page.waitForChanges();
 
@@ -259,7 +233,7 @@ describe('ds-modal', () => {
 
     it('keeps Tab and Shift+Tab in the dialog', async () => {
       const { page } = await render('<ds-modal><button id="first">First</button><button id="hidden" hidden>Hidden</button><a href="#a" id="last">Last</a></ds-modal>');
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
       page.root.shown = true;
       await page.waitForChanges();
       const first = page.root.querySelector<HTMLElement>('#first');
@@ -284,7 +258,7 @@ describe('ds-modal', () => {
 
     it('keeps the focus on the dialog on Tab when it has no focusable element', async () => {
       const { page } = await render('<ds-modal label="Notice"><p>Text</p></ds-modal>');
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
       page.root.shown = true;
       await page.waitForChanges();
 
@@ -294,7 +268,7 @@ describe('ds-modal', () => {
 
     it('brings the focus back into the dialog when it moves out', async () => {
       const { page } = await render('<ds-modal><button>OK</button></ds-modal>');
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
       const outside = page.doc.createElement('button');
       page.body.appendChild(outside);
       page.root.shown = true;
@@ -305,13 +279,10 @@ describe('ds-modal', () => {
     });
 
     it('closes the modal on top only on Escape, and the event goes no further', async () => {
-      const page = await newSpecPage({
-        components: [DSModal],
-        html: '<div id="page"><ds-modal id="a"><button id="in-a">A</button></ds-modal></div><ds-modal id="b"><button id="in-b">B</button></ds-modal>',
-      });
-      const getFocused = trackFocus(page);
+      const page = await renderPage('<div id="page"><ds-modal id="a"><button id="in-a">A</button></ds-modal></div><ds-modal id="b"><button id="in-b">B</button></ds-modal>');
+      const getFocused = trackFocus();
       const [a, b] = Array.from(page.body.querySelectorAll('ds-modal'));
-      const outer = jest.fn();
+      const outer = vi.fn();
       page.body.querySelector('#page').addEventListener('keydown', outer);
 
       a.shown = true;
@@ -350,7 +321,7 @@ describe('ds-modal', () => {
     // motion, or durations of 0).
     it('shows and hides without waiting for a transition', async () => {
       const { page, onOpen, onClose } = await render('<ds-modal><button>OK</button></ds-modal>');
-      const getFocused = trackFocus(page);
+      const getFocused = trackFocus();
 
       page.root.shown = true;
       await page.waitForChanges();
