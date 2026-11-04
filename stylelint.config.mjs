@@ -43,15 +43,12 @@ export default {
     // - the font names of the font stacks keep their case (`Roboto`, `SFMono-Regular`), and SVG keywords their camel case
     //   (`currentColor`, `optimizeLegibility`);
     'value-keyword-case': ['lower', { camelCaseSvgKeywords: true, ignoreProperties: ['/^\\$font-family-/'] }],
-    // - the icon font name is quoted (`font-family: 'ds-icons'`), and has no generic family to fall back to: a glyph of
-    //   the icon font means nothing in another font;
-    'font-family-name-quotes': 'always-unless-keyword',
-    'font-family-no-missing-generic-family-keyword': [true, { ignoreFontFamilies: ['ds-icons'] }],
     // - the themes write both :not() forms, chained simple ones (`:not([disabled]):not([checked])`) and a selector list
     //   (`input:not([type='checkbox'], [type='radio'])`): either rule would rewrite some of them.
     'selector-not-notation': null,
 
-    // Safari still needs -webkit-user-select (user-select: none of the combo options).
-    'property-no-vendor-prefix': [true, { ignoreProperties: ['-webkit-user-select'] }],
+    // Safari still needs -webkit-user-select (user-select: none of the combo options), and Chrome before 120 the
+    // -webkit-mask-* properties (the icons, drawn as masks: scss/engine/tools/_icons.scss).
+    'property-no-vendor-prefix': [true, { ignoreProperties: ['-webkit-user-select', '/^-webkit-mask-/'] }],
   },
 };

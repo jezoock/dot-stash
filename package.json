@@ -36,6 +36,7 @@
   "scripts": {
     "build": "stencil build --docs",
     "build:css": "node scripts/build-css.mjs",
+    "build:icons": "node scripts/build-icons.mjs",
     "build:all": "npm run clean && npm run build:css && npm run build",
     "clean": "node -e \"for (const dir of ['dist', 'www', '.stencil', 'loader']) require('fs').rmSync(dir, { recursive: true, force: true })\"",
     "start": "node scripts/dev.mjs",

@@ -1,8 +1,7 @@
 @use './tokens' as *;
 
-// The icon font, the keyframes of the engine mixins and base element styles.
+// The keyframes of the engine mixins and base element styles.
 
-@include ds-icon-font-face();
 @include ds-keyframes();
 
 *,

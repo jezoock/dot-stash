@@ -5,6 +5,7 @@
 @use 'sass:string';
 @use '../variables' as *;
 @use './references' as *;
+@use './icons';
 
 // *** Design tokens as CSS custom properties *** //
 // ds-tokens() writes each token of the maps below once, on :root, as a custom property named from its group and keys:
@@ -19,6 +20,9 @@
 // With the breakpoints (--ds-bp-<label>: <min width>px), it writes the list of their labels, for JavaScript (see -bp-labels()):
 //
 //   --ds-bp-labels: xxs xs sm md lg xl xxl;
+//
+// With all the groups (no group given), it also writes the images of the icons the stylesheet drew before it
+// (--ds-icons-<name>: url(…), see tools/_icons.scss), and the licence notice of the icons after the :root rule.
 
 // The token groups: the custom property prefix (--ds-<group>-) and the map each one reads.
 $ds-token-groups: color, colorset, font-size, font-family, font-style, space, radius, focus, bp, gradient;
@@ -354,9 +358,12 @@ $-identifier-starts: 'abcdefghijklmnopqrstuvwxyz_';
 }
 
 // The custom properties of the tokens of `$groups` (all by default): (<name>: <CSS value>). With the bp group, the
-// --ds-bp-labels list follows the breakpoints (when there is at least one).
+// --ds-bp-labels list follows the breakpoints (when there is at least one). With all the groups, the images of the icons
+// drawn so far follow the tokens.
 @function ds-token-declarations($groups...) {
-  @if list.length($groups) == 0 {
+  $all: list.length($groups) == 0;
+
+  @if $all {
     $groups: $ds-token-groups;
   }
 
@@ -393,12 +400,17 @@ $-identifier-starts: 'abcdefghijklmnopqrstuvwxyz_';
     }
   }
 
+  @if $all {
+    $declarations: map.merge($declarations, icons.ds-icon-declarations());
+  }
+
   @return $declarations;
 }
 
 // Writes the tokens of `$groups` (all by default) as custom properties: at the root of a stylesheet, in a :root rule (a theme
-// includes it once, in its index.scss); in a rule, in that rule. In a scope, it redeclares the tokens that refer to others,
-// so that they follow a value given in that scope: `.promo { --ds-color-primary-base: #c00; @include ds-tokens(colorset); }`.
+// includes it once, at the end of its index.scss, after the skins: with all the groups, it writes the icons they drew, and
+// the licence notice of the icons after the rule); in a rule, in that rule. In a scope, it redeclares the tokens that refer
+// to others, so that they follow a value given in that scope: `.promo { --ds-color-primary-base: #c00; @include ds-tokens(colorset); }`.
 @mixin ds-tokens($groups...) {
   @if & {
     @each $name, $value in ds-token-declarations($groups...) {
@@ -407,6 +419,10 @@ $-identifier-starts: 'abcdefghijklmnopqrstuvwxyz_';
   } @else {
     :root {
       @include ds-tokens($groups...);
+    }
+
+    @if list.length($groups) == 0 {
+      @include icons.ds-icon-notice();
     }
   }
 }

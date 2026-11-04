@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as sass from 'sass';
+import { execFileSync } from 'child_process';
 import type { Logger } from 'sass';
 
 // Compiles the stylesheets with the Sass JS API (the sass package of scripts/build-css.mjs, see package-lock.json):
@@ -59,6 +60,14 @@ describe('Sass stylesheets', () => {
     }
   });
 
+  // The icons are SVG images drawn as masks (scss/engine/tools/_icons.scss): no stylesheet declares a font face or requests
+  // a font file (the files of the former ds-icons font were never in the repository: each of their requests failed).
+  it.each(entryPoints)('%s requests no font file', file => {
+    const { css } = sass.compile(path.join(root, file));
+
+    expect(css).not.toMatch(/@font-face|url\([^)]*\.(woff2?|ttf|otf|eot)\b|font-family:\s*["']?ds-icons/);
+  });
+
   // The configuration comes with the first load of the module: the theme then gets the configured tokens.
   it.each([
     ['the engine tokens (default theme)', "@use 'engine' with ($grid-md: 1000); @use 'themes/default';"],
@@ -107,7 +116,8 @@ describe('Sass stylesheets', () => {
     };
 
     // The expected tokens of a theme, from its maps, with loops that know their depth (not the walk of ds-tokens()):
-    // the name made of the lower-cased keys, and the Sass value (references resolved with ds-token-value()).
+    // the name made of the lower-cased keys, and the Sass value (references resolved with ds-token-value()). And the images
+    // of all the icons, --ds-icons-<name>: the theme writes those its skins draw.
     const expectedTokensSource = (theme: string): string => `
       @use 'sass:meta';
       @use 'sass:string';
@@ -139,8 +149,12 @@ describe('Sass stylesheets', () => {
         @each $name, $value in $radii { @include token(radius, $name); }
         @each $prop, $value in $focus { @include token(focus, $prop); }
         @each $label, $value in $breakpoints { #{name(bp, $label)}: #{$value}px; }
+        @each $name, $image in $icons { --ds-icons-#{$name}: #{$image}; }
       }
     `;
+
+    // The icons a stylesheet reads: the names of its var(--ds-icons-<name>).
+    const iconsReadBy = (css: string) => new Set([...css.matchAll(/var\(--ds-icons-([\w-]+)\)/g)].map(([, name]) => name));
 
     const themeCss: Record<string, string> = {};
     const tokensOf = (theme: string) => new Map(declarationsOf(themeCss[theme], ':root'));
@@ -152,7 +166,10 @@ describe('Sass stylesheets', () => {
     it.each(themes)('the %s theme writes one custom property per token, on :root, named from the maps and resolving to their values', theme => {
       expect(themeCss[theme].match(/(^|})\s*:root\{/g)).toHaveLength(1);
       const tokens = tokensOf(theme);
-      const expected = new Map(declarationsOf(compileString(expectedTokensSource(theme)), 'expected'));
+      const drawn = iconsReadBy(themeCss[theme]);
+      const expected = new Map(
+        declarationsOf(compileString(expectedTokensSource(theme)), 'expected').filter(([name]) => !name.startsWith('--ds-icons-') || drawn.has(name.slice('--ds-icons-'.length))),
+      );
 
       // And the labels of the breakpoints, by width.
       const breakpoints = [...expected].filter(([name]) => name.startsWith('--ds-bp-')).sort(([, a], [, b]) => parseFloat(a) - parseFloat(b));
@@ -376,21 +393,217 @@ describe('Sass stylesheets', () => {
       expect(() => sass.compileString(`@use 'engine' as *; a { @include break-p() { b: c; } }`, { loadPaths })).toThrow(/break-p\(\) needs a breakpoint/);
     });
 
-    it.each(themes)('the %s icons all have a glyph', theme => {
-      for (const direction of ['up', 'down', 'left', 'right']) expect(themeCss[theme]).toMatch(new RegExp(`\\.ds-icon\\.--dir-${direction}:{1,2}before\\{content:"[^"]+"`));
-      expect(() => sass.compileString(`@use 'engine' as *; a { @include ds-icon(dir-up); }`, { loadPaths })).toThrow(/Unknown icon: dir-up\. Icons: basket, ok, /);
-    });
+    // The icons (scss/engine/tools/_icons.scss): the SVG images of $icons, generated from scss/engine/icons/, drawn as masks
+    // in the color of the text; a stylesheet writes the images of the icons it draws as custom properties (--ds-icons-<name>).
+    describe('icons', () => {
+      // The names of the icons of the former icon font: each one is still an icon, in this order.
+      // prettier-ignore
+      const iconNames = [
+        'basket', 'ok', 'cancel', 'right-open', 'user', 'search', 'mail', 'heart-empty', 'heart', 'star', 'star-empty', 'minus', 'plus', 'home', 'link', 'lock', 'eye-off', 'eye',
+        'thumbs-up', 'thumbs-down', 'pencil', 'comment', 'chat', 'bell', 'attention', 'location', 'folder', 'folder-open', 'cog', 'right-big', 'right-hand', 'cw', 'arrows-cw',
+        'play', 'stop', 'pause', 'to-end', 'to-end-alt', 'fast-fw', 'eject', 'down-dir', 'phone', 'left-dir', 'down-open', 'cog-alt', 'block', 'down-big', 'up-dir', 'right-dir',
+        'left-open', 'up-open', 'left-big', 'up-big', 'ccw', 'calendar', 'login', 'logout', 'attach', 'credit-card', 'barcode', 'off', 'truck', 'videocam', 'picture', 'doc',
+        'certificate', 'docs', 'menu', 'comment-empty', 'chat-empty', 'download-cloud', 'upload-cloud', 'bell-alt', 'angle-double-left', 'angle-double-right', 'angle-double-up',
+        'angle-double-down', 'angle-left', 'angle-right', 'angle-up', 'angle-down', 'quote-left', 'quote-right', 'folder-empty', 'folder-open-empty', 'help', 'info',
+        'attention-alt', 'ticket', 'thumbs-up-alt', 'thumbs-down-alt', 'down', 'up', 'left', 'right', 'sliders', 'trash', 'user-o',
+      ];
 
-    // CSS alternative text: a decorative glyph (of the private use area of the icon font) is not read by assistive
-    // technologies, nor part of the name of its element; the glyph alone first, for the browsers without that syntax.
-    it('writes the alternative text of a glyph after the glyph alone, with $alt', () => {
-      const css = compileString(`@use 'engine' as *; a { @include ds-icon(angle-down, $alt: ''); } b { @include ds-icon-content(plus); }`);
+      // The types of ds-icon in the default theme (components/_icon.scss).
+      // prettier-ignore
+      const iconTypes = [
+        'cart', 'help', 'account', 'voucher', 'returns', 'location', 'search', 'orders', 'filter', 'arrow-up', 'arrow-left', 'arrow-right', 'arrow-down', 'up', 'down', 'left',
+        'right', 'dir-up', 'dir-down', 'dir-left', 'dir-right', 'show', 'hide', 'cancel', 'delete', 'plus', 'minus', 'refresh', 'loading',
+      ];
 
-      expect(css).toMatch(/a\{font-family:"ds-icons";content:"([^"]+)";content:"\1"\/""\}/);
-      expect(css).toMatch(/b\{content:"[^"]+"\}/);
-      for (const glyph of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after']) {
-        expect(themeCss.default).toMatch(new RegExp(`${glyph.replace(/[.]/g, '\\.')}\\{[^}]*content:"[^"]+";content:"[^"]+"/""`));
-      }
+      // The images of $icons: [[name, image]].
+      const imagesOf = (use = "@use 'engine' as *;") => declarationsOf(compileString(`${use} images { @each $name, $image in $icons { #{$name}: #{$image}; } }`), 'images');
+      // The SVG of a data URI image.
+      const svgOf = (image: string) => decodeURIComponent(image.match(/^url\("data:image\/svg\+xml,([^"]*)"\)$/)?.[1] ?? '');
+      // The declarations of all the rules of a selector, but those in an at-rule.
+      const allDeclarationsOf = (css: string, selector: string) => [...css.matchAll(ruleRegExp(selector, 'g'))].flatMap(([rule]) => declarationsOf(rule, selector));
+
+      it('the icon map is the one scripts/build-icons.mjs generates from scss/engine/icons/', () => {
+        const output = execFileSync(process.execPath, [path.join(root, 'scripts/build-icons.mjs'), '--check'], { cwd: root, encoding: 'utf8' });
+
+        expect(output).toContain('scss/engine/variables/_icons.scss is up to date.');
+      });
+
+      it('keeps every name of the former icon font, each one an SVG data URI with a viewBox, the filled variants filled', () => {
+        const images = new Map(imagesOf());
+
+        expect([...images.keys()]).toEqual(iconNames);
+        for (const [name, image] of images) {
+          const svg = svgOf(image);
+          expect([name, svg]).toEqual([
+            name,
+            expect.stringMatching(/^<svg xmlns='http:\/\/www\.w3\.org\/2000\/svg' viewBox='-?[\d.]+ -?[\d.]+ [\d.]+ [\d.]+'[^<>]*>(<[^<>]+>)+<\/svg>$/),
+          ]);
+          expect(svg.match(/^<svg[^>]*>/)[0]).not.toMatch(/\s(class|width|height)=/);
+          expect(svg).not.toMatch(/<(script|style|image|use|foreignObject|a|text)\b|\s(href|xlink:href|style|on\w+)=|<!|[\n\t"]/);
+        }
+        // A filled icon and its outline (the -empty, -alt, -o variants of the font) look different.
+        for (const [filled, outline] of [
+          ['heart', 'heart-empty'],
+          ['star', 'star-empty'],
+          ['user', 'user-o'],
+          ['comment', 'comment-empty'],
+          ['chat', 'chat-empty'],
+          ['folder', 'folder-empty'],
+          ['folder-open', 'folder-open-empty'],
+          ['bell-alt', 'bell'],
+          ['thumbs-up-alt', 'thumbs-up'],
+          ['thumbs-down-alt', 'thumbs-down'],
+        ]) {
+          expect([filled, svgOf(images.get(filled))]).toEqual([filled, expect.stringContaining("fill='currentColor'")]);
+          expect([outline, svgOf(images.get(outline))]).toEqual([outline, expect.not.stringContaining("fill='currentColor'")]);
+        }
+      });
+
+      it('draws an icon as a mask of 1em in the color of the text, read from its custom property, with the icons drawn on :root', () => {
+        const css = compileString(`
+          @use 'engine' as *;
+          a::before { @include ds-icon(heart); }
+          b::before { @include ds-icon(null, block); }
+          b.--open::before { @include ds-icon-content(minus); }
+          c::after { @include ds-icon(plus, null, $alt: 'Add'); }
+          d::before { @include ds-icon(heart); }
+          @include ds-icon-tokens();
+        `);
+        const box = [
+          ['flex-shrink', '0'],
+          ['width', '1em'],
+          ['height', '1em'],
+          ['vertical-align', '-0.125em'],
+          ['content', '""'],
+        ];
+        const mask = [
+          ['-webkit-mask-repeat', 'no-repeat'],
+          ['mask-repeat', 'no-repeat'],
+          ['-webkit-mask-position', 'center'],
+          ['mask-position', 'center'],
+          ['-webkit-mask-size', 'contain'],
+          ['mask-size', 'contain'],
+        ];
+        const image = (name: string) => [
+          ['-webkit-mask-image', `var(--ds-icons-${name})`],
+          ['mask-image', `var(--ds-icons-${name})`],
+          ['background-color', 'currentColor'],
+        ];
+        const forcedColors = [
+          ['forced-color-adjust', 'none'],
+          ['forced-color-adjust', 'preserve-parent-color'],
+        ];
+        const images = new Map(imagesOf());
+
+        expect(declarationsOf(css, 'a::before')).toEqual([['display', 'inline-block'], ...box, ...mask, ...image('heart'), ...forcedColors]);
+        expect(declarationsOf(css, 'b::before')).toEqual([['display', 'block'], ...box, ...mask, ...forcedColors]);
+        expect(declarationsOf(css, 'b.--open::before')).toEqual(image('minus'));
+        expect(declarationsOf(css, 'c::after')).toEqual([...box, ['content', '""/"Add"'], ...mask, ...image('plus'), ...forcedColors]);
+        // In forced colors, the color its parent is given: the system color of the text, of a link, of a button.
+        for (const selector of ['a::before', 'b::before', 'c::after']) expect(css).toContain(`@media(forced-colors: active){${selector}{color:inherit}}`);
+        // The images of the icons drawn, once each, in the order of their first use, then the licence notice of the icons.
+        expect(declarationsOf(css, ':root')).toEqual(['heart', 'minus', 'plus'].map(name => [`--ds-icons-${name}`, images.get(name)]));
+        expect(css).toMatch(/\}\/\*! Icons: Lucide 1\.60\.0 \(lucide-static, https:\/\/lucide\.dev\), ISC License, [^*]*MIT License[^*]*\*\/$/);
+      });
+
+      it('writes no icon property nor notice without an icon, and the icons with ds-tokens()', () => {
+        const none = compileString("@use 'engine' as *; @include ds-tokens(); @include ds-icon-tokens(); a { @include ds-icon-tokens(); b: c; }");
+        const drawn = compileString("@use 'engine' as *; a::before { @include ds-icon(plus); } .promo { @include ds-tokens(colorset); } @include ds-tokens();");
+
+        expect(none).not.toMatch(/--ds-icons-|\/\*!/);
+        expect(declarationsOf(drawn, '.promo').some(([name]) => name.startsWith('--ds-icons-'))).toBe(false);
+        expect(declarationsOf(drawn, ':root').filter(([name]) => name.startsWith('--ds-icons-'))).toEqual([['--ds-icons-plus', new Map(imagesOf()).get('plus')]]);
+        expect(drawn.match(/\/\*!/g)).toHaveLength(1);
+      });
+
+      it('adds and replaces icons with a configured $icons, and fails on an unknown icon or a name that is not in kebab-case', () => {
+        const use = "@use 'engine' as * with ($icons: (plus: url('plus.svg'), sparkle: url('data:image/svg+xml,%3Csvg%3E%3C/svg%3E')));";
+        const css = compileString(
+          `${use} a::before { @include ds-icon(plus); } b::before { @include ds-icon(sparkle); } c::before { @include ds-icon(heart); } @include ds-icon-tokens();`,
+        );
+        const tokens = new Map(declarationsOf(css, ':root'));
+
+        expect(imagesOf(use).map(([name]) => name)).toEqual([...iconNames, 'sparkle']);
+        expect(tokens.get('--ds-icons-plus')).toBe('url("plus.svg")');
+        expect(tokens.get('--ds-icons-sparkle')).toBe('url("data:image/svg+xml,%3Csvg%3E%3C/svg%3E")');
+        expect(tokens.get('--ds-icons-heart')).toBe(new Map(imagesOf()).get('heart'));
+        expect(() => sass.compileString(`@use 'engine' as *; a { @include ds-icon(dir-up); }`, { loadPaths })).toThrow(/Unknown icon: dir-up\. Icons: basket, ok, /);
+        expect(() => sass.compileString(`@use 'engine' as *; a { @include ds-icon-content(nope); }`, { loadPaths })).toThrow(/Unknown icon: nope\./);
+        expect(() => sass.compileString(`@use 'engine' as * with ($icons: ('Big Star': url(x.svg))); a { @include ds-icon('Big Star'); }`, { loadPaths })).toThrow(
+          /The icon name Big Star is not in kebab-case/,
+        );
+        expect(() => sass.compileString(`@use 'engine' as *; @include ds-icon-font-face();`, { loadPaths })).toThrow(/Undefined mixin/);
+      });
+
+      it.each(themes)('the %s theme writes the image of each icon it draws once, then their licence notice', theme => {
+        const tokens = tokensOf(theme);
+        const drawn = iconsReadBy(themeCss[theme]);
+
+        expect(drawn.size).toBeGreaterThan(20);
+        expect([...tokens.keys()].filter(name => name.startsWith('--ds-icons-')).sort()).toEqual([...drawn].map(name => `--ds-icons-${name}`).sort());
+        expect(themeCss[theme].match(/\/\*![\s\S]*?\*\//g)).toEqual([expect.stringMatching(/^\/\*! Icons: Lucide 1\.60\.0 .*ISC License.*MIT License.* \*\/$/)]);
+        expect(themeCss[theme]).toMatch(/\}\/\*! Icons: [^*]*\*\/$/);
+      });
+
+      it('gives each type of ds-icon an image of the default theme', () => {
+        const tokens = tokensOf('default');
+
+        for (const type of iconTypes) {
+          const declarations = allDeclarationsOf(themeCss.default, `.ds-icon.--${type}::before`);
+          const name = declarations.find(([property]) => property === 'mask-image')?.[1].match(/^var\(--ds-icons-([\w-]+)\)$/)?.[1];
+          expect([type, declarations.slice(0, 3)]).toEqual([
+            type,
+            [
+              ['-webkit-mask-image', `var(--ds-icons-${name})`],
+              ['mask-image', `var(--ds-icons-${name})`],
+              ['background-color', 'currentColor'],
+            ],
+          ]);
+          expect([type, tokens.has(`--ds-icons-${name}`)]).toEqual([type, true]);
+        }
+        expect([...themeCss.default.matchAll(/\.ds-icon\.--([\w-]+)::before\{-webkit-mask-image:/g)].map(([, type]) => type)).toEqual(iconTypes);
+      });
+
+      // Forced colors: the browser replaces the colors of the page with the system colors, and the background of the box
+      // of an icon with the background of the page (the icon would not show): the boxes keep their background, in the color
+      // their parent is given.
+      it('the default theme keeps its icons visible in forced colors', () => {
+        const boxes = [...themeCss.default.matchAll(/(?<=^|\})([^{}@]+)\{([^{}]*-webkit-mask-repeat:no-repeat[^{}]*)\}/g)];
+
+        expect(boxes.length).toBeGreaterThanOrEqual(10);
+        for (const [, selector, body] of boxes) {
+          expect([selector, body]).toEqual([selector, expect.stringContaining('forced-color-adjust:none;forced-color-adjust:preserve-parent-color')]);
+          expect(themeCss.default).toContain(`@media(forced-colors: active){${selector}{color:inherit}}`);
+        }
+      });
+
+      // CSS alternative text: the box of an icon holds no text; `$alt: ''` says that a decorative icon is not read, nor part of
+      // the name of its element, after the empty content alone, for the browsers without that syntax.
+      it('writes the alternative text of an icon after its empty content, with $alt', () => {
+        const css = compileString(
+          `@use 'engine' as *; a { @include ds-icon(angle-down, $alt: ''); } b { @include ds-icon-content(plus); } c { @include ds-icon-content(null, 'Open'); }`,
+        );
+        const contents = (declarations: [string, string][]) => declarations.filter(([name]) => name === 'content');
+
+        expect(contents(declarationsOf(css, 'a'))).toEqual([
+          ['content', '""'],
+          ['content', '""/""'],
+        ]);
+        expect(contents(declarationsOf(css, 'b'))).toEqual([]);
+        expect(declarationsOf(css, 'c')).toEqual([
+          ['content', '""'],
+          ['content', '""/"Open"'],
+        ]);
+        for (const icon of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after']) {
+          expect([icon, contents(allDeclarationsOf(themeCss.default, icon))]).toEqual([
+            icon,
+            [
+              ['content', '""'],
+              ['content', '""/""'],
+            ],
+          ]);
+        }
+      });
     });
 
     it('leaves the declaration out for an optional color that does not exist', () => {
