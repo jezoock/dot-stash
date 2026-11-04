@@ -56,7 +56,7 @@ The `<ds-toggle>` element is the control (there is no native input in it). It fo
 <label for="newsletter">Subscribe to the newsletter</label>
 <ds-toggle id="newsletter" type="checkbox" name="newsletter" value="yes"></ds-toggle>
 
-<ds-toggle type="icon" label="Favorite"><ds-icon type="heart" aria-hidden="true"></ds-icon></ds-toggle>
+<ds-toggle type="icon" label="Show the password"><ds-icon type="show" aria-hidden="true"></ds-icon></ds-toggle>
 ```
 
 ## Forms

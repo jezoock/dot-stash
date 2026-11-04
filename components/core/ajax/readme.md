@@ -6,7 +6,7 @@
 - **Attributes** (reflected): `on`, `target`, `suffix`. While it loads, the target has `aria-busy="true"` (see [Accessibility](#accessibility)).
 - **Content**: the link (`a`) whose URL is loaded, a child of `<ds-ajax>` (no slot: the component renders no element of its own). After a failed load, an error message follows it: `p.ds-ajax__error`, with the `ds-message --error` classes of the theme.
 - **Structure** (`ajax.scss`): while it loads, an overlay (`::before`) covers the `ds-ajax` element and takes the pointer, and a loading indicator (`::after`) is in its center, above the overlay. The overlay covers the component even when the content goes to another `target`.
-- **Look** (default theme, `components/_ajax.scss`): a translucent white veil and a spinning `arrows-cw` glyph of the icon font (not read by screen readers), from the custom properties below, set on `ds-ajax`. The error message is a `.ds-message.--error` (`components/_message.scss`). A loaded content that takes the focus (see below) has the focus indicator of the theme.
+- **Look** (default theme, `components/_ajax.scss`): a translucent white veil and a spinning `arrows-cw` icon (an SVG image drawn in the spinner color, a square of 1em of the spinner size, not read by screen readers), from the custom properties below, set on `ds-ajax`. The error message is a `.ds-message.--error` (`components/_message.scss`). A loaded content that takes the focus (see below) has the focus indicator of the theme.
 
 Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
 
@@ -68,11 +68,11 @@ Version: 1.0
 
 ## CSS Custom Properties
 
-| Name                           | Description                                                       |
-| ------------------------------ | ----------------------------------------------------------------- |
-| `--ds-ajax-overlay-background` | Background of the overlay that covers the content while it loads. |
-| `--ds-ajax-spinner-color`      | Color of the loading indicator.                                   |
-| `--ds-ajax-spinner-size`       | Size of the loading indicator (its font size).                    |
+| Name                           | Description                                                                 |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `--ds-ajax-overlay-background` | Background of the overlay that covers the content while it loads.           |
+| `--ds-ajax-spinner-color`      | Color of the loading indicator.                                             |
+| `--ds-ajax-spinner-size`       | Size of the loading indicator (its font size: the icon is a square of 1em). |
 
 
 ----------------------------------------------

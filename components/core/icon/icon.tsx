@@ -1,9 +1,9 @@
 import { Component, Element, h, Host, Prop } from '@stencil/core';
 
 /**
- * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
- * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
- * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+ * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+ * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+ * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
  */
 @Component({
   tag: 'ds-icon',
@@ -12,6 +12,7 @@ import { Component, Element, h, Host, Prop } from '@stencil/core';
 export class DSIcon {
   @Element() host: HTMLElement;
 
+  /** The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme). */
   @Prop() type: string;
   /** The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative. */
   @Prop() label: string;

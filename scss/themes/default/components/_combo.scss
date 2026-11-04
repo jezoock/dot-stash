@@ -29,8 +29,8 @@ ds-combo {
     cursor: pointer;
 
     &::after {
-      @include ds-icon(angle-down);
       transition: transform 0.2s ease;
+      @include ds-icon(angle-down);
     }
   }
 

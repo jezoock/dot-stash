@@ -1,6 +1,6 @@
 @use '../tokens' as *;
 
-// The types of ds-icon (`type` → `--<type>` class) and their glyph in $icons.
+// The types of ds-icon (`type` → `--<type>` class) and their icon in $icons.
 $-icon-types: (
   cart: basket,
   help: help,
@@ -39,6 +39,8 @@ ds-icon {
   --ds-icon-color: currentColor;
 }
 
+// The icon is the ::before of the element, a block of 1em: the element is a box of the size of the icon, vertically
+// centered on the text. A type that is not in the map above draws nothing (an empty box).
 .ds-icon {
   display: inline-block;
   font-size: var(--ds-icon-size);
@@ -47,14 +49,12 @@ ds-icon {
   vertical-align: middle;
 
   &::before {
-    @include ds-icon(null, inline-block);
-    font-weight: normal;
-    font-style: normal;
+    @include ds-icon(null, block);
   }
 
-  @each $type, $glyph in $-icon-types {
+  @each $type, $icon in $-icon-types {
     &.--#{$type}::before {
-      @include ds-icon-content($glyph);
+      @include ds-icon-content($icon);
     }
   }
 

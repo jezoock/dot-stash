@@ -306,15 +306,18 @@ export namespace Components {
         "useContext": boolean;
     }
     /**
-     * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
-     * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
-     * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+     * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+     * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
      */
     interface DsIcon {
         /**
           * The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative.
          */
         "label": string;
+        /**
+          * The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme).
+         */
         "type": string;
     }
     /**
@@ -1222,9 +1225,9 @@ declare global {
         new (): HTMLDsHeadingElement;
     };
     /**
-     * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
-     * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
-     * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+     * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+     * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
      */
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
@@ -1915,15 +1918,18 @@ declare namespace LocalJSX {
         "useContext"?: boolean;
     }
     /**
-     * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
-     * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
-     * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+     * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+     * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
      */
     interface DsIcon {
         /**
           * The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative.
          */
         "label"?: string;
+        /**
+          * The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme).
+         */
         "type"?: string;
     }
     /**
@@ -2901,9 +2907,9 @@ declare module "@stencil/core" {
              */
             "ds-heading": LocalJSX.IntrinsicElements["ds-heading"] & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
             /**
-             * An icon: a glyph of the icon font of the theme (`type`). Decorative by default: hidden from assistive technologies
-             * (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label` / `aria-labelledby`
-             * of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+             * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+             * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+             * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
              */
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
             /**
