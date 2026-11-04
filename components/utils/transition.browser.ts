@@ -17,7 +17,8 @@ describe('waitForTransition() in a browser, with the default theme', () => {
   it('with less motion, reads the duration of the theme (0.01ms) and ends on the transitionend event, at once', async () => {
     await setReducedMotion(true);
     const { box, done } = await render();
-    const transitionEnd = new Promise<number>(resolve => box.addEventListener('transitionend', () => resolve(performance.now()), { once: true }));
+    // The time of the event: the listener of the wait, added first, is called before this one.
+    const transitionEnd = new Promise<number>(resolve => box.addEventListener('transitionend', event => resolve(event.timeStamp), { once: true }));
     const start = performance.now();
 
     const [end, eventTime] = await Promise.all([done, transitionEnd]);

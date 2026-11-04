@@ -22,7 +22,8 @@ describe('ds-select in a browser', () => {
     await userEvent.selectOptions(select, 'red');
 
     expect(formEntries(form)).toEqual([['color', 'red']]);
-    expect(label()).toBe('Red');
+    // The label follows at the next render of the component.
+    await expect.poll(label).toBe('Red');
     expect(changes).toEqual(['red']);
   });
 
