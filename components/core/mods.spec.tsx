@@ -1,71 +1,72 @@
+import { describe, expect, it } from 'vitest';
 import { h } from '@stencil/core';
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSBlock } from './block/block';
-import { DSCombo } from './combo/combo';
-import { DSGrid } from './grid/grid';
-import { DSHeading } from './heading/heading';
-import { DSNav } from './nav/nav';
-import { DSPanel } from './panel/panel';
-import { DSPanelGroup } from './panel-group/panel-group';
-import { DSSelect } from './select/select';
-import { DSSidebar } from './sidebar/sidebar';
-import { DSSlider } from './slider/slider';
-import { DSText } from './text/text';
-import { DSTitle } from './title/title';
-import { DSTitleBar } from './title-bar/title-bar';
-import { DSToaster } from './toaster/toaster';
-import { DSToggle } from './toggle/toggle';
-import { DSToggleGroup } from './toggle-group/toggle-group';
-import { DSTooltip } from './tooltip/tooltip';
-import { DSTrigger } from './trigger/trigger';
+import './block/block';
+import './combo/combo';
+import './grid/grid';
+import './heading/heading';
+import './nav/nav';
+import './panel/panel';
+import './panel-group/panel-group';
+import './select/select';
+import './sidebar/sidebar';
+import './slider/slider';
+import './text/text';
+import './title/title';
+import './title-bar/title-bar';
+import './toaster/toaster';
+import './toggle/toggle';
+import './toggle-group/toggle-group';
+import './tooltip/tooltip';
+import './trigger/trigger';
+import { renderPage, type SpecPage } from '../../test/helpers';
 
 /** Where the class list is rendered: on the host, or on the root element the component renders in it. */
 type ClassTarget = 'host' | 'root';
 
-// [tag, component, main class, class target, other props the component needs to render]
-const components: [string, unknown, string, ClassTarget, Record<string, string>?][] = [
-  ['ds-block', DSBlock, 'ds-block', 'host'],
-  ['ds-combo', DSCombo, 'ds-combo', 'root'],
-  ['ds-grid', DSGrid, 'ds-grid', 'root'],
-  ['ds-heading', DSHeading, 'ds-heading', 'host'],
-  ['ds-nav', DSNav, 'ds-nav', 'root'],
-  ['ds-panel', DSPanel, 'ds-panel', 'host'],
-  ['ds-panel-group', DSPanelGroup, 'ds-panel-group', 'host'],
-  ['ds-select', DSSelect, 'ds-select', 'host'],
-  ['ds-sidebar', DSSidebar, 'ds-sidebar', 'host'],
-  ['ds-slider', DSSlider, 'ds-slider', 'root'],
-  ['ds-text', DSText, 'ds-text', 'host'],
-  ['ds-title', DSTitle, 'ds-title', 'host'],
-  ['ds-title-bar', DSTitleBar, 'ds-title-bar', 'host'],
-  ['ds-toaster', DSToaster, 'ds-toaster', 'root'],
-  ['ds-toggle', DSToggle, 'ds-toggle', 'host'],
-  ['ds-toggle-group', DSToggleGroup, 'ds-toggle-group', 'host'],
-  ['ds-tooltip', DSTooltip, 'ds-tooltip', 'root'],
+// [tag, main class, class target, other props the component needs to render]: the components imported above.
+const components: [string, string, ClassTarget, Record<string, string>?][] = [
+  ['ds-block', 'ds-block', 'host'],
+  ['ds-combo', 'ds-combo', 'root'],
+  ['ds-grid', 'ds-grid', 'root'],
+  ['ds-heading', 'ds-heading', 'host'],
+  ['ds-nav', 'ds-nav', 'root'],
+  ['ds-panel', 'ds-panel', 'host'],
+  ['ds-panel-group', 'ds-panel-group', 'host'],
+  ['ds-select', 'ds-select', 'host'],
+  ['ds-sidebar', 'ds-sidebar', 'host'],
+  ['ds-slider', 'ds-slider', 'root'],
+  ['ds-text', 'ds-text', 'host'],
+  ['ds-title', 'ds-title', 'host'],
+  ['ds-title-bar', 'ds-title-bar', 'host'],
+  ['ds-toaster', 'ds-toaster', 'root'],
+  ['ds-toggle', 'ds-toggle', 'host'],
+  ['ds-toggle-group', 'ds-toggle-group', 'host'],
+  ['ds-tooltip', 'ds-tooltip', 'root'],
   // The main class of ds-trigger is `ds-<type>`: `control` by default.
-  ['ds-trigger', DSTrigger, 'ds-control', 'host'],
+  ['ds-trigger', 'ds-control', 'host'],
 ];
 
-describe.each(components)('%s mods', (tag, component, mainClass, classTarget, props = {}) => {
+describe.each(components)('%s mods', (tag, mainClass, classTarget, props = {}) => {
   const classElement = (page: SpecPage) => (classTarget === 'host' ? page.root : page.root.firstElementChild);
 
   it('renders the main class and a class per modifier of a comma-separated string, reflected to the attribute', async () => {
     const attributes = Object.entries(props)
       .map(([name, value]) => ` ${name}='${value}'`)
       .join('');
-    const page = await newSpecPage({ components: [component], html: `<${tag} mods="x, y"${attributes}></${tag}>` });
+    const page = await renderPage(`<${tag} mods="x, y"${attributes}></${tag}>`);
 
     expect(classElement(page)).toHaveClasses([mainClass, '--x', '--y']);
     expect(page.root.getAttribute('mods')).toBe('x, y');
   });
 
   it('renders a class per modifier of an array', async () => {
-    const page = await newSpecPage({ components: [component], template: () => h(tag, { ...props, mods: ['x', 'y'] }) });
+    const page = await renderPage(() => h(tag, { ...props, mods: ['x', 'y'] }));
 
     expect(classElement(page)).toHaveClasses([mainClass, '--x', '--y']);
   });
 
   it('updates the classes when the modifiers change after the load', async () => {
-    const page = await newSpecPage({ components: [component], template: () => h(tag, { ...props, mods: ['x', 'y'] }) });
+    const page = await renderPage(() => h(tag, { ...props, mods: ['x', 'y'] }));
 
     page.root.mods = 'z';
     await page.waitForChanges();
@@ -88,7 +89,7 @@ describe.each(components)('%s mods', (tag, component, mainClass, classTarget, pr
   });
 
   it('has no modifier and no mods attribute by default', async () => {
-    const page = await newSpecPage({ components: [component], template: () => h(tag, props) });
+    const page = await renderPage(() => h(tag, props));
 
     expect(page.root.mods).toEqual([]);
     expect(classElement(page)).toHaveClass(mainClass);

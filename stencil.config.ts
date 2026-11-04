@@ -23,7 +23,16 @@ export const config: Config = {
   },
   // While the unit tests move to Vitest (vitest.config.mts), Stencil's test runner skips the spec files already moved.
   testing: {
-    testPathIgnorePatterns: ['/node_modules/', '/.stencil/', '/dist/', '/www/', '/components/utils/', '/components/sass\\.spec\\.ts$'],
+    testPathIgnorePatterns: [
+      '/node_modules/',
+      '/.stencil/',
+      '/dist/',
+      '/www/',
+      '/components/utils/',
+      '/components/sass\\.spec\\.ts$',
+      '/components/core/mods\\.spec\\.tsx$',
+      '/components/core/(ajax|block|grid|heading|icon|select|title|toaster|tooltip|trigger)/',
+    ],
   },
   outputTargets: [
     {

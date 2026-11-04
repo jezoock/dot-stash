@@ -1,18 +1,14 @@
-import { newSpecPage } from '@stencil/core/testing';
-import { DSToaster } from './toaster';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import './toaster';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
 import { TRANSITION_END_MARGIN } from '../../utils/transition';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-// The spec tests have no CSS engine: the computed transition of the toaster is given here.
-const mockTransition = (transitionDuration: string, transitionDelay = '0s') =>
-  jest.spyOn(window, 'getComputedStyle').mockReturnValue({ transitionDuration, transitionDelay } as CSSStyleDeclaration);
+import { mockTransition, renderPage, wait } from '../../../test/helpers';
 
 describe('ds-toaster', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSToaster], html });
+    const page = await renderPage(html);
     const toaster = page.root.querySelector<HTMLDivElement>('.ds-toaster');
     return { page, toaster };
   };
@@ -77,7 +73,7 @@ describe('ds-toaster', () => {
     ['', ['--v-pos-top', '--h-pos-left']],
     [' position="bottom, right"', ['--v-pos-bottom', '--h-pos-right']],
     [' position="middle,center"', ['--v-pos-middle', '--h-pos-center']],
-  ])('<ds-toaster%s> has the %p position classes', async (attribute, classes) => {
+  ])('<ds-toaster%s> has the %j position classes', async (attribute, classes) => {
     const { toaster } = await render(`<ds-toaster${attribute}></ds-toaster>`);
 
     expect(toaster).toHaveClasses(classes);
@@ -203,7 +199,7 @@ describe('ds-toaster', () => {
       const { page } = await render('<ds-toaster messages="Saved" closing-delay="0"></ds-toaster>');
       let owner = Object.getPrototypeOf(page.body);
       while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-      const focus = jest.spyOn(owner, 'focus');
+      const focus = vi.spyOn(owner, 'focus');
 
       await page.root.displayToast();
       await page.waitForChanges();

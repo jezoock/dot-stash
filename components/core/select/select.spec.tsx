@@ -1,11 +1,12 @@
-import { newSpecPage } from '@stencil/core/testing';
-import { DSSelect } from './select';
+import { describe, expect, it, vi } from 'vitest';
+import './select';
+import { renderPage } from '../../../test/helpers';
 
 describe('ds-select', () => {
   const options = '<option value="red">Red</option><option value="blue" selected>Blue</option>';
 
   const render = async (attributes = '', html = options) => {
-    const page = await newSpecPage({ components: [DSSelect], html: `<ds-select ${attributes}>${html}</ds-select>` });
+    const page = await renderPage(`<ds-select ${attributes}>${html}</ds-select>`);
     const select = page.root.querySelector('select');
     const label = page.root.querySelector('.ds-select__label') as HTMLElement;
     return { page, select, label };
@@ -63,7 +64,7 @@ describe('ds-select', () => {
 
   it('shows the label of the option selected with the select, and emits valueChange', async () => {
     const { page, select, label } = await render();
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     page.root.addEventListener('valueChange', onChange);
 
     // The simulated DOM has no selectedOptions, nor option values: as a browser gives them.
@@ -80,7 +81,7 @@ describe('ds-select', () => {
 
   describe('form', () => {
     it('is not form-associated: its native select is the only form control, which submits the value once', async () => {
-      const page = await newSpecPage({ components: [DSSelect], html: `<form><ds-select name="color">${options}</ds-select></form>` });
+      const page = await renderPage(`<form><ds-select name="color">${options}</ds-select></form>`);
 
       expect((page.win.customElements.get('ds-select') as unknown as { formAssociated?: boolean }).formAssociated).toBeFalsy();
       expect(Array.from(page.body.querySelectorAll('select, [name]')).filter(element => element.tagName !== 'DS-SELECT')).toEqual([page.root.querySelector('select')]);
@@ -97,7 +98,7 @@ describe('ds-select', () => {
     });
 
     it('shows the option the native select selects again after a reset of its form', async () => {
-      const page = await newSpecPage({ components: [DSSelect], html: `<form><ds-select name="color">${options}</ds-select></form><form id="other"></form>` });
+      const page = await renderPage(`<form><ds-select name="color">${options}</ds-select></form><form id="other"></form>`);
       const select = page.root.querySelector('select');
       const label = page.root.querySelector('.ds-select__label');
       const [red, blue] = Array.from(select.querySelectorAll('option'));

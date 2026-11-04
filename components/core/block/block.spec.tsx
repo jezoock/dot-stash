@@ -1,7 +1,9 @@
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { newSpecPage } from '@stencil/core/testing';
-import { DSBlock } from './block';
+import type { DSBlock } from './block';
+import './block';
+import { componentClass, renderPage } from '../../../test/helpers';
 
 /** The classes of the host (sorted) and of its wrappers, as rendered. */
 const structure = (block: HTMLElement) => ({
@@ -11,7 +13,7 @@ const structure = (block: HTMLElement) => ({
 
 describe('ds-block', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it.each([
@@ -20,8 +22,8 @@ describe('ds-block', () => {
     ['<ds-block section></ds-block>', 'section'],
     ['<ds-block form></ds-block>', 'form'],
     ['<ds-block modal></ds-block>', 'modal'],
-  ])('%s has the %p context', async (html, context) => {
-    const page = await newSpecPage({ components: [DSBlock], html });
+  ])('%s has the %j context', async (html, context) => {
+    const page = await renderPage(html);
 
     expect(await page.root.getContext()).toBe(context);
     expect(page.root).toHaveClass(`ds-${context}`);
@@ -29,16 +31,13 @@ describe('ds-block', () => {
   });
 
   it('builds the class from name and type, with the modifiers', async () => {
-    const page = await newSpecPage({ components: [DSBlock], html: '<ds-block name="home" type="hero" mods="dark,wide"></ds-block>' });
+    const page = await renderPage('<ds-block name="home" type="hero" mods="dark,wide"></ds-block>');
 
     expect(page.root).toHaveClasses(['ds-home-hero', '--dark', '--wide']);
   });
 
   it('wraps its header and footer slots', async () => {
-    const page = await newSpecPage({
-      components: [DSBlock],
-      html: '<ds-block section name="home"><h2 slot="header">Title</h2><p>Text</p><footer slot="footer">End</footer></ds-block>',
-    });
+    const page = await renderPage('<ds-block section name="home"><h2 slot="header">Title</h2><p>Text</p><footer slot="footer">End</footer></ds-block>');
 
     expect(structure(page.root)).toEqual({ host: ['ds-home-section'], wrappers: ['ds-home-section__header', 'ds-home-section__body', 'ds-home-section__footer'] });
     expect(page.root.querySelector('.ds-home-section__header > h2').textContent).toBe('Title');
@@ -51,15 +50,16 @@ describe('ds-block', () => {
   // the promises, so an async step is simulated here by a getContext() that resolves after the first render.
   it('renders its classes and its header and footer wrappers in the first render', async () => {
     const renders: { host: unknown; wrappers: unknown[] }[] = [];
-    const render = DSBlock.prototype.render;
-    jest.spyOn(DSBlock.prototype, 'render').mockImplementation(function (this: DSBlock) {
+    const { prototype } = componentClass<DSBlock>('ds-block');
+    const render = prototype.render;
+    vi.spyOn(prototype, 'render').mockImplementation(function (this: DSBlock) {
       const vnode = render.call(this);
       renders.push({ host: vnode.$attrs$?.class, wrappers: (vnode.$children$ ?? []).map(child => child.$attrs$?.class) });
       return vnode;
     });
-    jest.spyOn(DSBlock.prototype, 'getContext').mockImplementation(() => new Promise(resolve => setTimeout(() => resolve('section'), 50)));
+    vi.spyOn(prototype, 'getContext').mockImplementation(() => new Promise(resolve => setTimeout(() => resolve('section'), 50)));
 
-    await newSpecPage({ components: [DSBlock], html: '<ds-block section name="home"><h2 slot="header">Title</h2><p>Text</p><footer slot="footer">End</footer></ds-block>' });
+    await renderPage('<ds-block section name="home"><h2 slot="header">Title</h2><p>Text</p><footer slot="footer">End</footer></ds-block>');
 
     expect(renders[0]).toEqual({
       host: 'ds-home-section',
@@ -68,7 +68,7 @@ describe('ds-block', () => {
   });
 
   it('follows the name, type and context when they change after the load', async () => {
-    const page = await newSpecPage({ components: [DSBlock], html: '<ds-block name="home" mods="dark"><p>Text</p></ds-block>' });
+    const page = await renderPage('<ds-block name="home" mods="dark"><p>Text</p></ds-block>');
 
     page.root.name = 'news';
     page.root.section = true;
@@ -82,10 +82,7 @@ describe('ds-block', () => {
   });
 
   it('only wraps its own header and footer, not those of a nested block', async () => {
-    const page = await newSpecPage({
-      components: [DSBlock],
-      html: '<ds-block name="outer"><ds-block name="inner"><h2 slot="header">Inner title</h2><p slot="footer">Inner end</p></ds-block></ds-block>',
-    });
+    const page = await renderPage('<ds-block name="outer"><ds-block name="inner"><h2 slot="header">Inner title</h2><p slot="footer">Inner end</p></ds-block></ds-block>');
     const inner = page.root.querySelector<HTMLElement>('[name="inner"]');
 
     expect(structure(page.root).wrappers).toEqual(['ds-outer-block__body']);
@@ -109,8 +106,8 @@ describe('ds-block', () => {
     ['<ds-block label="Not a section"></ds-block>', null, null],
     ['<ds-block form></ds-block>', null, null],
     ['<ds-block section role="contentinfo" label="Footer"></ds-block>', 'contentinfo', 'Footer'],
-  ])('%s has the role %p, named %p', async (html, role, label) => {
-    const page = await newSpecPage({ components: [DSBlock], html });
+  ])('%s has the role %j, named %j', async (html, role, label) => {
+    const page = await renderPage(html);
 
     expect(page.root.getAttribute('role')).toBe(role);
     expect(page.root.getAttribute('aria-label')).toBe(label);

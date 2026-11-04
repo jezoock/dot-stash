@@ -1,12 +1,11 @@
-import { newSpecPage } from '@stencil/core/testing';
-import { DSTooltip } from './tooltip';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import './tooltip';
 import { TOOLTIP_HIDE_DELAY } from './tooltip.constants';
-
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { renderPage, wait } from '../../../test/helpers';
 
 describe('ds-tooltip', () => {
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSTooltip], html });
+    const page = await renderPage(html);
     const box = page.root.querySelector<HTMLElement>('.ds-tooltip');
     const message = page.root.querySelector<HTMLElement>('[slot="message"]');
     const isShown = () => box.classList.contains('--is-shown');
@@ -44,10 +43,9 @@ describe('ds-tooltip', () => {
     });
 
     it('does not take the message or the content of a tooltip in its content', async () => {
-      const page = await newSpecPage({
-        components: [DSTooltip],
-        html: '<ds-tooltip id="outer"><ds-tooltip id="inner"><a href="#a">Inner</a><span slot="message">Inner message</span></ds-tooltip><span slot="message">Outer message</span></ds-tooltip>',
-      });
+      const page = await renderPage(
+        '<ds-tooltip id="outer"><ds-tooltip id="inner"><a href="#a">Inner</a><span slot="message">Inner message</span></ds-tooltip><span slot="message">Outer message</span></ds-tooltip>',
+      );
       const outer = page.body.querySelector('#outer');
       const inner = page.body.querySelector('#inner');
       const outerMessage = Array.from(outer.querySelectorAll('[slot="message"]')).find(message => message.textContent === 'Outer message');
@@ -90,7 +88,7 @@ describe('ds-tooltip', () => {
       const { page, box, isShown } = await render('<ds-tooltip><button>Help</button><span slot="message">Message</span></ds-tooltip>');
       const button = box.querySelector('button');
       // The simulated DOM has no capture phase: the document listener of the tooltip comes last but for the window's.
-      const outer = jest.fn();
+      const outer = vi.fn();
       page.win.addEventListener('keydown', outer);
 
       focus(button, 'focusin');

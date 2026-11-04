@@ -1,6 +1,8 @@
-import { newSpecPage } from '@stencil/core/testing';
-import { DSGrid } from './grid';
-import { DSGridItem } from './grid-item/grid-item';
+import { describe, expect, it } from 'vitest';
+import './grid';
+import type { DSGridItem } from './grid-item/grid-item';
+import './grid-item/grid-item';
+import { renderPage } from '../../../test/helpers';
 
 /** The custom properties the grid sets on its .ds-grid element (or an item on itself). */
 const customProperties = (element: HTMLElement, names: string[]) => Object.fromEntries(names.map(name => [name, element.style.getPropertyValue(name)]));
@@ -8,7 +10,7 @@ const GRID_PROPERTIES = ['--ds-grid-cols', '--ds-grid-h-gap', '--ds-grid-v-gap',
 
 describe('ds-grid', () => {
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSGrid, DSGridItem], html });
+    const page = await renderPage(html);
     await page.waitForChanges();
     const grid = (index = 0) => page.body.querySelectorAll<HTMLElement>('.ds-grid')[index];
     const items = () => Array.from(page.body.querySelectorAll<HTMLElement>('ds-grid-item'));
@@ -33,7 +35,7 @@ describe('ds-grid', () => {
     ['h-gap="10" v-gap=" 0 "', { '--ds-grid-h-gap': '10px', '--ds-grid-v-gap': '0px' }],
     ['cell-ratio="0.75"', { '--ds-grid-cell-ratio': '0.75' }],
     ['cell-ratio="0"', { '--ds-grid-cell-ratio': '' }],
-  ])('%s sets %p', async (attributes, expected) => {
+  ])('%s sets %j', async (attributes, expected) => {
     const { grid } = await render(`<ds-grid ${attributes}></ds-grid>`);
 
     expect(customProperties(grid(), Object.keys(expected))).toEqual(expected);
@@ -45,7 +47,7 @@ describe('ds-grid', () => {
     ['align="end" v-align="center"', ['--align-end', '--v-align-center']],
     ['cell-ratio="1"', ['--with-cell-ratio']],
     ['mods="cards,dark"', ['--cards', '--dark']],
-  ])('%s sets the classes %p', async (attributes, classes) => {
+  ])('%s sets the classes %j', async (attributes, classes) => {
     const { grid } = await render(`<ds-grid ${attributes}></ds-grid>`);
 
     expect(grid()).toHaveClasses(classes);
@@ -85,7 +87,7 @@ describe('ds-grid', () => {
 
 describe('ds-grid-item', () => {
   const render = async (html: string) => {
-    const page = await newSpecPage({ components: [DSGrid, DSGridItem], html });
+    const page = await renderPage(html);
     await page.waitForChanges();
     return { page, items: Array.from(page.body.querySelectorAll<HTMLElement & { width: number; setStyles: DSGridItem['setStyles'] }>('ds-grid-item')) };
   };

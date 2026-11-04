@@ -1,30 +1,14 @@
-import { newSpecPage, SpecPage } from '@stencil/core/testing';
-import { DSAjax } from './ajax';
-
-/**
- * The simulated DOM of the spec tests has no focus: `focus()` only dispatches a `focus` event. This gives the document an
- * `activeElement`, which `focus()` sets, and that a removed element loses.
- */
-const trackFocus = (page: SpecPage) => {
-  const focus: { active: HTMLElement | null } = { active: null };
-  let owner = Object.getPrototypeOf(page.body);
-  while (owner && !Object.prototype.hasOwnProperty.call(owner, 'focus')) owner = Object.getPrototypeOf(owner);
-
-  jest.spyOn(owner, 'focus').mockImplementation(function (this: HTMLElement) {
-    focus.active = this;
-  });
-  Object.defineProperty(page.doc, 'activeElement', { configurable: true, get: () => (focus.active?.isConnected ? focus.active : page.body) });
-
-  return () => page.doc.activeElement as HTMLElement;
-};
+import { afterEach, describe, expect, it, vi, type Mock, type MockInstance } from 'vitest';
+import './ajax';
+import { renderPage, trackFocus } from '../../../test/helpers';
 
 const PAGE = '<html><body><header>Site</header><div class="ds-ajax-content"><p>Loaded <a href="/next">next</a></p></div></body></html>';
 
 const flush = () => new Promise(resolve => setTimeout(resolve, 0));
 
 describe('ds-ajax', () => {
-  let fetchMock: jest.Mock;
-  let errorSpy: jest.SpyInstance;
+  let fetchMock: Mock;
+  let errorSpy: MockInstance;
 
   /** A text/html response: json() rejects, as for a real HTML body. */
   const htmlResponse = (html: string) => ({
@@ -33,14 +17,13 @@ describe('ds-ajax', () => {
     json: () => Promise.reject(new SyntaxError('Unexpected token < in JSON')),
   });
 
-  /** newSpecPage resets the window: fetch is mocked once the page exists, then the content is rendered. */
+  /** fetch is mocked once the page is reset, then the content is rendered. */
   const render = async (html: string, response = htmlResponse(PAGE)) => {
-    const page = await newSpecPage({ components: [DSAjax], html: '' });
+    const page = await renderPage('');
 
-    fetchMock = jest.fn(() => Promise.resolve(response));
-    global.fetch = fetchMock;
-    window.fetch = fetchMock;
-    errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    fetchMock = vi.fn(() => Promise.resolve(response));
+    vi.stubGlobal('fetch', fetchMock);
+    errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     await page.setContent(html);
     await flush();
@@ -57,7 +40,7 @@ describe('ds-ajax', () => {
   };
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it.each([
@@ -65,7 +48,7 @@ describe('ds-ajax', () => {
     ['/page', 'ajax=1', '/page?ajax=1'],
     ['/page?lang=fr', 'ajax=1', '/page?lang=fr&ajax=1'],
     ['/page?lang=fr', '', '/page?lang=fr'],
-  ])('requests %p with the suffix %p as %p', async (href, suffix, url) => {
+  ])('requests %j with the suffix %j as %j', async (href, suffix, url) => {
     await render(`<ds-ajax on="load" suffix="${suffix}"><a href="${href}">Load</a></ds-ajax>`);
 
     expect(fetchMock).toHaveBeenCalledWith(url);
@@ -111,12 +94,11 @@ describe('ds-ajax', () => {
   });
 
   it('renders the loading state of a load on load at once, without a Stencil warning', async () => {
-    const page = await newSpecPage({ components: [DSAjax], html: '' });
+    const page = await renderPage('');
     let respond: (value: unknown) => void;
-    fetchMock = jest.fn(() => new Promise(resolve => (respond = resolve)));
-    global.fetch = fetchMock;
-    window.fetch = fetchMock;
-    const warnSpy = jest.spyOn(console, 'warn');
+    fetchMock = vi.fn(() => new Promise(resolve => (respond = resolve)));
+    vi.stubGlobal('fetch', fetchMock);
+    const warnSpy = vi.spyOn(console, 'warn');
 
     await page.setContent('<ds-ajax on="load"><a href="/page">Load</a></ds-ajax>');
 
@@ -132,11 +114,10 @@ describe('ds-ajax', () => {
   });
 
   it('the target is aria-busy while it loads, then a polite live region after a click; a click while it loads does nothing', async () => {
-    const page = await newSpecPage({ components: [DSAjax], html: '' });
+    const page = await renderPage('');
     let respond: (value: unknown) => void;
-    fetchMock = jest.fn(() => new Promise(resolve => (respond = resolve)));
-    global.fetch = fetchMock;
-    window.fetch = fetchMock;
+    fetchMock = vi.fn(() => new Promise(resolve => (respond = resolve)));
+    vi.stubGlobal('fetch', fetchMock);
     await page.setContent('<div id="out"></div><div id="own" aria-live="assertive"></div><ds-ajax target="#out"><a href="/page">Load</a></ds-ajax>');
     const out = page.body.querySelector('#out');
 
@@ -166,8 +147,8 @@ describe('ds-ajax', () => {
 
   it('gives the focus of the replaced link to the loaded content, and emits ajaxLoaded', async () => {
     const page = await render('<ds-ajax><a href="/page">Load</a></ds-ajax>');
-    const getFocused = trackFocus(page);
-    const loaded = jest.fn();
+    const getFocused = trackFocus();
+    const loaded = vi.fn();
     page.root.addEventListener('ajaxLoaded', (event: CustomEvent) => loaded(event.detail));
 
     page.root.querySelector('a').focus();
@@ -180,7 +161,7 @@ describe('ds-ajax', () => {
 
   it('does not move the focus that is elsewhere', async () => {
     const page = await render('<button>Elsewhere</button><ds-ajax><a href="/page">Load</a></ds-ajax>');
-    const getFocused = trackFocus(page);
+    const getFocused = trackFocus();
 
     page.body.querySelector('button').focus();
     await click(page, page.body.querySelector('ds-ajax a'));
@@ -195,7 +176,7 @@ describe('ds-ajax', () => {
       text: () => Promise.resolve('Not found'),
       json: () => Promise.reject(),
     });
-    const errors = jest.fn();
+    const errors = vi.fn();
     page.root.addEventListener('ajaxError', (event: CustomEvent) => errors(event.detail.url));
 
     await click(page, page.root.querySelector('a'));

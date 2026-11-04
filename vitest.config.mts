@@ -14,7 +14,12 @@ export default defineVitestConfig({
         test: {
           name: 'unit',
           // The spec files moved from Stencil's test runner so far (stencil.config.ts, testing).
-          include: ['components/utils/**/*.spec.ts'],
+          // The spec files moved from Stencil's test runner so far (stencil.config.ts, testing).
+          include: [
+            'components/utils/**/*.spec.ts',
+            'components/core/mods.spec.tsx',
+            'components/core/{ajax,block,grid,heading,icon,select,title,toaster,tooltip,trigger}/*.spec.tsx',
+          ],
           environment: 'stencil',
           setupFiles: ['./test/setup/unit.ts'],
           // Before each test: the spies (vi.spyOn) get their original back, and the globals of vi.stubGlobal() too.

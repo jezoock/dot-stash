@@ -1,23 +1,13 @@
-import { newSpecPage } from '@stencil/core/testing';
-import { DSTrigger } from './trigger';
-
-const dispatchKey = (target: EventTarget, key: string, type = 'keydown', options: KeyboardEventInit = {}) => {
-  const event = new KeyboardEvent(type, { key, bubbles: true, cancelable: true, ...options });
-  target.dispatchEvent(event);
-  return event;
-};
+import { describe, expect, it, vi, type Mock } from 'vitest';
+import './trigger';
+import { keydown, keyup, renderPage } from '../../../test/helpers';
 
 describe('ds-trigger', () => {
-  afterEach(() => {
-    delete global.MutationObserver;
-    delete window.MutationObserver;
-  });
-
   const render = async (triggerAttributes: string, content = 'Go') => {
-    const page = await newSpecPage({ components: [DSTrigger], html: `<div id="slider"></div><ds-trigger ${triggerAttributes}>${content}</ds-trigger>` });
-    const target = page.body.querySelector('#slider') as HTMLElement & Record<string, jest.Mock>;
-    target.next = jest.fn();
-    target.goTo = jest.fn();
+    const page = await renderPage(`<div id="slider"></div><ds-trigger ${triggerAttributes}>${content}</ds-trigger>`);
+    const target = page.body.querySelector('#slider') as HTMLElement & Record<string, Mock>;
+    target.next = vi.fn();
+    target.goTo = vi.fn();
     const trigger = page.body.querySelector('ds-trigger');
     return { page, target, trigger };
   };
@@ -81,11 +71,11 @@ describe('ds-trigger', () => {
 
     it('Enter clicks it (the action and the click listeners run), once per key press', async () => {
       const { target, trigger } = await render('target="#slider" action="next"');
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       trigger.addEventListener('click', onClick);
 
-      expect(dispatchKey(trigger, 'Enter').defaultPrevented).toBe(true);
-      dispatchKey(trigger, 'Enter', 'keydown', { repeat: true });
+      expect(keydown(trigger, 'Enter').defaultPrevented).toBe(true);
+      keydown(trigger, 'Enter', { repeat: true });
 
       expect(target.next).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
@@ -94,21 +84,21 @@ describe('ds-trigger', () => {
     it('Space clicks it on keyup, after a keydown on it, without scrolling the page', async () => {
       const { target, trigger } = await render('target="#slider" action="next"');
 
-      expect(dispatchKey(trigger, ' ').defaultPrevented).toBe(true);
+      expect(keydown(trigger, ' ').defaultPrevented).toBe(true);
       expect(target.next).not.toHaveBeenCalled();
-      expect(dispatchKey(trigger, ' ', 'keyup').defaultPrevented).toBe(true);
+      expect(keyup(trigger, ' ').defaultPrevented).toBe(true);
       expect(target.next).toHaveBeenCalledTimes(1);
 
       // A keyup without a keydown on it (the focus came from another element): nothing.
-      dispatchKey(trigger, ' ', 'keyup');
+      keyup(trigger, ' ');
       expect(target.next).toHaveBeenCalledTimes(1);
     });
 
     it('ignores the keys with a modifier and the other keys', async () => {
       const { target, trigger } = await render('target="#slider" action="next"');
 
-      for (const modifier of ['altKey', 'ctrlKey', 'metaKey']) dispatchKey(trigger, 'Enter', 'keydown', { [modifier]: true });
-      expect(dispatchKey(trigger, 'a').defaultPrevented).toBe(false);
+      for (const modifier of ['altKey', 'ctrlKey', 'metaKey']) keydown(trigger, 'Enter', { [modifier]: true });
+      expect(keydown(trigger, 'a').defaultPrevented).toBe(false);
 
       expect(target.next).not.toHaveBeenCalled();
     });
@@ -117,9 +107,9 @@ describe('ds-trigger', () => {
       const { page, target, trigger } = await render('target="#slider" action="next" disabled');
 
       expect(aria(trigger)).toEqual(['button', null, 'true', null]);
-      expect(dispatchKey(trigger, 'Enter').defaultPrevented).toBe(false);
-      dispatchKey(trigger, ' ');
-      dispatchKey(trigger, ' ', 'keyup');
+      expect(keydown(trigger, 'Enter').defaultPrevented).toBe(false);
+      keydown(trigger, ' ');
+      keyup(trigger, ' ');
       expect(target.next).not.toHaveBeenCalled();
 
       trigger.disabled = false;
@@ -144,8 +134,8 @@ describe('ds-trigger', () => {
       const control = trigger.firstElementChild as HTMLElement;
 
       expect(aria(trigger)).toEqual([null, null, null, null]);
-      expect(dispatchKey(control, 'Enter').defaultPrevented).toBe(false);
-      expect(dispatchKey(trigger, 'Enter').defaultPrevented).toBe(false);
+      expect(keydown(control, 'Enter').defaultPrevented).toBe(false);
+      expect(keydown(trigger, 'Enter').defaultPrevented).toBe(false);
 
       trigger.disabled = false;
       control.click();
@@ -156,7 +146,7 @@ describe('ds-trigger', () => {
       const { trigger } = await render('target="#slider" action="next" on="mouseenter"');
 
       expect(aria(trigger)).toEqual([null, null, null, null]);
-      expect(dispatchKey(trigger, 'Enter').defaultPrevented).toBe(false);
+      expect(keydown(trigger, 'Enter').defaultPrevented).toBe(false);
     });
 
     it('keeps the role the element has: Space does not click a link', async () => {
@@ -164,24 +154,24 @@ describe('ds-trigger', () => {
       expect(aria(tab)).toEqual(['tab', '0', null, null]);
 
       const { target, trigger: link } = await render('type="link" target="#slider" action="next" role="link"');
-      expect(dispatchKey(link, ' ').defaultPrevented).toBe(false);
-      dispatchKey(link, ' ', 'keyup');
+      expect(keydown(link, ' ').defaultPrevented).toBe(false);
+      keyup(link, ' ');
       expect(target.next).not.toHaveBeenCalled();
-      dispatchKey(link, 'Enter');
+      keydown(link, 'Enter');
       expect(target.next).toHaveBeenCalledTimes(1);
     });
 
     it('gives up its role when a control is added to its content later (with MutationObserver, in browsers)', async () => {
-      const observers: { callback: () => void; observe: jest.Mock; disconnect: jest.Mock }[] = [];
+      const observers: { callback: () => void; observe: Mock; disconnect: Mock }[] = [];
       class FakeMutationObserver {
-        observe = jest.fn();
-        disconnect = jest.fn();
+        observe = vi.fn();
+        disconnect = vi.fn();
         constructor(public callback: () => void) {
           observers.push(this);
         }
       }
-      const page = await newSpecPage({ components: [DSTrigger], html: '' });
-      global.MutationObserver = window.MutationObserver = FakeMutationObserver as unknown as typeof MutationObserver;
+      const page = await renderPage('');
+      vi.stubGlobal('MutationObserver', FakeMutationObserver);
       await page.setContent('<ds-trigger>Menu</ds-trigger>');
       const trigger = page.body.querySelector('ds-trigger');
       const [observer] = observers;
