@@ -1,7 +1,8 @@
 /**
  * Form-associated components: the internal helpers of the components that take part in a native `<form>` through their
  * `ElementInternals` (`ds-toggle`, `ds-toggle-group`, `ds-combo`): their value, their validity and its message, their
- * `<label>` elements and their custom states.
+ * `<label>` elements and their custom states. And those of `ds-field`, which enhances a native control: its disabled
+ * state, the message of its validity, the ids of its descriptions.
  */
 
 /** The native control whose message a component gives for a required value left empty (`valueMissing`). */
@@ -152,4 +153,65 @@ export const getLabelIds = (labels: HTMLElement[], prefix: string): string | und
   });
 
   return ids.length ? ids.join(' ') : undefined;
+};
+
+/** Whether a native control is disabled: its own `disabled`, or a disabled `<fieldset>` around it (`:disabled`). */
+export const isDisabledControl = (control: Element | null | undefined): boolean => {
+  if (!control) {
+    return false;
+  }
+  try {
+    return control.matches(':disabled') || control.hasAttribute('disabled');
+  } catch {
+    // A DOM without the pseudo-class.
+    return control.hasAttribute('disabled');
+  }
+};
+
+/** The flags of a `ValidityState` but `customError`, in the order an error message is chosen for them. */
+export const VALIDITY_FLAGS = ['valueMissing', 'badInput', 'typeMismatch', 'patternMismatch', 'tooLong', 'tooShort', 'rangeUnderflow', 'rangeOverflow', 'stepMismatch'] as const;
+
+export type ValidityFlag = (typeof VALIDITY_FLAGS)[number];
+
+/**
+ * The error message of a control, `''` while it is valid: for a custom error (`setCustomValidity()`), the message its
+ * author gave (`validationMessage`); else the message of its first invalid flag in `messages`, else `fallback`, else the
+ * message of the browser (`validationMessage`, in its language).
+ */
+export const getErrorMessage = (
+  validity: Partial<ValidityState> | undefined,
+  validationMessage: string | undefined,
+  messages: Partial<Record<ValidityFlag, string>> = {},
+  fallback?: string,
+): string => {
+  if (!validity || validity.valid !== false) {
+    return '';
+  }
+  if (validity.customError && validationMessage) {
+    return validationMessage;
+  }
+  const flag = VALIDITY_FLAGS.find(name => validity[name]);
+  return (flag && messages[flag]) || fallback || validationMessage || '';
+};
+
+/**
+ * Updates the ids a component adds to an id reference attribute of an element (`aria-describedby`), and keeps those of the
+ * author, in their order: removes `previous` (the ids it added before), adds the ids of `next` that are not in the list.
+ * Writes the attribute only when its list changes (an empty list removes it). Returns the ids it added: the `previous`
+ * of the next update (an empty `next` removes them all).
+ */
+export const updateIdRefs = (element: Element, attribute: string, previous: string[], next: string[]): string[] => {
+  const current = (element.getAttribute(attribute) ?? '').split(/\s+/).filter(Boolean);
+  const own = current.filter(id => !previous.includes(id));
+  const added = next.filter((id, index) => id && !own.includes(id) && next.indexOf(id) === index);
+  const value = [...own, ...added].join(' ');
+
+  if (value !== current.join(' ')) {
+    if (value) {
+      element.setAttribute(attribute, value);
+    } else {
+      element.removeAttribute(attribute);
+    }
+  }
+  return added;
 };

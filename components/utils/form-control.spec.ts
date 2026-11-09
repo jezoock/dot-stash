@@ -4,16 +4,19 @@ import {
   DEFAULT_VALUE_MISSING_MESSAGES,
   getLabelIds,
   getLabels,
+  getErrorMessage,
   getLabelText,
   getValidationMessage,
   getValidity,
   getValueMissingMessage,
   getWillValidate,
+  isDisabledControl,
   isFormInternals,
   reportValidity,
   setCustomState,
   setFormValue,
   setValueMissing,
+  updateIdRefs,
 } from './form-control';
 
 /** The methods of a browser's ElementInternals that the helpers call, as mocks. */
@@ -151,5 +154,55 @@ describe('form-control', () => {
     const label = document.querySelector('label');
 
     expect(getLabelText(label, document.querySelector('ds-combo'))).toBe('Sizes (pick some)');
+  });
+
+  it('tells a disabled control: its own disabled attribute (the browser also gives a disabled fieldset around it)', () => {
+    document.body.innerHTML = '<input disabled><input>';
+    const [disabled, enabled] = Array.from(document.querySelectorAll('input'));
+
+    expect([isDisabledControl(disabled), isDisabledControl(enabled), isDisabledControl(null)]).toEqual([true, false, false]);
+  });
+
+  it('chooses the error message of a control: a custom error, the message of its flag, the fallback, the browser message', () => {
+    const messages = { valueMissing: 'Enter your email', typeMismatch: 'Enter an email address, like name@example.com' };
+
+    expect(getErrorMessage({ valid: true }, '', messages, 'Check this field')).toBe('');
+    expect(getErrorMessage(undefined, 'Please fill out this field.', messages)).toBe('');
+    expect(getErrorMessage({ valid: false, valueMissing: true }, 'Please fill out this field.', messages, 'Check this field')).toBe('Enter your email');
+    expect(getErrorMessage({ valid: false, typeMismatch: true }, 'Please include an @.', messages)).toBe('Enter an email address, like name@example.com');
+    // No message for the flag: the fallback, else the browser message.
+    expect(getErrorMessage({ valid: false, tooShort: true }, 'Please lengthen this text.', messages, 'Check this field')).toBe('Check this field');
+    expect(getErrorMessage({ valid: false, tooShort: true }, 'Please lengthen this text.', messages)).toBe('Please lengthen this text.');
+    // A custom error: the message its author gave, before the other flags.
+    expect(getErrorMessage({ valid: false, customError: true, valueMissing: true }, 'This username is taken', messages, 'Check this field')).toBe('This username is taken');
+    // The first flag in the order of VALIDITY_FLAGS.
+    expect(getErrorMessage({ valid: false, rangeOverflow: true, stepMismatch: true }, '', { stepMismatch: 'Step', rangeOverflow: 'Too high' })).toBe('Too high');
+  });
+
+  it('adds and removes its own ids in an id reference list, keeping the ids of the author and their order', () => {
+    document.body.innerHTML = '<input aria-describedby="author-1  author-2">';
+    const input = document.querySelector('input');
+
+    let own = updateIdRefs(input, 'aria-describedby', [], ['hint', 'error']);
+    expect([own, input.getAttribute('aria-describedby')]).toEqual([['hint', 'error'], 'author-1 author-2 hint error']);
+    // The author adds an id: it stays, before the ids of the component, which replaces its own.
+    input.setAttribute('aria-describedby', 'author-1 author-2 hint error author-3');
+    own = updateIdRefs(input, 'aria-describedby', own, ['hint']);
+    expect([own, input.getAttribute('aria-describedby')]).toEqual([['hint'], 'author-1 author-2 author-3 hint']);
+    // An id the author already references is not added twice, nor removed with those of the component.
+    own = updateIdRefs(input, 'aria-describedby', own, ['author-1', 'counter', 'counter']);
+    expect([own, input.getAttribute('aria-describedby')]).toEqual([['counter'], 'author-1 author-2 author-3 counter']);
+    own = updateIdRefs(input, 'aria-describedby', own, []);
+    expect([own, input.getAttribute('aria-describedby')]).toEqual([[], 'author-1 author-2 author-3']);
+
+    // Without ids of the author: the attribute goes with the last id of the component; an unchanged list is not written.
+    const other = document.createElement('input');
+    own = updateIdRefs(other, 'aria-describedby', [], ['hint']);
+    expect(other.getAttribute('aria-describedby')).toBe('hint');
+    other.setAttribute('aria-describedby', ' hint ');
+    updateIdRefs(other, 'aria-describedby', own, ['hint']);
+    expect(other.getAttribute('aria-describedby')).toBe(' hint ');
+    updateIdRefs(other, 'aria-describedby', own, []);
+    expect(other.hasAttribute('aria-describedby')).toBe(false);
   });
 });
