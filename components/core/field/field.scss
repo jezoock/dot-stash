@@ -1,0 +1,75 @@
+// The structure of ds-field: a grid that places the parts the field renders around the control the page wrote in it, which
+// the field never moves: the label on the first row; the box on the second (a prefix, the control, the password toggle, a
+// suffix); the hint, the error and the counter below. A row without its part has no height. The look (the box, the
+// borders, the colors, the spaces) is the theme's.
+
+.ds-field {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: [label] auto [box] auto [hint] auto [error] auto [counter] auto;
+  // A field taller than its rows (stretched by its parent) keeps its rows at their height, at the top.
+  align-content: start;
+
+  > label {
+    grid-row: label;
+    grid-column: 1 / -1;
+  }
+
+  > [slot='prefix'] {
+    grid-row: box;
+    grid-column: 1;
+  }
+
+  > :is(input, textarea, select, ds-select) {
+    grid-row: box;
+    grid-column: 2;
+    justify-self: stretch;
+    min-width: 0;
+  }
+
+  // The control or the toggle that has the focus: above its neighbours in the box, so that its focus indicator shows whole.
+  > :focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__toggle {
+    grid-row: box;
+    grid-column: 3;
+  }
+
+  > [slot='suffix'] {
+    grid-row: box;
+    grid-column: 4;
+  }
+
+  > [slot='hint'],
+  &__hint {
+    grid-row: hint;
+    grid-column: 1 / -1;
+  }
+
+  &__error {
+    grid-row: error;
+    grid-column: 1 / -1;
+  }
+
+  &__counter {
+    grid-row: counter;
+    grid-column: 1 / -1;
+  }
+
+  // The live region that tells screen readers the count, once the user stops typing: read, not shown.
+  &__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+}

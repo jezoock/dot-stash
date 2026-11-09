@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSBlockContext } from "./core/block/block.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
+import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
@@ -17,6 +18,7 @@ import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { DSBlockContext } from "./core/block/block.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
+export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
@@ -207,6 +209,53 @@ export namespace Components {
           * @readonly
          */
         "willValidate": boolean;
+    }
+    /**
+     * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+     * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+     * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+     * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+     * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+     * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+     * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+     * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+     */
+    interface DsField {
+        /**
+          * Shows the number of characters left under a control with a `maxlength` (`__counter`), which the control describes; screen readers are told the count once the user stops typing.
+         */
+        "counter": boolean;
+        /**
+          * The error message of the flags that have none in `messages`, instead of the message of the browser.
+         */
+        "errorMessage": string;
+        /**
+          * A hint under the control (`__hint`), which the control describes (`aria-describedby`). An element with `slot="hint"` replaces it.
+         */
+        "hint": string;
+        /**
+          * The label of the control: a `<label for>` rendered before it (the control gets an id if it has none), with the required mark of `labels` while the control is `required`. A `<label>` of the page in the field replaces it.
+         */
+        "label": string;
+        /**
+          * The texts of the field (JSON as an attribute), to translate them: `required`, `showPassword`, `counterRemaining`, `counterOver` (see the readme).
+          * @default {}
+         */
+        "labels": DSFieldLabels | string;
+        /**
+          * The error messages per validity flag of the control (JSON as an attribute), instead of the message of the browser: `{"valueMissing": "Enter your email address", "typeMismatch": "Enter an email address, like name@example.com"}`. The flags: `valueMissing`, `badInput`, `typeMismatch`, `patternMismatch`, `tooLong`, `tooShort`, `rangeUnderflow`, `rangeOverflow`, `stepMismatch`. A custom error of the page (`setCustomValidity()`) shows its own message.
+          * @default {}
+         */
+        "messages": DSFieldMessages | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Reads the control again and updates the field: after a change that no event or attribute tells, as a value set by a script (the counter) or a custom error set or cleared out of an event (`setCustomValidity()`).
+         */
+        "refresh": () => Promise<void>;
     }
     /**
      * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
@@ -1191,6 +1240,22 @@ declare global {
         new (): HTMLDsComboElement;
     };
     /**
+     * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+     * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+     * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+     * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+     * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+     * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+     * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+     * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+     */
+    interface HTMLDsFieldElement extends Components.DsField, HTMLStencilElement {
+    }
+    var HTMLDsFieldElement: {
+        prototype: HTMLDsFieldElement;
+        new (): HTMLDsFieldElement;
+    };
+    /**
      * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
      * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
      * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
@@ -1623,6 +1688,7 @@ declare global {
         "ds-ajax": HTMLDsAjaxElement;
         "ds-block": HTMLDsBlockElement;
         "ds-combo": HTMLDsComboElement;
+        "ds-field": HTMLDsFieldElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
@@ -1825,6 +1891,49 @@ declare namespace LocalJSX {
           * @readonly
          */
         "willValidate"?: boolean;
+    }
+    /**
+     * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+     * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+     * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+     * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+     * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+     * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+     * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+     * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+     */
+    interface DsField {
+        /**
+          * Shows the number of characters left under a control with a `maxlength` (`__counter`), which the control describes; screen readers are told the count once the user stops typing.
+         */
+        "counter"?: boolean;
+        /**
+          * The error message of the flags that have none in `messages`, instead of the message of the browser.
+         */
+        "errorMessage"?: string;
+        /**
+          * A hint under the control (`__hint`), which the control describes (`aria-describedby`). An element with `slot="hint"` replaces it.
+         */
+        "hint"?: string;
+        /**
+          * The label of the control: a `<label for>` rendered before it (the control gets an id if it has none), with the required mark of `labels` while the control is `required`. A `<label>` of the page in the field replaces it.
+         */
+        "label"?: string;
+        /**
+          * The texts of the field (JSON as an attribute), to translate them: `required`, `showPassword`, `counterRemaining`, `counterOver` (see the readme).
+          * @default {}
+         */
+        "labels"?: DSFieldLabels | string;
+        /**
+          * The error messages per validity flag of the control (JSON as an attribute), instead of the message of the browser: `{"valueMissing": "Enter your email address", "typeMismatch": "Enter an email address, like name@example.com"}`. The flags: `valueMissing`, `badInput`, `typeMismatch`, `patternMismatch`, `tooLong`, `tooShort`, `rangeUnderflow`, `rangeOverflow`, `stepMismatch`. A custom error of the page (`setCustomValidity()`) shows its own message.
+          * @default {}
+         */
+        "messages"?: DSFieldMessages | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
     }
     /**
      * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
@@ -2644,6 +2753,15 @@ declare namespace LocalJSX {
         "validationMessage": string;
         "willValidate": boolean;
     }
+    interface DsFieldAttributes {
+        "label": string;
+        "hint": string;
+        "messages": DSFieldMessages | string;
+        "errorMessage": string;
+        "counter": boolean;
+        "labels": DSFieldLabels | string;
+        "mods": string | string[];
+    }
     interface DsGridAttributes {
         "dataUseRsp": boolean;
         "mods": string | string[];
@@ -2825,6 +2943,7 @@ declare namespace LocalJSX {
         "ds-ajax": Omit<DsAjax, keyof DsAjaxAttributes> & { [K in keyof DsAjax & keyof DsAjaxAttributes]?: DsAjax[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `attr:${K}`]?: DsAjaxAttributes[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `prop:${K}`]?: DsAjax[K] };
         "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
         "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
+        "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
         "ds-grid": Omit<DsGrid, keyof DsGridAttributes> & { [K in keyof DsGrid & keyof DsGridAttributes]?: DsGrid[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `attr:${K}`]?: DsGridAttributes[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `prop:${K}`]?: DsGrid[K] };
         "ds-grid-item": Omit<DsGridItem, keyof DsGridItemAttributes> & { [K in keyof DsGridItem & keyof DsGridItemAttributes]?: DsGridItem[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `attr:${K}`]?: DsGridItemAttributes[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `prop:${K}`]?: DsGridItem[K] };
         "ds-heading": Omit<DsHeading, keyof DsHeadingAttributes> & { [K in keyof DsHeading & keyof DsHeadingAttributes]?: DsHeading[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `attr:${K}`]?: DsHeadingAttributes[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `prop:${K}`]?: DsHeading[K] };
@@ -2887,6 +3006,17 @@ declare module "@stencil/core" {
              * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
              */
             "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
+            /**
+             * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+             * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+             * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+             * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+             * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+             * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+             * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+             * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+             */
+            "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
             /**
              * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
              * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
