@@ -1,4 +1,5 @@
 import { commands } from 'vitest/browser';
+import type { AccessibleNode } from '../../vitest.config.mts';
 
 // The helpers of the browser tests (Chromium, with the build of the components and the theme: test/setup/browser.ts).
 
@@ -8,8 +9,17 @@ declare module 'vitest/browser' {
     emulateMedia: (options: { reducedMotion?: 'reduce' | 'no-preference' | null; forcedColors?: 'active' | 'none' | null }) => Promise<void>;
     /** Compiles SCSS with the Sass of the project, `scss/` on its load path (`@use 'engine' as *;`), in Node: the CSS. */
     compileScss: (source: string) => Promise<string>;
+    /** The node of an element in the accessibility tree of Chromium (CDP), `null` when it is not in the tree. */
+    accessibleNode: (selector: string) => Promise<AccessibleNode | null>;
   }
 }
+
+/**
+ * The node of the first element that matches a selector in the accessibility tree of Chromium, as assistive technologies
+ * get it: `role`, `name`, `description`, and `properties` (`invalid`, `required`, `disabled`, `pressed`…). `null` when the
+ * element is not in the tree.
+ */
+export const accessibleNode = (selector: string) => commands.accessibleNode(selector);
 
 /** The size of the page of the tests (vitest.config.mts), which each test gets back. */
 export const DEFAULT_VIEWPORT = { width: 1280, height: 800 };

@@ -14,6 +14,59 @@ const emulateMedia: BrowserCommand<[Parameters<import('playwright').Page['emulat
 const compileScss: BrowserCommand<[source: string]> = (_context, source) =>
   sass.compileString(source, { loadPaths: [fileURLToPath(new URL('./scss', import.meta.url))], style: 'expanded' }).css;
 
+/** A node of the accessibility tree of Chromium, as the browser tests read it (test/helpers/browser.ts: accessibleNode()). */
+export interface AccessibleNode {
+  role: string;
+  name: string;
+  description: string;
+  /** The states and properties of the node (`invalid`, `required`, `disabled`, `pressed`, `focusable`…): name → value. */
+  properties: Record<string, unknown>;
+}
+
+/** CDP nodes, as the commands below read them. */
+type CdpDomNode = { nodeId: number; frameId?: string; contentDocument?: CdpDomNode; children?: CdpDomNode[] };
+type CdpFrameTree = { frame: { id: string; url: string }; childFrames?: CdpFrameTree[] };
+type CdpAXValue = { value?: unknown };
+type CdpAXNode = { ignored: boolean; role?: CdpAXValue; name?: CdpAXValue; description?: CdpAXValue; properties?: { name: string; value: CdpAXValue }[] };
+
+/**
+ * The node of the first element of the page of the tests that matches a selector in the accessibility tree of Chromium
+ * (Chrome DevTools Protocol), as assistive technologies get it: its role, name, description and states. `null` when the
+ * element is not in the tree (hidden, or ignored).
+ */
+const accessibleNode: BrowserCommand<[selector: string]> = async ({ page, frame }, selector): Promise<AccessibleNode | null> => {
+  const session = await page.context().newCDPSession(page);
+  try {
+    const url = (await frame()).url();
+    const findFrame = (tree: CdpFrameTree): string | undefined => (tree.frame.url === url ? tree.frame.id : tree.childFrames?.map(findFrame).find(Boolean));
+    const frameId = findFrame(((await session.send('Page.getFrameTree')) as { frameTree: CdpFrameTree }).frameTree);
+    const { root } = (await session.send('DOM.getDocument', { depth: -1, pierce: true })) as { root: CdpDomNode };
+    const findDocument = (node: CdpDomNode): CdpDomNode | undefined =>
+      node.frameId === frameId && node.contentDocument ? node.contentDocument : [node.contentDocument, ...(node.children ?? [])].filter(Boolean).map(findDocument).find(Boolean);
+    const document = findDocument(root);
+    if (!frameId || !document) {
+      throw new Error('accessibleNode: the document of the tests was not found');
+    }
+    const { nodeId } = (await session.send('DOM.querySelector', { nodeId: document.nodeId, selector })) as { nodeId: number };
+    if (!nodeId) {
+      throw new Error(`accessibleNode: no element matches ${selector}`);
+    }
+    const { nodes } = (await session.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false })) as { nodes: CdpAXNode[] };
+    const [node] = nodes;
+    if (!node || node.ignored) {
+      return null;
+    }
+    return {
+      role: String(node.role?.value ?? ''),
+      name: String(node.name?.value ?? ''),
+      description: String(node.description?.value ?? ''),
+      properties: Object.fromEntries((node.properties ?? []).map(({ name, value }) => [name, value.value])),
+    };
+  } finally {
+    await session.detach();
+  }
+};
+
 export default defineVitestConfig({
   stencilConfig: './stencil.config.ts',
   test: {
@@ -49,7 +102,7 @@ export default defineVitestConfig({
             provider: playwright({ launchOptions: { executablePath: process.env.CHROMIUM_PATH || undefined }, actionTimeout: 5000 }),
             instances: [{ browser: 'chromium' }],
             viewport: { width: 1280, height: 800 },
-            commands: { emulateMedia, compileScss },
+            commands: { emulateMedia, compileScss, accessibleNode },
             // No screenshot files in the repository: the error and the DOM say what failed.
             screenshotFailures: false,
           },
