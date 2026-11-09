@@ -118,6 +118,40 @@ export namespace Components {
         "type": DSAlertType;
     }
     /**
+     * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+     * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+     * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+     * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+     * screen readers go on from the top too, then emits `backToTop`.
+     * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+     * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+     * per animation frame, removed when it leaves the document.
+     */
+    interface DsBackToTop {
+        /**
+          * The name of the link (its text, hidden on the screen): `Back to top` by default. Give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Scrolls to the top and moves the focus, as the link does.
+         */
+        "scrollToTop": () => Promise<void>;
+        /**
+          * The element that takes the focus after the scroll, a CSS selector (`#page-title`). Without it, or when it matches nothing: the `#top` element, else the main landmark, else the first heading, else the body. An element that cannot take the focus gets `tabindex="-1"` until it loses it. An id selector (`#page-title`) is also the `href` of the link.
+         */
+        "target": string;
+        /**
+          * How far the page is scrolled before the link shows: a number of px (`400`, `400px`) or of hundredths of the viewport height (`100vh`, the default: one screen; `50vh`). Another value is the default.
+          * @default '100vh'
+         */
+        "threshold": number | string;
+    }
+    /**
      * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
      * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
      * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
@@ -1258,6 +1292,10 @@ export interface DsAlertCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsAlertElement;
 }
+export interface DsBackToTopCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsBackToTopElement;
+}
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
@@ -1362,6 +1400,33 @@ declare global {
     var HTMLDsAlertElement: {
         prototype: HTMLDsAlertElement;
         new (): HTMLDsAlertElement;
+    };
+    interface HTMLDsBackToTopElementEventMap {
+        "backToTop": { target: HTMLElement };
+    }
+    /**
+     * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+     * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+     * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+     * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+     * screen readers go on from the top too, then emits `backToTop`.
+     * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+     * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+     * per animation frame, removed when it leaves the document.
+     */
+    interface HTMLDsBackToTopElement extends Components.DsBackToTop, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBackToTopElementEventMap>(type: K, listener: (this: HTMLDsBackToTopElement, ev: DsBackToTopCustomEvent<HTMLDsBackToTopElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBackToTopElementEventMap>(type: K, listener: (this: HTMLDsBackToTopElement, ev: DsBackToTopCustomEvent<HTMLDsBackToTopElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsBackToTopElement: {
+        prototype: HTMLDsBackToTopElement;
+        new (): HTMLDsBackToTopElement;
     };
     /**
      * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
@@ -1882,6 +1947,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "ds-ajax": HTMLDsAjaxElement;
         "ds-alert": HTMLDsAlertElement;
+        "ds-back-to-top": HTMLDsBackToTopElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-block": HTMLDsBlockElement;
         "ds-combo": HTMLDsComboElement;
@@ -2005,6 +2071,40 @@ declare namespace LocalJSX {
           * @default 'info'
          */
         "type"?: DSAlertType;
+    }
+    /**
+     * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+     * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+     * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+     * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+     * screen readers go on from the top too, then emits `backToTop`.
+     * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+     * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+     * per animation frame, removed when it leaves the document.
+     */
+    interface DsBackToTop {
+        /**
+          * The name of the link (its text, hidden on the screen): `Back to top` by default. Give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * Emitted once the link scrolled the page to the top and moved the focus (`detail.target`: the element focused).
+         */
+        "onBackToTop"?: (event: DsBackToTopCustomEvent<{ target: HTMLElement }>) => void;
+        /**
+          * The element that takes the focus after the scroll, a CSS selector (`#page-title`). Without it, or when it matches nothing: the `#top` element, else the main landmark, else the first heading, else the body. An element that cannot take the focus gets `tabindex="-1"` until it loses it. An id selector (`#page-title`) is also the `href` of the link.
+         */
+        "target"?: string;
+        /**
+          * How far the page is scrolled before the link shows: a number of px (`400`, `400px`) or of hundredths of the viewport height (`100vh`, the default: one screen; `50vh`). Another value is the default.
+          * @default '100vh'
+         */
+        "threshold"?: number | string;
     }
     /**
      * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
@@ -3062,6 +3162,12 @@ declare namespace LocalJSX {
         "labels": DSAlertLabels | string;
         "mods": string | string[];
     }
+    interface DsBackToTopAttributes {
+        "threshold": string;
+        "target": string;
+        "label": string;
+        "mods": string | string[];
+    }
     interface DsBadgeAttributes {
         "type": DSBadgeType;
         "count": string;
@@ -3297,6 +3403,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ds-ajax": Omit<DsAjax, keyof DsAjaxAttributes> & { [K in keyof DsAjax & keyof DsAjaxAttributes]?: DsAjax[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `attr:${K}`]?: DsAjaxAttributes[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `prop:${K}`]?: DsAjax[K] };
         "ds-alert": Omit<DsAlert, keyof DsAlertAttributes> & { [K in keyof DsAlert & keyof DsAlertAttributes]?: DsAlert[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `attr:${K}`]?: DsAlertAttributes[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `prop:${K}`]?: DsAlert[K] };
+        "ds-back-to-top": Omit<DsBackToTop, keyof DsBackToTopAttributes> & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes]?: DsBackToTop[K] } & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes as `attr:${K}`]?: DsBackToTopAttributes[K] } & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes as `prop:${K}`]?: DsBackToTop[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
         "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
@@ -3353,6 +3460,17 @@ declare module "@stencil/core" {
              * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
              */
             "ds-alert": LocalJSX.IntrinsicElements["ds-alert"] & JSXBase.HTMLAttributes<HTMLDsAlertElement>;
+            /**
+             * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+             * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+             * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+             * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+             * screen readers go on from the top too, then emits `backToTop`.
+             * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+             * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+             * per animation frame, removed when it leaves the document.
+             */
+            "ds-back-to-top": LocalJSX.IntrinsicElements["ds-back-to-top"] & JSXBase.HTMLAttributes<HTMLDsBackToTopElement>;
             /**
              * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
              * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its

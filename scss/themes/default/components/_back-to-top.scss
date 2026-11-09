@@ -1,0 +1,46 @@
+@use '../tokens' as *;
+
+// ds-back-to-top: a round button in the primary color with a white chevron up (the angle-up icon), with a shadow, 1rem from
+// the edges of a small screen, 2rem from md. The custom properties are documented in
+// components/core/back-to-top/readme.md; the position, the stack level and the fade are in the component stylesheet.
+
+ds-back-to-top {
+  --ds-back-to-top-offset: #{ds-spacing(4)};
+  --ds-back-to-top-z-index: 9;
+  --ds-back-to-top-transition-duration: 0.2s;
+  // 44 px: a target of 44 × 44 px at least (WCAG 2.5.5).
+  --ds-back-to-top-size: 2.75rem;
+  --ds-back-to-top-icon-size: 1.5rem;
+  --ds-back-to-top-background: #{ds-color(primary, base)};
+  --ds-back-to-top-hover-background: #{ds-color(primary, darker)};
+  --ds-back-to-top-color: #{ds-color(gray, white)};
+  --ds-back-to-top-radius: #{ds-radius(circle)};
+  --ds-back-to-top-shadow: 0 2px 6px #{ds-color(shadow, base)};
+
+  @include break-p(md) {
+    --ds-back-to-top-offset: #{ds-spacing(6)};
+  }
+}
+
+.ds-back-to-top__link {
+  width: var(--ds-back-to-top-size);
+  height: var(--ds-back-to-top-size);
+  // Transparent: in forced colors, the browser draws it in the color of the link, the outline of the button.
+  border: 1px solid transparent;
+  border-radius: var(--ds-back-to-top-radius);
+  background-color: var(--ds-back-to-top-background);
+  color: var(--ds-back-to-top-color);
+  font-size: var(--ds-back-to-top-icon-size);
+  text-decoration: none;
+  box-shadow: var(--ds-back-to-top-shadow);
+
+  &:hover {
+    background-color: var(--ds-back-to-top-hover-background);
+    color: var(--ds-back-to-top-color);
+  }
+
+  // The arrow: decorative (the link is named).
+  &::before {
+    @include ds-icon(angle-up, block, $alt: '');
+  }
+}
