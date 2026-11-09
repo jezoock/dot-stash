@@ -1,7 +1,22 @@
 // The structure of ds-field: a grid that places the parts the field renders around the control the page wrote in it, which
 // the field never moves: the label on the first row; the box on the second (a prefix, the control, the password toggle, a
 // suffix); the hint, the error and the counter below. A row without its part has no height. The look (the box, the
-// borders, the colors, the spaces) is the theme's.
+// borders, the colors, the spaces) is the theme's (components/_field.scss), from the custom properties below.
+
+/**
+ * @prop --ds-field-gap: Space between the label, the box, the hint, the error and the counter.
+ * @prop --ds-field-label-color: Color of the label.
+ * @prop --ds-field-required-color: Color of the required mark after the label.
+ * @prop --ds-field-hint-color: Color of the hint and of the counter.
+ * @prop --ds-field-background: Background of the control.
+ * @prop --ds-field-readonly-background: Background of a read-only control.
+ * @prop --ds-field-border-color: Border color of the control, of the prefix, of the suffix and of the password toggle (and of a ds-select in the field).
+ * @prop --ds-field-radius: Corner radius of the box (the control, with its prefix, suffix and password toggle).
+ * @prop --ds-field-padding: Padding of the control.
+ * @prop --ds-field-addon-background: Background of the prefix, of the suffix and of the password toggle.
+ * @prop --ds-field-addon-color: Color of the text and the icons of the prefix, of the suffix and of the password toggle.
+ * @prop --ds-field-invalid-color: Color of the error message and its icon, of the border of an invalid control, and of a counter over the limit.
+ */
 
 .ds-field {
   position: relative;

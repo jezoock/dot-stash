@@ -11,6 +11,7 @@
 // The .ds-button and .ds-link skins of ds-trigger: before the skins that add button variants (nav, slider).
 @use './components/trigger';
 @use './components/combo';
+@use './components/field';
 @use './components/form';
 @use './components/grid';
 @use './components/heading';

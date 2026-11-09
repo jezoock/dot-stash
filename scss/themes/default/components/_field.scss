@@ -1,0 +1,152 @@
+@use '../tokens' as *;
+
+// ds-field: the label, the box of the control (the control, a prefix, a suffix and the password toggle, joined), the hint,
+// the error message and the counter. The custom properties are documented in components/core/field/readme.md; the grid
+// that places the parts is in the component stylesheet. Only the controls in a field are styled here: the base styles of
+// the other inputs of the page do not change.
+
+// The controls of a field the box draws (a direct child; not a ds-select, which draws its own box).
+$-controls: 'input:not([type="checkbox"], [type="radio"]), textarea, select';
+
+ds-field {
+  --ds-field-gap: #{ds-spacing(1)};
+  --ds-field-label-color: #{ds-color(gray, darkest)};
+  --ds-field-required-color: #{ds-color(status, error)};
+  --ds-field-hint-color: #{ds-color(gray, dark)};
+  --ds-field-background: #{ds-color(gray, white)};
+  --ds-field-readonly-background: #{ds-color(gray, lighter)};
+  // gray dark: the border of a text box has a contrast of 3:1 at least with the page (WCAG 1.4.11).
+  --ds-field-border-color: #{ds-color(gray, dark)};
+  --ds-field-radius: #{ds-radius(sm)};
+  --ds-field-padding: #{ds-spacing(2) ds-spacing(3)};
+  --ds-field-addon-background: #{ds-color(gray, lighter)};
+  --ds-field-addon-color: #{ds-color(gray, darker)};
+  --ds-field-invalid-color: #{ds-color(status, error)};
+}
+
+// A ds-select in a field: the border of the other controls of the form.
+ds-field > ds-select {
+  --ds-select-border-color: var(--ds-field-border-color);
+}
+
+.ds-field {
+  > label {
+    margin-bottom: var(--ds-field-gap);
+    color: var(--ds-field-label-color);
+    font-weight: ds-font-weight(page, strong);
+  }
+
+  // The required mark: decorative (aria-hidden), the control is required for assistive technologies.
+  &__required {
+    margin-inline-start: 0.25em;
+    color: var(--ds-field-required-color);
+  }
+
+  > :is(#{$-controls}) {
+    margin: 0;
+    padding: var(--ds-field-padding);
+    border: 1px solid var(--ds-field-border-color);
+    border-radius: var(--ds-field-radius);
+    background-color: var(--ds-field-background);
+  }
+
+  // The prefix, the suffix and the password toggle: boxes joined to the control, on its row (logical sides: the row follows
+  // the direction of the text).
+  > [slot='prefix'],
+  > [slot='suffix'],
+  &__toggle {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0 ds-spacing(3);
+    border: 1px solid var(--ds-field-border-color);
+    background-color: var(--ds-field-addon-background);
+    color: var(--ds-field-addon-color);
+  }
+
+  > [slot='prefix'] {
+    border-inline-end: 0;
+    border-start-start-radius: var(--ds-field-radius);
+    border-end-start-radius: var(--ds-field-radius);
+  }
+
+  > [slot='suffix'],
+  &__toggle {
+    border-inline-start: 0;
+    border-start-end-radius: var(--ds-field-radius);
+    border-end-end-radius: var(--ds-field-radius);
+  }
+
+  &.--prefix > :is(#{$-controls}) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  &:is(.--suffix, .--password) > :is(#{$-controls}),
+  &.--suffix > .ds-field__toggle {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  // The password toggle: an eye while the password is hidden (press to show it), a crossed eye while it is shown.
+  &__toggle {
+    cursor: pointer;
+
+    &::before {
+      @include ds-icon(eye, $alt: '');
+    }
+
+    &[aria-pressed='true']::before {
+      @include ds-icon-content(eye-off);
+    }
+  }
+
+  > [slot='hint'],
+  &__hint,
+  &__error,
+  &__counter {
+    margin-top: var(--ds-field-gap);
+    font-size: ds-font-size(text, note);
+  }
+
+  > [slot='hint'],
+  &__hint,
+  &__counter {
+    color: var(--ds-field-hint-color);
+  }
+
+  // The error message: its icon (decorative, the text says it) and its text, in the error color.
+  &__error {
+    color: var(--ds-field-invalid-color);
+
+    &::before {
+      margin-inline-end: 0.25em;
+      @include ds-icon(attention-alt, $alt: '');
+    }
+  }
+
+  &__counter.--over {
+    color: var(--ds-field-invalid-color);
+  }
+
+  // Read-only: the control on a gray background.
+  &.--readonly > :is(#{$-controls}) {
+    background-color: var(--ds-field-readonly-background);
+  }
+
+  // Invalid (once the user should see it): the border of the control in the error color.
+  &.--invalid > :is(#{$-controls}) {
+    border-color: var(--ds-field-invalid-color);
+  }
+
+  // Disabled (the control's `disabled`, or a disabled fieldset around it): the box dimmed, as a disabled ds-select.
+  &.--disabled {
+    > :is(#{$-controls}),
+    > [slot='prefix'],
+    > [slot='suffix'],
+    .ds-field__toggle {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}

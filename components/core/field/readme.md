@@ -30,7 +30,20 @@ Write one control in a field, as a direct child (the layout of the theme places 
 - **Classes**: `ds-field` on `<ds-field>`; the kind of its control, `--input`, `--textarea`, `--select` or `--ds-select`; `--required` (the control is `required`), `--disabled` (its `disabled`, or a disabled `<fieldset>` around it), `--readonly`, `--invalid` (the error is shown, see [Forms](#forms)), `--password` (a password input) and `--password-shown`, `--prefix` and `--suffix` (the field holds one); `mods` → `--<mod>`. The focus in the field: `.ds-field:focus-within`. No custom state: the field is not form-associated, and the control has the native `:user-invalid` (`.ds-field:has(> :user-invalid)`), shown at the same time as `--invalid`.
 - **Elements**: the field renders, around the control it never moves, `__label` (a `<label>`, first) with `__required` (the required mark), `__toggle` (the password toggle, a `<button>` after the control), and, last, `__hint`, `__error`, `__counter` (`--over` over the limit) and `__status` (the live region of the counter, visually hidden by the component stylesheet). The page writes the control, and may write a `<label>`, an element with `slot="hint"`, `slot="prefix"` or `slot="suffix"`: the field and the theme style them by those attributes (`.ds-field > label`, `.ds-field > [slot='prefix']`), and the controls as the direct children of the field (`.ds-field > input`).
 - **Structure** (`field.scss`): a grid. The label on the first row; the box on the second, in four columns: the prefix, the control (which takes the width left), the password toggle, the suffix; then the hint, the error and the counter, each on its row. A row without its part has no height; a field stretched by its parent keeps its rows at the top. The control or the toggle that has the focus is above its neighbours, so that its focus indicator shows whole.
-- **Look**: the theme's: the component stylesheet only places the parts.
+- **Look** (default theme, `components/_field.scss`): the label in bold; the required mark in the error color; the control a box with a border (gray dark: a contrast of 3:1 with the page), a radius and a padding, on a gray background while read-only; the prefix, the suffix and the password toggle boxes joined to it, on a gray background (logical sides: the row follows the direction of the text); the password toggle shows an eye (an eye crossed out while the password shows), the icons `eye` and `eye-off` of the theme (the `show` and `hide` types of `ds-icon`); the hint and the counter in small gray text; the error in small text in the error color, after the `attention-alt` icon; an invalid control (`--invalid`) has its border in the error color, a counter over the limit is in the error color; a disabled field dims its box (`opacity: 0.5`, as a disabled `ds-select`). A `ds-select` in a field gets the border color of the field. Only the controls in a field are styled: the base styles of the other inputs of the page do not change. The theme has no transition for the field (nothing to do with less motion). In forced colors, the borders, the icons (in the color of their text: CanvasText, ButtonText) and the focus indicator show; the error is told by its text and its icon.
+
+Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
+
+```css
+ds-field {
+  --ds-field-radius: 0;
+  --ds-field-border-color: var(--ds-color-gray-darkest);
+}
+
+.compact ds-field {
+  --ds-field-padding: var(--ds-space-1) var(--ds-space-2);
+}
+```
 
 ## Accessibility
 
@@ -253,6 +266,24 @@ Type: `Promise<void>`
 | `"hint"`   | An element with `slot="hint"`: a hint with markup, instead of `hint`, described by the control.                                                                                          |
 | `"prefix"` | An element with `slot="prefix"`, before the control in its box: a unit, a currency or an icon. With a text, the control describes it; without, it is hidden from assistive technologies. |
 | `"suffix"` | An element with `slot="suffix"`, after the control in its box, as `prefix`.                                                                                                              |
+
+
+## CSS Custom Properties
+
+| Name                             | Description                                                                                                             |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `--ds-field-addon-background`    | Background of the prefix, of the suffix and of the password toggle.                                                     |
+| `--ds-field-addon-color`         | Color of the text and the icons of the prefix, of the suffix and of the password toggle.                                |
+| `--ds-field-background`          | Background of the control.                                                                                              |
+| `--ds-field-border-color`        | Border color of the control, of the prefix, of the suffix and of the password toggle (and of a ds-select in the field). |
+| `--ds-field-gap`                 | Space between the label, the box, the hint, the error and the counter.                                                  |
+| `--ds-field-hint-color`          | Color of the hint and of the counter.                                                                                   |
+| `--ds-field-invalid-color`       | Color of the error message and its icon, of the border of an invalid control, and of a counter over the limit.          |
+| `--ds-field-label-color`         | Color of the label.                                                                                                     |
+| `--ds-field-padding`             | Padding of the control.                                                                                                 |
+| `--ds-field-radius`              | Corner radius of the box (the control, with its prefix, suffix and password toggle).                                    |
+| `--ds-field-readonly-background` | Background of a read-only control.                                                                                      |
+| `--ds-field-required-color`      | Color of the required mark after the label.                                                                             |
 
 
 ----------------------------------------------
