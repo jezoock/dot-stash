@@ -1,0 +1,59 @@
+// The structure of ds-pagination: a row of its controls, in the direction of the text (right to left too): the first and
+// previous controls, the list of the pages or, compact, the text of the current page, then the next and last controls.
+// The list takes the room left between the arrows, and wraps there (a small screen gets another line of pages, never a
+// horizontal scroll); the arrows stay at its ends. Each control centers its number or its icon. A pagination without pages is not rendered. The look (the size of the controls, their colors, the
+// current page, the icons of the arrows and of the ellipsis) is the theme's (components/_pagination.scss), from the custom
+// properties below.
+
+/**
+ * @prop --ds-pagination-gap: Space between the controls, and between the pages.
+ * @prop --ds-pagination-size: Width (at least) and height of a control: its target size.
+ * @prop --ds-pagination-font-size: Font size of the page numbers and of the compact text.
+ * @prop --ds-pagination-icon-size: Size of the arrows and of the ellipsis (their font size: an icon is a square of 1em).
+ * @prop --ds-pagination-radius: Corner radius of the controls.
+ * @prop --ds-pagination-color: Text color of the controls: the page numbers and the arrows.
+ * @prop --ds-pagination-hover-background: Background of a control under the pointer.
+ * @prop --ds-pagination-current-color: Text color of the current page.
+ * @prop --ds-pagination-current-background: Background of the current page.
+ * @prop --ds-pagination-disabled-color: Color of the arrows of the unavailable controls (previous on the first page, next on the last one).
+ */
+
+.ds-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-pagination-gap, 0.25rem);
+
+  &.--empty {
+    display: none;
+  }
+
+  &__list {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-pagination-gap, 0.25rem);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__control {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // At a width where it does not fit, the text breaks rather than overflows.
+  &__status {
+    min-width: 0;
+  }
+}

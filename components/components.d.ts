@@ -14,6 +14,7 @@ import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 import { DSLoaderSize } from "./core/loader/loader.types";
+import { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
 import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { Element } from "@stencil/core";
@@ -30,6 +31,7 @@ export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption
 export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
 export { DSLoaderSize } from "./core/loader/loader.types";
+export { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
 export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { Element } from "@stencil/core";
@@ -664,6 +666,74 @@ export namespace Components {
           * @default 'page'
          */
         "type": string;
+    }
+    /**
+     * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+     * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+     * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+     * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+     * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+     * next and last ones: rendered in their place, not focusable.
+     * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+     * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+     * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+     * when that control became unavailable): it is never lost.
+     * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+     * controls (and first and last) around "Page 3 of 10", with the same names.
+     */
+    interface DsPagination {
+        /**
+          * The number of pages shown at each end of the list: `1` by default (the first and the last page), `10` at most.
+          * @default 1
+         */
+        "boundaries": number | string;
+        /**
+          * Always compact: "Page 3 of 10" between the previous and next controls, whatever the width of the viewport.
+          * @default false
+         */
+        "compact": boolean;
+        /**
+          * The breakpoint of the theme below which the pagination is compact (`xs`, `sm`, `md`…: the media query of `break-p(null, <breakpoint>)`): `sm` by default; `none` never.
+          * @default 'sm'
+         */
+        "compactBelow": string;
+        /**
+          * The current page, from 1 to `total` (a number out of that range is the closest page). A page change in button mode sets it.
+          * @default 1
+         */
+        "current": number | string;
+        /**
+          * Renders the controls of the first and of the last page, at each end.
+          * @default false
+         */
+        "firstLast": boolean;
+        /**
+          * The link of a page, `{page}` its number (`?page={page}`, `/results/page/{page}`): the controls are then links (links mode). Without it, they are buttons, and a page change emits `pageChange` (buttons mode).
+         */
+        "hrefTemplate": string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Pagination` by default. Give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * The texts of the pagination (JSON as an attribute), to translate them: `first`, `previous`, `next`, `last` (the names of the controls), `page` (the name of a page, `{page}` its number), `status` (the compact text, `{page}`, `{total}`).
+          * @default {}
+         */
+        "labels": DSPaginationLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The number of pages shown on each side of the current page: `1` by default, `10` at most.
+          * @default 1
+         */
+        "siblings": number | string;
+        /**
+          * The number of pages. Without pages (`0`, or not a number), nothing is rendered.
+         */
+        "total": number | string;
     }
     /**
      * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
@@ -1343,6 +1413,10 @@ export interface DsNavItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsNavItemElement;
 }
+export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsPaginationElement;
+}
 export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsPanelElement;
@@ -1681,6 +1755,37 @@ declare global {
         prototype: HTMLDsNavItemElement;
         new (): HTMLDsNavItemElement;
     };
+    interface HTMLDsPaginationElementEventMap {
+        "pageChange": DSPaginationChangeDetail;
+    }
+    /**
+     * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+     * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+     * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+     * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+     * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+     * next and last ones: rendered in their place, not focusable.
+     * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+     * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+     * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+     * when that control became unavailable): it is never lost.
+     * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+     * controls (and first and last) around "Page 3 of 10", with the same names.
+     */
+    interface HTMLDsPaginationElement extends Components.DsPagination, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsPaginationElement: {
+        prototype: HTMLDsPaginationElement;
+        new (): HTMLDsPaginationElement;
+    };
     interface HTMLDsPanelElementEventMap {
         "panelShow": any;
         "panelShown": any;
@@ -2015,6 +2120,7 @@ declare global {
         "ds-modal": HTMLDsModalElement;
         "ds-nav": HTMLDsNavElement;
         "ds-nav-item": HTMLDsNavItemElement;
+        "ds-pagination": HTMLDsPaginationElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
         "ds-rsp": HTMLDsRspElement;
@@ -2651,6 +2757,78 @@ declare namespace LocalJSX {
           * @default 'page'
          */
         "type"?: string;
+    }
+    /**
+     * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+     * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+     * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+     * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+     * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+     * next and last ones: rendered in their place, not focusable.
+     * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+     * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+     * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+     * when that control became unavailable): it is never lost.
+     * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+     * controls (and first and last) around "Page 3 of 10", with the same names.
+     */
+    interface DsPagination {
+        /**
+          * The number of pages shown at each end of the list: `1` by default (the first and the last page), `10` at most.
+          * @default 1
+         */
+        "boundaries"?: number | string;
+        /**
+          * Always compact: "Page 3 of 10" between the previous and next controls, whatever the width of the viewport.
+          * @default false
+         */
+        "compact"?: boolean;
+        /**
+          * The breakpoint of the theme below which the pagination is compact (`xs`, `sm`, `md`…: the media query of `break-p(null, <breakpoint>)`): `sm` by default; `none` never.
+          * @default 'sm'
+         */
+        "compactBelow"?: string;
+        /**
+          * The current page, from 1 to `total` (a number out of that range is the closest page). A page change in button mode sets it.
+          * @default 1
+         */
+        "current"?: number | string;
+        /**
+          * Renders the controls of the first and of the last page, at each end.
+          * @default false
+         */
+        "firstLast"?: boolean;
+        /**
+          * The link of a page, `{page}` its number (`?page={page}`, `/results/page/{page}`): the controls are then links (links mode). Without it, they are buttons, and a page change emits `pageChange` (buttons mode).
+         */
+        "hrefTemplate"?: string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Pagination` by default. Give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * The texts of the pagination (JSON as an attribute), to translate them: `first`, `previous`, `next`, `last` (the names of the controls), `page` (the name of a page, `{page}` its number), `status` (the compact text, `{page}`, `{total}`).
+          * @default {}
+         */
+        "labels"?: DSPaginationLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * Emitted in buttons mode when the user asks for another page (`detail.page`; `detail.previous`, the current page), before `current` changes: `preventDefault()` keeps the current page. Not emitted in links mode, nor when a script sets `current`.
+         */
+        "onPageChange"?: (event: DsPaginationCustomEvent<DSPaginationChangeDetail>) => void;
+        /**
+          * The number of pages shown on each side of the current page: `1` by default, `10` at most.
+          * @default 1
+         */
+        "siblings"?: number | string;
+        /**
+          * The number of pages. Without pages (`0`, or not a number), nothing is rendered.
+         */
+        "total"?: number | string;
     }
     /**
      * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
@@ -3366,6 +3544,19 @@ declare namespace LocalJSX {
         "label": string;
         "toggleLabel": string;
     }
+    interface DsPaginationAttributes {
+        "total": string;
+        "current": string;
+        "siblings": string;
+        "boundaries": string;
+        "hrefTemplate": string;
+        "firstLast": boolean;
+        "compact": boolean;
+        "compactBelow": string;
+        "label": string;
+        "labels": DSPaginationLabels | string;
+        "mods": string | string[];
+    }
     interface DsPanelAttributes {
         "mods": string | string[];
         "minHeight": string;
@@ -3511,6 +3702,7 @@ declare namespace LocalJSX {
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] };
         "ds-nav": Omit<DsNav, keyof DsNavAttributes> & { [K in keyof DsNav & keyof DsNavAttributes]?: DsNav[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `attr:${K}`]?: DsNavAttributes[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `prop:${K}`]?: DsNav[K] };
         "ds-nav-item": Omit<DsNavItem, keyof DsNavItemAttributes> & { [K in keyof DsNavItem & keyof DsNavItemAttributes]?: DsNavItem[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `attr:${K}`]?: DsNavItemAttributes[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `prop:${K}`]?: DsNavItem[K] };
+        "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel": Omit<DsPanel, keyof DsPanelAttributes> & { [K in keyof DsPanel & keyof DsPanelAttributes]?: DsPanel[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `attr:${K}`]?: DsPanelAttributes[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `prop:${K}`]?: DsPanel[K] };
         "ds-panel-group": Omit<DsPanelGroup, keyof DsPanelGroupAttributes> & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes]?: DsPanelGroup[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `attr:${K}`]?: DsPanelGroupAttributes[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `prop:${K}`]?: DsPanelGroup[K] };
         "ds-rsp": Omit<DsRsp, keyof DsRspAttributes> & { [K in keyof DsRsp & keyof DsRspAttributes]?: DsRsp[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `attr:${K}`]?: DsRspAttributes[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `prop:${K}`]?: DsRsp[K] };
@@ -3685,6 +3877,21 @@ declare module "@stencil/core" {
              * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
              */
             "ds-nav-item": LocalJSX.IntrinsicElements["ds-nav-item"] & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
+            /**
+             * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+             * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+             * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+             * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+             * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+             * next and last ones: rendered in their place, not focusable.
+             * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+             * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+             * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+             * when that control became unavailable): it is never lost.
+             * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+             * controls (and first and last) around "Page 3 of 10", with the same names.
+             */
+            "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
             /**
              * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
              * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,

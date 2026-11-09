@@ -626,6 +626,8 @@ describe('Sass stylesheets', () => {
           '.ds-back-to-top__link::before',
           '.ds-breadcrumb li+li::before',
           '.ds-breadcrumb__expand::before',
+          '.ds-pagination__control.--first::before,.ds-pagination__control.--previous::before,.ds-pagination__control.--next::before,.ds-pagination__control.--last::before',
+          '.ds-pagination__item.--ellipsis::before',
         ]) {
           expect([icon, contents(allDeclarationsOf(themeCss.default, icon))]).toEqual([
             icon,
