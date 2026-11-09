@@ -6,6 +6,8 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.types";
+import { DSBadgeType } from "./core/badge/badge.types";
+import { PluralLabel } from "./utils/labels";
 import { DSBlockContext } from "./core/block/block.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
@@ -18,6 +20,8 @@ import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/t
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.types";
+export { DSBadgeType } from "./core/badge/badge.types";
+export { PluralLabel } from "./utils/labels";
 export { DSBlockContext } from "./core/block/block.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
@@ -110,6 +114,42 @@ export namespace Components {
           * @default 'info'
          */
         "type": DSAlertType;
+    }
+    /**
+     * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+     * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+     * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+     * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+     * the count does it with a live region of its own.
+     */
+    interface DsBadge {
+        /**
+          * A count, shown instead of the content: `3`. Above `max`, `<max>+`.
+         */
+        "count": number | string;
+        /**
+          * Shows a dot instead of the text: the text (or the label) is hidden on the screen, read by assistive technologies.
+          * @default false
+         */
+        "dot": boolean;
+        /**
+          * The text assistive technologies read instead of the visible one, hidden on the screen: `{count}` is the count. One template (`{count} unread messages`), or one per plural category of the language of the badge (its closest `lang`), as JSON: `{"one": "{count} unread message", "other": "{count} unread messages"}`.
+         */
+        "label": PluralLabel;
+        /**
+          * The largest count shown: a count above it shows `<max>+` (`99+`), its label the count itself.
+         */
+        "max": number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The type of the badge: `neutral` (default), `info`, `success`, `warning` or `error`. Its `--<type>` class: the color of the theme.
+          * @default 'neutral'
+         */
+        "type": DSBadgeType;
     }
     /**
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
@@ -1281,6 +1321,19 @@ declare global {
         new (): HTMLDsAlertElement;
     };
     /**
+     * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+     * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+     * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+     * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+     * the count does it with a live region of its own.
+     */
+    interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
+    }
+    var HTMLDsBadgeElement: {
+        prototype: HTMLDsBadgeElement;
+        new (): HTMLDsBadgeElement;
+    };
+    /**
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
      * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
      * (`ds-home-hero__header`, `__body`, `__footer`).
@@ -1772,6 +1825,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "ds-ajax": HTMLDsAjaxElement;
         "ds-alert": HTMLDsAlertElement;
+        "ds-badge": HTMLDsBadgeElement;
         "ds-block": HTMLDsBlockElement;
         "ds-combo": HTMLDsComboElement;
         "ds-field": HTMLDsFieldElement;
@@ -1893,6 +1947,42 @@ declare namespace LocalJSX {
           * @default 'info'
          */
         "type"?: DSAlertType;
+    }
+    /**
+     * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+     * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+     * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+     * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+     * the count does it with a live region of its own.
+     */
+    interface DsBadge {
+        /**
+          * A count, shown instead of the content: `3`. Above `max`, `<max>+`.
+         */
+        "count"?: number | string;
+        /**
+          * Shows a dot instead of the text: the text (or the label) is hidden on the screen, read by assistive technologies.
+          * @default false
+         */
+        "dot"?: boolean;
+        /**
+          * The text assistive technologies read instead of the visible one, hidden on the screen: `{count}` is the count. One template (`{count} unread messages`), or one per plural category of the language of the badge (its closest `lang`), as JSON: `{"one": "{count} unread message", "other": "{count} unread messages"}`.
+         */
+        "label"?: PluralLabel;
+        /**
+          * The largest count shown: a count above it shows `<max>+` (`99+`), its label the count itself.
+         */
+        "max"?: number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The type of the badge: `neutral` (default), `info`, `success`, `warning` or `error`. Its `--<type>` class: the color of the theme.
+          * @default 'neutral'
+         */
+        "type"?: DSBadgeType;
     }
     /**
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
@@ -2873,6 +2963,14 @@ declare namespace LocalJSX {
         "labels": DSAlertLabels | string;
         "mods": string | string[];
     }
+    interface DsBadgeAttributes {
+        "type": DSBadgeType;
+        "count": string;
+        "max": string;
+        "label": PluralLabel;
+        "dot": boolean;
+        "mods": string | string[];
+    }
     interface DsBlockAttributes {
         "section": boolean;
         "block": boolean;
@@ -3091,6 +3189,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "ds-ajax": Omit<DsAjax, keyof DsAjaxAttributes> & { [K in keyof DsAjax & keyof DsAjaxAttributes]?: DsAjax[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `attr:${K}`]?: DsAjaxAttributes[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `prop:${K}`]?: DsAjax[K] };
         "ds-alert": Omit<DsAlert, keyof DsAlertAttributes> & { [K in keyof DsAlert & keyof DsAlertAttributes]?: DsAlert[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `attr:${K}`]?: DsAlertAttributes[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `prop:${K}`]?: DsAlert[K] };
+        "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
         "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
@@ -3145,6 +3244,14 @@ declare module "@stencil/core" {
              * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
              */
             "ds-alert": LocalJSX.IntrinsicElements["ds-alert"] & JSXBase.HTMLAttributes<HTMLDsAlertElement>;
+            /**
+             * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+             * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+             * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+             * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+             * the count does it with a live region of its own.
+             */
+            "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
             /**
              * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
              * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
