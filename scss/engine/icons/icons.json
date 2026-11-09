@@ -103,6 +103,7 @@
     "trash": "trash",
     "user-o": "user",
     "ok-circle": "circle-check",
-    "spinner": "loader-circle"
+    "spinner": "loader-circle",
+    "ellipsis": "ellipsis"
   }
 }

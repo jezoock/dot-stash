@@ -408,8 +408,9 @@ describe('Sass stylesheets', () => {
         'angle-double-down', 'angle-left', 'angle-right', 'angle-up', 'angle-down', 'quote-left', 'quote-right', 'folder-empty', 'folder-open-empty', 'help', 'info',
         'attention-alt', 'ticket', 'thumbs-up-alt', 'thumbs-down-alt', 'down', 'up', 'left', 'right', 'sliders', 'trash', 'user-o',
       ];
-      // The icons added since, after them: a check in a circle (the success of ds-alert), a spinner (ds-loader).
-      const addedIconNames = ['ok-circle', 'spinner'];
+      // The icons added since, after them: a check in a circle (the success of ds-alert), a spinner (ds-loader), three dots in
+      // a row (the hidden levels of ds-breadcrumb and pages of ds-pagination).
+      const addedIconNames = ['ok-circle', 'spinner', 'ellipsis'];
 
       // The types of ds-icon in the default theme (components/_icon.scss).
       // prettier-ignore

@@ -31,7 +31,7 @@ To update the set, copy the files of the icons of `icons.json` from the new vers
 
 ## The icons
 
-The names are those of the former icon font of the library, each mapped to the icon of the set that has its meaning, then the icons added since, at the end of the table (`ok-circle`, `spinner`). A filled icon and its outline (`heart`, `heart-empty`) are two variants of the same file. Some names have an approximate icon: the set has no icon of that exact shape.
+The names are those of the former icon font of the library, each mapped to the icon of the set that has its meaning, then the icons added since, at the end of the table (`ok-circle`, `spinner`, `ellipsis`). A filled icon and its outline (`heart`, `heart-empty`) are two variants of the same file. Some names have an approximate icon: the set has no icon of that exact shape.
 
 | Name                 | Lucide icon            | Variant                         | Note                                                                    |
 | -------------------- | ---------------------- | ------------------------------- | ----------------------------------------------------------------------- |
@@ -135,3 +135,4 @@ The names are those of the former icon font of the library, each mapped to the i
 | `user-o`             | `user`                 |                                 |                                                                         |
 | `ok-circle`          | `circle-check`         |                                 | added: a check in a circle (a success, `ds-alert`)                      |
 | `spinner`            | `loader-circle`        |                                 | added: an open circle, which turns (a loading indicator, `ds-loader`)   |
+| `ellipsis`           | `ellipsis`             |                                 | added: three dots in a row (`ds-breadcrumb`, `ds-pagination`)           |
