@@ -101,6 +101,8 @@
     "right": "move-right",
     "sliders": "sliders-horizontal",
     "trash": "trash",
-    "user-o": "user"
+    "user-o": "user",
+    "ok-circle": "circle-check",
+    "spinner": "loader-circle"
   }
 }

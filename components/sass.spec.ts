@@ -408,6 +408,8 @@ describe('Sass stylesheets', () => {
         'angle-double-down', 'angle-left', 'angle-right', 'angle-up', 'angle-down', 'quote-left', 'quote-right', 'folder-empty', 'folder-open-empty', 'help', 'info',
         'attention-alt', 'ticket', 'thumbs-up-alt', 'thumbs-down-alt', 'down', 'up', 'left', 'right', 'sliders', 'trash', 'user-o',
       ];
+      // The icons added since, after them: a check in a circle (the success of ds-alert), a spinner (ds-loader).
+      const addedIconNames = ['ok-circle', 'spinner'];
 
       // The types of ds-icon in the default theme (components/_icon.scss).
       // prettier-ignore
@@ -429,10 +431,10 @@ describe('Sass stylesheets', () => {
         expect(output).toContain('scss/engine/variables/_icons.scss is up to date.');
       });
 
-      it('keeps every name of the former icon font, each one an SVG data URI with a viewBox, the filled variants filled', () => {
+      it('keeps every name of the former icon font, then the added icons, each one an SVG data URI with a viewBox, the filled variants filled', () => {
         const images = new Map(imagesOf());
 
-        expect([...images.keys()]).toEqual(iconNames);
+        expect([...images.keys()]).toEqual([...iconNames, ...addedIconNames]);
         for (const [name, image] of images) {
           const svg = svgOf(image);
           expect([name, svg]).toEqual([
@@ -524,7 +526,7 @@ describe('Sass stylesheets', () => {
         );
         const tokens = new Map(declarationsOf(css, ':root'));
 
-        expect(imagesOf(use).map(([name]) => name)).toEqual([...iconNames, 'sparkle']);
+        expect(imagesOf(use).map(([name]) => name)).toEqual([...iconNames, ...addedIconNames, 'sparkle']);
         expect(tokens.get('--ds-icons-plus')).toBe('url("plus.svg")');
         expect(tokens.get('--ds-icons-sparkle')).toBe('url("data:image/svg+xml,%3Csvg%3E%3C/svg%3E")');
         expect(tokens.get('--ds-icons-heart')).toBe(new Map(imagesOf()).get('heart'));
