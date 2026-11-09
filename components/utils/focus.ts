@@ -59,6 +59,24 @@ export const isTabbable = (element: Element, options?: FocusQueryOptions): boole
 export const getTabbableElements = (root: Element, options?: FocusQueryOptions): HTMLElement[] =>
   Array.from(root.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter(element => isTabbable(element, options));
 
+/**
+ * The element the focus goes to when `element`, which holds it, goes away (hidden, removed): the first element Tab reaches
+ * after it in `root`, else the last one before it (not an element that contains it); `null` when there is none.
+ */
+export const getNeighbourTabbable = (element: Element, root: Element = document.body): HTMLElement | null => {
+  const order = new Map<Element, number>(Array.from(root.querySelectorAll('*')).map((other, index) => [other, index]));
+  const start = order.get(element);
+
+  if (start === undefined) {
+    return null;
+  }
+
+  const end = start + element.querySelectorAll('*').length;
+  const tabbable = getTabbableElements(root).filter(other => !other.contains(element));
+
+  return tabbable.find(other => order.get(other) > end) ?? tabbable.reverse().find(other => order.get(other) < start) ?? null;
+};
+
 /** The element that has the focus, `null` when none has (the body, or no document focus). */
 export const getFocusedElement = (): HTMLElement | null => {
   const element = document.activeElement as HTMLElement | null | undefined;

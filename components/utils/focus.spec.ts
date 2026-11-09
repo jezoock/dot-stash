@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { focusFirstElement, getFocusedElement, getTabbableElements, isTabbable } from './focus';
+import { focusFirstElement, getFocusedElement, getNeighbourTabbable, getTabbableElements, isTabbable } from './focus';
 
 describe('focus', () => {
   const root = (html: string) => {
@@ -59,6 +59,28 @@ describe('focus', () => {
     expect(focusFirstElement(root('<p>Text</p><button id="c">C</button>'), fallback).id).toBe('c');
     expect(focusFirstElement(root('<p>Text</p>'), fallback)).toBe(fallback);
     expect(focus.mock.calls).toEqual([['b'], ['c'], ['DIV']]);
+  });
+
+  it('finds the element the focus goes to when an element goes away: the next one Tab reaches, else the previous one', () => {
+    const element = root(`
+      <button id="first">First</button>
+      <section id="wrapper" tabindex="-1">
+        <a href="#" id="before">Before</a>
+        <div id="gone"><button id="inside">Inside</button></div>
+        <p>Text</p>
+        <div><input id="after" /></div>
+      </section>
+      <button id="last" disabled>Last</button>`);
+    const gone = element.querySelector('#gone');
+
+    expect(getNeighbourTabbable(gone)?.id).toBe('after');
+    element.querySelector('#after').remove();
+    // The section around it is not one: it contains the element.
+    expect(getNeighbourTabbable(gone)?.id).toBe('before');
+    element.querySelector('#before').remove();
+    expect(getNeighbourTabbable(gone)?.id).toBe('first');
+    expect(getNeighbourTabbable(gone, element.querySelector('#wrapper'))).toBeNull();
+    expect(getNeighbourTabbable(document.createElement('div'))).toBeNull();
   });
 
   it('returns null for the focused element when the body has the focus', () => {

@@ -616,7 +616,7 @@ describe('Sass stylesheets', () => {
           ['content', '""'],
           ['content', '""/"Open"'],
         ]);
-        for (const icon of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after']) {
+        for (const icon of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after', '.ds-alert::before', '.ds-alert__dismiss::before']) {
           expect([icon, contents(allDeclarationsOf(themeCss.default, icon))]).toEqual([
             icon,
             [

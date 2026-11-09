@@ -1,0 +1,61 @@
+// The structure of ds-alert: a grid of three columns, in the direction of the text: the icon of the theme (`::before`), the
+// content (the title over the message) and the dismiss button. A hidden alert (`hidden`: dismissed) is not rendered. The
+// prefix of the type is read by screen readers, hidden on the screen. The look (the box, its colors, the icon of the type,
+// the spaces) is the theme's (components/_alert.scss), from the custom properties below.
+
+/**
+ * @prop --ds-alert-background: Background of the alert.
+ * @prop --ds-alert-color: Text color of the alert.
+ * @prop --ds-alert-accent-color: Color of the type: the border on the start side and the icon. Each type sets it to its status color.
+ * @prop --ds-alert-border-width: Width of the border on the start side, in the color of the type.
+ * @prop --ds-alert-radius: Corner radius of the alert.
+ * @prop --ds-alert-padding: Padding of the alert.
+ * @prop --ds-alert-gap: Space between the icon, the content and the dismiss button.
+ * @prop --ds-alert-icon-size: Size of the icon of the type.
+ */
+
+.ds-alert {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: var(--ds-alert-gap, 0.75rem);
+
+  // Dismissed, or hidden by the page: the attribute wins over the display of the grid.
+  &[hidden] {
+    display: none;
+  }
+
+  // The icon of the type (drawn by the theme), on the first line.
+  &::before {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  &__content {
+    grid-row: 1;
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  &__title[hidden] {
+    display: none;
+  }
+
+  &__dismiss {
+    grid-row: 1;
+    grid-column: 3;
+  }
+
+  // Read before the title or the message, hidden on the screen: the icon and the color tell the type there.
+  &__prefix {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+}

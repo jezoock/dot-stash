@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.types";
 import { DSBlockContext } from "./core/block/block.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
@@ -16,6 +17,7 @@ import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
+export { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.types";
 export { DSBlockContext } from "./core/block/block.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
@@ -58,6 +60,56 @@ export namespace Components {
           * @default 'self'
          */
         "target": 'self' | string;
+    }
+    /**
+     * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+     * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+     * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+     * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+     * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+     * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+     * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+     * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+     * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+     */
+    interface DsAlert {
+        /**
+          * Dismisses the alert, as its dismiss button: emits `alertDismiss`, and unless it is cancelled, hides the alert (the `hidden` attribute), moves the focus out of it when it had it, and emits `alertDismissed`. Resolves with whether it was dismissed (`false`: cancelled, or already hidden).
+         */
+        "dismiss": () => Promise<boolean>;
+        /**
+          * Renders a dismiss button after the message: `alertDismiss` (cancelable), then the alert is hidden.
+          * @default false
+         */
+        "dismissible": boolean;
+        /**
+          * The title of the alert, before the message (`__title`). A `slot="title"` element replaces it.
+         */
+        "heading": string;
+        /**
+          * The texts of the alert (JSON as an attribute), to translate them: `info`, `success`, `warning`, `error` (the prefixes), `dismiss`.
+          * @default {}
+         */
+        "labels": DSAlertLabels | string;
+        /**
+          * The heading level (1 to 6) of the title: it is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element (`<h2 slot="title">`), which has its own level. Without it, the title is not a heading.
+         */
+        "level": number | string;
+        /**
+          * Whether the alert is a live region, announced when it appears and when its content changes: `off` (default: read where it is, for a message that is part of the page), `polite` (`role="status"`) or `assertive` (`role="alert"`, an urgent message, read at once). Set it before the alert gets the content to announce.
+          * @default 'off'
+         */
+        "live": DSAlertLive;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The type of the message: `info` (default), `success`, `warning` or `error`. Its `--<type>` class: the icon and the color of the theme.
+          * @default 'info'
+         */
+        "type": DSAlertType;
     }
     /**
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
@@ -1119,6 +1171,10 @@ export interface DsAjaxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsAjaxElement;
 }
+export interface DsAlertCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsAlertElement;
+}
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
@@ -1194,6 +1250,35 @@ declare global {
     var HTMLDsAjaxElement: {
         prototype: HTMLDsAjaxElement;
         new (): HTMLDsAjaxElement;
+    };
+    interface HTMLDsAlertElementEventMap {
+        "alertDismiss": void;
+        "alertDismissed": void;
+    }
+    /**
+     * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+     * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+     * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+     * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+     * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+     * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+     * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+     * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+     * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+     */
+    interface HTMLDsAlertElement extends Components.DsAlert, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAlertElementEventMap>(type: K, listener: (this: HTMLDsAlertElement, ev: DsAlertCustomEvent<HTMLDsAlertElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAlertElementEventMap>(type: K, listener: (this: HTMLDsAlertElement, ev: DsAlertCustomEvent<HTMLDsAlertElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsAlertElement: {
+        prototype: HTMLDsAlertElement;
+        new (): HTMLDsAlertElement;
     };
     /**
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
@@ -1686,6 +1771,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "ds-ajax": HTMLDsAjaxElement;
+        "ds-alert": HTMLDsAlertElement;
         "ds-block": HTMLDsBlockElement;
         "ds-combo": HTMLDsComboElement;
         "ds-field": HTMLDsFieldElement;
@@ -1753,6 +1839,60 @@ declare namespace LocalJSX {
           * @default 'self'
          */
         "target"?: 'self' | string;
+    }
+    /**
+     * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+     * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+     * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+     * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+     * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+     * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+     * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+     * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+     * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+     */
+    interface DsAlert {
+        /**
+          * Renders a dismiss button after the message: `alertDismiss` (cancelable), then the alert is hidden.
+          * @default false
+         */
+        "dismissible"?: boolean;
+        /**
+          * The title of the alert, before the message (`__title`). A `slot="title"` element replaces it.
+         */
+        "heading"?: string;
+        /**
+          * The texts of the alert (JSON as an attribute), to translate them: `info`, `success`, `warning`, `error` (the prefixes), `dismiss`.
+          * @default {}
+         */
+        "labels"?: DSAlertLabels | string;
+        /**
+          * The heading level (1 to 6) of the title: it is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element (`<h2 slot="title">`), which has its own level. Without it, the title is not a heading.
+         */
+        "level"?: number | string;
+        /**
+          * Whether the alert is a live region, announced when it appears and when its content changes: `off` (default: read where it is, for a message that is part of the page), `polite` (`role="status"`) or `assertive` (`role="alert"`, an urgent message, read at once). Set it before the alert gets the content to announce.
+          * @default 'off'
+         */
+        "live"?: DSAlertLive;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * Emitted before the alert is dismissed (its button, `dismiss()`): `preventDefault()` keeps it.
+         */
+        "onAlertDismiss"?: (event: DsAlertCustomEvent<void>) => void;
+        /**
+          * Emitted once the alert is dismissed: hidden, the focus moved.
+         */
+        "onAlertDismissed"?: (event: DsAlertCustomEvent<void>) => void;
+        /**
+          * The type of the message: `info` (default), `success`, `warning` or `error`. Its `--<type>` class: the icon and the color of the theme.
+          * @default 'info'
+         */
+        "type"?: DSAlertType;
     }
     /**
      * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
@@ -2724,6 +2864,15 @@ declare namespace LocalJSX {
         "suffix": string;
         "errorMessage": string;
     }
+    interface DsAlertAttributes {
+        "type": DSAlertType;
+        "heading": string;
+        "level": string;
+        "live": DSAlertLive;
+        "dismissible": boolean;
+        "labels": DSAlertLabels | string;
+        "mods": string | string[];
+    }
     interface DsBlockAttributes {
         "section": boolean;
         "block": boolean;
@@ -2941,6 +3090,7 @@ declare namespace LocalJSX {
 
     interface IntrinsicElements {
         "ds-ajax": Omit<DsAjax, keyof DsAjaxAttributes> & { [K in keyof DsAjax & keyof DsAjaxAttributes]?: DsAjax[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `attr:${K}`]?: DsAjaxAttributes[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `prop:${K}`]?: DsAjax[K] };
+        "ds-alert": Omit<DsAlert, keyof DsAlertAttributes> & { [K in keyof DsAlert & keyof DsAlertAttributes]?: DsAlert[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `attr:${K}`]?: DsAlertAttributes[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `prop:${K}`]?: DsAlert[K] };
         "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
         "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
@@ -2983,6 +3133,18 @@ declare module "@stencil/core" {
              * Version: 1.0
              */
             "ds-ajax": LocalJSX.IntrinsicElements["ds-ajax"] & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
+            /**
+             * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+             * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+             * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+             * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+             * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+             * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+             * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+             * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+             * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+             */
+            "ds-alert": LocalJSX.IntrinsicElements["ds-alert"] & JSXBase.HTMLAttributes<HTMLDsAlertElement>;
             /**
              * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
              * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
