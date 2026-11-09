@@ -1,0 +1,49 @@
+// The structure of ds-loader: a row of the indicator and its visible label (`show-label`), centered in a block, or in the
+// line of the text (`--inline`). The indicator: a spinner (`--indeterminate`, an icon of the theme that turns) or a track
+// (`--determinate`) filled from its start side to the width of the progress (set by the component). The look (the
+// sizes, the colors, the icon and its rotation) is the theme's (components/_loader.scss), from the custom properties below.
+
+/**
+ * @prop --ds-loader-size: Size of the indicator: its font size (the spinner is a square of 1em, the bar is `--ds-loader-bar-height` thick). `sm`, `md`, `lg` and `inline` set it.
+ * @prop --ds-loader-color: Color of the spinner and of the filled part of the bar.
+ * @prop --ds-loader-track-color: Color of the bar that is not filled yet (the track).
+ * @prop --ds-loader-bar-height: Thickness of the bar.
+ * @prop --ds-loader-bar-width: Width of the bar of an inline loader (a block one is as wide as its container).
+ * @prop --ds-loader-radius: Corner radius of the bar.
+ * @prop --ds-loader-gap: Space between the indicator and its visible label.
+ */
+
+.ds-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-loader-gap, 0.5em);
+
+  &.--inline {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
+  &__spinner {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  &__track {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &.--inline &__track {
+    flex: 0 0 auto;
+    width: var(--ds-loader-bar-width, 6em);
+  }
+
+  // Its width is the progress, set by the component: from the start side of the track (the right, from right to left).
+  &__bar {
+    display: block;
+    height: 100%;
+  }
+}

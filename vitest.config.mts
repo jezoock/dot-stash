@@ -19,6 +19,8 @@ export interface AccessibleNode {
   role: string;
   name: string;
   description: string;
+  /** The value of the node, for the roles that have one (`progressbar`: its `aria-valuenow`); `undefined` without one. */
+  value?: unknown;
   /** The states and properties of the node (`invalid`, `required`, `disabled`, `pressed`, `focusable`…): name → value. */
   properties: Record<string, unknown>;
 }
@@ -27,7 +29,14 @@ export interface AccessibleNode {
 type CdpDomNode = { nodeId: number; frameId?: string; contentDocument?: CdpDomNode; children?: CdpDomNode[] };
 type CdpFrameTree = { frame: { id: string; url: string }; childFrames?: CdpFrameTree[] };
 type CdpAXValue = { value?: unknown };
-type CdpAXNode = { ignored: boolean; role?: CdpAXValue; name?: CdpAXValue; description?: CdpAXValue; properties?: { name: string; value: CdpAXValue }[] };
+type CdpAXNode = {
+  ignored: boolean;
+  role?: CdpAXValue;
+  name?: CdpAXValue;
+  description?: CdpAXValue;
+  value?: CdpAXValue;
+  properties?: { name: string; value: CdpAXValue }[];
+};
 
 /**
  * The node of the first element of the page of the tests that matches a selector in the accessibility tree of Chromium
@@ -60,6 +69,7 @@ const accessibleNode: BrowserCommand<[selector: string]> = async ({ page, frame 
       role: String(node.role?.value ?? ''),
       name: String(node.name?.value ?? ''),
       description: String(node.description?.value ?? ''),
+      ...(node.value?.value !== undefined ? { value: node.value.value } : {}),
       properties: Object.fromEntries((node.properties ?? []).map(({ name, value }) => [name, value.value])),
     };
   } finally {

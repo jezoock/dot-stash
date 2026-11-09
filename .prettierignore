@@ -1,7 +1,7 @@
 # Build output and caches
 dist/
 www/
-loader/
+/loader/
 .stencil/
 node_modules/
 package-lock.json

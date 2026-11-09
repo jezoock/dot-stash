@@ -12,6 +12,7 @@ import { DSBlockContext } from "./core/block/block.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
+import { DSLoaderSize } from "./core/loader/loader.types";
 import { PanelType } from "./core/panel/panel.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { Element } from "@stencil/core";
@@ -26,6 +27,7 @@ export { DSBlockContext } from "./core/block/block.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
+export { DSLoaderSize } from "./core/loader/loader.types";
 export { PanelType } from "./core/panel/panel.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { Element } from "@stencil/core";
@@ -460,6 +462,47 @@ export namespace Components {
           * The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme).
          */
         "type": string;
+    }
+    /**
+     * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+     * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+     * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+     * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+     * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+     * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+     */
+    interface DsLoader {
+        /**
+          * In the line of the text, at its size (`--inline`), instead of a block centered in its container.
+          * @default false
+         */
+        "inline": boolean;
+        /**
+          * The accessible name of the loader (`aria-label`): what loads. `Loading` by default: give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * The value of a complete progress (`aria-valuemax`): 100 by default, and for a value that is not a number above 0.
+         */
+        "max": number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Shows the label next to the indicator, instead of only giving it to assistive technologies.
+          * @default false
+         */
+        "showLabel": boolean;
+        /**
+          * The size of the indicator: `sm`, `md` or `lg` (its `--<size>` class). Without it, `md`, or the size of the text when `inline`.
+         */
+        "size": DSLoaderSize;
+        /**
+          * The progress, from 0 to `max`: a determinate loader (a bar), else an indeterminate one (a spinner). Clamped to 0…`max`.
+         */
+        "value": number | string;
     }
     /**
      * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
@@ -1438,6 +1481,20 @@ declare global {
         prototype: HTMLDsIconElement;
         new (): HTMLDsIconElement;
     };
+    /**
+     * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+     * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+     * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+     * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+     * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+     * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+     */
+    interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
+    }
+    var HTMLDsLoaderElement: {
+        prototype: HTMLDsLoaderElement;
+        new (): HTMLDsLoaderElement;
+    };
     interface HTMLDsModalElementEventMap {
         "modalClose": any;
         "modalOpen": any;
@@ -1833,6 +1890,7 @@ declare global {
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
         "ds-icon": HTMLDsIconElement;
+        "ds-loader": HTMLDsLoaderElement;
         "ds-modal": HTMLDsModalElement;
         "ds-nav": HTMLDsNavElement;
         "ds-nav-item": HTMLDsNavItemElement;
@@ -2270,6 +2328,47 @@ declare namespace LocalJSX {
           * The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme).
          */
         "type"?: string;
+    }
+    /**
+     * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+     * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+     * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+     * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+     * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+     * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+     */
+    interface DsLoader {
+        /**
+          * In the line of the text, at its size (`--inline`), instead of a block centered in its container.
+          * @default false
+         */
+        "inline"?: boolean;
+        /**
+          * The accessible name of the loader (`aria-label`): what loads. `Loading` by default: give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * The value of a complete progress (`aria-valuemax`): 100 by default, and for a value that is not a number above 0.
+         */
+        "max"?: number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * Shows the label next to the indicator, instead of only giving it to assistive technologies.
+          * @default false
+         */
+        "showLabel"?: boolean;
+        /**
+          * The size of the indicator: `sm`, `md` or `lg` (its `--<size>` class). Without it, `md`, or the size of the text when `inline`.
+         */
+        "size"?: DSLoaderSize;
+        /**
+          * The progress, from 0 to `max`: a determinate loader (a bar), else an indeterminate one (a spinner). Clamped to 0…`max`.
+         */
+        "value"?: number | string;
     }
     /**
      * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
@@ -3036,6 +3135,15 @@ declare namespace LocalJSX {
         "type": string;
         "label": string;
     }
+    interface DsLoaderAttributes {
+        "value": string;
+        "max": string;
+        "label": string;
+        "showLabel": boolean;
+        "inline": boolean;
+        "size": DSLoaderSize;
+        "mods": string | string[];
+    }
     interface DsModalAttributes {
         "shown": boolean;
         "overlay": boolean;
@@ -3197,6 +3305,7 @@ declare namespace LocalJSX {
         "ds-grid-item": Omit<DsGridItem, keyof DsGridItemAttributes> & { [K in keyof DsGridItem & keyof DsGridItemAttributes]?: DsGridItem[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `attr:${K}`]?: DsGridItemAttributes[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `prop:${K}`]?: DsGridItem[K] };
         "ds-heading": Omit<DsHeading, keyof DsHeadingAttributes> & { [K in keyof DsHeading & keyof DsHeadingAttributes]?: DsHeading[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `attr:${K}`]?: DsHeadingAttributes[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `prop:${K}`]?: DsHeading[K] };
         "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
+        "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
         "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] };
         "ds-nav": Omit<DsNav, keyof DsNavAttributes> & { [K in keyof DsNav & keyof DsNavAttributes]?: DsNav[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `attr:${K}`]?: DsNavAttributes[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `prop:${K}`]?: DsNav[K] };
         "ds-nav-item": Omit<DsNavItem, keyof DsNavItemAttributes> & { [K in keyof DsNavItem & keyof DsNavItemAttributes]?: DsNavItem[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `attr:${K}`]?: DsNavItemAttributes[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `prop:${K}`]?: DsNavItem[K] };
@@ -3311,6 +3420,15 @@ declare module "@stencil/core" {
              * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
              */
             "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
+            /**
+             * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+             * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+             * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+             * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+             * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+             * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+             */
+            "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
             /**
              * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
              * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by

@@ -16,8 +16,8 @@ declare module 'vitest/browser' {
 
 /**
  * The node of the first element that matches a selector in the accessibility tree of Chromium, as assistive technologies
- * get it: `role`, `name`, `description`, and `properties` (`invalid`, `required`, `disabled`, `pressed`…). `null` when the
- * element is not in the tree.
+ * get it: `role`, `name`, `description`, `value` (a progress bar: its `aria-valuenow`), and `properties` (`invalid`,
+ * `required`, `disabled`, `pressed`…). `null` when the element is not in the tree.
  */
 export const accessibleNode = (selector: string) => commands.accessibleNode(selector);
 

@@ -616,7 +616,7 @@ describe('Sass stylesheets', () => {
           ['content', '""'],
           ['content', '""/"Open"'],
         ]);
-        for (const icon of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after', '.ds-alert::before', '.ds-alert__dismiss::before']) {
+        for (const icon of ['.ds-panel__title::after', '.ds-ajax.--is-loading::after', '.ds-alert::before', '.ds-alert__dismiss::before', '.ds-loader__spinner::before']) {
           expect([icon, contents(allDeclarationsOf(themeCss.default, icon))]).toEqual([
             icon,
             [
@@ -908,7 +908,7 @@ describe('Sass stylesheets', () => {
           'scroll-behavior:auto !important',
         ],
       ]);
-      for (const spinner of ['.ds-ajax.--is-loading::after', '.ds-icon.--loading::before']) {
+      for (const spinner of ['.ds-ajax.--is-loading::after', '.ds-icon.--loading::before', '.ds-loader__spinner::before']) {
         expect(rules(spinner)).toEqual([['animation-duration:4s !important', 'animation-iteration-count:infinite !important']]);
       }
     });
