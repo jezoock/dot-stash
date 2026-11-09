@@ -37,7 +37,7 @@ jobs:
       - name: Check build output
         run: |
           missing=0
-          for file in dist/index.js dist/index.cjs.js dist/types/index.d.ts dist/collection/collection-manifest.json dist/dot-stash/dot-stash.esm.js loader/index.js dist/css/default.css; do
+          for file in dist/index.js dist/index.cjs.js dist/types/index.d.ts dist/collection/collection-manifest.json dist/dot-stash/dot-stash.esm.js loader/index.js dist/css/default.css dist/css/LICENSE-icons.txt; do
             if [ ! -s "$file" ]; then
               echo "::error::Missing or empty build output: $file"
               missing=1

@@ -10,7 +10,9 @@
 //   --strict      a Sass warning fails the compilation, as an error.
 //   --source-map  writes <stylesheet>.css.map next to each stylesheet (or `css.sourceMap` in dot-stash.config.mjs).
 //
-// The build deletes dist/css/ first. Without --watch, it exits with code 1 if a stylesheet fails to compile.
+// The build deletes dist/css/ first, then copies the licence texts of the icons there (LICENSE-icons.txt: the stylesheets
+// draw icons of the icon set of scss/engine/icons/, and their notice names that file). Without --watch, it exits with code
+// 1 if a stylesheet fails to compile.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import * as sass from 'sass';
 import config from '../dot-stash.config.mjs';
+import { copyIconsLicence } from './build-icons.mjs';
 
 const options = { 'watch': { type: 'boolean' }, 'strict': { type: 'boolean' }, 'source-map': { type: 'boolean' } };
 let flags;
@@ -131,6 +134,7 @@ const watch = () => {
 
 fs.rmSync(cssDir, { recursive: true, force: true });
 fs.mkdirSync(cssDir, { recursive: true }); // even if nothing compiles: the Stencil watch of npm start reads it
+console.log(`scss/engine/icons/LICENSE → ${relative(copyIconsLicence(cssDir))}`);
 const built = run(config.themes.flatMap(themeJobs));
 
 if (flags.watch) {

@@ -6,7 +6,7 @@
 
 // The licence notice of the icons: a stylesheet writes it, as a /*! */ comment that the compressed output keeps, after the
 // custom properties of the icons it draws (ds-tokens(), ds-icon-tokens()).
-$icons-notice: 'Icons: Lucide 1.60.0 (lucide-static, https://lucide.dev), ISC License, Copyright (c) 2026 Lucide Icons and Contributors; the icons derived from Feather: MIT License, Copyright (c) 2013-present Cole Bemis. Licence texts: scss/engine/icons/LICENSE of dot-stash.';
+$icons-notice: 'Icons: Lucide 1.60.0 (lucide-static, https://lucide.dev), ISC License, Copyright (c) 2026 Lucide Icons and Contributors; the icons derived from Feather: MIT License, Copyright (c) 2013-present Cole Bemis. Licence texts: dist/css/LICENSE-icons.txt of the dot-stash package.';
 
 // The icons of the engine: name → image, an SVG data URI.
 $-icon-set: (

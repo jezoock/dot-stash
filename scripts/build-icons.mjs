@@ -13,6 +13,9 @@
 // "rotate": 90, 180 or 270 (degrees, clockwise, around the center), "scale": a factor below 1 (the icon smaller in its
 // box) }. The SVG files are copies of the icon set, unchanged: the variants are made here. Only the elements and attributes
 // of an icon (no script, style, link, text or entity) are accepted, any other one is an error.
+//
+// It also exports copyIconsLicence(), which scripts/build-css.mjs calls: the licence texts of the icon set, copied next to
+// the compiled stylesheets (dist/css/LICENSE-icons.txt), the file their licence notice names.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -227,6 +230,20 @@ export const generate = () => {
     '$icons: map.merge($-icon-set, $icons);',
     '',
   ].join('\n');
+};
+
+/**
+ * The licence texts of the icon set (scss/engine/icons/LICENSE), shipped with the stylesheets that draw its icons: the
+ * published package holds dist/ and loader/ only, and the notice of the stylesheets names this file.
+ */
+export const ICONS_LICENCE_FILE = 'LICENSE-icons.txt';
+
+/** Copies the licence texts of the icon set into a folder (scripts/build-css.mjs: dist/css/). Returns the path of the copy. */
+export const copyIconsLicence = dir => {
+  const copy = path.join(dir, ICONS_LICENCE_FILE);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.copyFileSync(path.join(iconsDir, 'LICENSE'), copy);
+  return copy;
 };
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);

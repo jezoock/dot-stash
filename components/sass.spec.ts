@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import * as sass from 'sass';
 import { execFileSync } from 'child_process';
@@ -543,6 +544,25 @@ describe('Sass stylesheets', () => {
         expect([...tokens.keys()].filter(name => name.startsWith('--ds-icons-')).sort()).toEqual([...drawn].map(name => `--ds-icons-${name}`).sort());
         expect(themeCss[theme].match(/\/\*![\s\S]*?\*\//g)).toEqual([expect.stringMatching(/^\/\*! Icons: Lucide 1\.60\.0 .*ISC License.*MIT License.* \*\/$/)]);
         expect(themeCss[theme]).toMatch(/\}\/\*! Icons: [^*]*\*\/$/);
+      });
+
+      // The published package holds dist/ and loader/: the CSS build copies the licence texts of the icon set into dist/css/,
+      // and the notice of the stylesheets names that copy.
+      it('ships the licence texts of the icons next to the stylesheets, in the file their notice names', async () => {
+        const { copyIconsLicence, ICONS_LICENCE_FILE } = await import('../scripts/build-icons.mjs');
+        const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ds-icons-licence-'));
+        const licence = fs.readFileSync(path.join(root, 'scss/engine/icons/LICENSE'), 'utf8');
+
+        try {
+          expect(copyIconsLicence(path.join(dir, 'css'))).toBe(path.join(dir, 'css', 'LICENSE-icons.txt'));
+          expect(fs.readFileSync(path.join(dir, 'css', ICONS_LICENCE_FILE), 'utf8')).toBe(licence);
+        } finally {
+          fs.rmSync(dir, { recursive: true, force: true });
+        }
+        expect(licence).toMatch(/^ISC License\n[\s\S]*The MIT License \(MIT\)/);
+        expect(fs.readFileSync(path.join(root, 'scripts/build-css.mjs'), 'utf8')).toContain('copyIconsLicence(cssDir)');
+        expect(JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).files).toContain('dist/');
+        for (const theme of themes) expect(themeCss[theme]).toContain(`Licence texts: dist/css/${ICONS_LICENCE_FILE} of the dot-stash package. */`);
       });
 
       it('gives each type of ds-icon an image of the default theme', () => {

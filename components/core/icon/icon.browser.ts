@@ -117,6 +117,15 @@ describe('the icons of the theme in a browser', () => {
     for (const [name, element, pseudo] of skinIcons()) expect([name, iconStyle(element, pseudo).maskImage]).toEqual([name, expect.stringMatching(/^url\("data:image\/svg\+xml,/)]);
   });
 
+  it('come with their licence texts next to the theme stylesheet, which its notice names', async () => {
+    // Accept: text/css, as a stylesheet <link> requests it (the server of the tests makes a module of a CSS file otherwise).
+    const read = (url: string, accept: string) => fetch(url, { headers: { Accept: accept } }).then(response => (response.ok ? response.text() : `${response.status}`));
+    const [css, licence] = await Promise.all([read('/dist/css/default.css', 'text/css'), read('/dist/css/LICENSE-icons.txt', 'text/plain')]);
+
+    expect(css).toMatch(/\/\*! Icons: Lucide [^*]* Licence texts: dist\/css\/LICENSE-icons\.txt of the dot-stash package\. \*\/$/);
+    expect(licence).toMatch(/^ISC License\n[\s\S]*Lucide Icons and Contributors[\s\S]*The MIT License \(MIT\)[\s\S]*Cole Bemis/);
+  });
+
   it('draw every icon of $icons: a mask of 1em that paints pixels in the color of the text, and nothing around them', async () => {
     await addStylesheet(`
       @use 'engine' as *;

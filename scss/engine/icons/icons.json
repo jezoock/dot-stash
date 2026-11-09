@@ -2,7 +2,7 @@
   "set": "Lucide",
   "package": "lucide-static",
   "version": "1.60.0",
-  "notice": "Icons: Lucide 1.60.0 (lucide-static, https://lucide.dev), ISC License, Copyright (c) 2026 Lucide Icons and Contributors; the icons derived from Feather: MIT License, Copyright (c) 2013-present Cole Bemis. Licence texts: scss/engine/icons/LICENSE of dot-stash.",
+  "notice": "Icons: Lucide 1.60.0 (lucide-static, https://lucide.dev), ISC License, Copyright (c) 2026 Lucide Icons and Contributors; the icons derived from Feather: MIT License, Copyright (c) 2013-present Cole Bemis. Licence texts: dist/css/LICENSE-icons.txt of the dot-stash package.",
   "icons": {
     "basket": "shopping-cart",
     "ok": "check",

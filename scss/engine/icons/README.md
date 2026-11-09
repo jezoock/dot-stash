@@ -4,7 +4,7 @@ The icons of the engine: SVG files of [Lucide](https://lucide.dev) 1.60.0, an op
 
 - `*.svg`: the icon files, as the package has them (each keeps its `@license` comment).
 - `icons.json`: the icon set (`set`, `package`, `version`), the licence notice that the compiled stylesheets keep (`notice`), and `icons`, which maps each icon name of the engine to an SVG file.
-- `LICENSE`: the licence of the icon set, a copy of the one of the package.
+- `LICENSE`: the licence of the icon set, a copy of the one of the package. `npm run build:css` copies it next to the compiled stylesheets, to `dist/css/LICENSE-icons.txt` (the published package holds `dist/`, not `scss/`), and the licence notice of the stylesheets names that file.
 
 `scripts/build-icons.mjs` (`npm run build:icons`) generates `scss/engine/variables/_icons.scss` from them: `$icons`, each name with its SVG as a data URI. It keeps the elements and attributes of each file, without its comments, the whitespace between the tags, and the `class`, `width` and `height` of its root element (the viewBox stays), and fails on anything that is not part of an icon (a script, a style, a link, a text). The generated file is committed; `npm test` and CI (`npm run build:icons -- --check`) fail when it is not the one the script generates.
 
