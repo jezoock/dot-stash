@@ -624,6 +624,8 @@ describe('Sass stylesheets', () => {
           '.ds-alert__dismiss::before',
           '.ds-loader__spinner::before',
           '.ds-back-to-top__link::before',
+          '.ds-breadcrumb li+li::before',
+          '.ds-breadcrumb__expand::before',
         ]) {
           expect([icon, contents(allDeclarationsOf(themeCss.default, icon))]).toEqual([
             icon,

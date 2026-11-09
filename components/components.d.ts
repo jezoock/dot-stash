@@ -9,6 +9,7 @@ import { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.type
 import { DSBadgeType } from "./core/badge/badge.types";
 import { PluralLabel } from "./utils/labels";
 import { DSBlockContext } from "./core/block/block.types";
+import { DSBreadcrumbLabels } from "./core/breadcrumb/breadcrumb.types";
 import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
@@ -24,6 +25,7 @@ export { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.type
 export { DSBadgeType } from "./core/badge/badge.types";
 export { PluralLabel } from "./utils/labels";
 export { DSBlockContext } from "./core/block/block.types";
+export { DSBreadcrumbLabels } from "./core/breadcrumb/breadcrumb.types";
 export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
 export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
 export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
@@ -218,6 +220,39 @@ export namespace Components {
           * Block type classname ( also used to build block classname )
          */
         "type": string;
+    }
+    /**
+     * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+     * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+     * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+     * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+     * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+     * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+     * theme draws the separators between the items, in CSS: they are not read.
+     * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+     * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+     * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+     * the trail is collapsed.
+     */
+    interface DsBreadcrumb {
+        /**
+          * Collapses a long trail: the number of items it keeps at its end (`collapse="2"`; `2` without a number), after the first item and a "Show full path" button that shows the others. A trail is collapsed only when that hides 2 items at least. Without it (or `0`), the whole trail shows, and wraps on a small screen.
+         */
+        "collapse": number | string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Breadcrumb` by default. Give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * The texts of the trail (JSON as an attribute), to translate them: `expand`, the name of the button of a collapsed trail.
+          * @default {}
+         */
+        "labels": DSBreadcrumbLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
     }
     /**
      * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
@@ -1454,6 +1489,25 @@ declare global {
         prototype: HTMLDsBlockElement;
         new (): HTMLDsBlockElement;
     };
+    /**
+     * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+     * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+     * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+     * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+     * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+     * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+     * theme draws the separators between the items, in CSS: they are not read.
+     * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+     * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+     * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+     * the trail is collapsed.
+     */
+    interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
+    }
+    var HTMLDsBreadcrumbElement: {
+        prototype: HTMLDsBreadcrumbElement;
+        new (): HTMLDsBreadcrumbElement;
+    };
     interface HTMLDsComboElementEventMap {
         "optionSelected": DSComboSelectedEventDetail;
     }
@@ -1950,6 +2004,7 @@ declare global {
         "ds-back-to-top": HTMLDsBackToTopElement;
         "ds-badge": HTMLDsBadgeElement;
         "ds-block": HTMLDsBlockElement;
+        "ds-breadcrumb": HTMLDsBreadcrumbElement;
         "ds-combo": HTMLDsComboElement;
         "ds-field": HTMLDsFieldElement;
         "ds-grid": HTMLDsGridElement;
@@ -2172,6 +2227,39 @@ declare namespace LocalJSX {
           * Block type classname ( also used to build block classname )
          */
         "type"?: string;
+    }
+    /**
+     * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+     * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+     * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+     * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+     * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+     * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+     * theme draws the separators between the items, in CSS: they are not read.
+     * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+     * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+     * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+     * the trail is collapsed.
+     */
+    interface DsBreadcrumb {
+        /**
+          * Collapses a long trail: the number of items it keeps at its end (`collapse="2"`; `2` without a number), after the first item and a "Show full path" button that shows the others. A trail is collapsed only when that hides 2 items at least. Without it (or `0`), the whole trail shows, and wraps on a small screen.
+         */
+        "collapse"?: number | string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Breadcrumb` by default. Give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * The texts of the trail (JSON as an attribute), to translate them: `expand`, the name of the button of a collapsed trail.
+          * @default {}
+         */
+        "labels"?: DSBreadcrumbLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
     }
     /**
      * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
@@ -3187,6 +3275,12 @@ declare namespace LocalJSX {
         "mods": string | string[];
         "label": string;
     }
+    interface DsBreadcrumbAttributes {
+        "label": string;
+        "labels": DSBreadcrumbLabels | string;
+        "collapse": string;
+        "mods": string | string[];
+    }
     interface DsComboAttributes {
         "options": string | DSOption[];
         "name": string;
@@ -3406,6 +3500,7 @@ declare namespace LocalJSX {
         "ds-back-to-top": Omit<DsBackToTop, keyof DsBackToTopAttributes> & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes]?: DsBackToTop[K] } & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes as `attr:${K}`]?: DsBackToTopAttributes[K] } & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes as `prop:${K}`]?: DsBackToTop[K] };
         "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
         "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
+        "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
         "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
         "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
         "ds-grid": Omit<DsGrid, keyof DsGridAttributes> & { [K in keyof DsGrid & keyof DsGridAttributes]?: DsGrid[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `attr:${K}`]?: DsGridAttributes[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `prop:${K}`]?: DsGrid[K] };
@@ -3487,6 +3582,20 @@ declare module "@stencil/core" {
              * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
              */
             "ds-block": LocalJSX.IntrinsicElements["ds-block"] & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
+            /**
+             * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+             * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+             * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+             * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+             * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+             * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+             * theme draws the separators between the items, in CSS: they are not read.
+             * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+             * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+             * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+             * the trail is collapsed.
+             */
+            "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
             /**
              * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
              * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
