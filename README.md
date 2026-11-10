@@ -26,8 +26,6 @@ npm ci
 npm run build:all
 ```
 
-Until the pull request of version 0.1.0 is merged into `main`, its code is on the `claude/intelligent-pasteur-rwiqsn` branch: `git clone --branch claude/intelligent-pasteur-rwiqsn https://github.com/jezoock/dot-stash.git`.
-
 The build writes `dist/` and `loader/` (see [Build output](#build-output)), which are not committed. A project then takes the library from the clone, as a local path dependency or as built files: see [In another project](#in-another-project).
 
 ## Browser support
