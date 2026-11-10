@@ -53,10 +53,6 @@ export class DSTooltip {
    * Displayed tooltip icon
    */
   @Prop() icon = '';
-  /**
-   * Used for applying modifier on main container
-   */
-  @Prop() mode: string;
 
   /**
    * @type {string} Tooltip position (top, left, right or bottom)
@@ -68,7 +64,6 @@ export class DSTooltip {
    */
   @Prop({ mutable: true, reflect: true, attribute: 'disabled' }) isDisabled = false;
   @Prop({ mutable: true }) hasArrow = true;
-  @Prop({ mutable: true }) isActive = true;
   /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
   @Prop({ mutable: true }) containerSelector = '';

@@ -1325,18 +1325,10 @@ export namespace Components {
          */
         "icon": string;
         /**
-          * @default true
-         */
-        "isActive": boolean;
-        /**
           * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
           * @default false
          */
         "isDisabled": boolean;
-        /**
-          * Used for applying modifier on main container
-         */
-        "mode": string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -3353,18 +3345,10 @@ declare namespace LocalJSX {
          */
         "icon"?: string;
         /**
-          * @default true
-         */
-        "isActive"?: boolean;
-        /**
           * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
           * @default false
          */
         "isDisabled"?: boolean;
-        /**
-          * Used for applying modifier on main container
-         */
-        "mode"?: string;
         /**
           * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
           * @default []
@@ -3673,11 +3657,9 @@ declare namespace LocalJSX {
     }
     interface DsTooltipAttributes {
         "icon": string;
-        "mode": string;
         "position": TooltipPosition;
         "isDisabled": boolean;
         "hasArrow": boolean;
-        "isActive": boolean;
         "mods": string | string[];
         "containerSelector": string;
     }

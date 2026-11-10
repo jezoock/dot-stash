@@ -22,6 +22,18 @@ describe('ds-tooltip', () => {
     return event;
   };
 
+  it('has no mode nor is-active prop: the attributes change nothing (they never did; mods and disabled do)', async () => {
+    const { box: plain } = await render('<ds-tooltip><button>Help</button><span slot="message">Opens the help center</span></ds-tooltip>');
+    const classes = plain.className;
+    const { page, box, isShown } = await render('<ds-tooltip mode="dark" is-active="false"><button>Help</button><span slot="message">Opens the help center</span></ds-tooltip>');
+
+    expect(box.className).toBe(classes);
+    expect(['mode', 'isActive'].filter(name => name in page.root)).toEqual([]);
+    focus(box.querySelector('button'), 'focusin');
+    await page.waitForChanges();
+    expect(isShown()).toBe(true);
+  });
+
   describe('roles and attributes', () => {
     it('gives the message role="tooltip" and an id, which the focusable element of the content references', async () => {
       const { box, message } = await render('<ds-tooltip><button aria-describedby="other">Help</button><span slot="message">Opens the help center</span></ds-tooltip>');
