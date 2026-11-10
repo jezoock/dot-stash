@@ -19,6 +19,10 @@ ds-text {
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A block of text, in the paragraph font style of the theme.
+
 ## Properties
 
 | Property | Attribute | Description                                                                                        | Type                                                  | Default     |
@@ -33,9 +37,9 @@ ds-text {
 
 ## Slots
 
-| Slot | Description      |
-| ---- | ---------------- |
-|      | The default slot |
+| Slot | Description                               |
+| ---- | ----------------------------------------- |
+|      | The text: paragraphs, lists, inline text. |
 
 
 ## CSS Custom Properties

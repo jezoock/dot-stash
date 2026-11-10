@@ -10,6 +10,8 @@ import { focusFirstElement, getFocusedElement } from '../../utils/focus';
  * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
  * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
  * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+ *
+ * @slot - The content of the sidebar, in its scrolling content (`__content`).
  */
 @Component({
   tag: 'ds-sidebar',

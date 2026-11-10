@@ -1,6 +1,11 @@
 import { Prop, Component, h, Host } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 
+/**
+ * A block of text, in the paragraph font style of the theme.
+ *
+ * @slot - The text: paragraphs, lists, inline text.
+ */
 @Component({
   tag: 'ds-text',
   styleUrl: 'text.scss',

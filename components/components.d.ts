@@ -1025,6 +1025,9 @@ export namespace Components {
          */
         "type": string;
     }
+    /**
+     * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+     */
     interface DsSliderItem {
     }
     /**
@@ -1052,6 +1055,9 @@ export namespace Components {
          */
         "label": string;
     }
+    /**
+     * A block of text, in the paragraph font style of the theme.
+     */
     interface DsText {
         "inline": boolean;
         /**
@@ -1089,6 +1095,9 @@ export namespace Components {
         "sub": boolean;
         "sup": boolean;
     }
+    /**
+     * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+     */
     interface DsTitleBar {
         "ctx": boolean;
         /**
@@ -1933,6 +1942,9 @@ declare global {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
     };
+    /**
+     * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+     */
     interface HTMLDsSliderItemElement extends Components.DsSliderItem, HTMLStencilElement {
     }
     var HTMLDsSliderItemElement: {
@@ -1961,6 +1973,9 @@ declare global {
         prototype: HTMLDsSliderMenuElement;
         new (): HTMLDsSliderMenuElement;
     };
+    /**
+     * A block of text, in the paragraph font style of the theme.
+     */
     interface HTMLDsTextElement extends Components.DsText, HTMLStencilElement {
     }
     var HTMLDsTextElement: {
@@ -1977,6 +1992,9 @@ declare global {
         prototype: HTMLDsTitleElement;
         new (): HTMLDsTitleElement;
     };
+    /**
+     * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+     */
     interface HTMLDsTitleBarElement extends Components.DsTitleBar, HTMLStencilElement {
     }
     var HTMLDsTitleBarElement: {
@@ -3070,6 +3088,9 @@ declare namespace LocalJSX {
          */
         "type"?: string;
     }
+    /**
+     * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+     */
     interface DsSliderItem {
     }
     /**
@@ -3098,6 +3119,9 @@ declare namespace LocalJSX {
         "label"?: string;
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
+    /**
+     * A block of text, in the paragraph font style of the theme.
+     */
     interface DsText {
         "inline"?: boolean;
         /**
@@ -3135,6 +3159,9 @@ declare namespace LocalJSX {
         "sub"?: boolean;
         "sup"?: boolean;
     }
+    /**
+     * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+     */
     interface DsTitleBar {
         "ctx"?: boolean;
         /**
@@ -3942,6 +3969,9 @@ declare module "@stencil/core" {
              * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
              */
             "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
+            /**
+             * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+             */
             "ds-slider-item": LocalJSX.IntrinsicElements["ds-slider-item"] & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
             /**
              * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
@@ -3949,12 +3979,18 @@ declare module "@stencil/core" {
              * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
              */
             "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
+            /**
+             * A block of text, in the paragraph font style of the theme.
+             */
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
             /**
              * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
              * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
              */
             "ds-title": LocalJSX.IntrinsicElements["ds-title"] & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
+            /**
+             * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+             */
             "ds-title-bar": LocalJSX.IntrinsicElements["ds-title-bar"] & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
             /**
              * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.

@@ -18,6 +18,9 @@ import { DSBreadcrumbLabels } from './breadcrumb.types';
  * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
  * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
  * the trail is collapsed.
+ *
+ * @slot - The trail, written by the page: an ordered list of links (`<ol>`, or `<ul>`), one `li` per page, the current page
+ * last. The component renders no `<slot>`: the list stays where it is, enhanced in place.
  */
 @Component({
   tag: 'ds-breadcrumb',

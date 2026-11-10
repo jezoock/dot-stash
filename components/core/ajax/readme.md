@@ -66,6 +66,13 @@ Version: 1.0
 | `ajaxLoaded` | Emitted once the content is in the target (`detail.target`, `detail.url`).   | `CustomEvent<{ target: HTMLElement; url: string; }>` |
 
 
+## Slots
+
+| Slot | Description                                                                                                                                                                                                                           |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|      | The link to the page to load (`<a href>`, its first link), and what shows until the load: the component renders no `<slot>`, its children stay where they are, and the loaded content replaces them when it loads into the component. |
+
+
 ## CSS Custom Properties
 
 | Name                           | Description                                                                 |

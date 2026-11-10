@@ -19,6 +19,10 @@ ds-title-bar {
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A row of three parts: content before, the main content (which takes the remaining width), and content after.
+
 ## Properties
 
 | Property | Attribute | Description                                                                                        | Type                 | Default     |
@@ -29,11 +33,11 @@ ds-title-bar {
 
 ## Slots
 
-| Slot       | Description      |
-| ---------- | ---------------- |
-|            | The default slot |
-| `"after"`  |                  |
-| `"before"` |                  |
+| Slot       | Description                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------- |
+|            | The main content (`__content`), a title.                                                     |
+| `"after"`  | Content after it (`__after`, rendered with a `slot="after"` child): actions.                 |
+| `"before"` | Content before it (`__before`, rendered with a `slot="before"` child): an icon, a back link. |
 
 
 ## CSS Custom Properties

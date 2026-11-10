@@ -80,11 +80,11 @@ Type: `Promise<DSBlockContext>`
 
 ## Slots
 
-| Slot       | Description      |
-| ---------- | ---------------- |
-|            | The default slot |
-| `"footer"` |                  |
-| `"header"` |                  |
+| Slot       | Description                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------- |
+|            | The content of the block, in its body (`__body`).                                         |
+| `"footer"` | The footer of the block (`__footer`, rendered with a `slot="footer"` child).              |
+| `"header"` | The header of the block (`__header`, rendered with a `slot="header"` child): its heading. |
 
 
 ## CSS Custom Properties

@@ -1,6 +1,13 @@
 import { Component, h, Prop, Element, Host } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 
+/**
+ * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+ *
+ * @slot - The main content (`__content`), a title.
+ * @slot before - Content before it (`__before`, rendered with a `slot="before"` child): an icon, a back link.
+ * @slot after - Content after it (`__after`, rendered with a `slot="after"` child): actions.
+ */
 @Component({
   tag: 'ds-title-bar',
   styleUrl: 'title-bar.scss',

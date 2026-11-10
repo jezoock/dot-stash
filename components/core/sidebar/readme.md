@@ -119,9 +119,9 @@ Type: `Promise<void>`
 
 ## Slots
 
-| Slot | Description      |
-| ---- | ---------------- |
-|      | The default slot |
+| Slot | Description                                                         |
+| ---- | ------------------------------------------------------------------- |
+|      | The content of the sidebar, in its scrolling content (`__content`). |
 
 
 ## CSS Custom Properties

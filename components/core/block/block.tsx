@@ -8,6 +8,10 @@ import { DSBlockContext } from './block.types';
  * (`ds-home-hero__header`, `__body`, `__footer`).
  * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
  * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
+ *
+ * @slot - The content of the block, in its body (`__body`).
+ * @slot header - The header of the block (`__header`, rendered with a `slot="header"` child): its heading.
+ * @slot footer - The footer of the block (`__footer`, rendered with a `slot="footer"` child).
  */
 @Component({
   tag: 'ds-block',

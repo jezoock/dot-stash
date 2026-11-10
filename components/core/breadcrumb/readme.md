@@ -141,6 +141,13 @@ the trail is collapsed.
 | `mods`     | `mods`     | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.                                                                                                                                                                                                                     | `string \| string[]`           | `[]`        |
 
 
+## Slots
+
+| Slot | Description                                                                                                                                                                                               |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|      | The trail, written by the page: an ordered list of links (`<ol>`, or `<ul>`), one `li` per page, the current page last. The component renders no `<slot>`: the list stays where it is, enhanced in place. |
+
+
 ## CSS Custom Properties
 
 | Name                              | Description                                                            |

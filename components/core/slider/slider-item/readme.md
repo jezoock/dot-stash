@@ -13,11 +13,15 @@
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+
 ## Slots
 
-| Slot | Description      |
-| ---- | ---------------- |
-|      | The default slot |
+| Slot | Description                                         |
+| ---- | --------------------------------------------------- |
+|      | The content of the slide: an image, a link, a card. |
 
 
 ----------------------------------------------

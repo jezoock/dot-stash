@@ -10,6 +10,9 @@ import { getFocusedElement } from '../../utils/focus';
  * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
  * `ajaxError`; a load emits `ajaxLoaded`.
  * Version: 1.0
+ *
+ * @slot - The link to the page to load (`<a href>`, its first link), and what shows until the load: the component renders
+ * no `<slot>`, its children stay where they are, and the loaded content replaces them when it loads into the component.
  */
 
 @Component({
