@@ -2,16 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 
-// The repository paths that the README and the notes of docs/ name (`scss/…`, `components/…`, `scripts/…`, `test/…`,
+// The repository paths that the README, the changelog and the notes of docs/ name (`scss/…`, `components/…`, `scripts/…`, `test/…`,
 // `docs/…`) and their relative links exist: a file moved or removed leaves no stale path in them.
 
 const root = join(__dirname, '..');
 
-/** The paths of the development branch that the archive notes name as removed or archived, on purpose. */
-const FORMER_PATHS = ['components/core/button/button.tsx', 'components/demo', 'scss/themes/legacy/'];
+/** The paths that the archive notes and the changelog name as removed, archived or replaced, on purpose. */
+const FORMER_PATHS = ['components/core/button/button.tsx', 'components/demo', 'scss/themes/legacy/', 'scss/variables', 'scss/tools'];
 
 const documents = [
   'README.md',
+  'CHANGELOG.md',
   ...readdirSync(join(root, 'docs'))
     .filter(name => name.endsWith('.md'))
     .map(name => `docs/${name}`),

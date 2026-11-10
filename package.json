@@ -1,7 +1,25 @@
 {
   "name": "dot-stash",
-  "version": "0.0.1",
-  "description": "Standalone Stencil web-components UI library (light DOM ds-* components) with a SCSS theming toolkit.",
+  "version": "0.1.0",
+  "description": "A standalone UI library: light-DOM web components (ds-* custom elements, Stencil) and a SCSS theming toolkit, with no runtime dependency.",
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "stencil",
+    "light-dom",
+    "design-system",
+    "ui",
+    "scss",
+    "sass",
+    "theming",
+    "design-tokens",
+    "accessibility",
+    "forms"
+  ],
+  "homepage": "https://github.com/jezoock/dot-stash#readme",
+  "bugs": {
+    "url": "https://github.com/jezoock/dot-stash/issues"
+  },
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "types": "dist/types/index.d.ts",
@@ -28,7 +46,8 @@
   },
   "files": [
     "dist/",
-    "loader/"
+    "loader/",
+    "CHANGELOG.md"
   ],
   "engines": {
     "node": ">=22"
