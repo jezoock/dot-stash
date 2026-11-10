@@ -17,12 +17,18 @@ This README describes the current state of the library (version 0.1.0). What cha
 
 ## Install
 
+The library is used from its repository: clone it, install its dependencies and build it.
+
 ```sh
 git clone https://github.com/jezoock/dot-stash.git
 cd dot-stash
 npm ci
 npm run build:all
 ```
+
+Until the pull request of version 0.1.0 is merged into `main`, its code is on the `claude/intelligent-pasteur-rwiqsn` branch: `git clone --branch claude/intelligent-pasteur-rwiqsn https://github.com/jezoock/dot-stash.git`.
+
+The build writes `dist/` and `loader/` (see [Build output](#build-output)), which are not committed. A project then takes the library from the clone, as a local path dependency or as built files: see [In another project](#in-another-project).
 
 ## Browser support
 
@@ -450,6 +456,15 @@ await rsp.refresh();
 
 ## Using the components
 
+### In another project
+
+The package is not published to a registry: a project takes it from a clone of the repository, built with `npm ci` and `npm run build:all` (see [Install](#install)), in one of two ways.
+
+- **A local path dependency**: in the project, `npm install ../dot-stash` (the path of the clone), which writes `"dot-stash": "file:../dot-stash"` in its `package.json` and links `node_modules/dot-stash` to the clone. The project imports the loader, the utilities (with their types) and the theme stylesheet from `dot-stash`: see [From the package](#from-the-package). After a `git pull` in the clone, `npm run build:all` there gives the project the new build. A tarball made by `npm pack` in the clone (`dot-stash-0.1.0.tgz`, the files of `files` only) installs the same way, as a copy: `npm install ../dot-stash/dot-stash-0.1.0.tgz`.
+- **The built files**: copy `dist/dot-stash/` (the browser build, which loads the code of each component from its own folder) and `dist/css/<theme>.css` (with `dist/css/LICENSE-icons.txt`, the licence texts of its icons) to the static files of the site, and load them with a script tag and a stylesheet link: see [Script tags](#script-tags).
+
+A git dependency (`npm install github:jezoock/dot-stash`, or a git URL in `package.json`) does not work: it installs the files of the repository, and `dist/` and `loader/`, built and not committed, are not among them (the package has no `prepare` script that would build them on install), so the imports of `dot-stash` and `dot-stash/loader` and the stylesheets are missing. Use a built clone.
+
 ### Script tags
 
 After `npm run build:all`, serve the files and load the theme and the browser build:
@@ -467,7 +482,7 @@ Each component's code is loaded on first use, from the same folder.
 
 ### From the package
 
-The package is not published to a registry. Install it from a local path or from a tarball made with `npm pack`, then:
+In a project that has the package as a dependency (a local path, see [In another project](#in-another-project)), register the components with the loader, from the code the bundler of the project builds:
 
 ```js
 import { defineCustomElements } from 'dot-stash/loader';
@@ -475,9 +490,23 @@ import { defineCustomElements } from 'dot-stash/loader';
 defineCustomElements();
 ```
 
-Add a theme stylesheet, `dot-stash/dist/css/<theme>.css`, to the page with your usual CSS pipeline, or compile your own theme (see [Creating a theme](#creating-a-theme)).
+Add a theme stylesheet, `dot-stash/dist/css/<theme>.css`, to the page with your usual CSS pipeline, or compile your own theme (see [Creating a theme](#creating-a-theme)). Without a bundler, an import map gives the browser the files of the entry points (`node_modules/` served by the site):
 
-The `exports` of `package.json` give these entry points, as ES modules (`import`) or CommonJS (`require`), with their types: `dot-stash` (the utilities, `ds`), `dot-stash/loader` and the files of `dist/` (`dot-stash/dist/css/<theme>.css`, `dot-stash/dist/collection/…`).
+```html
+<link rel="stylesheet" href="/node_modules/dot-stash/dist/css/default.css" />
+<script type="importmap">
+  { "imports": { "dot-stash/loader": "/node_modules/dot-stash/loader/index.js", "dot-stash": "/node_modules/dot-stash/dist/index.js" } }
+</script>
+<script type="module">
+  import { defineCustomElements } from 'dot-stash/loader';
+  import { tokens } from 'dot-stash';
+
+  defineCustomElements();
+  console.log(tokens.getToken('color-primary-base')); // '#2563eb', the default theme
+</script>
+```
+
+The `exports` of `package.json` give these entry points, as ES modules (`import`) or CommonJS (`require`), with their types: `dot-stash` (the utilities, `ds`), `dot-stash/loader` and the files of `dist/` (`dot-stash/dist/css/<theme>.css`, `dot-stash/dist/collection/…`). TypeScript finds the types with the module resolutions `bundler`, `node16` and `nodenext`, and with them the typings of the elements: `document.querySelector('ds-alert')` is an `HTMLDsAlertElement`, with its props and methods (`HTMLElementTagNameMap`), and `JSX.DsAlert` (`import type { JSX } from 'dot-stash'`) the props of the component.
 
 ### Components
 
