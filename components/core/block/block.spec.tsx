@@ -30,6 +30,13 @@ describe('ds-block', () => {
     expect(page.root.querySelector(`.ds-${context}__body`)).not.toBeNull();
   });
 
+  it.each(['', 'article', 'section label="Offers"', 'form', 'modal'])('<ds-block %s> renders its wrappers as div elements, in the element itself', async attributes => {
+    const page = await renderPage(`<ds-block ${attributes}><h2 slot="header">Title</h2><p>Text</p><p slot="footer">End</p></ds-block>`);
+
+    expect(page.root.localName).toBe('ds-block');
+    expect(Array.from(page.root.children).map(child => child.localName)).toEqual(['div', 'div', 'div']);
+  });
+
   it('builds the class from name and type, with the modifiers', async () => {
     const page = await renderPage('<ds-block name="home" type="hero" mods="dark,wide"></ds-block>');
 

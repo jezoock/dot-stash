@@ -2,17 +2,6 @@ import { Component, h, Prop, Host, Element, Method } from '@stencil/core';
 import { toClassList } from '../../utils/props';
 import { DSBlockContext } from './block.types';
 
-// A const object rather than an enum: several block types map to the same tag.
-const DsBlockTypeToTag = {
-  PAGE: 'Host',
-  SECTION: 'section',
-  BLOCK: 'div',
-  CONTENT: 'div',
-  FORM: 'div',
-} as const;
-
-type DsBlockTypeToTag = (typeof DsBlockTypeToTag)[keyof typeof DsBlockTypeToTag];
-
 /**
  * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
  * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
@@ -25,7 +14,6 @@ type DsBlockTypeToTag = (typeof DsBlockTypeToTag)[keyof typeof DsBlockTypeToTag]
   styleUrl: './block.scss',
 })
 export class DSBlock {
-  blockTag: DsBlockTypeToTag = DsBlockTypeToTag.BLOCK;
   /** Whether the block has a `slot="header"` child, read before the first render. */
   hasHeader = false;
   /** Whether the block has a `slot="footer"` child, read before the first render. */
