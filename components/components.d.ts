@@ -1105,15 +1105,17 @@ export namespace Components {
      * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
      * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
      * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+     * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+     * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
      */
     interface DsToaster {
         /**
-          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
+          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. The countdown pauses while the pointer is over the toasts or the focus is in the toaster, and starts again from this delay when they leave it. Leave the time to read the messages: 5000 at least for a sentence, more for a longer text (see the Accessibility section of the readme).
           * @default 3000
          */
         "closingDelay": number;
         /**
-          * Shows the toaster, then hides it after `closingDelay` ms (counted from the last call).
+          * Shows the toaster, then hides it after `closingDelay` ms (counted from the last call). The countdown pauses while the pointer is over the toasts or the focus is in the toaster, and starts again from `closingDelay` when they leave it.
          */
         "displayToast": () => Promise<void>;
         "hide": () => Promise<void>;
@@ -2003,6 +2005,8 @@ declare global {
      * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
      * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
      * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+     * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+     * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
      */
     interface HTMLDsToasterElement extends Components.DsToaster, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToasterElementEventMap>(type: K, listener: (this: HTMLDsToasterElement, ev: DsToasterCustomEvent<HTMLDsToasterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -3155,10 +3159,12 @@ declare namespace LocalJSX {
      * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
      * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
      * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+     * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+     * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
      */
     interface DsToaster {
         /**
-          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown.
+          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. The countdown pauses while the pointer is over the toasts or the focus is in the toaster, and starts again from this delay when they leave it. Leave the time to read the messages: 5000 at least for a sentence, more for a longer text (see the Accessibility section of the readme).
           * @default 3000
          */
         "closingDelay"?: number;
@@ -3976,6 +3982,8 @@ declare module "@stencil/core" {
              * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
              * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
              * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+             * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+             * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
              */
             "ds-toaster": LocalJSX.IntrinsicElements["ds-toaster"] & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
             /**

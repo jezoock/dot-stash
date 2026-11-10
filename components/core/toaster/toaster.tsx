@@ -1,4 +1,4 @@
-import { Component, h, Method, State, Prop, Event, EventEmitter } from '@stencil/core';
+import { Component, Element, h, Listen, Method, State, Prop, Event, EventEmitter } from '@stencil/core';
 import { toArray, toClassList } from '../../utils/props';
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from './toaster-positions.enum';
 import { TransitionWait, waitForTransition } from '../../utils/transition';
@@ -12,14 +12,25 @@ import { TransitionWait, waitForTransition } from '../../utils/transition';
  * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
  * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
  * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+ *
+ * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+ * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
  */
 @Component({
   tag: 'ds-toaster',
   styleUrl: 'toaster.scss',
 })
 export class DSToaster {
+  @Element() host: HTMLDsToasterElement;
+
   container: HTMLDivElement;
   closingTimer: ReturnType<typeof setTimeout>;
+  /** Whether the countdown of `displayToast()` runs, or is paused: once over, it hides the toaster. */
+  private isClosing = false;
+  /** Whether the pointer is over the toasts: the countdown pauses. */
+  private isHovered = false;
+  /** Whether the focus is in the toaster: the countdown pauses. */
+  private hasFocus = false;
   /** The wait for the end of the fade in or out, while it runs. */
   private fade: TransitionWait;
   /** Whether the duration of the fade was read, once its state was rendered. */
@@ -43,7 +54,11 @@ export class DSToaster {
    * `0` displays them all.
    */
   @Prop({ reflect: true }) maxDisplayedToast = 3;
-  /** Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. */
+  /**
+   * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. The countdown pauses while the pointer is
+   * over the toasts or the focus is in the toaster, and starts again from this delay when they leave it. Leave the time to
+   * read the messages: 5000 at least for a sentence, more for a longer text (see the Accessibility section of the readme).
+   */
   @Prop() closingDelay = 3000;
 
   @State() isShown = false;
@@ -53,16 +68,15 @@ export class DSToaster {
   @Event() toasterHide: EventEmitter;
   @Event() toasterHidden: EventEmitter;
 
-  /** Shows the toaster, then hides it after `closingDelay` ms (counted from the last call). */
+  /**
+   * Shows the toaster, then hides it after `closingDelay` ms (counted from the last call). The countdown pauses while the
+   * pointer is over the toasts or the focus is in the toaster, and starts again from `closingDelay` when they leave it.
+   */
   @Method()
   async displayToast() {
     this.show();
-    clearTimeout(this.closingTimer);
-    if (this.closingDelay !== 0) {
-      this.closingTimer = setTimeout(() => {
-        this.hide();
-      }, this.closingDelay);
-    }
+    this.isClosing = Number(this.closingDelay) !== 0;
+    this.startCountdown();
   }
 
   @Method()
@@ -76,6 +90,9 @@ export class DSToaster {
 
   @Method()
   async hide() {
+    // A hidden toaster is neither under the pointer nor focused: a later displayToast() counts down at once.
+    this.isHovered = false;
+    this.hasFocus = false;
     if (this.isShown) {
       this.toasterHide.emit();
       this.waitForFade();
@@ -93,6 +110,35 @@ export class DSToaster {
     if (this.fade && !this.isFadeMeasured) {
       this.isFadeMeasured = true;
       this.fade.measure();
+    }
+  }
+
+  /** The pointer over the toasts (the rest of the toaster lets it through) pauses the countdown of `displayToast()`. */
+  @Listen('mouseenter')
+  mouseEnterHandler() {
+    this.isHovered = true;
+    clearTimeout(this.closingTimer);
+  }
+
+  @Listen('mouseleave')
+  mouseLeaveHandler() {
+    this.isHovered = false;
+    this.startCountdown();
+  }
+
+  /** The focus in the toaster pauses the countdown of `displayToast()`, until it leaves the toaster. */
+  @Listen('focusin')
+  focusInHandler() {
+    this.hasFocus = true;
+    clearTimeout(this.closingTimer);
+  }
+
+  @Listen('focusout')
+  focusOutHandler(event: FocusEvent) {
+    const to = event.relatedTarget as Node | null;
+    if (!(to && this.host.contains(to))) {
+      this.hasFocus = false;
+      this.startCountdown();
     }
   }
 
@@ -115,6 +161,21 @@ export class DSToaster {
       this[`toaster${this.isShown ? 'Shown' : 'Hidden'}`].emit();
     });
     this.isFadeMeasured = false;
+  }
+
+  /**
+   * Starts the countdown of `displayToast()` again, from `closingDelay`, unless it is paused (the pointer over the toasts,
+   * the focus in the toaster) or there is none: once over, it hides the toaster. A fresh delay rather than the time that
+   * was left: the user who paused it was reading, and the toasts never vanish as the pointer or the focus leaves them.
+   */
+  private startCountdown() {
+    clearTimeout(this.closingTimer);
+    if (this.isClosing && !this.isHovered && !this.hasFocus) {
+      this.closingTimer = setTimeout(() => {
+        this.isClosing = false;
+        this.hide();
+      }, Number(this.closingDelay));
+    }
   }
 
   /** The messages displayed: the last `maxDisplayedToast` ones (all of them for `0`). */

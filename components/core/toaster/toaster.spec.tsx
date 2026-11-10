@@ -233,4 +233,94 @@ describe('ds-toaster', () => {
     await page.waitForChanges();
     expect(toaster).toHaveClass('--hidden');
   });
+
+  describe('countdown (WCAG 2.2.1, Timing Adjustable)', () => {
+    const isShown = async (page: Awaited<ReturnType<typeof render>>['page'], toaster: HTMLElement) => {
+      await page.waitForChanges();
+      return toaster.classList.contains('--shown');
+    };
+
+    it('pauses while the pointer is over the toasts, and counts closing-delay again from when it leaves', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved" closing-delay="60"></ds-toaster>');
+
+      await page.root.displayToast();
+      await wait(30);
+      page.root.dispatchEvent(new Event('mouseenter'));
+      await wait(80);
+      expect(await isShown(page, toaster)).toBe(true);
+
+      page.root.dispatchEvent(new Event('mouseleave'));
+      await wait(40);
+      // 40 ms after the pointer left: the toaster stays the whole delay, not the 30 ms that were left.
+      expect(await isShown(page, toaster)).toBe(true);
+      await wait(40);
+      expect(await isShown(page, toaster)).toBe(false);
+    });
+
+    it('pauses while the focus is in the toaster, not when it moves in it, and counts again once it leaves', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved" closing-delay="60"></ds-toaster>');
+      const inside = toaster.querySelector('.ds-toaster__toast');
+
+      await page.root.displayToast();
+      inside.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+      await wait(80);
+      expect(await isShown(page, toaster)).toBe(true);
+
+      inside.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: toaster }));
+      await wait(80);
+      expect(await isShown(page, toaster)).toBe(true);
+
+      inside.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: page.body }));
+      await wait(30);
+      expect(await isShown(page, toaster)).toBe(true);
+      await wait(50);
+      expect(await isShown(page, toaster)).toBe(false);
+    });
+
+    it('a displayToast() while paused waits for the pointer to leave', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved" closing-delay="40"></ds-toaster>');
+
+      page.root.dispatchEvent(new Event('mouseenter'));
+      await page.root.displayToast();
+      await wait(60);
+      expect(await isShown(page, toaster)).toBe(true);
+
+      page.root.dispatchEvent(new Event('mouseleave'));
+      await wait(60);
+      expect(await isShown(page, toaster)).toBe(false);
+    });
+
+    it('with closing-delay="0", stays shown, with or without the pointer', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved" closing-delay="0"></ds-toaster>');
+
+      await page.root.displayToast();
+      page.root.dispatchEvent(new Event('mouseenter'));
+      page.root.dispatchEvent(new Event('mouseleave'));
+      await wait(40);
+      expect(await isShown(page, toaster)).toBe(true);
+    });
+
+    it('show() has no countdown, and the pointer leaving does not start one', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved" closing-delay="20"></ds-toaster>');
+
+      await page.root.show();
+      page.root.dispatchEvent(new Event('mouseenter'));
+      page.root.dispatchEvent(new Event('mouseleave'));
+      await wait(40);
+      expect(await isShown(page, toaster)).toBe(true);
+    });
+
+    it('a toaster hidden under the pointer counts down at once when displayToast() shows it again', async () => {
+      const { page, toaster } = await render('<ds-toaster messages="Saved" closing-delay="40"></ds-toaster>');
+
+      await page.root.displayToast();
+      page.root.dispatchEvent(new Event('mouseenter'));
+      toaster.click();
+      expect(await isShown(page, toaster)).toBe(false);
+
+      await page.root.displayToast();
+      await wait(60);
+      expect(await isShown(page, toaster)).toBe(false);
+    });
+  });
 });
