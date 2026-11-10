@@ -1,0 +1,105 @@
+@use '../tokens' as *;
+
+// ds-alert: a box on a light gray background, with a border in the status color of its type on the start side, the icon of
+// the type in that color, and its title in bold. The custom properties are documented in components/core/alert/readme.md;
+// the grid of the icon, the content and the dismiss button is in the component stylesheet.
+
+// The types: the icon of each one (its color is the status color of the same name). Each icon has its own shape, so that
+// the type does not rest on the color only.
+$-alert-icons: (
+  info: info,
+  success: ok-circle,
+  warning: attention,
+  error: attention-alt,
+);
+
+ds-alert {
+  --ds-alert-background: #{ds-color(gray, lightest)};
+  --ds-alert-color: #{ds-color(gray, darkest)};
+  --ds-alert-accent-color: #{ds-color(status, info)};
+  --ds-alert-border-width: 4px;
+  --ds-alert-radius: #{ds-radius(sm)};
+  --ds-alert-padding: #{ds-spacing(3) ds-spacing(4)};
+  --ds-alert-gap: #{ds-spacing(3)};
+  --ds-alert-icon-size: 1.25em;
+}
+
+.ds-alert {
+  margin-bottom: ds-spacing(4);
+  padding: var(--ds-alert-padding);
+  // A transparent border on the other sides: in forced colors, the browser draws it in the color of the text, a frame.
+  border: 1px solid transparent;
+  border-inline-start: var(--ds-alert-border-width) solid var(--ds-alert-accent-color);
+  border-radius: var(--ds-alert-radius);
+  background-color: var(--ds-alert-background);
+  color: var(--ds-alert-color);
+
+  @each $type, $icon in $-alert-icons {
+    &.--#{$type} {
+      --ds-alert-accent-color: #{ds-color(status, $type)};
+    }
+  }
+
+  // The icon of the type: decorative (the prefix tells the type), in the color of the type, centered on the first line.
+  &::before {
+    color: var(--ds-alert-accent-color);
+    @include ds-icon(null, block, $alt: '');
+  }
+
+  &::before {
+    width: var(--ds-alert-icon-size);
+    height: 1.5em;
+    height: 1lh;
+  }
+
+  @each $type, $icon in $-alert-icons {
+    &.--#{$type}::before {
+      @include ds-icon-content($icon);
+    }
+  }
+
+  &__title {
+    font-weight: ds-font-weight(page, strong);
+  }
+
+  // A heading of the page in the title slot: the look of the title, its level kept.
+  &__title :is(h1, h2, h3, h4, h5, h6) {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  &__title:not([hidden]) + &__body {
+    margin-top: ds-spacing(1);
+  }
+
+  // The paragraphs and lists of the message: no space before the first one, nor after the last one.
+  &__body > :first-child {
+    margin-top: 0;
+  }
+
+  &__body > :last-child {
+    margin-bottom: 0;
+  }
+
+  // The dismiss button: a cross, decorative (the button is named), in a square of 1.5em (24 px at least).
+  &__dismiss {
+    margin: 0;
+    padding: 0.25em;
+    border: 1px solid transparent;
+    border-radius: ds-radius(sm);
+    background-color: transparent;
+    color: inherit;
+    line-height: 1;
+    cursor: pointer;
+
+    &::before {
+      @include ds-icon(cancel, block, $alt: '');
+    }
+
+    &:hover {
+      background-color: ds-color(gray, light);
+    }
+  }
+}

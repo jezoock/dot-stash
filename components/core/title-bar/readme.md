@@ -1,30 +1,51 @@
 # ds-title-bar
 
+## Styling
 
+- **Classes**: `ds-title-bar` on `<ds-title-bar>`; `mods` → `--<mod>`.
+- **Elements**: `__before` (slot `before`), `__content` (the default slot) and `__after` (slot `after`). `__before` and `__after` are rendered when their slot has content.
+- **Attributes**: `ctx`, `mods` (reflected).
+- **Structure** (`title-bar.scss`): a flex row; the content takes the remaining width, between the two other parts.
+- **Look** (default theme, `components/_title-bar.scss`): the space between the parts, `--ds-title-bar-gap`, set on `ds-title-bar`. The default theme puts none (`normal`).
+
+Override it after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
+
+```css
+ds-title-bar {
+  --ds-title-bar-gap: var(--ds-space-4);
+}
+```
 
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+A row of three parts: content before, the main content (which takes the remaining width), and content after.
+
 ## Properties
 
-| Property | Attribute | Description | Type                 | Default     |
-| -------- | --------- | ----------- | -------------------- | ----------- |
-| `ctx`    | `ctx`     |             | `boolean`            | `undefined` |
-| `mods`   | `mods`    |             | `string \| string[]` | `[]`        |
+| Property | Attribute | Description                                                                                        | Type                 | Default     |
+| -------- | --------- | -------------------------------------------------------------------------------------------------- | -------------------- | ----------- |
+| `ctx`    | `ctx`     |                                                                                                    | `boolean`            | `undefined` |
+| `mods`   | `mods`    | Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. | `string \| string[]` | `[]`        |
 
 
-## Dependencies
+## Slots
 
-### Used by
+| Slot       | Description                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------- |
+|            | The main content (`__content`), a title.                                                     |
+| `"after"`  | Content after it (`__after`, rendered with a `slot="after"` child): actions.                 |
+| `"before"` | Content before it (`__before`, rendered with a `slot="before"` child): an icon, a back link. |
 
- - [pronto-content-admin](../../pronto/pronto-content)
 
-### Graph
-```mermaid
-graph TD;
-  pronto-content-admin --> ds-title-bar
-  style ds-title-bar fill:#f9f,stroke:#333,stroke-width:4px
-```
+## CSS Custom Properties
+
+| Name                 | Description                                                        |
+| -------------------- | ------------------------------------------------------------------ |
+| `--ds-title-bar-gap` | Space between the `before` part, the content and the `after` part. |
+
 
 ----------------------------------------------
 

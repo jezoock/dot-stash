@@ -1,0 +1,110 @@
+@use '../tokens' as *;
+
+// ds-combo: the toggle button and its chevron, the list and the options. The custom properties are documented in
+// components/core/combo/readme.md; the component stylesheet reads the list offset.
+
+ds-combo {
+  --ds-combo-background: #{ds-color(gray, white)};
+  --ds-combo-color: #{ds-color(gray, darkest)};
+  --ds-combo-border-color: #{ds-color(gray, base)};
+  --ds-combo-active-color: #{ds-color(primary, base)};
+  --ds-combo-hover-background: #{ds-color(gray, lighter)};
+  --ds-combo-selected-background: #{ds-color(primary, light)};
+  --ds-combo-selected-color: #{ds-color(primary, darker)};
+  --ds-combo-list-offset: 0.5rem;
+  --ds-combo-invalid-color: #{ds-color(status, error)};
+}
+
+.ds-combo {
+  &__selected-option {
+    display: inline-flex;
+    align-items: center;
+    gap: ds-spacing(2);
+    max-width: 100%;
+    padding: ds-spacing(2) ds-spacing(3);
+    border: 1px solid var(--ds-combo-border-color);
+    border-radius: ds-radius(sm);
+    background-color: var(--ds-combo-background);
+    color: var(--ds-combo-color);
+    cursor: pointer;
+
+    &::after {
+      transition: transform 0.2s ease;
+      @include ds-icon(angle-down);
+    }
+  }
+
+  &.--open > &__selected-option {
+    border-color: var(--ds-combo-active-color);
+
+    &::after {
+      transform: rotate(180deg);
+    }
+  }
+
+  // Invalid (required, no option selected, once the user should see it): the border of the toggle button in the error color.
+  &.--invalid > &__selected-option {
+    border-color: var(--ds-combo-invalid-color);
+  }
+
+  // A disabled combo (its `disabled`, or a disabled fieldset around it): the toggle button dimmed, as a disabled option.
+  &.--disabled > &__selected-option {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &__option-list {
+    margin: 0;
+    padding: ds-spacing(1) 0;
+    list-style: none;
+    max-height: 50vh;
+    overflow-y: auto;
+    border: 1px solid ds-color(gray, light);
+    border-radius: ds-radius(md);
+    background-color: var(--ds-combo-background);
+    box-shadow: 0 4px 12px ds-color(shadow, base);
+  }
+
+  &__option {
+    & > span,
+    & > a {
+      padding: ds-spacing(2) ds-spacing(4);
+      color: var(--ds-combo-color);
+      text-decoration: none;
+    }
+
+    &:hover {
+      background-color: var(--ds-combo-hover-background);
+    }
+
+    &.--selected {
+      background-color: var(--ds-combo-selected-background);
+
+      & > span,
+      & > a {
+        color: var(--ds-combo-selected-color);
+      }
+    }
+
+    &.--disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    // The active option, which the keys move and select (the combobox keeps the focus): the focus indicator, inside the
+    // option, as the list cuts what overflows it.
+    &.--active {
+      @include ds-focus-ring();
+      outline-offset: calc(-1 * #{ds-focus(width)});
+    }
+
+    & > img {
+      display: block;
+      max-width: 100%;
+    }
+  }
+}

@@ -1,0 +1,55 @@
+// *** Return CSS ruleset to display an arrow *** //
+
+@mixin ds-arrow($size, $direction, $color) {
+  border: $size solid transparent;
+  content: '';
+  @if $direction == 'top' {
+    border-bottom-color: $color;
+  }
+  @if $direction == 'right' {
+    border-left-color: $color;
+  }
+  @if $direction == 'bottom' {
+    border-top-color: $color;
+  }
+  @if $direction == 'left' {
+    border-right-color: $color;
+  }
+  width: $size;
+  height: $size;
+  display: inline-block;
+}
+
+// *** Animations *** //
+
+// The @keyframes the mixins below rely on. Include it once, at the root of a theme.
+@mixin ds-keyframes() {
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+// Rules for the users who ask for less motion (their system setting, `prefers-reduced-motion: reduce`):
+// `@include ds-reduced-motion() { transition: none; }`.
+@mixin ds-reduced-motion() {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Needs the keyframes of ds-keyframes(). A loading indicator: an essential animation, which tells that something is going
+// on. With less motion, it keeps turning, more slowly, where the base styles of a theme cut the other animations short
+// (!important: wins over that rule of the base styles, `*::after` and the others).
+@mixin spin {
+  animation: spin 2s linear infinite;
+
+  @include ds-reduced-motion() {
+    animation-duration: 4s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

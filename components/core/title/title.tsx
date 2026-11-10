@@ -1,61 +1,45 @@
-import { Component, h, Prop, Watch, Host } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { Component, Element, h, Prop, Host } from '@stencil/core';
+import { toClassList, toNumber } from '../../utils/props';
 
+/**
+ * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+ * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+ *
+ * @slot - The title: a text, or a heading, a paragraph, a link or a `strong`.
+ */
 @Component({
-	tag: 'ds-title',
-	styleUrl: 'title.scss',
+  tag: 'ds-title',
+  styleUrl: 'title.scss',
 })
 export class DSTitle {
-	CSSClassList: CssClassList;
+  @Element() host: HTMLElement;
 
-	@Prop({ reflect: true }) mods: string | string[] = [];
-	@Prop({ reflect: true }) article: boolean;
-	@Prop({ reflect: true }) form: boolean;
-	@Prop({ reflect: true }) page: boolean;
-	@Prop({ reflect: true }) section: boolean;
-	@Prop({ reflect: true }) block: boolean;
-	@Prop({ reflect: true }) sub: boolean;
-	@Prop({ reflect: true }) sup: boolean;
-	/*@Prop() useContext: boolean;*/
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
+  @Prop({ reflect: true }) article: boolean;
+  @Prop({ reflect: true }) form: boolean;
+  @Prop({ reflect: true }) page: boolean;
+  @Prop({ reflect: true }) section: boolean;
+  @Prop({ reflect: true }) block: boolean;
+  @Prop({ reflect: true }) sub: boolean;
+  @Prop({ reflect: true }) sup: boolean;
+  /**
+   * The heading level (1 to 6) of a text title: the element is a heading (`role="heading"`, `aria-level`). Not applied when
+   * the title holds a heading element, which has its own level.
+   */
+  @Prop() level: number | string;
 
-	@Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(mods));
+  /** The heading level of the element: `level`, when it is valid and the title holds no heading element. */
+  get headingLevel(): number | undefined {
+    const level = this.level !== undefined && this.level !== null && this.level !== '' ? toNumber(this.level) : undefined;
+    return level >= 1 && level <= 6 && !this.host.querySelector('h1, h2, h3, h4, h5, h6') ? level : undefined;
   }
 
-	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList("ds-title", _ds.props.toArray(this.mods));
-	}
-
-	/* getContext() {
-		return this.article && 'article' || this.block && "block" || this.section && "section" || this.form && "form"; 
-	} */
-	
-	/*async connectedCallback() {
-		let { useContext } = this;
-		if (typeof useContext === 'undefined') {
-			const { useContext: useContextFromConfig } = _ds.app.getConfig([ 'useContext' ]);
-			useContext = Boolean(useContextFromConfig);
-		}
-		if (useContext) {
-			const contextContainer = this.container.closest("ds-block");
-			if (contextContainer) {
-				const context = await contextContainer.getContext();
-				if (typeof this[context] === "undefined") {
-					this[context] = true;
-				}
-			}
-		}
-	}*/
-	
-	render() {
-		return (
-			<Host
-				class={this.CSSClassList}
-			>
-				<slot />
-			</Host>
-		);
-	}
+  render() {
+    return (
+      <Host class={toClassList('ds-title', this.mods)} role={this.headingLevel ? 'heading' : undefined} aria-level={this.headingLevel}>
+        <slot />
+      </Host>
+    );
+  }
 }

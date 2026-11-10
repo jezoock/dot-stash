@@ -1,32 +1,50 @@
 # ds-rsp
 
+## Styling
 
+`<ds-rsp>` renders nothing: an empty element, without class, stylesheet or custom property. It reads the breakpoints of the theme from its `--ds-bp-*` tokens (see [Breakpoints shared with JavaScript](../../../README.md#breakpoints-shared-with-javascript)), or from its `breakpoints` attribute.
+
+It watches one media query per breakpoint boundary (`matchMedia()`: `(min-width: 576px)`, `(min-width: 768px)`…), the media queries the theme writes with `break-p()`: a breakpoint change is applied at once, when the viewport crosses a boundary, never while it is resized within a breakpoint, and at the exact width of a zoomed page (991.5 px is `sm`, as for the theme's `(min-width: 992px)`). See [Breakpoints shared with JavaScript](../../../README.md#breakpoints-shared-with-javascript).
+
+**Changed**: ds-rsp listened to `resize`, debounced (`debounce-delay`, 500 ms), and compared the rounded `window.innerWidth` with the breakpoints. `debounce-delay` is deprecated and ignored: a breakpoint change is applied at once (a console warning when it is set).
 
 <!-- Auto Generated Below -->
 
 
+## Overview
+
+Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+attribute the properties their `data-rsp` attribute declares for it (see the README).
+It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
+Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
+The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
+
 ## Properties
 
-| Property              | Attribute             | Description | Type                       | Default                                 |
-| --------------------- | --------------------- | ----------- | -------------------------- | --------------------------------------- |
-| `breakpointsFromProp` | --                    |             | `{ [x: string]: number; }` | `undefined`                             |
-| `debounceDelay`       | `debounce-delay`      |             | `number`                   | `500`                                   |
-| `propertyName`        | `property-name`       |             | `string`                   | `'data-rsp'`                            |
-| `subscriberSelector`  | `subscriber-selector` |             | `string`                   | `'[data-use-rsp]:not([data-rsp-init])'` |
+| Property              | Attribute             | Description                                                                                                                                                                                                                                                                                       | Type                      | Default                                 |
+| --------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | --------------------------------------- |
+| `breakpointsFromProp` | `breakpoints`         | Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.                                                                                                         | `RawBreakpoint \| string` | `undefined`                             |
+| `debounceDelay`       | `debounce-delay`      | <span style="color:red">**[DEPRECATED]**</span> Ignored: remove it.<br/><br/>The delay, in ms, of the debounced `resize` listener ds-rsp used before. ds-rsp now follows the breakpoints with media queries (`matchMedia()`) and applies a change at once: it is ignored, with a console warning. | `number`                  | `500`                                   |
+| `propertyName`        | `property-name`       |                                                                                                                                                                                                                                                                                                   | `string`                  | `'data-rsp'`                            |
+| `subscriberSelector`  | `subscriber-selector` |                                                                                                                                                                                                                                                                                                   | `string`                  | `'[data-use-rsp]:not([data-rsp-init])'` |
 
 
 ## Events
 
-| Event              | Description | Type               |
-| ------------------ | ----------- | ------------------ |
-| `breakpointChange` |             | `CustomEvent<any>` |
+| Event              | Description                                                                                                                                                                                                                                                                                                            | Type                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `breakpointChange` | Emitted by ds-rsp when the breakpoint changes (and when it starts), once the subscribers have their params. It bubbles. Each subscriber also receives a `breakpointChange` event on itself, which does not bubble: a subscriber that contains ds-rsp gets both, and should only handle the one whose target is itself. | `CustomEvent<BreakpointChangeDetail>` |
 
 
 ## Methods
 
 ### `getBreakpoint(rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>`
 
-Get the current breakpoint
+Get the current breakpoint: the breakpoint of the viewport, from the media queries of the minimums, as ds-rsp sees it
+(`responsive.getBreakpoint()`).
 
 #### Parameters
 
@@ -42,7 +60,7 @@ current breakpoint ( label & limits )
 
 ### `getBreakpoints() => Promise<Breakpoints>`
 
-
+The theme breakpoints (`tokens.getBreakpoints()`), as limits: `{ xxs: [0, 575], …, xxl: [1600] }`; `{}` without the theme.
 
 #### Returns
 
@@ -113,9 +131,28 @@ Type: `Promise<Breakpoints>`
 
 
 
-### `subscribe(target: Element) => Promise<number>`
+### `refresh() => Promise<void>`
+
+Reads the breakpoints again (from the `breakpoints` property, else from the theme custom properties) and applies them:
+subscribes the matching elements not subscribed yet, sets the params of the current breakpoint on every subscriber
+again, and emits `breakpointChange` only when the label or the limits of the current breakpoint changed.
+Without breakpoints until then (theme stylesheet loaded after ds-rsp), it starts, as when the theme is there at load.
+When it finds none, it keeps the current ones (if any) and logs a warning, once until it finds some again.
+
+ds-rsp calls it when a stylesheet `<link>` of the document loads (a theme added, or its `href` changed). Call it after
+changing the theme otherwise: a `<style>` element, a constructed stylesheet, a `media` attribute changed after the load…
+Before ds-rsp has loaded, it does nothing: ds-rsp reads the breakpoints when it loads.
+
+#### Returns
+
+Type: `Promise<void>`
 
 
+
+### `subscribe(target: Element) => Promise<void>`
+
+Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once
+(before, when ds-rsp starts).
 
 #### Parameters
 
@@ -125,23 +162,10 @@ Type: `Promise<Breakpoints>`
 
 #### Returns
 
-Type: `Promise<number>`
+Type: `Promise<void>`
 
 
 
-
-## Dependencies
-
-### Used by
-
- - [ds-page](../../pronto/page)
-
-### Graph
-```mermaid
-graph TD;
-  ds-page --> ds-rsp
-  style ds-rsp fill:#f9f,stroke:#333,stroke-width:4px
-```
 
 ----------------------------------------------
 

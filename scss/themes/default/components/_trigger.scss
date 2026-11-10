@@ -1,0 +1,134 @@
+@use 'sass:list';
+@use 'sass:map';
+@use '../tokens' as *;
+
+// ds-trigger: the .ds-button skin (`type="button"`: the previous / next buttons of ds-slider, the expand button of
+// ds-nav-item) and the .ds-link skin (`type="link"`). Button modifiers: sizes xs to xl (md by default), colors stl-1 to
+// stl-3, rounded, shadow. The modifiers set the custom properties the skins read; the custom properties are documented in
+// components/core/trigger/readme.md.
+
+// Size modifiers: font size and padding.
+$-sizes: (
+  xs: (
+    font-size: ds-token(font-size, 100),
+    padding: ds-spacing(1) ds-spacing(2),
+  ),
+  sm: (
+    font-size: ds-token(font-size, 100),
+    padding: ds-spacing(2) ds-spacing(3),
+  ),
+  md: (
+    font-size: ds-token(font-size, 200),
+    padding: ds-spacing(2) ds-spacing(4),
+  ),
+  lg: (
+    font-size: ds-token(font-size, 300),
+    padding: ds-spacing(3) ds-spacing(5),
+  ),
+  xl: (
+    font-size: ds-token(font-size, 400),
+    padding: ds-spacing(4) ds-spacing(6),
+  ),
+);
+
+// Style modifiers: colorset type and variant (the hover variant is `<variant>-hover`).
+$-styles: (
+  stl-1: (
+    solid,
+    primary,
+  ),
+  stl-2: (
+    outlined,
+    secondary,
+  ),
+  stl-3: (
+    solid,
+    gray,
+  ),
+);
+
+@mixin -size($size) {
+  --ds-trigger-font-size: #{map.get($size, font-size)};
+  --ds-trigger-padding: #{map.get($size, padding)};
+}
+
+// The text, border and background colors of a colorset.
+@mixin -colors($type, $variant) {
+  --ds-trigger-color: #{ds-colorset-text($type, $variant)};
+  --ds-trigger-border-color: #{ds-colorset-border($type, $variant)};
+  --ds-trigger-background: #{ds-colorset-background($type, $variant)};
+}
+
+ds-trigger {
+  @include -size(map.get($-sizes, md));
+  @include -colors(solid, gray);
+  --ds-trigger-radius: #{ds-radius(sm)};
+  --ds-trigger-link-color: #{ds-colorset-text(link, primary)};
+  --ds-trigger-link-hover-color: #{ds-color(primary, darker)};
+}
+
+.ds-button {
+  font-family: ds-font-family(button);
+  font-size: var(--ds-trigger-font-size);
+  font-weight: ds-font-weight(button);
+  text-decoration: ds-font-decoration(button);
+  padding: var(--ds-trigger-padding);
+  color: var(--ds-trigger-color);
+  border-color: var(--ds-trigger-border-color);
+  background-color: var(--ds-trigger-background);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: var(--ds-trigger-radius);
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-timing-function: ease;
+
+  @each $name, $size in $-sizes {
+    &.--#{$name} {
+      @include -size($size);
+    }
+  }
+
+  @each $name, $style in $-styles {
+    $type: list.nth($style, 1);
+    $variant: list.nth($style, 2);
+
+    &.--#{$name} {
+      @include -colors($type, $variant);
+
+      &:not([disabled]):hover {
+        @include -colors($type, #{$variant}-hover);
+      }
+    }
+  }
+
+  &:not([disabled]):not([class*='--stl-']):hover {
+    @include -colors(solid, gray-hover);
+  }
+
+  &.--rounded {
+    --ds-trigger-radius: #{ds-radius(pill)};
+  }
+
+  &.--shadow {
+    box-shadow: 0 2px 6px ds-color(shadow, base);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.ds-link {
+  color: var(--ds-trigger-link-color);
+  text-decoration: ds-font-decoration(link);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--ds-trigger-link-hover-color);
+  }
+}

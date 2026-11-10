@@ -1,0 +1,114 @@
+@use '../tokens' as *;
+
+// ds-pagination: square controls of 40 px (a target larger than 24 × 24 px), the page numbers and the arrows in the link
+// color, a light background under the pointer; the current page filled with the primary color, its number white and bold;
+// the unavailable arrows faded. The custom properties are documented in components/core/pagination/readme.md; the rows
+// that wrap and the centered contents are in the component stylesheet.
+
+ds-pagination {
+  --ds-pagination-gap: #{ds-spacing(1)};
+  --ds-pagination-size: 2.5rem;
+  --ds-pagination-font-size: #{ds-token(font-size, 200)};
+  --ds-pagination-icon-size: 1.25rem;
+  --ds-pagination-radius: #{ds-radius(sm)};
+  --ds-pagination-color: #{ds-colorset-text(link, primary)};
+  --ds-pagination-hover-background: #{ds-color(primary, light)};
+  --ds-pagination-current-color: #{ds-color(gray, white)};
+  --ds-pagination-current-background: #{ds-color(primary, base)};
+  --ds-pagination-disabled-color: #{ds-color(gray, base)};
+}
+
+.ds-pagination {
+  margin-bottom: ds-spacing(4);
+  font-size: var(--ds-pagination-font-size);
+  line-height: 1.25;
+
+  &__control {
+    min-width: var(--ds-pagination-size);
+    height: var(--ds-pagination-size);
+    margin: 0;
+    padding: 0 ds-spacing(2);
+    border: 0;
+    border-radius: var(--ds-pagination-radius);
+    background-color: transparent;
+    color: var(--ds-pagination-color);
+    font: inherit;
+    font-weight: ds-font-weight(button);
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--ds-pagination-hover-background);
+      color: var(--ds-pagination-color);
+    }
+
+    // The current page: filled, its number white and bold. Its border, in the color of the background, is the frame the
+    // browser draws in forced colors, where the backgrounds go: the current page is the one framed, and bold.
+    &.--current {
+      border: 2px solid var(--ds-pagination-current-background);
+      background-color: var(--ds-pagination-current-background);
+      color: var(--ds-pagination-current-color);
+      font-weight: ds-font-weight(page, strong);
+      cursor: default;
+    }
+
+    // Unavailable (the first or the last page): faded, without a pointer nor a background under it. In forced colors, a
+    // link without href takes the color of the text, a disabled button the color of a disabled text: not the color of the
+    // available controls.
+    &.--disabled {
+      background-color: transparent;
+      color: var(--ds-pagination-disabled-color);
+      cursor: default;
+    }
+
+    // The arrows: decorative (the controls are named).
+    &.--first::before,
+    &.--previous::before,
+    &.--next::before,
+    &.--last::before {
+      font-size: var(--ds-pagination-icon-size);
+      @include ds-icon(null, block, $alt: '');
+    }
+
+    &.--first::before {
+      @include ds-icon-content(angle-double-left);
+    }
+
+    &.--previous::before {
+      @include ds-icon-content(angle-left);
+    }
+
+    &.--next::before {
+      @include ds-icon-content(angle-right);
+    }
+
+    &.--last::before {
+      @include ds-icon-content(angle-double-right);
+    }
+  }
+
+  // Right to left, the previous pages are on the right: the arrows are mirrored. `[dir='rtl']` on an ancestor, as
+  // `:dir(rtl)` needs Chrome 120: a pagination in a `dir="ltr"` element of a right-to-left page is mirrored too.
+  [dir='rtl'] &__control:is(.--first, .--previous, .--next, .--last)::before {
+    transform: scaleX(-1);
+  }
+
+  // The pages left out: an ellipsis, decorative (the item is aria-hidden), in the place of a control.
+  &__item.--ellipsis {
+    min-width: var(--ds-pagination-size);
+    height: var(--ds-pagination-size);
+    color: ds-color(gray, dark);
+
+    &::before {
+      font-size: var(--ds-pagination-icon-size);
+      @include ds-icon(ellipsis, block, $alt: '');
+    }
+  }
+
+  // Compact: the current page and the number of pages, between the arrows.
+  &__status {
+    padding: 0 ds-spacing(2);
+    color: ds-color(gray, darkest);
+  }
+}

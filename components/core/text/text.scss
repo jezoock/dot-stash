@@ -1,0 +1,14 @@
+// The structure of ds-text: a block element. Its typography and the spacing of its paragraphs and lists are the look of
+// the theme (components/_text.scss), from the custom properties below.
+
+/**
+ * @prop --ds-text-font-family: Font family of the text.
+ * @prop --ds-text-font-size: Font size of the text.
+ * @prop --ds-text-line-height: Line height of the text.
+ * @prop --ds-text-spacing: Space below each paragraph and list (none below the last child).
+ * @prop --ds-text-list-indent: Indent of the lists.
+ */
+
+.ds-text {
+  display: block;
+}

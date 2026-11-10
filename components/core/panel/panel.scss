@@ -1,9 +1,27 @@
+// The structure of ds-panel: a tab of ds-panel-group (the expanded tab shows its content, the others are hidden behind
+// it) or a collapsible panel (its content collapses to a height of 0), and the transitions between these states. The
+// title and the lines are the look of the theme (components/_panel.scss), from the custom properties below.
+//
+// The content is clipped only where it must be: while it is collapsed or hidden, and during its transition (the
+// component sets --transition until it ends). Expanded, it is not clipped, so that the focus indicator of the elements at
+// its edges shows.
+
+/**
+ * @prop --ds-panel-border-color: Color of the line under a collapsible panel and under a tab title.
+ * @prop --ds-panel-tab-color: Text color of a tab title.
+ * @prop --ds-panel-active-color: Text and line color of the title of the expanded tab.
+ * @prop --ds-panel-title-font-size: Font size of the title.
+ * @prop --ds-panel-transition-duration: Duration of the transitions when the panel expands or collapses (the content of a tab fades, the height of a collapsible panel changes).
+ */
+
 .ds-panel {
+  // Its own block formatting context (the margins of the first and last elements of the content stay inside it), without
+  // clipping it.
   &__content-wrapper {
-    overflow: hidden;
+    display: flow-root;
     position: relative;
   }
-  
+
   &.--tab {
     display: contents;
 
@@ -13,14 +31,10 @@
       }
 
       &__content {
-        transition: opacity 0.4s ease;
+        transition: opacity var(--ds-panel-transition-duration, 0.4s) ease;
         order: 2;
         width: 100%;
         position: relative;
-      }
-      
-      &__content-wrapper {
-        
       }
     }
 
@@ -28,7 +42,6 @@
       & > .ds-panel {
         &__content {
           opacity: 0;
-          /* display: block; */
           & > .ds-panel__content-wrapper {
             pointer-events: none;
             z-index: -1;
@@ -39,13 +52,18 @@
           }
         }
       }
+
+      // Hidden, once its fade out is over: its content (absolute, under the expanded one) is clipped, so that it does not
+      // overflow the group.
+      &:not(.--transition) > .ds-panel__content {
+        overflow: hidden;
+      }
     }
 
     &[expanded] {
       & > .ds-panel {
         &__content {
           opacity: 1;
-          /* display: block; */
           & > .ds-panel__content-wrapper {
             z-index: 1;
             position: relative;
@@ -61,12 +79,20 @@
     & > .ds-panel {
       &__content {
         display: grid;
-        transition: grid-template-rows 0.4s ease;
-        overflow: hidden;
+        transition: grid-template-rows var(--ds-panel-transition-duration, 0.4s) ease;
       }
 
       &__title {
         position: relative;
+      }
+    }
+
+    // Collapsed, and while it expands or collapses: the content does not overflow the height of its row.
+    &:not([expanded]),
+    &.--transition {
+      & > .ds-panel__content,
+      & > .ds-panel__content > .ds-panel__content-wrapper {
+        overflow: hidden;
       }
     }
 

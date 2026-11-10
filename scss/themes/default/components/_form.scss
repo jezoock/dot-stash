@@ -1,0 +1,25 @@
+@use '../tokens' as *;
+
+// Width modifiers: form modifier → breakpoint width.
+$-widths: (
+  xs: xxs,
+  sm: xs,
+  md: md,
+  lg: xl,
+);
+
+.ds-form {
+  margin: 0 auto;
+  padding: 0 ds-spacing(4);
+
+  @each $name, $breakpoint in $-widths {
+    &.--#{$name} {
+      max-width: ds-breakpoint($breakpoint);
+    }
+  }
+
+  &__footer {
+    padding: ds-spacing(6) 0;
+    text-align: center;
+  }
+}

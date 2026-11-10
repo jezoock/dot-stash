@@ -1,0 +1,137 @@
+@use '../tools/references' as *;
+
+// *** FONT SIZES *** //
+
+$font-size-100: 0.875rem !default;
+$font-size-200: 1rem !default;
+$font-size-300: 1.125rem !default;
+$font-size-400: 1.5rem !default;
+$font-size-500: 1.625rem !default;
+$font-size-600: 1.75rem !default;
+$font-size-700: 2.125rem !default;
+$font-size-800: 2.25rem !default;
+$font-size-900: 2.5rem !default;
+
+$font-sizes: (
+  100: $font-size-100,
+  200: $font-size-200,
+  300: $font-size-300,
+  400: $font-size-400,
+  500: $font-size-500,
+  600: $font-size-600,
+  700: $font-size-700,
+  800: $font-size-800,
+  900: $font-size-900,
+) !default;
+
+// *** FONT FAMILIES *** //
+// System font stacks: no font file to load.
+
+$font-family-base:
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  Arial,
+  sans-serif,
+  'Apple Color Emoji',
+  'Segoe UI Emoji' !default;
+$font-family-heading: $font-family-base !default;
+$font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace !default;
+
+$font-families: (
+  default: $font-family-base,
+  heading: $font-family-heading,
+  mono: $font-family-mono,
+) !default;
+
+// *** FONT STYLES *** //
+// family, size, weight and decoration by type and variant. A variant inherits the `default` variant of its type,
+// which inherits the top-level `default` (see ds-font-style()). Families and sizes are references to $font-families and
+// $font-sizes (ds-ref(font-family, <name>), ds-ref(font-size, <step>)): they follow them, at runtime too.
+
+$font-styles: (
+  default: (
+    family: ds-ref(font-family, default),
+    size: ds-ref(font-size, 200),
+    weight: 400,
+    decoration: none,
+  ),
+  page: (
+    light: (
+      weight: 300,
+    ),
+    default: (),
+    strong: (
+      weight: 700,
+    ),
+  ),
+  text: (
+    default: (),
+    paragraph: (),
+    span: (),
+    note: (
+      size: ds-ref(font-size, 100),
+    ),
+    quote: (
+      size: ds-ref(font-size, 300),
+    ),
+    code: (
+      family: ds-ref(font-family, mono),
+      size: ds-ref(font-size, 100),
+    ),
+    pre: (
+      family: ds-ref(font-family, mono),
+      size: ds-ref(font-size, 100),
+    ),
+  ),
+  title: (
+    default: (
+      family: ds-ref(font-family, heading),
+      weight: 700,
+    ),
+    page-main: (
+      size: ds-ref(font-size, 800),
+    ),
+    page-sub: (
+      size: ds-ref(font-size, 500),
+      weight: 400,
+    ),
+    section-main: (
+      size: ds-ref(font-size, 600),
+    ),
+    section-sub: (
+      size: ds-ref(font-size, 300),
+      weight: 400,
+    ),
+    block-main: (
+      size: ds-ref(font-size, 400),
+    ),
+    block-sub: (
+      size: ds-ref(font-size, 200),
+      weight: 400,
+    ),
+  ),
+  button: (
+    default: (
+      weight: 600,
+    ),
+  ),
+  form: (
+    default: (
+      size: ds-ref(font-size, 200),
+    ),
+    input: (
+      size: ds-ref(font-size, 200),
+    ),
+    label: (
+      weight: 600,
+    ),
+  ),
+  link: (
+    default: (
+      decoration: underline,
+    ),
+  ),
+) !default;

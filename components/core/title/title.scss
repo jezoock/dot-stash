@@ -1,3 +1,14 @@
+// The structure of ds-title: a block element whose inner headings, paragraphs and links take the typography of the
+// title (they inherit it: the resets below set none of their own). The typography and colors are the look of the theme
+// (components/_title.scss), from the custom properties below.
+
+/**
+ * @prop --ds-title-color: Text color of the title.
+ * @prop --ds-title-sub-color: Text color of a `sub` title.
+ * @prop --ds-title-font-family: Font family of the titles (every variant: `page`, `block`, `sub`…).
+ * @prop --ds-title-line-height: Line height of the titles.
+ */
+
 ds-title {
   display: block;
 

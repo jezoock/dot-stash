@@ -1,0 +1,48 @@
+@use 'sass:map';
+@use 'sass:math';
+@use '../variables' as *;
+
+// A media query from $breakpoints, mobile first: from the width of `$breakpoint-min` (min-width), below the width of
+// `$breakpoint-max` (the range syntax of Media Queries level 4, `width <`), both for a range.
+//
+//   @include break-p(md) { … }          @media (min-width: 992px)
+//   @include break-p(null, md) { … }    @media (width < 992px)
+//   @include break-p(sm, md) { … }      @media (min-width: 768px) and (width < 992px)
+//
+// Two ranges that meet leave no gap: at the fractional widths of a zoomed page (991.5px), `max-width: 991px` and
+// `min-width: 992px` would both fail. They are the media queries of the JavaScript helpers (responsive.widthQuery()).
+// An unknown label, or no label at all, is an error. Below the first breakpoint is break-p(null, <first label>).
+@mixin break-p($breakpoint-min: null, $breakpoint-max: null) {
+  @if $breakpoint-min == null and $breakpoint-max == null {
+    @error 'break-p() needs a breakpoint: break-p(md), break-p(null, md) or break-p(sm, md). Breakpoints: #{map.keys($breakpoints)}.';
+  }
+
+  @if $breakpoint-max == null {
+    @media (min-width: ds-breakpoint($breakpoint-min)) {
+      @content;
+    }
+  } @else if $breakpoint-min == null {
+    @media (width < ds-breakpoint($breakpoint-max)) {
+      @content;
+    }
+  } @else {
+    @media (min-width: ds-breakpoint($breakpoint-min)) and (width < ds-breakpoint($breakpoint-max)) {
+      @content;
+    }
+  }
+}
+
+// The minimum width of a breakpoint, in px: ds-breakpoint(md) → 992px (a unitless width or a width in px).
+@function ds-breakpoint($label) {
+  @if not map.has-key($breakpoints, $label) {
+    @error 'Unknown breakpoint: #{$label}. Breakpoints: #{map.keys($breakpoints)}.';
+  }
+
+  $width: map.get($breakpoints, $label);
+
+  @if math.is-unitless($width) {
+    @return $width * 1px;
+  }
+
+  @return $width;
+}

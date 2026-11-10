@@ -1,0 +1,37 @@
+@use '../tokens' as *;
+
+// ds-block: the space around the header and the footer, and the width of the body. Its custom properties are documented
+// in components/core/block/readme.md; the structure (display, empty wrappers) is in the component stylesheet.
+
+ds-block {
+  --ds-block-header-gap: #{ds-spacing(5)};
+  --ds-block-footer-gap: #{ds-spacing(5)};
+}
+
+.ds-block,
+.ds-section {
+  &__header {
+    margin-bottom: var(--ds-block-header-gap);
+  }
+
+  // No maximum width while --ds-block-max-width is not set.
+  &__body {
+    max-width: var(--ds-block-max-width);
+    margin: 0 auto;
+  }
+
+  &__footer {
+    margin-top: var(--ds-block-footer-gap);
+  }
+
+  // Width of the body: a breakpoint width, or the full width. The bodies of the nested blocks inherit it.
+  @each $size in (sm, md, lg) {
+    &.--#{$size} {
+      --ds-block-max-width: #{ds-breakpoint($size)};
+    }
+  }
+
+  &.--full-width {
+    --ds-block-max-width: 100%;
+  }
+}

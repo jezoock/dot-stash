@@ -1,33 +1,42 @@
+// The structure of ds-toaster: a fixed box on the side and at the edge of its position, above the page, that fades in and
+// out (show() and hide() emit toasterShown and toasterHidden at the end of the transition) and lets the pointer through
+// around its toasts. The toasts are the look of the theme (components/_toaster.scss), from the custom properties below.
+
+/**
+ * @prop --ds-toaster-background: Background of the toasts. The `success`, `warning` and `error` modifiers set it to their status color.
+ * @prop --ds-toaster-color: Text color of the toasts.
+ * @prop --ds-toaster-font-size: Font size of the toasts.
+ * @prop --ds-toaster-padding: Padding of the box of the toasts.
+ * @prop --ds-toaster-gap: Space between two toasts.
+ * @prop --ds-toaster-shadow: Shadow of the box of the toasts.
+ * @prop --ds-toaster-min-width: Minimum width of the box of the toasts; on a small screen, the box is never wider than the viewport less 2rem.
+ * @prop --ds-toaster-z-index: Stack level of the toaster.
+ */
+
 .ds-toaster {
   position: fixed;
-  z-index: 10000;
+  z-index: var(--ds-toaster-z-index, 10000);
   pointer-events: none;
+  // show() / hide(): toasterShown and toasterHidden are emitted at the end of this transition.
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+
+  &.--hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
 
   &__container {
     box-sizing: border-box;
     display: block;
     max-width: 50vw;
-    min-width: 500px;
-    padding: 1.25rem;
+    // Never wider than the viewport, less a gutter of 1rem on each side (wider than a classic scrollbar, which 100vw
+    // includes): on a small screen (320 px, 375 px), the minimum width would push the toasts out of it.
+    min-width: min(var(--ds-toaster-min-width, 500px), 100vw - 2rem);
     min-height: 3rem;
     transform-origin: center;
-    background-color: color(color-2, dark);
-    color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
     pointer-events: initial;
-    font-size: 1rem;
-
-    &--valid {
-      background-color: color(valid);
-    }
-
-    &--warning {
-      background-color: color(warning);
-    }
-
-    &--error {
-      background-color: color(error);
-    }
   }
 
   &__content {
@@ -35,83 +44,71 @@
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    line-height: 20px;
   }
 
-  &__message {
-    &--info {
-    }
-
-    &--valid {
-      color: white;
-    }
-
-    &--warning {
-      color: white;
-    }
-
-    &--error {
-      color: white;
-    }
+  // The live region that screen readers announce (role="status" or "alert"): hidden on the screen, where the toasts show
+  // the same messages, but in the accessibility tree while the toaster is hidden too (visible in a hidden toaster), so
+  // that it exists before the messages come.
+  &__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+    visibility: visible;
   }
 
-  &__container {
-    &--valid {
-      & .ds-toaster {
-        &__message {
-          &--valid,
-          &--warning,
-          &--error {
-            color: #fff;
-          }
-        }
-      }
-    }
+  // Position classes: --v-pos-<TOASTER_VERTICAL_POSITION> and --h-pos-<TOASTER_HORIZONTAL_POSITION>.
+  &.--v-pos-top {
+    top: 0;
+    animation: ds-toaster-fade-in-top 0.5s;
   }
 
-  &__action {
-    flex-shrink: 0;
-    margin: -0.5rem -0.5rem -0.5rem 0.5rem;
-
-    .ds-toaster__close-button {
-      color: #fff;
-      max-height: 2.25rem;
-      min-width: 0;
-      border: 0;
-      background: none;
-    }
+  &.--v-pos-middle {
+    top: 50%;
+    transform: translateY(-50%);
   }
 
-  &--position-vertical {
-    &-top {
-      top: 0;
-      -webkit-animation: fadeinTop 0.5s;
-      animation: fadeinTop 0.5s;
-    }
-
-    &-bottom {
-      bottom: 0;
-      -webkit-animation: fadeinBottom 0.5s;
-      animation: fadeinBottom 0.5s;
-    }
+  &.--v-pos-bottom {
+    bottom: 0;
+    animation: ds-toaster-fade-in-bottom 0.5s;
   }
 
-  &--position-horizontal {
-    &-left {
-      left: 0;
-    }
+  &.--h-pos-left {
+    left: 0;
+  }
 
-    &-right {
-      right: 0;
-    }
+  &.--h-pos-right {
+    right: 0;
+  }
 
-    &-center {
-      left: 50%;
-      transform: translateX(-50%);
+  &.--h-pos-center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.--v-pos-middle.--h-pos-center {
+    transform: translate(-50%, -50%);
+  }
+
+  // Less motion (after the position classes, which it overrides): no transition and no animation, the toaster shows and
+  // hides at once, and show() and hide() emit toasterShown and toasterHidden at once. No property at all, rather than
+  // durations of 0, which the base styles of a theme may make 0.01ms.
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &.--v-pos-top,
+    &.--v-pos-bottom {
+      transition-property: none;
+      animation: none;
     }
   }
 
-  @-webkit-keyframes fadeinBottom {
+  // The keyframes are global: their names are prefixed like the classes.
+  @keyframes ds-toaster-fade-in-bottom {
     from {
       bottom: -100px;
       opacity: 0;
@@ -122,29 +119,7 @@
     }
   }
 
-  @keyframes fadeinBottom {
-    from {
-      bottom: -100px;
-      opacity: 0;
-    }
-    to {
-      bottom: 0;
-      opacity: 1;
-    }
-  }
-
-  @-webkit-keyframes fadeinTop {
-    from {
-      top: -100px;
-      opacity: 0;
-    }
-    to {
-      top: 0;
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeinTop {
+  @keyframes ds-toaster-fade-in-top {
     from {
       top: -100px;
       opacity: 0;

@@ -1,0 +1,8 @@
+// ds-icon has no structure of its own: it is an icon of the theme (components/_icon.scss), an SVG image drawn as a mask in
+// its `::before`, in the color of its text (the `type` gives the icon, `--<type>`). Its size and color are the custom
+// properties below.
+
+/**
+ * @prop --ds-icon-size: Size of the icon (its font size: the icon is a square of 1em).
+ * @prop --ds-icon-color: Color of the icon (its text color, which paints it).
+ */

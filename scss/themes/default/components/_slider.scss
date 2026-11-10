@@ -1,0 +1,91 @@
+@use 'sass:color';
+@use '../tokens' as *;
+
+// ds-slider and ds-slider-menu: the previous / next buttons and the dots of the menu. The structure (the sliding list,
+// the place of the buttons and of the menu) is in the component stylesheets. The custom properties are documented in
+// components/core/slider/readme.md and components/core/slider/slider-menu/readme.md.
+
+ds-slider {
+  --ds-slider-transition-duration: 0.6s;
+  --ds-slider-button-offset: #{ds-spacing(2)};
+  --ds-slider-button-size: #{ds-spacing(7)};
+  --ds-slider-button-background: #{color.change(ds-color-value(gray, white), $alpha: 0.85)};
+  --ds-slider-button-border-color: #{ds-color(gray, light)};
+}
+
+ds-slider-menu {
+  --ds-slider-menu-offset: -4rem;
+  --ds-slider-menu-dot-size: 1.125rem;
+  --ds-slider-menu-dot-gap: #{ds-spacing(2)};
+  --ds-slider-menu-dot-color: #{ds-color(indicator, base)};
+  --ds-slider-menu-dot-active-color: #{ds-color(indicator, active)};
+}
+
+.ds-slider__item img {
+  display: block;
+}
+
+// The previous / next buttons (ds-trigger with the button skin): round, with a chevron drawn with borders. Their border and
+// background colors are those of the button skin, set from the slider custom properties (a hovered button keeps the hover
+// colors of the button skin).
+.ds-button.--slider {
+  --ds-trigger-border-color: var(--ds-slider-button-border-color);
+  --ds-trigger-background: var(--ds-slider-button-background);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-slider-button-size);
+  height: var(--ds-slider-button-size);
+  padding: 0;
+  border-radius: ds-radius(circle);
+
+  &::before {
+    content: '';
+    width: ds-spacing(2);
+    height: ds-spacing(2);
+    margin-left: ds-spacing(1);
+    border: solid currentColor;
+    border-width: 0 0 2px 2px;
+    transform: rotate(45deg);
+  }
+
+  &.--next::before {
+    margin: 0 ds-spacing(1) 0 0;
+    transform: rotate(-135deg);
+  }
+
+  // The rotation button of an automatic rotation: two bars (stop) while the slides rotate, a triangle (start) once stopped.
+  &.--pause::before,
+  &.--play::before {
+    margin: 0;
+    transform: none;
+  }
+
+  &.--pause::before {
+    width: ds-spacing(2);
+    height: ds-spacing(3);
+    border-width: 0 3px;
+  }
+
+  &.--play::before {
+    width: 0;
+    height: 0;
+    margin-left: 3px;
+    border-width: 6px 0 6px 10px;
+    border-color: transparent currentColor;
+  }
+}
+
+// The dots of the menu.
+.ds-slider-menu__item {
+  margin: 0 var(--ds-slider-menu-dot-gap);
+  width: var(--ds-slider-menu-dot-size);
+  height: var(--ds-slider-menu-dot-size);
+  border-radius: ds-radius(circle);
+  background-color: var(--ds-slider-menu-dot-color);
+  transition: background-color ease 0.4s;
+
+  &.--active {
+    background-color: var(--ds-slider-menu-dot-active-color);
+  }
+}

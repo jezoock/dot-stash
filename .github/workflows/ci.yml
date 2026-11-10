@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build, format and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build:all
+
+      - name: Check build output
+        run: |
+          missing=0
+          for file in dist/index.js dist/index.cjs.js dist/types/index.d.ts dist/collection/collection-manifest.json dist/dot-stash/dot-stash.esm.js loader/index.js dist/css/default.css dist/css/LICENSE-icons.txt; do
+            if [ ! -s "$file" ]; then
+              echo "::error::Missing or empty build output: $file"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      # The icon map of the engine, generated from scss/engine/icons/ by npm run build:icons, is committed: it must be the
+      # one the script generates from the SVG files and icons.json.
+      - name: Check generated files
+        run: npm run build:icons -- --check
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      # The components and the tests: the build only compiles the components (tsconfig.build.json).
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint stylesheets
+        run: npm run lint:css
+
+      - name: Unit tests
+        run: npm test
+
+  browser:
+    name: Browser tests (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The browser tests load the build of the components and of the theme (test/setup/browser.ts).
+      - name: Build
+        run: npm run build:all
+
+      # The Chromium of the Playwright version of package-lock.json, with the system libraries it needs.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm run test:browser

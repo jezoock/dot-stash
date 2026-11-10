@@ -1,0 +1,70 @@
+@use '../tokens' as *;
+
+// ds-panel: a collapsible panel (chevron), or a tab of ds-panel-group. Its custom properties are documented in
+// components/core/panel/readme.md.
+
+ds-panel {
+  --ds-panel-border-color: #{ds-color(gray, light)};
+  --ds-panel-tab-color: #{ds-color(gray, dark)};
+  --ds-panel-active-color: #{ds-color(primary, base)};
+  --ds-panel-title-font-size: #{ds-font-size(title, block-sub)};
+  --ds-panel-transition-duration: 0.4s;
+}
+
+.ds-panel {
+  &__title {
+    position: relative;
+    padding: ds-spacing(3) ds-spacing(6) ds-spacing(3) 0;
+    font-family: ds-font-family(title);
+    font-size: var(--ds-panel-title-font-size);
+    font-weight: ds-font-weight(title);
+    cursor: pointer;
+
+    // The title slot is in the control of the title (the tab, or the button of a collapsible panel).
+    & > *,
+    & > .ds-panel__control > * {
+      margin: 0;
+      font: inherit;
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      transition: transform 0.2s ease;
+      // Decorative: not part of the name of the title (a heading).
+      @include ds-icon(angle-down, $alt: '');
+    }
+  }
+
+  &__content-wrapper {
+    padding-bottom: ds-spacing(4);
+  }
+
+  &[expanded] > &__title::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  &.--collapsible {
+    border-bottom: 1px solid var(--ds-panel-border-color);
+  }
+
+  &.--tab {
+    & > .ds-panel__title {
+      margin-bottom: ds-spacing(4);
+      padding: ds-spacing(2) ds-spacing(4);
+      border-bottom: 2px solid var(--ds-panel-border-color);
+      color: var(--ds-panel-tab-color);
+
+      &::after {
+        content: none;
+      }
+    }
+
+    &[expanded] > .ds-panel__title {
+      border-bottom-color: var(--ds-panel-active-color);
+      color: var(--ds-panel-active-color);
+    }
+  }
+}

@@ -5,71 +5,212 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { DSOption } from "./core/combo/combo";
-import { DSOption as DSOption1 } from "./core/dropdown/dropdown";
-import { DSGridAlignment, DSGridType } from "./core/grid/grid";
-import { DSGridItemStyles } from "./core/grid/grid";
-import { MediaPosition, MediaProps, MediaType, MediaUrlType } from "./pronto-content/configurator/types";
-import { DSOption as DSOption2 } from "./core/dropdown/dropdown";
-import { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./core/map/map.type";
-import { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-import { AppLocale } from "../toSort-propal/page/page";
-import { PanelType } from "./core/panel/panel";
-import { PanelType as PanelType1 } from "./core/panel/panel";
-import { ProductBlockParams } from "./pronto/product-block/product-block";
-import { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
-import { DSSliderParams } from "./core/slider/slider";
-import { AnyHTMLElement } from "@stencil/core/internal";
-import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "../toSort-propal/toaster/toaster-positions.enum";
+import { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.types";
+import { DSBadgeType } from "./core/badge/badge.types";
+import { PluralLabel } from "./utils/labels";
+import { DSBlockContext } from "./core/block/block.types";
+import { DSBreadcrumbLabels } from "./core/breadcrumb/breadcrumb.types";
+import { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
+import { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
+import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
+import { DSLoaderSize } from "./core/loader/loader.types";
+import { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
+import { PanelType } from "./core/panel/panel.types";
+import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
+import { Element } from "@stencil/core";
+import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
+import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
-export { DSOption } from "./core/combo/combo";
-export { DSOption as DSOption1 } from "./core/dropdown/dropdown";
-export { DSGridAlignment, DSGridType } from "./core/grid/grid";
-export { DSGridItemStyles } from "./core/grid/grid";
-export { MediaPosition, MediaProps, MediaType, MediaUrlType } from "./pronto-content/configurator/types";
-export { DSOption as DSOption2 } from "./core/dropdown/dropdown";
-export { GMapsParams, MapMarkerOptions, MarkerOptionsFromProps } from "./core/map/map.type";
-export { DSMarqueeTransitionEnum } from "./core/marquee/marquee";
-export { AppLocale } from "../toSort-propal/page/page";
-export { PanelType } from "./core/panel/panel";
-export { PanelType as PanelType1 } from "./core/panel/panel";
-export { ProductBlockParams } from "./pronto/product-block/product-block";
-export { Breakpoint, Breakpoints, RawBreakpoint } from "../typescript/interfaces/sass-styles";
-export { DSSliderParams } from "./core/slider/slider";
-export { AnyHTMLElement } from "@stencil/core/internal";
-export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "../toSort-propal/toaster/toaster-positions.enum";
+export { DSAlertLabels, DSAlertLive, DSAlertType } from "./core/alert/alert.types";
+export { DSBadgeType } from "./core/badge/badge.types";
+export { PluralLabel } from "./utils/labels";
+export { DSBlockContext } from "./core/block/block.types";
+export { DSBreadcrumbLabels } from "./core/breadcrumb/breadcrumb.types";
+export { DSComboPosition, DSComboSelectedEventDetail, DSComboSelection, DSOption } from "./core/combo/combo.types";
+export { DSFieldLabels, DSFieldMessages } from "./core/field/field.types";
+export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.types";
+export { DSLoaderSize } from "./core/loader/loader.types";
+export { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
+export { PanelType } from "./core/panel/panel.types";
+export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
+export { Element } from "@stencil/core";
+export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
+export { DSToggleValue } from "./core/toggle/toggle.types";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
 export namespace Components {
-    interface DsAccountBlock {
-        "dsIsDropdownEnabled": boolean;
-    }
-    interface DsAddress {
-    }
+    /**
+     * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+     * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+     * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+     * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+     * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+     * `ajaxError`; a load emits `ajaxLoaded`.
+     * Version: 1.0
+     */
     interface DsAjax {
+        /**
+          * The message shown (and announced: `role="alert"`) after the link when the content could not be loaded. Empty: no message (listen to `ajaxError`).
+          * @default 'The content could not be loaded.'
+         */
+        "errorMessage": string;
+        /**
+          * Event that will trigger the loading of the ajax content: `click` (default) or `load`
+          * @default 'click'
+         */
         "on": 'load' | 'click';
+        /**
+          * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
+          * @default ''
+         */
+        "suffix": string;
+        /**
+          * Where to display the content, can be the component itself or an element specified by a css selector
+          * @default 'self'
+         */
         "target": 'self' | string;
     }
-    interface DsApp {
-        "backToTop": () => Promise<void>;
+    /**
+     * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+     * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+     * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+     * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+     * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+     * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+     * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+     * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+     * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+     */
+    interface DsAlert {
+        /**
+          * Dismisses the alert, as its dismiss button: emits `alertDismiss`, and unless it is cancelled, hides the alert (the `hidden` attribute), moves the focus out of it when it had it, and emits `alertDismissed`. Resolves with whether it was dismissed (`false`: cancelled, or already hidden).
+         */
+        "dismiss": () => Promise<boolean>;
+        /**
+          * Renders a dismiss button after the message: `alertDismiss` (cancelable), then the alert is hidden.
+          * @default false
+         */
+        "dismissible": boolean;
+        /**
+          * The title of the alert, before the message (`__title`). A `slot="title"` element replaces it.
+         */
+        "heading": string;
+        /**
+          * The texts of the alert (JSON as an attribute), to translate them: `info`, `success`, `warning`, `error` (the prefixes), `dismiss`.
+          * @default {}
+         */
+        "labels": DSAlertLabels | string;
+        /**
+          * The heading level (1 to 6) of the title: it is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element (`<h2 slot="title">`), which has its own level. Without it, the title is not a heading.
+         */
+        "level": number | string;
+        /**
+          * Whether the alert is a live region, announced when it appears and when its content changes: `off` (default: read where it is, for a message that is part of the page), `polite` (`role="status"`) or `assertive` (`role="alert"`, an urgent message, read at once). Set it before the alert gets the content to announce.
+          * @default 'off'
+         */
+        "live": DSAlertLive;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The type of the message: `info` (default), `success`, `warning` or `error`. Its `--<type>` class: the icon and the color of the theme.
+          * @default 'info'
+         */
+        "type": DSAlertType;
     }
-    interface DsAppMenu {
+    /**
+     * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+     * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+     * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+     * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+     * screen readers go on from the top too, then emits `backToTop`.
+     * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+     * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+     * per animation frame, removed when it leaves the document.
+     */
+    interface DsBackToTop {
+        /**
+          * The name of the link (its text, hidden on the screen): `Back to top` by default. Give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Scrolls to the top and moves the focus, as the link does.
+         */
+        "scrollToTop": () => Promise<void>;
+        /**
+          * The element that takes the focus after the scroll, a CSS selector (`#page-title`). Without it, or when it matches nothing: the `#top` element, else the main landmark, else the first heading, else the body. An element that cannot take the focus gets `tabindex="-1"` until it loses it. An id selector (`#page-title`) is also the `href` of the link.
+         */
+        "target": string;
+        /**
+          * How far the page is scrolled before the link shows: a number of px (`400`, `400px`) or of hundredths of the viewport height (`100vh`, the default: one screen; `50vh`). Another value is the default.
+          * @default '100vh'
+         */
+        "threshold": number | string;
     }
-    interface DsAuth {
+    /**
+     * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+     * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+     * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+     * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+     * the count does it with a live region of its own.
+     */
+    interface DsBadge {
+        /**
+          * A count, shown instead of the content: `3`. Above `max`, `<max>+`.
+         */
+        "count": number | string;
+        /**
+          * Shows a dot instead of the text: the text (or the label) is hidden on the screen, read by assistive technologies.
+          * @default false
+         */
+        "dot": boolean;
+        /**
+          * The text assistive technologies read instead of the visible one, hidden on the screen: `{count}` is the count. One template (`{count} unread messages`), or one per plural category of the language of the badge (its closest `lang`), as JSON: `{"one": "{count} unread message", "other": "{count} unread messages"}`.
+         */
+        "label": PluralLabel;
+        /**
+          * The largest count shown: a count above it shows `<max>+` (`99+`), its label the count itself.
+         */
+        "max": number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The type of the badge: `neutral` (default), `info`, `success`, `warning` or `error`. Its `--<type>` class: the color of the theme.
+          * @default 'neutral'
+         */
+        "type": DSBadgeType;
     }
-    interface DsBackToTopButton {
-        "offset": string | number;
-        "scrollBehavior": "smooth" | "instant" | "auto";
-    }
-    interface DsBanner {
-        "dsUrl": string;
-    }
+    /**
+     * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+     * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+     * (`ds-home-hero__header`, `__body`, `__footer`).
+     * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+     * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
+     */
     interface DsBlock {
         "article": boolean;
         "block": boolean;
         "form": boolean;
-        "getContext": () => Promise<"block" | "article" | "section" | "form">;
+        "getContext": () => Promise<DSBlockContext>;
         /**
-          * List of modifiers
+          * The accessible name (`aria-label`) of a `section` block, which makes it a region landmark (`role="region"`): for a section people go to from the list of landmarks. Without it, a section has no role (an unnamed region is not a landmark).
+         */
+        "label": string;
+        "modal": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods": string | string[];
         /**
@@ -82,764 +223,1190 @@ export namespace Components {
          */
         "type": string;
     }
-    interface DsBlockBuilder {
-        "name": string;
-        "settings": string | any;
-    }
+    /**
+     * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+     * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+     * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+     * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+     * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+     * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+     * theme draws the separators between the items, in CSS: they are not read.
+     * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+     * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+     * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+     * the trail is collapsed.
+     */
     interface DsBreadcrumb {
-    }
-    interface DsButtonConfigurator {
-        "defaultValue": any;
-        "getConfig": (extraProps: any) => Promise<{ config: any; markup: string; }>;
-        "inputId": string;
-        "value": any;
-    }
-    interface DsCart {
-        "updateUrl": string;
-    }
-    interface DsCartBlock {
-        "dsCartUrl": string;
-        "dsProductsCount": number | string;
-        "dsRefreshUrl": string;
-    }
-    interface DsCategoryList {
-        "showImage": boolean;
-    }
-    interface DsCategorySearch {
-        "controllerUrl": string;
-    }
-    interface DsCheckoutPage {
+        /**
+          * Collapses a long trail: the number of items it keeps at its end (`collapse="2"`; `2` without a number), after the first item and a "Show full path" button that shows the others. A trail is collapsed only when that hides 2 items at least. Without it (or `0`), the whole trail shows, and wraps on a small screen.
+         */
+        "collapse": number | string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Breadcrumb` by default. Give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * The texts of the trail (JSON as an attribute), to translate them: `expand`, the name of the button of a collapsed trail.
+          * @default {}
+         */
+        "labels": DSBreadcrumbLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
-        "showBackButton": boolean;
     }
-    interface DsCheckoutPath {
-        "dsCurrentStep": string | number;
-    }
-    interface DsCmsImage {
-        "filemanagerUrl": string;
-        "name": string;
-        "setUrl": (url: string) => Promise<void>;
-    }
-    interface DsCmsSearch {
-        "route": string;
-        "value": string;
-    }
-    interface DsCmsVideo {
-        "filemanagerUrl": string;
-        "name": string;
-        "setUrl": (url: string) => Promise<void>;
-    }
+    /**
+     * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+     * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+     * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+     * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+     * `ds-trigger`). A click outside the component closes the list.
+     * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+     * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+     * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+     * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+     * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+     * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+     * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
+     */
     interface DsCombo {
+        /**
+          * Whether the combo is valid; an invalid combo gets an `invalid` event (as the `checkValidity()` of a native select, but asynchronous).
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Closes the list. When the focus is in the list (`dropdown` mode), it goes back to the element that had it before.
+         */
         "close": () => Promise<void>;
+        /**
+          * Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).
+          * @default ''
+         */
         "customLabel": string;
+        /**
+          * Disables the combo: its button cannot be focused nor opened, an open list closes, and it submits nothing. A disabled `<fieldset>` around it disables it too, without changing this prop.
+         */
+        "disabled": boolean;
+        /**
+          * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
+         */
+        "label": string;
+        /**
+          * The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list.
+         */
+        "labelledby": string;
+        /**
+          * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
+          * @default ''
+         */
         "mode": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
+        /**
+          * Several options can be selected: a click toggles an option and keeps the list open.
+          * @default false
+         */
         "multiple": boolean;
+        /**
+          * Name of the combo: the name of its value in the form data (a combo without a name submits nothing), sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+         */
         "name": string;
+        /**
+          * Opens the list (not while the combo is disabled). In `dropdown` mode, it moves the focus to the list.
+         */
         "open": () => Promise<void>;
-        "options": any;
+        /**
+          * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
+          * @default []
+         */
+        "options": string | DSOption[];
+        /**
+          * Renders a full-page overlay behind the open list: a click on it closes the list.
+          * @default false
+         */
         "overlay": boolean;
-        "position": string;
-        "selected": DSOption;
-        "selectedOption": DSOption[];
+        /**
+          * Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).
+          * @default 'left'
+         */
+        "position": DSComboPosition;
+        /**
+          * As `checkValidity()`, and the browser shows the message of an invalid combo at its combobox, which takes the focus.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * An option must be selected for the form to be submitted (`valueMissing`, `aria-required` on the combobox).
+         */
+        "required": boolean;
+        /**
+          * The message of a required combo without a selected option, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage": string;
+        /**
+          * Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing).
+         */
+        "selected": string | DSComboSelection;
+        /**
+          * The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.
+          * @default []
+         */
+        "selectedOptions": DSOption[];
+        /**
+          * Opens the list if it is closed and closes it if it is open, or opens (`true`) or closes (`false`) it.
+         */
         "toggle": (forceDisplay?: boolean) => Promise<void>;
+        /**
+          * The message of an invalid combo, as the `validationMessage` of a native select (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage": string;
+        /**
+          * The validity of the combo, as the `validity` of a native select (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity": ValidityState;
+        /**
+          * Whether the form validates the combo (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate": boolean;
     }
-    interface DsContactBlock {
-        "dsAddress": string;
-        "dsEmail": string;
-        "dsFax": string;
-        "dsPhone": string;
+    /**
+     * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+     * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+     * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+     * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+     * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+     * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+     * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+     * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+     */
+    interface DsField {
+        /**
+          * Shows the number of characters left under a control with a `maxlength` (`__counter`), which the control describes; screen readers are told the count once the user stops typing.
+         */
+        "counter": boolean;
+        /**
+          * The error message of the flags that have none in `messages`, instead of the message of the browser.
+         */
+        "errorMessage": string;
+        /**
+          * A hint under the control (`__hint`), which the control describes (`aria-describedby`). An element with `slot="hint"` replaces it.
+         */
+        "hint": string;
+        /**
+          * The label of the control: a `<label for>` rendered before it (the control gets an id if it has none), with the required mark of `labels` while the control is `required`. A `<label>` of the page in the field replaces it.
+         */
+        "label": string;
+        /**
+          * The texts of the field (JSON as an attribute), to translate them: `required`, `showPassword`, `counterRemaining`, `counterOver` (see the readme).
+          * @default {}
+         */
+        "labels": DSFieldLabels | string;
+        /**
+          * The error messages per validity flag of the control (JSON as an attribute), instead of the message of the browser: `{"valueMissing": "Enter your email address", "typeMismatch": "Enter an email address, like name@example.com"}`. The flags: `valueMissing`, `badInput`, `typeMismatch`, `patternMismatch`, `tooLong`, `tooShort`, `rangeUnderflow`, `rangeOverflow`, `stepMismatch`. A custom error of the page (`setCustomValidity()`) shows its own message.
+          * @default {}
+         */
+        "messages": DSFieldMessages | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Reads the control again and updates the field: after a change that no event or attribute tells, as a value set by a script (the counter) or a custom error set or cleared out of an event (`setCustomValidity()`).
+         */
+        "refresh": () => Promise<void>;
     }
-    interface DsContactForm {
-    }
-    interface DsContentBlock {
-        "imagePos": 'none' | 'before' | 'center' | 'after';
-    }
-    interface DsCustomerPage {
-        "dsMods": string | string[];
-    }
-    interface DsDropdown {
-        "close": () => Promise<void>;
-        "customLabel": string;
-        "multiple": boolean;
-        "name": string;
-        "open": () => Promise<void>;
-        "overlay": boolean;
-        "position": string;
-        "selected": DSOption1;
-        "selectedOption": DSOption1[];
-        "toggle": (forceDisplay?: boolean) => Promise<void>;
-    }
-    interface DsDropdownItem {
-        "name": string;
-        "value": any;
-    }
-    interface DsFaq {
-    }
-    interface DsFeatureConfigurator {
-        "featureId": string;
-        "isMain": boolean;
-        "settings": any;
-    }
-    interface DsFeaturesConfigurator {
-        "name": string;
-        "settings": string | any;
-        "showActions": boolean;
-    }
-    interface DsFilemanager {
-        "mediaIndex": string;
-        "name": string;
-        "setUrl": (url: string) => Promise<void>;
-        "type": 'image' | 'video';
-        "url": string;
-    }
-    interface DsFilters {
-    }
-    interface DsFooter {
-    }
-    interface DsGiftcard {
-    }
-    interface DsGradeStar {
-        "dsCount": string | number;
-        "dsGrade": string | number;
-    }
+    /**
+     * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+     * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+     * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+     * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+     */
     interface DsGrid {
+        /**
+          * Where the items of a row that does not fill the grid go: `start`, `center` or `end`.
+          * @default 'start'
+         */
         "align": string | DSGridAlignment;
+        /**
+          * The height of the items as a ratio of their width (`0.75`: 4:3), their content filling it; an item's own `ratio` wins.
+         */
         "cellRatio": string | number;
+        /**
+          * The number of columns (a whole number).
+          * @default 1
+         */
         "cols": string | number;
+        /**
+          * A subscriber of `ds-rsp`: its `data-rsp` attribute can change its props per breakpoint.
+          * @default true
+         */
         "dataUseRsp": boolean;
+        /**
+          * The space between the columns: a CSS length (`20px`, `1rem`, `5%`); a unitless number is in px.
+          * @default '0'
+         */
         "hGap": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
+        /**
+          * `fixed`: `v-gap` separates the rows, and is kept below the last one; `fluid`: the rows have no gap (`v-gap` is not used).
+          * @default 'fixed'
+         */
         "type": string | DSGridType;
+        /**
+          * The alignment of the items in the height of their row: `start`, `center` or `end`.
+          * @default 'start'
+         */
         "vAlign": string | DSGridAlignment;
+        /**
+          * The space between the rows of a `fixed` grid, and below its last row: a CSS length; a unitless number is in px.
+          * @default '0'
+         */
         "vGap": string;
     }
+    /**
+     * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+     * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+     * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+     */
     interface DsGridItem {
         "getWidth": () => Promise<number>;
+        /**
+          * The height of the item as a ratio of its width (`0.5625`: 16:9), its content filling it.
+         */
         "ratioFromProps": number | string;
+        /**
+          * Writes inline styles on the item.
+          * @deprecated ds-grid no longer calls it: the grid lays its items out with CSS Grid, from the `width` of each item. It still writes the given styles, which apply over the layout of the grid.
+         */
         "setStyles": (styles: DSGridItemStyles) => Promise<void>;
+        /**
+          * The number of columns the item spans: a whole number (a fractional one is rounded), at most the `cols` of the grid.
+          * @default 1
+         */
         "width": number;
     }
+    /**
+     * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+     * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+     * are not headings: put a text or a `p` in their slots.
+     */
     interface DsHeading {
         "block": boolean;
+        /**
+          * @default 'block-before'
+         */
         "imagePosition": string;
+        /**
+          * The heading level (1 to 6) of a text main title, given to its `ds-title` (`level`).
+         */
+        "level": number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
         "section": boolean;
         "useContext": boolean;
     }
-    interface DsHtml {
-        "hide": () => Promise<void>;
-        "name": string;
-        "show": () => Promise<void>;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "value": any;
-    }
-    interface DsHtmlEditor {
-        "content": string;
-        "name": string;
-    }
+    /**
+     * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+     * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+     * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     */
     interface DsIcon {
+        /**
+          * The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative.
+         */
+        "label": string;
+        /**
+          * The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme).
+         */
         "type": string;
     }
-    interface DsInfoWindow {
+    /**
+     * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+     * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+     * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+     * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+     * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+     * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+     */
+    interface DsLoader {
         /**
-          * AriaLabel to assign to the InfoWindow.
+          * In the line of the text, at its size (`--inline`), instead of a block centered in its container.
+          * @default false
          */
-        "ariaLabel": string;
+        "inline": boolean;
         /**
-          * Disable panning the map to make the InfoWindow fully visible when it opens.
+          * The accessible name of the loader (`aria-label`): what loads. `Loading` by default: give it in the language of the page.
          */
-        "disableAutoPan": boolean;
-        "getParams": () => Promise<google.maps.InfoWindowOptions>;
+        "label": string;
         /**
-          * Maximum width of the InfoWindow, regardless of content&#39;s width. This
+          * The value of a complete progress (`aria-valuemax`): 100 by default, and for a value that is not a number above 0.
          */
-        "maxWidth": number;
-        /**
-          * Minimum width of the InfoWindow, regardless of the content&#39;s width.
-         */
-        "minWidth": number;
-        /**
-          * The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
-         */
-        "pixelOffset": google.maps.Size;
-        /**
-          * The LatLng at which to display this InfoWindow.
-         */
-        "position": google.maps.LatLng|google.maps.LatLngLiteral;
-        /**
-          * All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-         */
-        "zIndex": number;
-    }
-    interface DsInputDate {
-        "value": string;
-    }
-    interface DsInputModal {
-        "MediaPositions": MediaPosition[];
-        "associatedRoute": string;
-        "defaultType": any;
-        "hide": () => Promise<void>;
-        "name": string;
-        "setMediaUrlType": (MediaUrlType: MediaUrlType) => Promise<void>;
-        "setPath": (path: string) => Promise<void>;
-        "setPosition": (position: MediaPosition) => Promise<void>;
-        "setType": (type: MediaType) => Promise<void>;
-        "show": () => Promise<void>;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "value": any;
-    }
-    interface DsInputNumber {
-        "ariaLabel": string;
-        "defaultValue": number | string;
         "max": number | string;
-        "min": number | string;
-        "name": string;
-        "setValue": (value: number) => Promise<void>;
-    }
-    interface DsJson {
-        "data": any;
-    }
-    interface DsLang {
-        "dsIsSelected": boolean;
-        "dsIsoCode": string;
-    }
-    interface DsLangSelector {
-        "currentLang": string;
-        "languagesFromProp": DSOption2[] | string;
-    }
-    interface DsLinksList {
-    }
-    interface DsLogin {
-    }
-    interface DsMainConfigurator {
-    }
-    interface DsMap {
-        "addInfoWindow": (infoWindowComponent: HTMLDsInfoWindowElement, marker: google.maps.Marker) => Promise<void>;
-        "addMapStyle": (name: string, styles: google.maps.MapTypeStyle[]) => Promise<void>;
-        "addMarkers": (markers: MapMarkerOptions[]) => Promise<any[]>;
-        "apiKey": string;
-        "clusturize": () => Promise<void>;
-        "fitMarkers": () => Promise<void>;
-        "getTilt": () => Promise<number>;
-        "getZoom": () => Promise<number>;
-        "initialize": (apiKey?: string, initializeCallbackName?: string) => Promise<void>;
-        "locations": Location[];
-        "params": GMapsParams;
-        "setMapStyles": (name: string) => Promise<void>;
-        "setTilt": (tilt?: number) => Promise<void>;
-        "setZoom": (zoomLevel: number) => Promise<void>;
-        "zoomIn": (scale?: number) => Promise<void>;
-        "zoomOut": (scale?: number) => Promise<void>;
-    }
-    interface DsMapLocation {
-        "lat": number;
-        "lng": number;
-        "name": string;
-    }
-    interface DsMapMarker {
-        "icon": string | google.maps.Icon | google.maps.Symbol;
-        "label": string | google.maps.MarkerLabel;
-        "lat": number;
-        "lng": number;
-        "name": string;
-        "params": string | MarkerOptionsFromProps;
-    }
-    interface DsMarquee {
-        "bgColor": string;
-        "color": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
-        "pauseOnHover": string | boolean;
-        "speed": string | number;
-        "start": () => Promise<void>;
-        "transition": string | DSMarqueeTransitionEnum;
+        /**
+          * Shows the label next to the indicator, instead of only giving it to assistive technologies.
+          * @default false
+         */
+        "showLabel": boolean;
+        /**
+          * The size of the indicator: `sm`, `md` or `lg` (its `--<size>` class). Without it, `md`, or the size of the text when `inline`.
+         */
+        "size": DSLoaderSize;
+        /**
+          * The progress, from 0 to `max`: a determinate loader (a bar), else an indeterminate one (a spinner). Clamped to 0…`max`.
+         */
+        "value": number | string;
     }
-    interface DsMarqueeConfigurator {
-        "inputId": string;
-        "settings": any;
-    }
-    interface DsMedia {
-        "associatedRoute": string;
-        "getConfig": (extraProps: Record<string, unknown>) => Promise<{ config: any; markup: string; }>;
-        "hide": () => Promise<void>;
-        "mediaPositions": MediaPosition[];
-        "name": string;
-        "setAttributes": (attributes: any) => Promise<void>;
-        "setPath": (newPath: string, imageIndex?: number) => Promise<void>;
-        "setPosition": (position: MediaPosition) => Promise<void>;
-        "setType": (type: MediaType) => Promise<void>;
-        "setUrlType": (urlType: MediaUrlType) => Promise<void>;
-        "show": () => Promise<void>;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "value": any;
-    }
-    interface DsMessage {
-        "bgColor": string;
-        "color": string;
-        "speed": number;
-    }
+    /**
+     * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+     * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+     * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+     * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+     * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+     * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+     * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+     * the document.
+     */
     interface DsModal {
-        "closeButtonMods": string[];
-        "darkBackground": boolean;
-        "isClosingDisabled": boolean;
-        "isFooterDisabled": boolean;
-        "isHeaderDisabled": boolean;
-        "isLayoutDisabled": boolean;
-        "isSubtitleDisabled": boolean;
+        /**
+          * The accessible name of the dialog (`aria-label`), for a dialog without a `slot="title"` element.
+         */
+        "label": string;
+        /**
+          * @default { '--dialog': true }
+         */
         "lightboxClass": any;
         "lightboxClassObject": any;
+        /**
+          * @default false
+         */
         "overlay": boolean;
-        "redirectToSmoodOnClose": boolean;
         "setContent": (content: string) => Promise<void>;
+        /**
+          * @default false
+         */
         "shown": boolean;
-        "useSnack": boolean;
     }
+    /**
+     * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+     * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+     * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+     */
     interface DsNav {
         "currentActiveItemId": string;
-        "mods": string|string[];
+        /**
+          * The accessible name of the navigation landmark (`aria-label`), which tells it from the other navigations of the page: "Main", "Footer". Not rendered on a sub-navigation.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
     }
+    /**
+     * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+     * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+     * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+     * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+     * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+     * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+     * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+     * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
+     */
     interface DsNavItem {
+        /**
+          * @default 0
+         */
         "depth": number;
+        /**
+          * @default false
+         */
         "hasChildren": boolean;
+        /**
+          * The item of the current page: its link gets `aria-current="page"` (unless it has an `aria-current` of its own).
+          * @default false
+         */
         "isActive": boolean;
+        /**
+          * Whether the expand button animates the height of the sub-navigation (`false`: the theme opens it, on `--open`).
+          * @default true
+         */
         "isAnimated": boolean;
         "itemId": string;
+        /**
+          * The name of the item in the name of its expand button. Default: the text of its link.
+         */
+        "label": string;
+        /**
+          * The name of the expand button (`aria-label`): `{label}` is the name of the item.
+          * @default '{label} submenu'
+         */
+        "toggleLabel": string;
+        /**
+          * @default 'page'
+         */
         "type": string;
     }
-    interface DsNewsletter {
-        "dsDisplayedBy": string;
-        "dsInputValue": string;
-        "dsPlaceholder": string;
-        "dsSubscribeUrl": string;
-    }
-    interface DsPage {
-        "addToCart": (id: string, attributeId: string, attributeGroupId: string, customizationId: string) => Promise<void>;
-        "cartUrl": string;
-        "disableScroll": () => Promise<void>;
-        "enableScroll": () => Promise<void>;
-        "goTo": (url: string) => Promise<void>;
-        "locale": AppLocale;
+    /**
+     * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+     * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+     * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+     * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+     * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+     * next and last ones: rendered in their place, not focusable.
+     * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+     * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+     * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+     * when that control became unavailable): it is never lost.
+     * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+     * controls (and first and last) around "Page 3 of 10", with the same names.
+     */
+    interface DsPagination {
+        /**
+          * The number of pages shown at each end of the list: `1` by default (the first and the last page), `10` at most.
+          * @default 1
+         */
+        "boundaries": number | string;
+        /**
+          * Always compact: "Page 3 of 10" between the previous and next controls, whatever the width of the viewport.
+          * @default false
+         */
+        "compact": boolean;
+        /**
+          * The breakpoint of the theme below which the pagination is compact (`xs`, `sm`, `md`…: the media query of `break-p(null, <breakpoint>)`): `sm` by default; `none` never.
+          * @default 'sm'
+         */
+        "compactBelow": string;
+        /**
+          * The current page, from 1 to `total` (a number out of that range is the closest page). A page change in button mode sets it.
+          * @default 1
+         */
+        "current": number | string;
+        /**
+          * Renders the controls of the first and of the last page, at each end.
+          * @default false
+         */
+        "firstLast": boolean;
+        /**
+          * The link of a page, `{page}` its number (`?page={page}`, `/results/page/{page}`): the controls are then links (links mode). Without it, they are buttons, and a page change emits `pageChange` (buttons mode).
+         */
+        "hrefTemplate": string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Pagination` by default. Give it in the language of the page.
+         */
+        "label": string;
+        /**
+          * The texts of the pagination (JSON as an attribute), to translate them: `first`, `previous`, `next`, `last` (the names of the controls), `page` (the name of a page, `{page}` its number), `status` (the compact text, `{page}`, `{total}`).
+          * @default {}
+         */
+        "labels": DSPaginationLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
-        "token": string;
+        /**
+          * The number of pages shown on each side of the current page: `1` by default, `10` at most.
+          * @default 1
+         */
+        "siblings": number | string;
+        /**
+          * The number of pages. Without pages (`0`, or not a number), nothing is rendered.
+         */
+        "total": number | string;
     }
+    /**
+     * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+     * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+     *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+     *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+     *   that button.
+     * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+     *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+     * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+     * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+     * (at once when there is none).
+     */
     interface DsPanel {
+        /**
+          * Whether the content is shown.
+          * @default false
+         */
         "expanded": boolean;
         "hide": () => Promise<void>;
+        /**
+          * The place of the panel in its `ds-panel-group` (set by the group).
+         */
         "index": number;
+        /**
+          * The heading level (1 to 6) of the title of a collapsible panel: the title is then a heading (`role="heading"`, `aria-level`) that holds its button, as in the WAI-ARIA accordion pattern. Default: the level of an `h1`…`h6` element put in the `title` slot (which gets `role="none"`: the title is the heading), else none.
+         */
+        "level": number | string;
+        /**
+          * The minimum height of the content (a CSS length).
+          * @default '0'
+         */
         "minHeight": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
         "setIndex": (index: number) => Promise<void>;
+        /**
+          * Makes the panel a tab of the tab list of its `ds-panel-group` (`true`), or not: `ds-panel-group` calls it. A `tab` panel that is not in a tab list has no role (its title is not a control).
+         */
+        "setTab": (isTab: boolean) => Promise<void>;
         "setType": (type: PanelType) => Promise<void>;
         "show": () => Promise<void>;
         "toggle": (mustShow?: boolean) => Promise<void>;
+        /**
+          * `tab` (in a `ds-panel-group` of tabs) or `collapsible`. `ds-panel-group` sets it on its panels.
+          * @default 'tab'
+         */
         "type": PanelType;
     }
-    interface DsPanelConfigurator {
-        "isMain": boolean;
-        "panelId": string;
-        "settings": any;
-    }
+    /**
+     * Groups `ds-panel` elements, and gives them its `type`:
+     * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+     *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+     *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+     *   and select it.
+     * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+     *   expanded at a time.
+     * The panels of the group are its own: not those of a group or a panel nested in one of them.
+     */
     interface DsPanelGroup {
+        /**
+          * The panels of the group: its `ds-panel` elements, but those of a nested group or panel.
+         */
         "getItems": () => Promise<HTMLDsPanelElement[]>;
-        "hidePanel": (index?: number) => Promise<void>;
+        /**
+          * Not implemented yet: does nothing.
+         */
+        "hidePanel": (_index?: number) => Promise<void>;
+        /**
+          * `false`: the group does not set the type of its panels, which are all shown (no tab list).
+          * @default true
+         */
         "isActive": boolean;
+        /**
+          * The accessible name of the tab list (`aria-label`) of a `tab` group.
+         */
+        "label": string;
+        /**
+          * The id of a visible label of the tab list of a `tab` group (`aria-labelledby`), instead of `label`.
+         */
+        "labelledby": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
         "showPanel": (index: number) => Promise<void>;
+        /**
+          * A `collapsible` group expands one panel at a time.
+          * @default false
+         */
         "soloContent": boolean;
-        "type": PanelType1;
+        /**
+          * @default 'tab'
+         */
+        "type": PanelType;
     }
-    interface DsPanelsConfigurator {
-        "name": string;
-        "settings": string | any;
-        "showActions": boolean;
-    }
-    interface DsPassword {
-        "defaultValue": string;
-        "mods": string | string[];
-        "name": string;
-        "pattern": string;
-        "type": 'text' | 'password';
-    }
-    interface DsPostList {
-        "dsMods": string | string[];
-    }
-    interface DsProduct {
-        "isLoading": boolean;
-        "productId": string;
-    }
-    interface DsProductBlock {
-        "params": string | ProductBlockParams;
-        "size": string;
-    }
-    interface DsProductList {
-        "infiniteScroll": boolean;
-        "infiniteScrollDelay": number;
-        "listUrl": string;
-    }
-    interface DsProductListHeader {
-        "labels": Record<string, string>;
-    }
-    interface DsProductPage {
-    }
-    interface DsProductPageConfigurator {
-        "defaultValue": string;
-        "getConfig": (extraProps?: Record<string, any>) => Promise<{ markup: string; config: Record<string, unknown>; }>;
-        "settings": string | any;
-    }
-    interface DsProductSearch {
-        "route": string;
-        "value": string | string[];
-    }
-    interface DsProductsConfigurator {
-        "associatedRoute": string;
-        "defaultValue": string;
-        "settings": string | any;
-    }
-    interface DsRatingList {
-        "dsAverage": string|number;
-        "dsRatings": string|any[];
-    }
-    interface DsReassurance {
-    }
-    interface DsRegister {
-    }
+    /**
+     * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+     * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+     * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
+     * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
+     * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+     * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
+     */
     interface DsRsp {
-        "breakpointsFromProp": Record<string, number>;
+        /**
+          * Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
+         */
+        "breakpointsFromProp": string | RawBreakpoint;
+        /**
+          * The delay, in ms, of the debounced `resize` listener ds-rsp used before. ds-rsp now follows the breakpoints with media queries (`matchMedia()`) and applies a change at once: it is ignored, with a console warning.
+          * @deprecated Ignored: remove it.
+          * @default 500
+         */
         "debounceDelay": number;
         /**
-          * Get the current breakpoint
+          * Get the current breakpoint: the breakpoint of the viewport, from the media queries of the minimums, as ds-rsp sees it (`responsive.getBreakpoint()`).
           * @param rawBreakpoints JSON Object containings all breakpoints
           * @returns current breakpoint ( label & limits )
          */
         "getBreakpoint": (rawBreakpoints: { [label: string]: number[]; }) => Promise<Breakpoint>;
+        /**
+          * The theme breakpoints (`tokens.getBreakpoints()`), as limits: `{ xxs: [0, 575], …, xxl: [1600] }`; `{}` without the theme.
+         */
         "getBreakpoints": () => Promise<Breakpoints>;
         "getCurrentBreakpoint": () => Promise<Breakpoint>;
         "getData": () => Promise<{ breakpoints: Breakpoints; }>;
         "getParamsForBreakpoint": (currentBreakpoint: Breakpoint, params: { [breakpointLabel: string]: Record<string, unknown>; }) => Promise<Record<string, unknown>>;
         "getSubscribers": () => Promise<Element[]>;
-        "processBreakpoints": (breakpoints: RawBreakpoint1) => Promise<Breakpoints1>;
+        "processBreakpoints": (breakpoints: RawBreakpoint) => Promise<Breakpoints>;
+        /**
+          * @default 'data-rsp'
+         */
         "propertyName": string;
-        "subscribe": (target: Element) => Promise<number>;
+        /**
+          * Reads the breakpoints again (from the `breakpoints` property, else from the theme custom properties) and applies them: subscribes the matching elements not subscribed yet, sets the params of the current breakpoint on every subscriber again, and emits `breakpointChange` only when the label or the limits of the current breakpoint changed. Without breakpoints until then (theme stylesheet loaded after ds-rsp), it starts, as when the theme is there at load. When it finds none, it keeps the current ones (if any) and logs a warning, once until it finds some again.  ds-rsp calls it when a stylesheet `<link>` of the document loads (a theme added, or its `href` changed). Call it after changing the theme otherwise: a `<style>` element, a constructed stylesheet, a `media` attribute changed after the load… Before ds-rsp has loaded, it does nothing: ds-rsp reads the breakpoints when it loads.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Adds a subscriber. Once ds-rsp has started, the element gets the params of the current breakpoint at once (before, when ds-rsp starts).
+         */
+        "subscribe": (target: Element) => Promise<void>;
+        /**
+          * @default '[data-use-rsp]:not([data-rsp-init])'
+         */
         "subscriberSelector": string;
     }
-    interface DsSearch {
-        "placeholder": string;
-        "toggle": (mustShow?: boolean) => Promise<void>;
-        "url": string;
-        "value": string;
-    }
-    interface DsSearchBar {
-        "dsPlaceholder": string;
-        "dsSearchString": string;
-        "dsSearchUrl": string;
-    }
+    /**
+     * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+     * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+     * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+     * (the id of the select).
+     * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+     * a disabled fieldset disables it, and the box follows a form reset.
+     */
     interface DsSelect {
         "defaultValue": string;
+        /**
+          * Disables the native select: it cannot be focused or changed, and submits nothing. A disabled `<fieldset>` around it does the same.
+         */
         "disabled": boolean;
         "getValue": () => Promise<{ value: string; label: string; }>;
+        /**
+          * The accessible name of the select (`aria-label`), without a visible label.
+         */
+        "label": string;
+        /**
+          * The ids of the elements that name the select (a visible label): its `aria-labelledby`.
+         */
+        "labelledby": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
+        /**
+          * The `name` of the native select, and its `id` (a `<label for>` with it names the select).
+         */
         "name": string;
+        /**
+          * Makes the native select required: the form is not submitted while its selected option is a placeholder (a first option with an empty value), and the browser shows its own message.
+         */
+        "required": boolean;
     }
+    /**
+     * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+     * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+     * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+     * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+     * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+     */
     interface DsSidebar {
+        /**
+          * @default true
+         */
         "ctx": boolean;
+        /**
+          * @default SIDEBAR_POSITION.LEFT
+         */
         "hPos": 'left' | 'right';
         /**
-          * Hide the sidebar
+          * Hide the sidebar (nothing happens when it is already hidden), and give the focus back to the element that had it before `show()`, when the focus is in the sidebar
          */
         "hide": () => Promise<void>;
+        /**
+          * @default false
+         */
         "isShown": boolean;
+        /**
+          * The accessible name of the sidebar (`aria-label`), which tells it from the other landmarks of the page.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
         /**
-          * Show the sidebar
+          * Show the sidebar (nothing happens when it is already shown), and move the focus into it
          */
         "show": () => Promise<void>;
         /**
           * Toggle the sidebar display
-          * @param mustShow Used to specify wether the sidebar must be shown or hidden
+          * @param mustShow Used to specify wether the sidebar must be shown or hidden; without it, the display is switched
          */
         "toggle": (mustShow?: boolean) => Promise<void>;
+        /**
+          * @default SIDEBAR_POSITION.TOP
+         */
         "vPos": 'top' | 'bottom';
     }
+    /**
+     * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+     * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+     * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+     * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+     * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+     * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+     * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+     */
     interface DsSlider {
         "goTo": (itemIndex: number) => Promise<void>;
         "initialize": () => Promise<void>;
+        /**
+          * The accessible name of the carousel (`aria-label`): what its slides are ("Featured products").
+         */
+        "label": string;
+        /**
+          * The texts read by assistive technologies, to translate them (JSON as an attribute): `carousel` and `slide` (the `aria-roledescription` of the slider and of a slide), `slideName` (the name of a slide, `{index} of {count}`), `previous`, `next`, `play`, `pause` (the names of the buttons), `menu` and `menuItem` (the names of the menu and of a dot, `Slide {index}`). Each one has an English default.
+          * @default {}
+         */
+        "labels": DSSliderLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
         "next": (step?: number, startPosition?: number) => Promise<void>;
+        /**
+          * @default {}
+         */
         "params": DSSliderParams | string;
+        /**
+          * Starts the automatic rotation again (`params.autoplay`), unless the pointer is over the slider (it then starts when it leaves).
+         */
         "play": () => Promise<void>;
-        "pointerDownHandler": (event: PointerEvent) => Promise<void>;
+        "pointerDownHandler": (event: TouchEvent) => Promise<void>;
         "pointerMoveHandler": () => Promise<void>;
-        "pointerUpHandler": (event: PointerEvent) => Promise<void>;
+        "pointerUpHandler": (event: TouchEvent) => Promise<void>;
         "prev": (step?: number, startPosition?: number) => Promise<void>;
         "refresh": (reset?: boolean) => Promise<void>;
         "reset": () => Promise<void>;
+        /**
+          * @default `slide-${sliderId++}`
+         */
         "sliderId": string;
+        /**
+          * Stops the automatic rotation (`params.autoplay`): the rotation button then starts it.
+         */
         "stop": () => Promise<void>;
+        /**
+          * @default 'sld'
+         */
         "type": string;
     }
+    /**
+     * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+     */
     interface DsSliderItem {
     }
+    /**
+     * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+     * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+     * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+     */
     interface DsSliderMenu {
+        /**
+          * @default 0
+         */
         "dsCurrentItemIndex": number;
+        /**
+          * @default 0
+         */
         "dsItemCount": number;
+        /**
+          * The accessible name of a dot: `{index}` is the number of its slide, `{count}` the number of slides.
+          * @default 'Slide {index}'
+         */
+        "itemLabel": string;
+        /**
+          * The accessible name of the menu (`aria-label` of its list).
+          * @default 'Choose a slide'
+         */
+        "label": string;
     }
-    interface DsSocialLink {
-        "dsNetworks": any[]|string;
-    }
-    interface DsStickyCartButton {
-        "offset": string | number;
-        "scrollBehavior": "smooth" | "instant" | "auto";
-    }
-    interface DsTag {
-        "tagId": string;
-    }
+    /**
+     * A block of text, in the paragraph font style of the theme.
+     */
     interface DsText {
-        "bold": boolean;
-        "color": string;
-        "content": boolean;
-        "highlight": boolean;
-        "italic": boolean;
-        "main": boolean;
+        "inline": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
-        "size": string | number;
         "sub": boolean;
-        "text": boolean;
-        "type": string;
+        "sup": boolean;
+        /**
+          * @default 'p'
+         */
+        "type": 'p' | 'code' | 'quote';
+        "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
+    /**
+     * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+     * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+     */
     interface DsTitle {
         "article": boolean;
         "block": boolean;
         "form": boolean;
+        /**
+          * The heading level (1 to 6) of a text title: the element is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element, which has its own level.
+         */
+        "level": number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
         "page": boolean;
         "section": boolean;
         "sub": boolean;
         "sup": boolean;
-        "useContext": boolean;
     }
+    /**
+     * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+     */
     interface DsTitleBar {
         "ctx": boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
     }
-    interface DsTitleConfigurator {
-        "toolbar": string;
-        "validElements": string;
-        "value": string;
-    }
+    /**
+     * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+     * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+     * at the end of that transition.
+     * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+     * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+     * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+     * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+     * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+     * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
+     */
     interface DsToaster {
+        /**
+          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. The countdown pauses while the pointer is over the toasts or the focus is in the toaster, and starts again from this delay when they leave it. Leave the time to read the messages: 5000 at least for a sentence, more for a longer text (see the Accessibility section of the readme).
+          * @default 3000
+         */
         "closingDelay": number;
+        /**
+          * Shows the toaster, then hides it after `closingDelay` ms (counted from the last call). The countdown pauses while the pointer is over the toasts or the focus is in the toaster, and starts again from `closingDelay` when they leave it.
+         */
         "displayToast": () => Promise<void>;
         "hide": () => Promise<void>;
+        /**
+          * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first. `0` displays them all.
+          * @default 3
+         */
         "maxDisplayedToast": number;
+        /**
+          * The messages, one toast each, from the oldest to the newest: an array, or a comma-separated string.
+         */
         "messages": string | string[];
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
+        /**
+          * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+          * @default [     TOASTER_VERTICAL_POSITION.TOP,     TOASTER_HORIZONTAL_POSITION.LEFT,   ]
+         */
         "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
         "show": () => Promise<void>;
     }
+    /**
+     * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+     * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+     * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+     * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+     * cannot be focused.
+     * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+     * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+     * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
+     */
     interface DsToggle {
+        /**
+          * Whether the toggle is valid; an invalid toggle gets an `invalid` event (as the `checkValidity()` of a native control, but asynchronous).
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Whether the toggle is checked (pressed, for an `icon` toggle). Its value at the load is the default one, which a form reset gives back.
+         */
         "checked": boolean;
+        /**
+          * A disabled toggle ignores clicks and keys, cannot be focused (`aria-disabled="true"`, no `tabindex`) and submits nothing. A disabled `<fieldset>` or `ds-toggle-group` disables it too, without changing this prop.
+         */
         "disabled": boolean;
+        /**
+          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with a `<label>` element (`<label for="<id>">`, or around it) or with `aria-labelledby` (its id) on the element instead.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
+        /**
+          * The name of the value in the form data (a toggle without a name submits nothing). A `ds-toggle-group` with a `name` gives it its own.
+         */
         "name": string;
+        /**
+          * As `checkValidity()`, and the browser shows the message of an invalid toggle, which takes the focus.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * The toggle must be checked for its form to be submitted (`valueMissing`, `aria-required` on a checkbox or a switch). A radio of a `ds-toggle-group` makes its group required instead.
+         */
+        "required": boolean;
+        /**
+          * The message of a required toggle left unchecked, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage": string;
         "setChecked": (checked: boolean) => Promise<void>;
+        /**
+          * Disables the toggle while its parent is disabled (`ds-toggle-group` calls it), without changing its own `disabled`: `true` disables it, `false` or `undefined` gives it its own state back.
+         */
+        "setGroupDisabled": (isDisabled?: boolean) => Promise<void>;
         "setName": (name: string) => Promise<void>;
+        /**
+          * Sets the given props (`mods`, `value`, `name`, `type`, `disabled`, `checked`); `undefined` values and other keys are ignored.
+         */
         "setProps": (properties: Record<string, unknown>) => Promise<void>;
+        /**
+          * Sets whether Tab reaches the toggle, for a parent that moves the focus between its toggles (the arrow keys of a `ds-toggle-group` of radios): `false` renders `tabindex="-1"`, `true` or `undefined` `tabindex="0"`, the default.
+         */
+        "setTabbable": (isTabbable?: boolean) => Promise<void>;
+        /**
+          * Sets the type given by a parent (`ds-toggle-group` calls it): the toggle uses it while it has no `type` of its own. `undefined` removes it.
+         */
         "setType": (type: "radio" | "icon" | "checkbox" | "switch" | string) => Promise<void>;
-        "type": "radio" | "icon" | "checkbox" | "switch" | string;
-        "value": any;
-    }
-    interface DsToggleGroup {
-        "count": number[] | string;
-        "disabled": boolean;
-        "mods": string | string[];
-        "name": string;
-        "type": string;
+        /**
+          * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins.
+         */
+        "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        /**
+          * The message of an invalid toggle, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage": string;
+        /**
+          * The validity of the toggle, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity": ValidityState;
+        /**
+          * The value the toggle submits with its form while it is checked: `on` without one (as a native checkbox). Also sent in the `toggle` event.
+         */
+        "value": DSToggleValue;
+        /**
+          * Whether the form validates the toggle (read-only), as the browser tells it: not while its `disabled` or a disabled fieldset disables it (a toggle its group disables is valid).
+          * @readonly
+         */
+        "willValidate": boolean;
     }
     /**
-     * Simple icon tooltip component
+     * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+     * The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
+     * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
+     * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
+     * MutationObserver, in browsers).
+     * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+     * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+     * focus and the selection between the enabled radios.
+     * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+     * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+     * it, and a disabled fieldset disables it with its toggles.
+     */
+    interface DsToggleGroup {
+        /**
+          * Whether the group is valid; an invalid group gets an `invalid` event (as the `checkValidity()` of a native control, but asynchronous).
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+          * @default [1, 1]
+         */
+        "count": number[] | string;
+        /**
+          * Disables the group and all its toggles (`aria-disabled` on the group, and on each toggle, which leaves the toggles' own `disabled` as it is). A disabled `<fieldset>` around it does the same.
+         */
+        "disabled": boolean;
+        /**
+          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element, or a `<label>` element (`<label for="<id of the group>">`) instead.
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The name of its toggles, which submit their values under it with their form (it replaces their own).
+         */
+        "name": string;
+        /**
+          * As `checkValidity()`, and the browser shows the message of an invalid group at its first enabled toggle (the checked radio of a radio group), which takes the focus.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * At least one toggle must be checked for the form to be submitted (`valueMissing`; `aria-required` on a radio group). A radio of the group with `required` makes it required too, as a native radio.
+         */
+        "required": boolean;
+        /**
+          * The message of a required group without a checked toggle, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage": string;
+        /**
+          * The type of its toggles that have none of their own (`radio`, `checkbox`, `switch`, `icon`).
+         */
+        "type": string;
+        /**
+          * The message of an invalid group, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage": string;
+        /**
+          * The validity of the group, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity": ValidityState;
+        /**
+          * Whether the form validates the group (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate": boolean;
+    }
+    /**
+     * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+     * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+     * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+     * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+     * moving the focus or the pointer. On touch screens, a tap shows or hides it.
      */
     interface DsTooltip {
+        /**
+          * @default ''
+         */
         "containerSelector": string;
+        /**
+          * @default true
+         */
         "hasArrow": boolean;
         /**
           * Displayed tooltip icon
+          * @default ''
          */
         "icon": string;
-        "isActive": boolean;
         /**
           * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
+          * @default false
          */
         "isDisabled": boolean;
         /**
-          * Used for applying modifier on main container
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
-        "mode": string;
         "mods": string | string[];
         /**
           * @type {string} Tooltip position (top, left, right or bottom)
+          * @default TooltipPosition.TOP
          */
         "position": TooltipPosition;
     }
+    /**
+     * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+     * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+     * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+     * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+     * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
+     */
     interface DsTrigger {
+        /**
+          * Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`).
+         */
         "action": string;
+        /**
+          * A disabled trigger does not call the action; when it is the control, it is `aria-disabled` and cannot be focused.
+          * @default false
+         */
         "disabled": boolean;
+        /**
+          * The accessible name of the trigger (`aria-label`) when it is the control, for a trigger without a text (an icon).
+         */
+        "label": string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods": string | string[];
+        /**
+          * Event of the trigger that calls the action. With another event than `click`, the trigger is not a button.
+          * @default 'click'
+         */
         "on": string;
+        /**
+          * The target: a CSS selector, `window` or `document`.
+         */
         "target": string;
+        /**
+          * `control` (no skin), `button` (the `.ds-button` skin) or `link` (the `.ds-link` skin): the look only, all are buttons.
+          * @default 'control'
+         */
         "type": 'button' | 'control' | 'link';
     }
-    interface DsTxtImgConfigurator {
-        "defaultValue": string;
-        "getConfig": (extraProps: Record<string, unknown>) => Promise<{ config: Record<string, unknown>; markup: string; }>;
-        "settings": string | any;
-    }
-    interface DsVideo {
-        "autoplay": boolean;
-        "controls": boolean;
-        "loop": boolean;
-        "mods": string[];
-        "mute": () => Promise<void>;
-        "pause": () => Promise<void>;
-        "play": () => Promise<void>;
-        "playsinline": boolean;
-        "poster": string;
-        "sources": string | string[];
-        "stop": () => Promise<void>;
-        "unmute": () => Promise<void>;
-    }
-    interface DsVimeo {
-        "loadingDelay": string;
-        "mods": string[];
-        "videoId": string;
-    }
-    interface DsWishlistButton {
-        "dsIsLogged": string;
-        "dsProductAttributeId": string;
-        "dsProductId": string;
-        "dsUrl": string;
-    }
-    interface ProntoContentAdmin {
-        "active": string | boolean;
-        "adminUrl": string;
-        "blockTitle": string;
-        "componentType": string;
-        "controllerUrl": string;
-        "endDate": string;
-        "filemanagerUrl": string;
-        "getConfig": () => Promise<{ adminUrl: string; filemanagerUrl: string; controllerUrl: string; settings: any; }>;
-        "hook": string;
-        "linkedId": string;
-        "modifiers": string;
-        "orderPosition": string;
-        "pageType": string;
-        "settings": any;
-        "startDate": string;
-    }
-    interface ProntoField {
-        "associatedRoute": string;
-        "defaultValue": string;
-        "label": string;
-        "mods": string | string[];
-        "positions": MediaPosition[];
-        "type": string;
-        "values": { label: string; value: string; }[];
-    }
-    interface ProntoFieldset {
-        "defaultValue": any;
-        "depth": number;
-        "fields": any[];
-        "label": string;
-        "name": string;
-    }
-    interface ProntoForm {
-        "fields": any[];
-        "mods": string | string[];
-        "size": "sm" | "md" | "lg" | "xl";
-    }
-    interface ProntoIcon {
-        "type": string;
-    }
-    interface ProntoModal {
-        "associatedRoute": string;
-        "mods": string | string[];
-        "name": string;
-        "overlay": boolean;
-        "type": string;
-        "value": any;
-    }
-    interface ProntoProductList {
-        "associatedRoute": string;
-        "inputProps": any;
-        "value": any[];
-    }
 }
-export interface DsBlockBuilderCustomEvent<T> extends CustomEvent<T> {
+export interface DsAjaxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsBlockBuilderElement;
+    target: HTMLDsAjaxElement;
 }
-export interface DsButtonConfiguratorCustomEvent<T> extends CustomEvent<T> {
+export interface DsAlertCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsButtonConfiguratorElement;
+    target: HTMLDsAlertElement;
 }
-export interface DsCheckoutPageCustomEvent<T> extends CustomEvent<T> {
+export interface DsBackToTopCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsCheckoutPageElement;
-}
-export interface DsCmsImageCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCmsImageElement;
-}
-export interface DsCmsVideoCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsCmsVideoElement;
+    target: HTMLDsBackToTopElement;
 }
 export interface DsComboCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsComboElement;
-}
-export interface DsDropdownCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsDropdownElement;
-}
-export interface DsFeatureConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFeatureConfiguratorElement;
-}
-export interface DsFeaturesConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFeaturesConfiguratorElement;
-}
-export interface DsFilemanagerCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsFilemanagerElement;
-}
-export interface DsHtmlCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsHtmlElement;
-}
-export interface DsHtmlEditorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsHtmlEditorElement;
-}
-export interface DsInputDateCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputDateElement;
-}
-export interface DsInputModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputModalElement;
-}
-export interface DsInputNumberCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsInputNumberElement;
-}
-export interface DsMarqueeConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsMarqueeConfiguratorElement;
-}
-export interface DsMediaCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsMediaElement;
 }
 export interface DsModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -849,29 +1416,9 @@ export interface DsNavItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsNavItemElement;
 }
-export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
+export interface DsPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
-    target: HTMLDsPanelElement;
-}
-export interface DsPanelConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsPanelConfiguratorElement;
-}
-export interface DsPanelsConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsPanelsConfiguratorElement;
-}
-export interface DsProductPageConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsProductPageConfiguratorElement;
-}
-export interface DsProductSearchCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsProductSearchElement;
-}
-export interface DsProductsConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsProductsConfiguratorElement;
+    target: HTMLDsPaginationElement;
 }
 export interface DsPanelCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -897,14 +1444,6 @@ export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
 }
-export interface DsTagCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTagElement;
-}
-export interface DsTitleConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTitleConfiguratorElement;
-}
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToasterElement;
@@ -917,220 +1456,152 @@ export interface DsToggleGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsToggleGroupElement;
 }
-export interface DsTxtImgConfiguratorCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLDsTxtImgConfiguratorElement;
-}
-export interface ProntoContentAdminCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoContentAdminElement;
-}
-export interface ProntoFieldCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoFieldElement;
-}
-export interface ProntoFieldsetCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoFieldsetElement;
-}
-export interface ProntoFormCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoFormElement;
-}
-export interface ProntoModalCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoModalElement;
-}
-export interface ProntoProductListCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLProntoProductListElement;
-}
 declare global {
-    interface HTMLDsAccountBlockElement extends Components.DsAccountBlock, HTMLStencilElement {
+    interface HTMLDsAjaxElementEventMap {
+        "ajaxLoaded": { target: HTMLElement; url: string };
+        "ajaxError": { url: string; error: unknown };
     }
-    var HTMLDsAccountBlockElement: {
-        prototype: HTMLDsAccountBlockElement;
-        new (): HTMLDsAccountBlockElement;
-    };
-    interface HTMLDsAddressElement extends Components.DsAddress, HTMLStencilElement {
-    }
-    var HTMLDsAddressElement: {
-        prototype: HTMLDsAddressElement;
-        new (): HTMLDsAddressElement;
-    };
+    /**
+     * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+     * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+     * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+     * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+     * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+     * `ajaxError`; a load emits `ajaxLoaded`.
+     * Version: 1.0
+     */
     interface HTMLDsAjaxElement extends Components.DsAjax, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAjaxElementEventMap>(type: K, listener: (this: HTMLDsAjaxElement, ev: DsAjaxCustomEvent<HTMLDsAjaxElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAjaxElementEventMap>(type: K, listener: (this: HTMLDsAjaxElement, ev: DsAjaxCustomEvent<HTMLDsAjaxElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLDsAjaxElement: {
         prototype: HTMLDsAjaxElement;
         new (): HTMLDsAjaxElement;
     };
-    interface HTMLDsAppElement extends Components.DsApp, HTMLStencilElement {
+    interface HTMLDsAlertElementEventMap {
+        "alertDismiss": void;
+        "alertDismissed": void;
     }
-    var HTMLDsAppElement: {
-        prototype: HTMLDsAppElement;
-        new (): HTMLDsAppElement;
-    };
-    interface HTMLDsAppMenuElement extends Components.DsAppMenu, HTMLStencilElement {
+    /**
+     * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+     * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+     * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+     * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+     * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+     * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+     * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+     * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+     * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+     */
+    interface HTMLDsAlertElement extends Components.DsAlert, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsAlertElementEventMap>(type: K, listener: (this: HTMLDsAlertElement, ev: DsAlertCustomEvent<HTMLDsAlertElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsAlertElementEventMap>(type: K, listener: (this: HTMLDsAlertElement, ev: DsAlertCustomEvent<HTMLDsAlertElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsAppMenuElement: {
-        prototype: HTMLDsAppMenuElement;
-        new (): HTMLDsAppMenuElement;
+    var HTMLDsAlertElement: {
+        prototype: HTMLDsAlertElement;
+        new (): HTMLDsAlertElement;
     };
-    interface HTMLDsAuthElement extends Components.DsAuth, HTMLStencilElement {
+    interface HTMLDsBackToTopElementEventMap {
+        "backToTop": { target: HTMLElement };
     }
-    var HTMLDsAuthElement: {
-        prototype: HTMLDsAuthElement;
-        new (): HTMLDsAuthElement;
-    };
-    interface HTMLDsBackToTopButtonElement extends Components.DsBackToTopButton, HTMLStencilElement {
+    /**
+     * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+     * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+     * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+     * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+     * screen readers go on from the top too, then emits `backToTop`.
+     * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+     * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+     * per animation frame, removed when it leaves the document.
+     */
+    interface HTMLDsBackToTopElement extends Components.DsBackToTop, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsBackToTopElementEventMap>(type: K, listener: (this: HTMLDsBackToTopElement, ev: DsBackToTopCustomEvent<HTMLDsBackToTopElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsBackToTopElementEventMap>(type: K, listener: (this: HTMLDsBackToTopElement, ev: DsBackToTopCustomEvent<HTMLDsBackToTopElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsBackToTopButtonElement: {
-        prototype: HTMLDsBackToTopButtonElement;
-        new (): HTMLDsBackToTopButtonElement;
+    var HTMLDsBackToTopElement: {
+        prototype: HTMLDsBackToTopElement;
+        new (): HTMLDsBackToTopElement;
     };
-    interface HTMLDsBannerElement extends Components.DsBanner, HTMLStencilElement {
+    /**
+     * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+     * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+     * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+     * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+     * the count does it with a live region of its own.
+     */
+    interface HTMLDsBadgeElement extends Components.DsBadge, HTMLStencilElement {
     }
-    var HTMLDsBannerElement: {
-        prototype: HTMLDsBannerElement;
-        new (): HTMLDsBannerElement;
+    var HTMLDsBadgeElement: {
+        prototype: HTMLDsBadgeElement;
+        new (): HTMLDsBadgeElement;
     };
+    /**
+     * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+     * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+     * (`ds-home-hero__header`, `__body`, `__footer`).
+     * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+     * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
+     */
     interface HTMLDsBlockElement extends Components.DsBlock, HTMLStencilElement {
     }
     var HTMLDsBlockElement: {
         prototype: HTMLDsBlockElement;
         new (): HTMLDsBlockElement;
     };
-    interface HTMLDsBlockBuilderElementEventMap {
-        "saveConfiguration": any;
-        "configChange": any;
-    }
-    interface HTMLDsBlockBuilderElement extends Components.DsBlockBuilder, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsBlockBuilderElementEventMap>(type: K, listener: (this: HTMLDsBlockBuilderElement, ev: DsBlockBuilderCustomEvent<HTMLDsBlockBuilderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsBlockBuilderElementEventMap>(type: K, listener: (this: HTMLDsBlockBuilderElement, ev: DsBlockBuilderCustomEvent<HTMLDsBlockBuilderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsBlockBuilderElement: {
-        prototype: HTMLDsBlockBuilderElement;
-        new (): HTMLDsBlockBuilderElement;
-    };
+    /**
+     * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+     * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+     * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+     * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+     * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+     * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+     * theme draws the separators between the items, in CSS: they are not read.
+     * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+     * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+     * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+     * the trail is collapsed.
+     */
     interface HTMLDsBreadcrumbElement extends Components.DsBreadcrumb, HTMLStencilElement {
     }
     var HTMLDsBreadcrumbElement: {
         prototype: HTMLDsBreadcrumbElement;
         new (): HTMLDsBreadcrumbElement;
     };
-    interface HTMLDsButtonConfiguratorElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsButtonConfiguratorElement extends Components.DsButtonConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsButtonConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsButtonConfiguratorElement, ev: DsButtonConfiguratorCustomEvent<HTMLDsButtonConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsButtonConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsButtonConfiguratorElement, ev: DsButtonConfiguratorCustomEvent<HTMLDsButtonConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsButtonConfiguratorElement: {
-        prototype: HTMLDsButtonConfiguratorElement;
-        new (): HTMLDsButtonConfiguratorElement;
-    };
-    interface HTMLDsCartElement extends Components.DsCart, HTMLStencilElement {
-    }
-    var HTMLDsCartElement: {
-        prototype: HTMLDsCartElement;
-        new (): HTMLDsCartElement;
-    };
-    interface HTMLDsCartBlockElement extends Components.DsCartBlock, HTMLStencilElement {
-    }
-    var HTMLDsCartBlockElement: {
-        prototype: HTMLDsCartBlockElement;
-        new (): HTMLDsCartBlockElement;
-    };
-    interface HTMLDsCategoryListElement extends Components.DsCategoryList, HTMLStencilElement {
-    }
-    var HTMLDsCategoryListElement: {
-        prototype: HTMLDsCategoryListElement;
-        new (): HTMLDsCategoryListElement;
-    };
-    interface HTMLDsCategorySearchElement extends Components.DsCategorySearch, HTMLStencilElement {
-    }
-    var HTMLDsCategorySearchElement: {
-        prototype: HTMLDsCategorySearchElement;
-        new (): HTMLDsCategorySearchElement;
-    };
-    interface HTMLDsCheckoutPageElementEventMap {
-        "panelShow": any;
-    }
-    interface HTMLDsCheckoutPageElement extends Components.DsCheckoutPage, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCheckoutPageElementEventMap>(type: K, listener: (this: HTMLDsCheckoutPageElement, ev: DsCheckoutPageCustomEvent<HTMLDsCheckoutPageElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCheckoutPageElementEventMap>(type: K, listener: (this: HTMLDsCheckoutPageElement, ev: DsCheckoutPageCustomEvent<HTMLDsCheckoutPageElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCheckoutPageElement: {
-        prototype: HTMLDsCheckoutPageElement;
-        new (): HTMLDsCheckoutPageElement;
-    };
-    interface HTMLDsCheckoutPathElement extends Components.DsCheckoutPath, HTMLStencilElement {
-    }
-    var HTMLDsCheckoutPathElement: {
-        prototype: HTMLDsCheckoutPathElement;
-        new (): HTMLDsCheckoutPathElement;
-    };
-    interface HTMLDsCmsImageElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsCmsImageElement extends Components.DsCmsImage, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCmsImageElementEventMap>(type: K, listener: (this: HTMLDsCmsImageElement, ev: DsCmsImageCustomEvent<HTMLDsCmsImageElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCmsImageElementEventMap>(type: K, listener: (this: HTMLDsCmsImageElement, ev: DsCmsImageCustomEvent<HTMLDsCmsImageElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCmsImageElement: {
-        prototype: HTMLDsCmsImageElement;
-        new (): HTMLDsCmsImageElement;
-    };
-    interface HTMLDsCmsSearchElement extends Components.DsCmsSearch, HTMLStencilElement {
-    }
-    var HTMLDsCmsSearchElement: {
-        prototype: HTMLDsCmsSearchElement;
-        new (): HTMLDsCmsSearchElement;
-    };
-    interface HTMLDsCmsVideoElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsCmsVideoElement extends Components.DsCmsVideo, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsCmsVideoElementEventMap>(type: K, listener: (this: HTMLDsCmsVideoElement, ev: DsCmsVideoCustomEvent<HTMLDsCmsVideoElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsCmsVideoElementEventMap>(type: K, listener: (this: HTMLDsCmsVideoElement, ev: DsCmsVideoCustomEvent<HTMLDsCmsVideoElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsCmsVideoElement: {
-        prototype: HTMLDsCmsVideoElement;
-        new (): HTMLDsCmsVideoElement;
-    };
     interface HTMLDsComboElementEventMap {
-        "optionSelected": any;
+        "optionSelected": DSComboSelectedEventDetail;
     }
+    /**
+     * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+     * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+     * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+     * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+     * `ds-trigger`). A click outside the component closes the list.
+     * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+     * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+     * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+     * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+     * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+     * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+     * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
+     */
     interface HTMLDsComboElement extends Components.DsCombo, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsComboElementEventMap>(type: K, listener: (this: HTMLDsComboElement, ev: DsComboCustomEvent<HTMLDsComboElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1145,363 +1616,95 @@ declare global {
         prototype: HTMLDsComboElement;
         new (): HTMLDsComboElement;
     };
-    interface HTMLDsContactBlockElement extends Components.DsContactBlock, HTMLStencilElement {
+    /**
+     * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+     * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+     * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+     * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+     * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+     * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+     * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+     * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+     */
+    interface HTMLDsFieldElement extends Components.DsField, HTMLStencilElement {
     }
-    var HTMLDsContactBlockElement: {
-        prototype: HTMLDsContactBlockElement;
-        new (): HTMLDsContactBlockElement;
+    var HTMLDsFieldElement: {
+        prototype: HTMLDsFieldElement;
+        new (): HTMLDsFieldElement;
     };
-    interface HTMLDsContactFormElement extends Components.DsContactForm, HTMLStencilElement {
-    }
-    var HTMLDsContactFormElement: {
-        prototype: HTMLDsContactFormElement;
-        new (): HTMLDsContactFormElement;
-    };
-    interface HTMLDsContentBlockElement extends Components.DsContentBlock, HTMLStencilElement {
-    }
-    var HTMLDsContentBlockElement: {
-        prototype: HTMLDsContentBlockElement;
-        new (): HTMLDsContentBlockElement;
-    };
-    interface HTMLDsCustomerPageElement extends Components.DsCustomerPage, HTMLStencilElement {
-    }
-    var HTMLDsCustomerPageElement: {
-        prototype: HTMLDsCustomerPageElement;
-        new (): HTMLDsCustomerPageElement;
-    };
-    interface HTMLDsDropdownElementEventMap {
-        "optionSelected": any;
-    }
-    interface HTMLDsDropdownElement extends Components.DsDropdown, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsDropdownElementEventMap>(type: K, listener: (this: HTMLDsDropdownElement, ev: DsDropdownCustomEvent<HTMLDsDropdownElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsDropdownElementEventMap>(type: K, listener: (this: HTMLDsDropdownElement, ev: DsDropdownCustomEvent<HTMLDsDropdownElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsDropdownElement: {
-        prototype: HTMLDsDropdownElement;
-        new (): HTMLDsDropdownElement;
-    };
-    interface HTMLDsDropdownItemElement extends Components.DsDropdownItem, HTMLStencilElement {
-    }
-    var HTMLDsDropdownItemElement: {
-        prototype: HTMLDsDropdownItemElement;
-        new (): HTMLDsDropdownItemElement;
-    };
-    interface HTMLDsFaqElement extends Components.DsFaq, HTMLStencilElement {
-    }
-    var HTMLDsFaqElement: {
-        prototype: HTMLDsFaqElement;
-        new (): HTMLDsFaqElement;
-    };
-    interface HTMLDsFeatureConfiguratorElementEventMap {
-        "featureChange": any;
-        "requestDeleteFeature": any;
-    }
-    interface HTMLDsFeatureConfiguratorElement extends Components.DsFeatureConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFeatureConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeatureConfiguratorElement, ev: DsFeatureConfiguratorCustomEvent<HTMLDsFeatureConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFeatureConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeatureConfiguratorElement, ev: DsFeatureConfiguratorCustomEvent<HTMLDsFeatureConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFeatureConfiguratorElement: {
-        prototype: HTMLDsFeatureConfiguratorElement;
-        new (): HTMLDsFeatureConfiguratorElement;
-    };
-    interface HTMLDsFeaturesConfiguratorElementEventMap {
-        "saveConfiguration": any;
-        "configChange": any;
-    }
-    interface HTMLDsFeaturesConfiguratorElement extends Components.DsFeaturesConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFeaturesConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeaturesConfiguratorElement, ev: DsFeaturesConfiguratorCustomEvent<HTMLDsFeaturesConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFeaturesConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsFeaturesConfiguratorElement, ev: DsFeaturesConfiguratorCustomEvent<HTMLDsFeaturesConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFeaturesConfiguratorElement: {
-        prototype: HTMLDsFeaturesConfiguratorElement;
-        new (): HTMLDsFeaturesConfiguratorElement;
-    };
-    interface HTMLDsFilemanagerElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsFilemanagerElement extends Components.DsFilemanager, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsFilemanagerElementEventMap>(type: K, listener: (this: HTMLDsFilemanagerElement, ev: DsFilemanagerCustomEvent<HTMLDsFilemanagerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsFilemanagerElementEventMap>(type: K, listener: (this: HTMLDsFilemanagerElement, ev: DsFilemanagerCustomEvent<HTMLDsFilemanagerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsFilemanagerElement: {
-        prototype: HTMLDsFilemanagerElement;
-        new (): HTMLDsFilemanagerElement;
-    };
-    interface HTMLDsFiltersElement extends Components.DsFilters, HTMLStencilElement {
-    }
-    var HTMLDsFiltersElement: {
-        prototype: HTMLDsFiltersElement;
-        new (): HTMLDsFiltersElement;
-    };
-    interface HTMLDsFooterElement extends Components.DsFooter, HTMLStencilElement {
-    }
-    var HTMLDsFooterElement: {
-        prototype: HTMLDsFooterElement;
-        new (): HTMLDsFooterElement;
-    };
-    interface HTMLDsGiftcardElement extends Components.DsGiftcard, HTMLStencilElement {
-    }
-    var HTMLDsGiftcardElement: {
-        prototype: HTMLDsGiftcardElement;
-        new (): HTMLDsGiftcardElement;
-    };
-    interface HTMLDsGradeStarElement extends Components.DsGradeStar, HTMLStencilElement {
-    }
-    var HTMLDsGradeStarElement: {
-        prototype: HTMLDsGradeStarElement;
-        new (): HTMLDsGradeStarElement;
-    };
+    /**
+     * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+     * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+     * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+     * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+     */
     interface HTMLDsGridElement extends Components.DsGrid, HTMLStencilElement {
     }
     var HTMLDsGridElement: {
         prototype: HTMLDsGridElement;
         new (): HTMLDsGridElement;
     };
+    /**
+     * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+     * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+     * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+     */
     interface HTMLDsGridItemElement extends Components.DsGridItem, HTMLStencilElement {
     }
     var HTMLDsGridItemElement: {
         prototype: HTMLDsGridItemElement;
         new (): HTMLDsGridItemElement;
     };
+    /**
+     * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+     * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+     * are not headings: put a text or a `p` in their slots.
+     */
     interface HTMLDsHeadingElement extends Components.DsHeading, HTMLStencilElement {
     }
     var HTMLDsHeadingElement: {
         prototype: HTMLDsHeadingElement;
         new (): HTMLDsHeadingElement;
     };
-    interface HTMLDsHtmlElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsHtmlElement extends Components.DsHtml, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsHtmlElementEventMap>(type: K, listener: (this: HTMLDsHtmlElement, ev: DsHtmlCustomEvent<HTMLDsHtmlElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsHtmlElementEventMap>(type: K, listener: (this: HTMLDsHtmlElement, ev: DsHtmlCustomEvent<HTMLDsHtmlElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsHtmlElement: {
-        prototype: HTMLDsHtmlElement;
-        new (): HTMLDsHtmlElement;
-    };
-    interface HTMLDsHtmlEditorElementEventMap {
-        "valueChange": any;
-        "cancel": any;
-        "save": any;
-    }
-    interface HTMLDsHtmlEditorElement extends Components.DsHtmlEditor, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsHtmlEditorElementEventMap>(type: K, listener: (this: HTMLDsHtmlEditorElement, ev: DsHtmlEditorCustomEvent<HTMLDsHtmlEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsHtmlEditorElementEventMap>(type: K, listener: (this: HTMLDsHtmlEditorElement, ev: DsHtmlEditorCustomEvent<HTMLDsHtmlEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsHtmlEditorElement: {
-        prototype: HTMLDsHtmlEditorElement;
-        new (): HTMLDsHtmlEditorElement;
-    };
+    /**
+     * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+     * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+     * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     */
     interface HTMLDsIconElement extends Components.DsIcon, HTMLStencilElement {
     }
     var HTMLDsIconElement: {
         prototype: HTMLDsIconElement;
         new (): HTMLDsIconElement;
     };
-    interface HTMLDsInfoWindowElement extends Components.DsInfoWindow, HTMLStencilElement {
+    /**
+     * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+     * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+     * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+     * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+     * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+     * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+     */
+    interface HTMLDsLoaderElement extends Components.DsLoader, HTMLStencilElement {
     }
-    var HTMLDsHeadingElement: {
-        prototype: HTMLDsHeadingElement;
-        new (): HTMLDsHeadingElement;
-    };
-    interface HTMLDsInputElement extends Components.DsInput, HTMLStencilElement {
-    }
-    var HTMLDsInputElement: {
-        prototype: HTMLDsInputElement;
-        new (): HTMLDsInputElement;
-    };
-    interface HTMLDsInputDateElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsInputDateElement extends Components.DsInputDate, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputDateElementEventMap>(type: K, listener: (this: HTMLDsInputDateElement, ev: DsInputDateCustomEvent<HTMLDsInputDateElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputDateElement: {
-        prototype: HTMLDsInputDateElement;
-        new (): HTMLDsInputDateElement;
-    };
-    interface HTMLDsInputModalElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsInputModalElement extends Components.DsInputModal, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputModalElementEventMap>(type: K, listener: (this: HTMLDsInputModalElement, ev: DsInputModalCustomEvent<HTMLDsInputModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputModalElementEventMap>(type: K, listener: (this: HTMLDsInputModalElement, ev: DsInputModalCustomEvent<HTMLDsInputModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputModalElement: {
-        prototype: HTMLDsInputModalElement;
-        new (): HTMLDsInputModalElement;
-    };
-    interface HTMLDsInputNumberElementEventMap {
-        "quantityChange": any;
-    }
-    interface HTMLDsInputNumberElement extends Components.DsInputNumber, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsInputNumberElementEventMap>(type: K, listener: (this: HTMLDsInputNumberElement, ev: DsInputNumberCustomEvent<HTMLDsInputNumberElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsInputNumberElementEventMap>(type: K, listener: (this: HTMLDsInputNumberElement, ev: DsInputNumberCustomEvent<HTMLDsInputNumberElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsInputNumberElement: {
-        prototype: HTMLDsInputNumberElement;
-        new (): HTMLDsInputNumberElement;
-    };
-    interface HTMLDsJsonElement extends Components.DsJson, HTMLStencilElement {
-    }
-    var HTMLDsJsonElement: {
-        prototype: HTMLDsJsonElement;
-        new (): HTMLDsJsonElement;
-    };
-    interface HTMLDsLangElement extends Components.DsLang, HTMLStencilElement {
-    }
-    var HTMLDsLangElement: {
-        prototype: HTMLDsLangElement;
-        new (): HTMLDsLangElement;
-    };
-    interface HTMLDsLangSelectorElement extends Components.DsLangSelector, HTMLStencilElement {
-    }
-    var HTMLDsLangSelectorElement: {
-        prototype: HTMLDsLangSelectorElement;
-        new (): HTMLDsLangSelectorElement;
-    };
-    interface HTMLDsLinksListElement extends Components.DsLinksList, HTMLStencilElement {
-    }
-    var HTMLDsLinksListElement: {
-        prototype: HTMLDsLinksListElement;
-        new (): HTMLDsLinksListElement;
-    };
-    interface HTMLDsLoginElement extends Components.DsLogin, HTMLStencilElement {
-    }
-    var HTMLDsLoginElement: {
-        prototype: HTMLDsLoginElement;
-        new (): HTMLDsLoginElement;
-    };
-    interface HTMLDsMainConfiguratorElement extends Components.DsMainConfigurator, HTMLStencilElement {
-    }
-    var HTMLDsMainConfiguratorElement: {
-        prototype: HTMLDsMainConfiguratorElement;
-        new (): HTMLDsMainConfiguratorElement;
-    };
-    interface HTMLDsMapElement extends Components.DsMap, HTMLStencilElement {
-    }
-    var HTMLDsMapElement: {
-        prototype: HTMLDsMapElement;
-        new (): HTMLDsMapElement;
-    };
-    interface HTMLDsMapLocationElement extends Components.DsMapLocation, HTMLStencilElement {
-    }
-    var HTMLDsMapLocationElement: {
-        prototype: HTMLDsMapLocationElement;
-        new (): HTMLDsMapLocationElement;
-    };
-    interface HTMLDsMapMarkerElement extends Components.DsMapMarker, HTMLStencilElement {
-    }
-    var HTMLDsMapMarkerElement: {
-        prototype: HTMLDsMapMarkerElement;
-        new (): HTMLDsMapMarkerElement;
-    };
-    interface HTMLDsMarqueeElement extends Components.DsMarquee, HTMLStencilElement {
-    }
-    var HTMLDsMarqueeElement: {
-        prototype: HTMLDsMarqueeElement;
-        new (): HTMLDsMarqueeElement;
-    };
-    interface HTMLDsMarqueeConfiguratorElementEventMap {
-        "saveConfiguration": any;
-    }
-    interface HTMLDsMarqueeConfiguratorElement extends Components.DsMarqueeConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsMarqueeConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsMarqueeConfiguratorElement, ev: DsMarqueeConfiguratorCustomEvent<HTMLDsMarqueeConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsMarqueeConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsMarqueeConfiguratorElement, ev: DsMarqueeConfiguratorCustomEvent<HTMLDsMarqueeConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsMarqueeConfiguratorElement: {
-        prototype: HTMLDsMarqueeConfiguratorElement;
-        new (): HTMLDsMarqueeConfiguratorElement;
-    };
-    interface HTMLDsMediaElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsMediaElement extends Components.DsMedia, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsMediaElementEventMap>(type: K, listener: (this: HTMLDsMediaElement, ev: DsMediaCustomEvent<HTMLDsMediaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsMediaElementEventMap>(type: K, listener: (this: HTMLDsMediaElement, ev: DsMediaCustomEvent<HTMLDsMediaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsMediaElement: {
-        prototype: HTMLDsMediaElement;
-        new (): HTMLDsMediaElement;
-    };
-    interface HTMLDsMessageElement extends Components.DsMessage, HTMLStencilElement {
-    }
-    var HTMLDsMessageElement: {
-        prototype: HTMLDsMessageElement;
-        new (): HTMLDsMessageElement;
+    var HTMLDsLoaderElement: {
+        prototype: HTMLDsLoaderElement;
+        new (): HTMLDsLoaderElement;
     };
     interface HTMLDsModalElementEventMap {
         "modalClose": any;
         "modalOpen": any;
     }
+    /**
+     * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+     * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+     * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+     * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+     * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+     * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+     * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+     * the document.
+     */
     interface HTMLDsModalElement extends Components.DsModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsModalElementEventMap>(type: K, listener: (this: HTMLDsModalElement, ev: DsModalCustomEvent<HTMLDsModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1516,6 +1719,11 @@ declare global {
         prototype: HTMLDsModalElement;
         new (): HTMLDsModalElement;
     };
+    /**
+     * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+     * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+     * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+     */
     interface HTMLDsNavElement extends Components.DsNav, HTMLStencilElement {
     }
     var HTMLDsNavElement: {
@@ -1525,6 +1733,17 @@ declare global {
     interface HTMLDsNavItemElementEventMap {
         "dsMenuItemClick": any;
     }
+    /**
+     * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+     * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+     * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+     * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+     * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+     * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+     * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+     * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
+     */
     interface HTMLDsNavItemElement extends Components.DsNavItem, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsNavItemElementEventMap>(type: K, listener: (this: HTMLDsNavItemElement, ev: DsNavItemCustomEvent<HTMLDsNavItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1539,17 +1758,36 @@ declare global {
         prototype: HTMLDsNavItemElement;
         new (): HTMLDsNavItemElement;
     };
-    interface HTMLDsNewsletterElement extends Components.DsNewsletter, HTMLStencilElement {
+    interface HTMLDsPaginationElementEventMap {
+        "pageChange": DSPaginationChangeDetail;
     }
-    var HTMLDsNewsletterElement: {
-        prototype: HTMLDsNewsletterElement;
-        new (): HTMLDsNewsletterElement;
-    };
-    interface HTMLDsPageElement extends Components.DsPage, HTMLStencilElement {
+    /**
+     * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+     * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+     * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+     * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+     * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+     * next and last ones: rendered in their place, not focusable.
+     * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+     * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+     * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+     * when that control became unavailable): it is never lost.
+     * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+     * controls (and first and last) around "Page 3 of 10", with the same names.
+     */
+    interface HTMLDsPaginationElement extends Components.DsPagination, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsPaginationElementEventMap>(type: K, listener: (this: HTMLDsPaginationElement, ev: DsPaginationCustomEvent<HTMLDsPaginationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
-    var HTMLDsPageElement: {
-        prototype: HTMLDsPageElement;
-        new (): HTMLDsPageElement;
+    var HTMLDsPaginationElement: {
+        prototype: HTMLDsPaginationElement;
+        new (): HTMLDsPaginationElement;
     };
     interface HTMLDsPanelElementEventMap {
         "panelShow": any;
@@ -1557,6 +1795,18 @@ declare global {
         "panelHide": any;
         "panelHidden": any;
     }
+    /**
+     * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+     * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+     *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+     *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+     *   that button.
+     * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+     *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+     * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+     * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+     * (at once when there is none).
+     */
     interface HTMLDsPanelElement extends Components.DsPanel, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsPanelElementEventMap>(type: K, listener: (this: HTMLDsPanelElement, ev: DsPanelCustomEvent<HTMLDsPanelElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1571,164 +1821,35 @@ declare global {
         prototype: HTMLDsPanelElement;
         new (): HTMLDsPanelElement;
     };
-    interface HTMLDsPanelConfiguratorElementEventMap {
-        "panelChange": any;
-        "requestDeletePanel": any;
-    }
-    interface HTMLDsPanelConfiguratorElement extends Components.DsPanelConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsPanelConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelConfiguratorElement, ev: DsPanelConfiguratorCustomEvent<HTMLDsPanelConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsPanelConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelConfiguratorElement, ev: DsPanelConfiguratorCustomEvent<HTMLDsPanelConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsPanelConfiguratorElement: {
-        prototype: HTMLDsPanelConfiguratorElement;
-        new (): HTMLDsPanelConfiguratorElement;
-    };
+    /**
+     * Groups `ds-panel` elements, and gives them its `type`:
+     * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+     *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+     *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+     *   and select it.
+     * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+     *   expanded at a time.
+     * The panels of the group are its own: not those of a group or a panel nested in one of them.
+     */
     interface HTMLDsPanelGroupElement extends Components.DsPanelGroup, HTMLStencilElement {
     }
     var HTMLDsPanelGroupElement: {
         prototype: HTMLDsPanelGroupElement;
         new (): HTMLDsPanelGroupElement;
     };
-    interface HTMLDsPanelsConfiguratorElementEventMap {
-        "saveConfiguration": any;
-        "configChange": any;
-    }
-    interface HTMLDsPanelsConfiguratorElement extends Components.DsPanelsConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsPanelsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelsConfiguratorElement, ev: DsPanelsConfiguratorCustomEvent<HTMLDsPanelsConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsPanelsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsPanelsConfiguratorElement, ev: DsPanelsConfiguratorCustomEvent<HTMLDsPanelsConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsPanelsConfiguratorElement: {
-        prototype: HTMLDsPanelsConfiguratorElement;
-        new (): HTMLDsPanelsConfiguratorElement;
-    };
-    interface HTMLDsPasswordElement extends Components.DsPassword, HTMLStencilElement {
-    }
-    var HTMLDsPasswordElement: {
-        prototype: HTMLDsPasswordElement;
-        new (): HTMLDsPasswordElement;
-    };
-    interface HTMLDsPostListElement extends Components.DsPostList, HTMLStencilElement {
-    }
-    var HTMLDsPostListElement: {
-        prototype: HTMLDsPostListElement;
-        new (): HTMLDsPostListElement;
-    };
-    interface HTMLDsProductElement extends Components.DsProduct, HTMLStencilElement {
-    }
-    var HTMLDsProductElement: {
-        prototype: HTMLDsProductElement;
-        new (): HTMLDsProductElement;
-    };
-    interface HTMLDsProductBlockElement extends Components.DsProductBlock, HTMLStencilElement {
-    }
-    var HTMLDsProductBlockElement: {
-        prototype: HTMLDsProductBlockElement;
-        new (): HTMLDsProductBlockElement;
-    };
-    interface HTMLDsProductListElement extends Components.DsProductList, HTMLStencilElement {
-    }
-    var HTMLDsProductListElement: {
-        prototype: HTMLDsProductListElement;
-        new (): HTMLDsProductListElement;
-    };
-    interface HTMLDsProductListHeaderElement extends Components.DsProductListHeader, HTMLStencilElement {
-    }
-    var HTMLDsProductListHeaderElement: {
-        prototype: HTMLDsProductListHeaderElement;
-        new (): HTMLDsProductListHeaderElement;
-    };
-    interface HTMLDsProductPageElement extends Components.DsProductPage, HTMLStencilElement {
-    }
-    var HTMLDsProductPageElement: {
-        prototype: HTMLDsProductPageElement;
-        new (): HTMLDsProductPageElement;
-    };
-    interface HTMLDsProductPageConfiguratorElementEventMap {
-        "configChange": any;
-        "saveConfiguration": any;
-        "preview": any;
-    }
-    interface HTMLDsProductPageConfiguratorElement extends Components.DsProductPageConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsProductPageConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductPageConfiguratorElement, ev: DsProductPageConfiguratorCustomEvent<HTMLDsProductPageConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsProductPageConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductPageConfiguratorElement, ev: DsProductPageConfiguratorCustomEvent<HTMLDsProductPageConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsProductPageConfiguratorElement: {
-        prototype: HTMLDsProductPageConfiguratorElement;
-        new (): HTMLDsProductPageConfiguratorElement;
-    };
-    interface HTMLDsProductSearchElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsProductSearchElement extends Components.DsProductSearch, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsProductSearchElementEventMap>(type: K, listener: (this: HTMLDsProductSearchElement, ev: DsProductSearchCustomEvent<HTMLDsProductSearchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsProductSearchElementEventMap>(type: K, listener: (this: HTMLDsProductSearchElement, ev: DsProductSearchCustomEvent<HTMLDsProductSearchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsProductSearchElement: {
-        prototype: HTMLDsProductSearchElement;
-        new (): HTMLDsProductSearchElement;
-    };
-    interface HTMLDsProductsConfiguratorElementEventMap {
-        "configChange": any;
-    }
-    interface HTMLDsProductsConfiguratorElement extends Components.DsProductsConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsProductsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductsConfiguratorElement, ev: DsProductsConfiguratorCustomEvent<HTMLDsProductsConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsProductsConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsProductsConfiguratorElement, ev: DsProductsConfiguratorCustomEvent<HTMLDsProductsConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsProductsConfiguratorElement: {
-        prototype: HTMLDsProductsConfiguratorElement;
-        new (): HTMLDsProductsConfiguratorElement;
-    };
-    interface HTMLDsRatingListElement extends Components.DsRatingList, HTMLStencilElement {
-    }
-    var HTMLDsRatingListElement: {
-        prototype: HTMLDsRatingListElement;
-        new (): HTMLDsRatingListElement;
-    };
-    interface HTMLDsReassuranceElement extends Components.DsReassurance, HTMLStencilElement {
-    }
-    var HTMLDsReassuranceElement: {
-        prototype: HTMLDsReassuranceElement;
-        new (): HTMLDsReassuranceElement;
-    };
-    interface HTMLDsRegisterElement extends Components.DsRegister, HTMLStencilElement {
-    }
-    var HTMLDsRegisterElement: {
-        prototype: HTMLDsRegisterElement;
-        new (): HTMLDsRegisterElement;
-    };
     interface HTMLDsRspElementEventMap {
-        "breakpointChange": any;
+        "breakpointChange": BreakpointChangeDetail;
     }
+    /**
+     * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+     * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+     * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
+     * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
+     * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+     * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
+     */
     interface HTMLDsRspElement extends Components.DsRsp, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsRspElementEventMap>(type: K, listener: (this: HTMLDsRspElement, ev: DsRspCustomEvent<HTMLDsRspElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1743,21 +1864,17 @@ declare global {
         prototype: HTMLDsRspElement;
         new (): HTMLDsRspElement;
     };
-    interface HTMLDsSearchElement extends Components.DsSearch, HTMLStencilElement {
-    }
-    var HTMLDsSearchElement: {
-        prototype: HTMLDsSearchElement;
-        new (): HTMLDsSearchElement;
-    };
-    interface HTMLDsSearchBarElement extends Components.DsSearchBar, HTMLStencilElement {
-    }
-    var HTMLDsSearchBarElement: {
-        prototype: HTMLDsSearchBarElement;
-        new (): HTMLDsSearchBarElement;
-    };
     interface HTMLDsSelectElementEventMap {
         "valueChange": any;
     }
+    /**
+     * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+     * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+     * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+     * (the id of the select).
+     * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+     * a disabled fieldset disables it, and the box follows a form reset.
+     */
     interface HTMLDsSelectElement extends Components.DsSelect, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSelectElementEventMap>(type: K, listener: (this: HTMLDsSelectElement, ev: DsSelectCustomEvent<HTMLDsSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1778,6 +1895,13 @@ declare global {
         "sidebarShow": any;
         "sidebarShown": any;
     }
+    /**
+     * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+     * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+     * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+     * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+     * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+     */
     interface HTMLDsSidebarElement extends Components.DsSidebar, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSidebarElementEventMap>(type: K, listener: (this: HTMLDsSidebarElement, ev: DsSidebarCustomEvent<HTMLDsSidebarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1793,8 +1917,17 @@ declare global {
         new (): HTMLDsSidebarElement;
     };
     interface HTMLDsSliderElementEventMap {
-        "sliderEvent": {slide: string; direction: number; currentIndex?: number;};
+        "sliderEvent": { slide: string; direction: number; currentIndex?: number };
     }
+    /**
+     * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+     * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+     * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+     * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+     * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+     * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+     * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+     */
     interface HTMLDsSliderElement extends Components.DsSlider, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderElementEventMap>(type: K, listener: (this: HTMLDsSliderElement, ev: DsSliderCustomEvent<HTMLDsSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1809,6 +1942,9 @@ declare global {
         prototype: HTMLDsSliderElement;
         new (): HTMLDsSliderElement;
     };
+    /**
+     * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+     */
     interface HTMLDsSliderItemElement extends Components.DsSliderItem, HTMLStencilElement {
     }
     var HTMLDsSliderItemElement: {
@@ -1818,6 +1954,11 @@ declare global {
     interface HTMLDsSliderMenuElementEventMap {
         "request_displaySliderItem_event": any;
     }
+    /**
+     * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+     * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+     * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+     */
     interface HTMLDsSliderMenuElement extends Components.DsSliderMenu, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsSliderMenuElementEventMap>(type: K, listener: (this: HTMLDsSliderMenuElement, ev: DsSliderMenuCustomEvent<HTMLDsSliderMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1832,69 +1973,33 @@ declare global {
         prototype: HTMLDsSliderMenuElement;
         new (): HTMLDsSliderMenuElement;
     };
-    interface HTMLDsSocialLinkElement extends Components.DsSocialLink, HTMLStencilElement {
-    }
-    var HTMLDsSocialLinkElement: {
-        prototype: HTMLDsSocialLinkElement;
-        new (): HTMLDsSocialLinkElement;
-    };
-    interface HTMLDsStickyCartButtonElement extends Components.DsStickyCartButton, HTMLStencilElement {
-    }
-    var HTMLDsStickyCartButtonElement: {
-        prototype: HTMLDsStickyCartButtonElement;
-        new (): HTMLDsStickyCartButtonElement;
-    };
-    interface HTMLDsTagElementEventMap {
-        "requestDeleteTag": any;
-    }
-    interface HTMLDsTagElement extends Components.DsTag, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTagElementEventMap>(type: K, listener: (this: HTMLDsTagElement, ev: DsTagCustomEvent<HTMLDsTagElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTagElement: {
-        prototype: HTMLDsTagElement;
-        new (): HTMLDsTagElement;
-    };
+    /**
+     * A block of text, in the paragraph font style of the theme.
+     */
     interface HTMLDsTextElement extends Components.DsText, HTMLStencilElement {
     }
     var HTMLDsTextElement: {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
     };
+    /**
+     * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+     * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+     */
     interface HTMLDsTitleElement extends Components.DsTitle, HTMLStencilElement {
     }
     var HTMLDsTitleElement: {
         prototype: HTMLDsTitleElement;
         new (): HTMLDsTitleElement;
     };
+    /**
+     * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+     */
     interface HTMLDsTitleBarElement extends Components.DsTitleBar, HTMLStencilElement {
     }
     var HTMLDsTitleBarElement: {
         prototype: HTMLDsTitleBarElement;
         new (): HTMLDsTitleBarElement;
-    };
-    interface HTMLDsTitleConfiguratorElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLDsTitleConfiguratorElement extends Components.DsTitleConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTitleConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTitleConfiguratorElement, ev: DsTitleConfiguratorCustomEvent<HTMLDsTitleConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTitleConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTitleConfiguratorElement, ev: DsTitleConfiguratorCustomEvent<HTMLDsTitleConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTitleConfiguratorElement: {
-        prototype: HTMLDsTitleConfiguratorElement;
-        new (): HTMLDsTitleConfiguratorElement;
     };
     interface HTMLDsToasterElementEventMap {
         "toasterShow": any;
@@ -1902,6 +2007,17 @@ declare global {
         "toasterHide": any;
         "toasterHidden": any;
     }
+    /**
+     * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+     * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+     * at the end of that transition.
+     * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+     * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+     * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+     * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+     * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+     * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
+     */
     interface HTMLDsToasterElement extends Components.DsToaster, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToasterElementEventMap>(type: K, listener: (this: HTMLDsToasterElement, ev: DsToasterCustomEvent<HTMLDsToasterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1919,6 +2035,17 @@ declare global {
     interface HTMLDsToggleElementEventMap {
         "toggle": any;
     }
+    /**
+     * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+     * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+     * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+     * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+     * cannot be focused.
+     * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+     * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+     * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
+     */
     interface HTMLDsToggleElement extends Components.DsToggle, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleElementEventMap>(type: K, listener: (this: HTMLDsToggleElement, ev: DsToggleCustomEvent<HTMLDsToggleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1936,6 +2063,19 @@ declare global {
     interface HTMLDsToggleGroupElementEventMap {
         "toggleValueChange": any;
     }
+    /**
+     * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+     * The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
+     * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
+     * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
+     * MutationObserver, in browsers).
+     * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+     * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+     * focus and the selection between the enabled radios.
+     * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+     * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+     * it, and a disabled fieldset disables it with its toggles.
+     */
     interface HTMLDsToggleGroupElement extends Components.DsToggleGroup, HTMLStencilElement {
         addEventListener<K extends keyof HTMLDsToggleGroupElementEventMap>(type: K, listener: (this: HTMLDsToggleGroupElement, ev: DsToggleGroupCustomEvent<HTMLDsToggleGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1951,7 +2091,11 @@ declare global {
         new (): HTMLDsToggleGroupElement;
     };
     /**
-     * Simple icon tooltip component
+     * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+     * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+     * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+     * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+     * moving the focus or the pointer. On touch screens, a tap shows or hides it.
      */
     interface HTMLDsTooltipElement extends Components.DsTooltip, HTMLStencilElement {
     }
@@ -1959,302 +2103,239 @@ declare global {
         prototype: HTMLDsTooltipElement;
         new (): HTMLDsTooltipElement;
     };
+    /**
+     * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+     * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+     * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+     * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+     * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
+     */
     interface HTMLDsTriggerElement extends Components.DsTrigger, HTMLStencilElement {
     }
     var HTMLDsTriggerElement: {
         prototype: HTMLDsTriggerElement;
         new (): HTMLDsTriggerElement;
     };
-    interface HTMLDsTxtImgConfiguratorElementEventMap {
-        "configChange": any;
-        "saveConfiguration": any;
-    }
-    interface HTMLDsTxtImgConfiguratorElement extends Components.DsTxtImgConfigurator, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLDsTxtImgConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTxtImgConfiguratorElement, ev: DsTxtImgConfiguratorCustomEvent<HTMLDsTxtImgConfiguratorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLDsTxtImgConfiguratorElementEventMap>(type: K, listener: (this: HTMLDsTxtImgConfiguratorElement, ev: DsTxtImgConfiguratorCustomEvent<HTMLDsTxtImgConfiguratorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLDsTxtImgConfiguratorElement: {
-        prototype: HTMLDsTxtImgConfiguratorElement;
-        new (): HTMLDsTxtImgConfiguratorElement;
-    };
-    interface HTMLDsVideoElement extends Components.DsVideo, HTMLStencilElement {
-    }
-    var HTMLDsVideoElement: {
-        prototype: HTMLDsVideoElement;
-        new (): HTMLDsVideoElement;
-    };
-    interface HTMLDsVimeoElement extends Components.DsVimeo, HTMLStencilElement {
-    }
-    var HTMLDsVimeoElement: {
-        prototype: HTMLDsVimeoElement;
-        new (): HTMLDsVimeoElement;
-    };
-    interface HTMLDsWishlistButtonElement extends Components.DsWishlistButton, HTMLStencilElement {
-    }
-    var HTMLDsWishlistButtonElement: {
-        prototype: HTMLDsWishlistButtonElement;
-        new (): HTMLDsWishlistButtonElement;
-    };
-    interface HTMLProntoContentAdminElementEventMap {
-        "settingsChange": any;
-        "saveConfiguration": any;
-    }
-    interface HTMLProntoContentAdminElement extends Components.ProntoContentAdmin, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoContentAdminElementEventMap>(type: K, listener: (this: HTMLProntoContentAdminElement, ev: ProntoContentAdminCustomEvent<HTMLProntoContentAdminElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoContentAdminElementEventMap>(type: K, listener: (this: HTMLProntoContentAdminElement, ev: ProntoContentAdminCustomEvent<HTMLProntoContentAdminElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoContentAdminElement: {
-        prototype: HTMLProntoContentAdminElement;
-        new (): HTMLProntoContentAdminElement;
-    };
-    interface HTMLProntoFieldElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoFieldElement extends Components.ProntoField, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoFieldElementEventMap>(type: K, listener: (this: HTMLProntoFieldElement, ev: ProntoFieldCustomEvent<HTMLProntoFieldElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoFieldElementEventMap>(type: K, listener: (this: HTMLProntoFieldElement, ev: ProntoFieldCustomEvent<HTMLProntoFieldElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoFieldElement: {
-        prototype: HTMLProntoFieldElement;
-        new (): HTMLProntoFieldElement;
-    };
-    interface HTMLProntoFieldsetElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoFieldsetElement extends Components.ProntoFieldset, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoFieldsetElementEventMap>(type: K, listener: (this: HTMLProntoFieldsetElement, ev: ProntoFieldsetCustomEvent<HTMLProntoFieldsetElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoFieldsetElementEventMap>(type: K, listener: (this: HTMLProntoFieldsetElement, ev: ProntoFieldsetCustomEvent<HTMLProntoFieldsetElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoFieldsetElement: {
-        prototype: HTMLProntoFieldsetElement;
-        new (): HTMLProntoFieldsetElement;
-    };
-    interface HTMLProntoFormElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoFormElement extends Components.ProntoForm, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoFormElementEventMap>(type: K, listener: (this: HTMLProntoFormElement, ev: ProntoFormCustomEvent<HTMLProntoFormElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoFormElementEventMap>(type: K, listener: (this: HTMLProntoFormElement, ev: ProntoFormCustomEvent<HTMLProntoFormElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoFormElement: {
-        prototype: HTMLProntoFormElement;
-        new (): HTMLProntoFormElement;
-    };
-    interface HTMLProntoIconElement extends Components.ProntoIcon, HTMLStencilElement {
-    }
-    var HTMLProntoIconElement: {
-        prototype: HTMLProntoIconElement;
-        new (): HTMLProntoIconElement;
-    };
-    interface HTMLProntoModalElementEventMap {
-        "modalClose": any;
-        "modalOpen": any;
-    }
-    interface HTMLProntoModalElement extends Components.ProntoModal, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoModalElementEventMap>(type: K, listener: (this: HTMLProntoModalElement, ev: ProntoModalCustomEvent<HTMLProntoModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoModalElementEventMap>(type: K, listener: (this: HTMLProntoModalElement, ev: ProntoModalCustomEvent<HTMLProntoModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoModalElement: {
-        prototype: HTMLProntoModalElement;
-        new (): HTMLProntoModalElement;
-    };
-    interface HTMLProntoProductListElementEventMap {
-        "valueChange": any;
-    }
-    interface HTMLProntoProductListElement extends Components.ProntoProductList, HTMLStencilElement {
-        addEventListener<K extends keyof HTMLProntoProductListElementEventMap>(type: K, listener: (this: HTMLProntoProductListElement, ev: ProntoProductListCustomEvent<HTMLProntoProductListElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLProntoProductListElementEventMap>(type: K, listener: (this: HTMLProntoProductListElement, ev: ProntoProductListCustomEvent<HTMLProntoProductListElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-    }
-    var HTMLProntoProductListElement: {
-        prototype: HTMLProntoProductListElement;
-        new (): HTMLProntoProductListElement;
-    };
     interface HTMLElementTagNameMap {
-        "ds-account-block": HTMLDsAccountBlockElement;
-        "ds-address": HTMLDsAddressElement;
         "ds-ajax": HTMLDsAjaxElement;
-        "ds-app": HTMLDsAppElement;
-        "ds-app-menu": HTMLDsAppMenuElement;
-        "ds-auth": HTMLDsAuthElement;
-        "ds-back-to-top-button": HTMLDsBackToTopButtonElement;
-        "ds-banner": HTMLDsBannerElement;
+        "ds-alert": HTMLDsAlertElement;
+        "ds-back-to-top": HTMLDsBackToTopElement;
+        "ds-badge": HTMLDsBadgeElement;
         "ds-block": HTMLDsBlockElement;
-        "ds-block-builder": HTMLDsBlockBuilderElement;
         "ds-breadcrumb": HTMLDsBreadcrumbElement;
-        "ds-button-configurator": HTMLDsButtonConfiguratorElement;
-        "ds-cart": HTMLDsCartElement;
-        "ds-cart-block": HTMLDsCartBlockElement;
-        "ds-category-list": HTMLDsCategoryListElement;
-        "ds-category-search": HTMLDsCategorySearchElement;
-        "ds-checkout-page": HTMLDsCheckoutPageElement;
-        "ds-checkout-path": HTMLDsCheckoutPathElement;
-        "ds-cms-image": HTMLDsCmsImageElement;
-        "ds-cms-search": HTMLDsCmsSearchElement;
-        "ds-cms-video": HTMLDsCmsVideoElement;
         "ds-combo": HTMLDsComboElement;
-        "ds-contact-block": HTMLDsContactBlockElement;
-        "ds-contact-form": HTMLDsContactFormElement;
-        "ds-content-block": HTMLDsContentBlockElement;
-        "ds-customer-page": HTMLDsCustomerPageElement;
-        "ds-dropdown": HTMLDsDropdownElement;
-        "ds-dropdown-item": HTMLDsDropdownItemElement;
-        "ds-faq": HTMLDsFaqElement;
-        "ds-feature-configurator": HTMLDsFeatureConfiguratorElement;
-        "ds-features-configurator": HTMLDsFeaturesConfiguratorElement;
-        "ds-filemanager": HTMLDsFilemanagerElement;
-        "ds-filters": HTMLDsFiltersElement;
-        "ds-footer": HTMLDsFooterElement;
-        "ds-giftcard": HTMLDsGiftcardElement;
-        "ds-grade-star": HTMLDsGradeStarElement;
+        "ds-field": HTMLDsFieldElement;
         "ds-grid": HTMLDsGridElement;
         "ds-grid-item": HTMLDsGridItemElement;
         "ds-heading": HTMLDsHeadingElement;
-        "ds-html": HTMLDsHtmlElement;
-        "ds-html-editor": HTMLDsHtmlEditorElement;
         "ds-icon": HTMLDsIconElement;
-        "ds-info-window": HTMLDsInfoWindowElement;
-        "ds-input-date": HTMLDsInputDateElement;
-        "ds-input-modal": HTMLDsInputModalElement;
-        "ds-input-number": HTMLDsInputNumberElement;
-        "ds-json": HTMLDsJsonElement;
-        "ds-lang": HTMLDsLangElement;
-        "ds-lang-selector": HTMLDsLangSelectorElement;
-        "ds-links-list": HTMLDsLinksListElement;
-        "ds-login": HTMLDsLoginElement;
-        "ds-main-configurator": HTMLDsMainConfiguratorElement;
-        "ds-map": HTMLDsMapElement;
-        "ds-map-location": HTMLDsMapLocationElement;
-        "ds-map-marker": HTMLDsMapMarkerElement;
-        "ds-marquee": HTMLDsMarqueeElement;
-        "ds-marquee-configurator": HTMLDsMarqueeConfiguratorElement;
-        "ds-media": HTMLDsMediaElement;
-        "ds-message": HTMLDsMessageElement;
+        "ds-loader": HTMLDsLoaderElement;
         "ds-modal": HTMLDsModalElement;
         "ds-nav": HTMLDsNavElement;
         "ds-nav-item": HTMLDsNavItemElement;
-        "ds-newsletter": HTMLDsNewsletterElement;
-        "ds-page": HTMLDsPageElement;
+        "ds-pagination": HTMLDsPaginationElement;
         "ds-panel": HTMLDsPanelElement;
-        "ds-panel-configurator": HTMLDsPanelConfiguratorElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
-        "ds-panels-configurator": HTMLDsPanelsConfiguratorElement;
-        "ds-password": HTMLDsPasswordElement;
-        "ds-post-list": HTMLDsPostListElement;
-        "ds-product": HTMLDsProductElement;
-        "ds-product-block": HTMLDsProductBlockElement;
-        "ds-product-list": HTMLDsProductListElement;
-        "ds-product-list-header": HTMLDsProductListHeaderElement;
-        "ds-product-page": HTMLDsProductPageElement;
-        "ds-product-page-configurator": HTMLDsProductPageConfiguratorElement;
-        "ds-product-search": HTMLDsProductSearchElement;
-        "ds-products-configurator": HTMLDsProductsConfiguratorElement;
-        "ds-rating-list": HTMLDsRatingListElement;
-        "ds-reassurance": HTMLDsReassuranceElement;
-        "ds-register": HTMLDsRegisterElement;
         "ds-rsp": HTMLDsRspElement;
-        "ds-search": HTMLDsSearchElement;
-        "ds-search-bar": HTMLDsSearchBarElement;
         "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
-        "ds-social-link": HTMLDsSocialLinkElement;
-        "ds-sticky-cart-button": HTMLDsStickyCartButtonElement;
-        "ds-tag": HTMLDsTagElement;
         "ds-text": HTMLDsTextElement;
         "ds-title": HTMLDsTitleElement;
         "ds-title-bar": HTMLDsTitleBarElement;
-        "ds-title-configurator": HTMLDsTitleConfiguratorElement;
         "ds-toaster": HTMLDsToasterElement;
         "ds-toggle": HTMLDsToggleElement;
         "ds-toggle-group": HTMLDsToggleGroupElement;
         "ds-tooltip": HTMLDsTooltipElement;
         "ds-trigger": HTMLDsTriggerElement;
-        "ds-txt-img-configurator": HTMLDsTxtImgConfiguratorElement;
-        "ds-video": HTMLDsVideoElement;
-        "ds-vimeo": HTMLDsVimeoElement;
-        "ds-wishlist-button": HTMLDsWishlistButtonElement;
-        "pronto-content-admin": HTMLProntoContentAdminElement;
-        "pronto-field": HTMLProntoFieldElement;
-        "pronto-fieldset": HTMLProntoFieldsetElement;
-        "pronto-form": HTMLProntoFormElement;
-        "pronto-icon": HTMLProntoIconElement;
-        "pronto-modal": HTMLProntoModalElement;
-        "pronto-product-list": HTMLProntoProductListElement;
     }
 }
 declare namespace LocalJSX {
-    interface DsAccountBlock {
-        "dsIsDropdownEnabled"?: boolean;
-    }
-    interface DsAddress {
-    }
+    /**
+     * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+     * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+     * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+     * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+     * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+     * `ajaxError`; a load emits `ajaxLoaded`.
+     * Version: 1.0
+     */
     interface DsAjax {
+        /**
+          * The message shown (and announced: `role="alert"`) after the link when the content could not be loaded. Empty: no message (listen to `ajaxError`).
+          * @default 'The content could not be loaded.'
+         */
+        "errorMessage"?: string;
+        /**
+          * Event that will trigger the loading of the ajax content: `click` (default) or `load`
+          * @default 'click'
+         */
         "on"?: 'load' | 'click';
+        /**
+          * Emitted when the content could not be loaded (`detail.url`, `detail.error`).
+         */
+        "onAjaxError"?: (event: DsAjaxCustomEvent<{ url: string; error: unknown }>) => void;
+        /**
+          * Emitted once the content is in the target (`detail.target`, `detail.url`).
+         */
+        "onAjaxLoaded"?: (event: DsAjaxCustomEvent<{ target: HTMLElement; url: string }>) => void;
+        /**
+          * If the url can be crawled by search bots, one should pass an additional query param to tell server to render url in "ajax mode"
+          * @default ''
+         */
+        "suffix"?: string;
+        /**
+          * Where to display the content, can be the component itself or an element specified by a css selector
+          * @default 'self'
+         */
         "target"?: 'self' | string;
     }
-    interface DsApp {
+    /**
+     * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+     * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+     * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+     * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+     * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+     * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+     * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+     * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+     * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+     */
+    interface DsAlert {
+        /**
+          * Renders a dismiss button after the message: `alertDismiss` (cancelable), then the alert is hidden.
+          * @default false
+         */
+        "dismissible"?: boolean;
+        /**
+          * The title of the alert, before the message (`__title`). A `slot="title"` element replaces it.
+         */
+        "heading"?: string;
+        /**
+          * The texts of the alert (JSON as an attribute), to translate them: `info`, `success`, `warning`, `error` (the prefixes), `dismiss`.
+          * @default {}
+         */
+        "labels"?: DSAlertLabels | string;
+        /**
+          * The heading level (1 to 6) of the title: it is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element (`<h2 slot="title">`), which has its own level. Without it, the title is not a heading.
+         */
+        "level"?: number | string;
+        /**
+          * Whether the alert is a live region, announced when it appears and when its content changes: `off` (default: read where it is, for a message that is part of the page), `polite` (`role="status"`) or `assertive` (`role="alert"`, an urgent message, read at once). Set it before the alert gets the content to announce.
+          * @default 'off'
+         */
+        "live"?: DSAlertLive;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * Emitted before the alert is dismissed (its button, `dismiss()`): `preventDefault()` keeps it.
+         */
+        "onAlertDismiss"?: (event: DsAlertCustomEvent<void>) => void;
+        /**
+          * Emitted once the alert is dismissed: hidden, the focus moved.
+         */
+        "onAlertDismissed"?: (event: DsAlertCustomEvent<void>) => void;
+        /**
+          * The type of the message: `info` (default), `success`, `warning` or `error`. Its `--<type>` class: the icon and the color of the theme.
+          * @default 'info'
+         */
+        "type"?: DSAlertType;
     }
-    interface DsAppMenu {
+    /**
+     * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+     * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+     * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+     * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+     * screen readers go on from the top too, then emits `backToTop`.
+     * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+     * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+     * per animation frame, removed when it leaves the document.
+     */
+    interface DsBackToTop {
+        /**
+          * The name of the link (its text, hidden on the screen): `Back to top` by default. Give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * Emitted once the link scrolled the page to the top and moved the focus (`detail.target`: the element focused).
+         */
+        "onBackToTop"?: (event: DsBackToTopCustomEvent<{ target: HTMLElement }>) => void;
+        /**
+          * The element that takes the focus after the scroll, a CSS selector (`#page-title`). Without it, or when it matches nothing: the `#top` element, else the main landmark, else the first heading, else the body. An element that cannot take the focus gets `tabindex="-1"` until it loses it. An id selector (`#page-title`) is also the `href` of the link.
+         */
+        "target"?: string;
+        /**
+          * How far the page is scrolled before the link shows: a number of px (`400`, `400px`) or of hundredths of the viewport height (`100vh`, the default: one screen; `50vh`). Another value is the default.
+          * @default '100vh'
+         */
+        "threshold"?: number | string;
     }
-    interface DsAuth {
+    /**
+     * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+     * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+     * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+     * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+     * the count does it with a live region of its own.
+     */
+    interface DsBadge {
+        /**
+          * A count, shown instead of the content: `3`. Above `max`, `<max>+`.
+         */
+        "count"?: number | string;
+        /**
+          * Shows a dot instead of the text: the text (or the label) is hidden on the screen, read by assistive technologies.
+          * @default false
+         */
+        "dot"?: boolean;
+        /**
+          * The text assistive technologies read instead of the visible one, hidden on the screen: `{count}` is the count. One template (`{count} unread messages`), or one per plural category of the language of the badge (its closest `lang`), as JSON: `{"one": "{count} unread message", "other": "{count} unread messages"}`.
+         */
+        "label"?: PluralLabel;
+        /**
+          * The largest count shown: a count above it shows `<max>+` (`99+`), its label the count itself.
+         */
+        "max"?: number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The type of the badge: `neutral` (default), `info`, `success`, `warning` or `error`. Its `--<type>` class: the color of the theme.
+          * @default 'neutral'
+         */
+        "type"?: DSBadgeType;
     }
-    interface DsBackToTopButton {
-        "offset"?: string | number;
-        "scrollBehavior"?: "smooth" | "instant" | "auto";
-    }
-    interface DsBanner {
-        "dsUrl"?: string;
-    }
+    /**
+     * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+     * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+     * (`ds-home-hero__header`, `__body`, `__footer`).
+     * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+     * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
+     */
     interface DsBlock {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
         /**
-          * List of modifiers
+          * The accessible name (`aria-label`) of a `section` block, which makes it a region landmark (`role="region"`): for a section people go to from the list of landmarks. Without it, a section has no role (an unnamed region is not a landmark).
+         */
+        "label"?: string;
+        "modal"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
         "mods"?: string | string[];
         /**
@@ -2267,880 +2348,1705 @@ declare namespace LocalJSX {
          */
         "type"?: string;
     }
-    interface DsBlockBuilder {
-        "name"?: string;
-        "onConfigChange"?: (event: DsBlockBuilderCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsBlockBuilderCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
+    /**
+     * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+     * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+     * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+     * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+     * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+     * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+     * theme draws the separators between the items, in CSS: they are not read.
+     * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+     * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+     * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+     * the trail is collapsed.
+     */
     interface DsBreadcrumb {
-    }
-    interface DsButtonConfigurator {
-        "defaultValue"?: any;
-        "inputId"?: string;
-        "onValueChange"?: (event: DsButtonConfiguratorCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsCart {
-        "updateUrl"?: string;
-    }
-    interface DsCartBlock {
-        "dsCartUrl"?: string;
-        "dsProductsCount"?: number | string;
-        "dsRefreshUrl"?: string;
-    }
-    interface DsCategoryList {
-        "showImage"?: boolean;
-    }
-    interface DsCategorySearch {
-        "controllerUrl"?: string;
-    }
-    interface DsCheckoutPage {
+        /**
+          * Collapses a long trail: the number of items it keeps at its end (`collapse="2"`; `2` without a number), after the first item and a "Show full path" button that shows the others. A trail is collapsed only when that hides 2 items at least. Without it (or `0`), the whole trail shows, and wraps on a small screen.
+         */
+        "collapse"?: number | string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Breadcrumb` by default. Give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * The texts of the trail (JSON as an attribute), to translate them: `expand`, the name of the button of a collapsed trail.
+          * @default {}
+         */
+        "labels"?: DSBreadcrumbLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
-        "onPanelShow"?: (event: DsCheckoutPageCustomEvent<any>) => void;
-        "showBackButton"?: boolean;
     }
-    interface DsCheckoutPath {
-        "dsCurrentStep"?: string | number;
-    }
-    interface DsCmsImage {
-        "filemanagerUrl"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: DsCmsImageCustomEvent<any>) => void;
-    }
-    interface DsCmsSearch {
-        "route"?: string;
-        "value"?: string;
-    }
-    interface DsCmsVideo {
-        "filemanagerUrl"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: DsCmsVideoCustomEvent<any>) => void;
-    }
+    /**
+     * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+     * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+     * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+     * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+     * `ds-trigger`). A click outside the component closes the list.
+     * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+     * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+     * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+     * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+     * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+     * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+     * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
+     */
     interface DsCombo {
+        /**
+          * Fixed text of the toggle button, shown instead of the selected option's name (single) or the `name` (multiple).
+          * @default ''
+         */
         "customLabel"?: string;
+        /**
+          * Disables the combo: its button cannot be focused nor opened, an open list closes, and it submits nothing. A disabled `<fieldset>` around it disables it too, without changing this prop.
+         */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The accessible name of the combo, what it chooses ("Color"): the `aria-label` of the combobox and of the list. Without it (and without `labelledby`), the combo is named by `custom-label`, else by `name`.
+         */
+        "label"?: string;
+        /**
+          * The ids of the elements that name the combo (a visible label): the `aria-labelledby` of the combobox and of the list.
+         */
+        "labelledby"?: string;
+        /**
+          * `dropdown`: no toggle button, the list is opened with the methods. `image`: each option shows its `image`, and the list stays in the DOM while closed (with a `--hidden` class), so that the images are loaded. Each mode also adds a `--<mode>` class.
+          * @default ''
+         */
         "mode"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * Several options can be selected: a click toggles an option and keeps the list open.
+          * @default false
+         */
         "multiple"?: boolean;
+        /**
+          * Name of the combo: the name of its value in the form data (a combo without a name submits nothing), sent in the `optionSelected` event, and shown on the toggle button of a multiple combo without `custom-label`.
+         */
         "name"?: string;
-        "onOptionSelected"?: (event: DsComboCustomEvent<any>) => void;
-        "options"?: any;
+        /**
+          * Emitted when the user selects an option (or toggles it, in a multiple combo). See `DSComboSelectedEventDetail`.
+         */
+        "onOptionSelected"?: (event: DsComboCustomEvent<DSComboSelectedEventDetail>) => void;
+        /**
+          * The options: an array of `DSOption` (`{ name, value, disabled, selected, image, url }`), or its JSON string: `options='[{"name": "Red", "value": "red"}, {"name": "Blue", "value": "blue", "selected": true}]'`.
+          * @default []
+         */
+        "options"?: string | DSOption[];
+        /**
+          * Renders a full-page overlay behind the open list: a click on it closes the list.
+          * @default false
+         */
         "overlay"?: boolean;
-        "position"?: string;
-        "selected"?: DSOption;
-        "selectedOption"?: DSOption[];
+        /**
+          * Where the list opens: `top` (above), `bottom` (below), `left` (below, towards the left) or `right` (below, towards the right).
+          * @default 'left'
+         */
+        "position"?: DSComboPosition;
+        /**
+          * An option must be selected for the form to be submitted (`valueMissing`, `aria-required` on the combobox).
+         */
+        "required"?: boolean;
+        /**
+          * The message of a required combo without a selected option, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage"?: string;
+        /**
+          * Pre-selects an option: `{ index }`, `{ value }` or `{ name }`, or its JSON string (`selected='{"value": "blue"}'`). It adds to the options' `selected` flags in a multiple combo, and replaces them in a single combo. Changing `options`, `selected` or `multiple` resets the selection from them (new arrays or objects with the same content change nothing).
+         */
+        "selected"?: string | DSComboSelection;
+        /**
+          * The selected options, in the list order. Set by the component: to change the selection, set `selected` or the options' `selected` flags.
+          * @default []
+         */
+        "selectedOptions"?: DSOption[];
+        /**
+          * The message of an invalid combo, as the `validationMessage` of a native select (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage"?: string;
+        /**
+          * The validity of the combo, as the `validity` of a native select (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity"?: ValidityState;
+        /**
+          * Whether the form validates the combo (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate"?: boolean;
     }
-    interface DsContactBlock {
-        "dsAddress"?: string;
-        "dsEmail"?: string;
-        "dsFax"?: string;
-        "dsPhone"?: string;
+    /**
+     * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+     * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+     * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+     * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+     * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+     * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+     * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+     * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+     */
+    interface DsField {
+        /**
+          * Shows the number of characters left under a control with a `maxlength` (`__counter`), which the control describes; screen readers are told the count once the user stops typing.
+         */
+        "counter"?: boolean;
+        /**
+          * The error message of the flags that have none in `messages`, instead of the message of the browser.
+         */
+        "errorMessage"?: string;
+        /**
+          * A hint under the control (`__hint`), which the control describes (`aria-describedby`). An element with `slot="hint"` replaces it.
+         */
+        "hint"?: string;
+        /**
+          * The label of the control: a `<label for>` rendered before it (the control gets an id if it has none), with the required mark of `labels` while the control is `required`. A `<label>` of the page in the field replaces it.
+         */
+        "label"?: string;
+        /**
+          * The texts of the field (JSON as an attribute), to translate them: `required`, `showPassword`, `counterRemaining`, `counterOver` (see the readme).
+          * @default {}
+         */
+        "labels"?: DSFieldLabels | string;
+        /**
+          * The error messages per validity flag of the control (JSON as an attribute), instead of the message of the browser: `{"valueMissing": "Enter your email address", "typeMismatch": "Enter an email address, like name@example.com"}`. The flags: `valueMissing`, `badInput`, `typeMismatch`, `patternMismatch`, `tooLong`, `tooShort`, `rangeUnderflow`, `rangeOverflow`, `stepMismatch`. A custom error of the page (`setCustomValidity()`) shows its own message.
+          * @default {}
+         */
+        "messages"?: DSFieldMessages | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
     }
-    interface DsContactForm {
-    }
-    interface DsContentBlock {
-        "imagePos"?: 'none' | 'before' | 'center' | 'after';
-    }
-    interface DsCustomerPage {
-        "dsMods"?: string | string[];
-    }
-    interface DsDropdown {
-        "customLabel"?: string;
-        "multiple"?: boolean;
-        "name"?: string;
-        "onOptionSelected"?: (event: DsDropdownCustomEvent<any>) => void;
-        "overlay"?: boolean;
-        "position"?: string;
-        "selected"?: DSOption1;
-        "selectedOption"?: DSOption1[];
-    }
-    interface DsDropdownItem {
-        "name"?: string;
-        "value"?: any;
-    }
-    interface DsFaq {
-    }
-    interface DsFeatureConfigurator {
-        "featureId"?: string;
-        "isMain"?: boolean;
-        "onFeatureChange"?: (event: DsFeatureConfiguratorCustomEvent<any>) => void;
-        "onRequestDeleteFeature"?: (event: DsFeatureConfiguratorCustomEvent<any>) => void;
-        "settings"?: any;
-    }
-    interface DsFeaturesConfigurator {
-        "name"?: string;
-        "onConfigChange"?: (event: DsFeaturesConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsFeaturesConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-        "showActions"?: boolean;
-    }
-    interface DsFilemanager {
-        "mediaIndex"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: DsFilemanagerCustomEvent<any>) => void;
-        "type"?: 'image' | 'video';
-        "url"?: string;
-    }
-    interface DsFilters {
-    }
-    interface DsFooter {
-    }
-    interface DsGiftcard {
-    }
-    interface DsGradeStar {
-        "dsCount"?: string | number;
-        "dsGrade"?: string | number;
-    }
+    /**
+     * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+     * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+     * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+     * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+     */
     interface DsGrid {
+        /**
+          * Where the items of a row that does not fill the grid go: `start`, `center` or `end`.
+          * @default 'start'
+         */
         "align"?: string | DSGridAlignment;
+        /**
+          * The height of the items as a ratio of their width (`0.75`: 4:3), their content filling it; an item's own `ratio` wins.
+         */
         "cellRatio"?: string | number;
+        /**
+          * The number of columns (a whole number).
+          * @default 1
+         */
         "cols"?: string | number;
+        /**
+          * A subscriber of `ds-rsp`: its `data-rsp` attribute can change its props per breakpoint.
+          * @default true
+         */
         "dataUseRsp"?: boolean;
+        /**
+          * The space between the columns: a CSS length (`20px`, `1rem`, `5%`); a unitless number is in px.
+          * @default '0'
+         */
         "hGap"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * `fixed`: `v-gap` separates the rows, and is kept below the last one; `fluid`: the rows have no gap (`v-gap` is not used).
+          * @default 'fixed'
+         */
         "type"?: string | DSGridType;
+        /**
+          * The alignment of the items in the height of their row: `start`, `center` or `end`.
+          * @default 'start'
+         */
         "vAlign"?: string | DSGridAlignment;
+        /**
+          * The space between the rows of a `fixed` grid, and below its last row: a CSS length; a unitless number is in px.
+          * @default '0'
+         */
         "vGap"?: string;
     }
+    /**
+     * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+     * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+     * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+     */
     interface DsGridItem {
+        /**
+          * The height of the item as a ratio of its width (`0.5625`: 16:9), its content filling it.
+         */
         "ratioFromProps"?: number | string;
+        /**
+          * The number of columns the item spans: a whole number (a fractional one is rounded), at most the `cols` of the grid.
+          * @default 1
+         */
         "width"?: number;
     }
+    /**
+     * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+     * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+     * are not headings: put a text or a `p` in their slots.
+     */
     interface DsHeading {
         "block"?: boolean;
+        /**
+          * @default 'block-before'
+         */
         "imagePosition"?: string;
+        /**
+          * The heading level (1 to 6) of a text main title, given to its `ds-title` (`level`).
+         */
+        "level"?: number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
         "section"?: boolean;
         "useContext"?: boolean;
     }
-    interface DsHtml {
-        "name"?: string;
-        "onValueChange"?: (event: DsHtmlCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsHtmlEditor {
-        "content"?: string;
-        "name"?: string;
-        "onCancel"?: (event: DsHtmlEditorCustomEvent<any>) => void;
-        "onSave"?: (event: DsHtmlEditorCustomEvent<any>) => void;
-        "onValueChange"?: (event: DsHtmlEditorCustomEvent<any>) => void;
-    }
+    /**
+     * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+     * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+     * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+     */
     interface DsIcon {
+        /**
+          * The accessible name of an icon that means something on its own (`role="img"`, `aria-label`). Without it, the icon is decorative.
+         */
+        "label"?: string;
+        /**
+          * The icon: a type of the theme, its `--<type>` class (`cart`, `search`, `arrow-down`…, see the readme).
+         */
         "type"?: string;
     }
-    interface DsInfoWindow {
+    /**
+     * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+     * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+     * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+     * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+     * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+     * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+     */
+    interface DsLoader {
         /**
-          * AriaLabel to assign to the InfoWindow.
+          * In the line of the text, at its size (`--inline`), instead of a block centered in its container.
+          * @default false
          */
-        "ariaLabel"?: string;
+        "inline"?: boolean;
         /**
-          * Disable panning the map to make the InfoWindow fully visible when it opens.
+          * The accessible name of the loader (`aria-label`): what loads. `Loading` by default: give it in the language of the page.
          */
-        "disableAutoPan"?: boolean;
+        "label"?: string;
         /**
-          * Maximum width of the InfoWindow, regardless of content&#39;s width. This
+          * The value of a complete progress (`aria-valuemax`): 100 by default, and for a value that is not a number above 0.
          */
-        "maxWidth"?: number;
-        /**
-          * Minimum width of the InfoWindow, regardless of the content&#39;s width.
-         */
-        "minWidth"?: number;
-        /**
-          * The offset, in pixels, of the tip of the info window from the point on the map at whose geographical coordinates the info window is anchored.
-         */
-        "pixelOffset"?: google.maps.Size;
-        /**
-          * The LatLng at which to display this InfoWindow.
-         */
-        "position"?: google.maps.LatLng|google.maps.LatLngLiteral;
-        /**
-          * All InfoWindows are displayed on the map in order of their zIndex, with higher values displaying in front of InfoWindows with lower values.
-         */
-        "zIndex"?: number;
-    }
-    interface DsInputDate {
-        "onValueChange"?: (event: DsInputDateCustomEvent<any>) => void;
-        "value"?: string;
-    }
-    interface DsInputModal {
-        "MediaPositions"?: MediaPosition[];
-        "associatedRoute"?: string;
-        "defaultType"?: any;
-        "name"?: string;
-        "onValueChange"?: (event: DsInputModalCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsInputNumber {
-        "ariaLabel"?: string;
-        "defaultValue"?: number | string;
         "max"?: number | string;
-        "min"?: number | string;
-        "name"?: string;
-        "onQuantityChange"?: (event: DsInputNumberCustomEvent<any>) => void;
-    }
-    interface DsJson {
-        "data"?: any;
-    }
-    interface DsLang {
-        "dsIsSelected"?: boolean;
-        "dsIsoCode"?: string;
-    }
-    interface DsLangSelector {
-        "currentLang"?: string;
-        "languagesFromProp"?: DSOption2[] | string;
-    }
-    interface DsLinksList {
-    }
-    interface DsLogin {
-    }
-    interface DsMainConfigurator {
-    }
-    interface DsMap {
-        "apiKey"?: string;
-        "locations"?: Location[];
-        "params"?: GMapsParams;
-    }
-    interface DsMapLocation {
-        "lat"?: number;
-        "lng"?: number;
-        "name"?: string;
-    }
-    interface DsMapMarker {
-        "icon"?: string | google.maps.Icon | google.maps.Symbol;
-        "label"?: string | google.maps.MarkerLabel;
-        "lat"?: number;
-        "lng"?: number;
-        "name"?: string;
-        "params"?: string | MarkerOptionsFromProps;
-    }
-    interface DsMarquee {
-        "bgColor"?: string;
-        "color"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
-        "pauseOnHover"?: string | boolean;
-        "speed"?: string | number;
-        "transition"?: string | DSMarqueeTransitionEnum;
+        /**
+          * Shows the label next to the indicator, instead of only giving it to assistive technologies.
+          * @default false
+         */
+        "showLabel"?: boolean;
+        /**
+          * The size of the indicator: `sm`, `md` or `lg` (its `--<size>` class). Without it, `md`, or the size of the text when `inline`.
+         */
+        "size"?: DSLoaderSize;
+        /**
+          * The progress, from 0 to `max`: a determinate loader (a bar), else an indeterminate one (a spinner). Clamped to 0…`max`.
+         */
+        "value"?: number | string;
     }
-    interface DsMarqueeConfigurator {
-        "inputId"?: string;
-        "onSaveConfiguration"?: (event: DsMarqueeConfiguratorCustomEvent<any>) => void;
-        "settings"?: any;
-    }
-    interface DsMedia {
-        "associatedRoute"?: string;
-        "mediaPositions"?: MediaPosition[];
-        "name"?: string;
-        "onValueChange"?: (event: DsMediaCustomEvent<any>) => void;
-        "value"?: any;
-    }
-    interface DsMessage {
-        "bgColor"?: string;
-        "color"?: string;
-        "speed"?: number;
-    }
+    /**
+     * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+     * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+     * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+     * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+     * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+     * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+     * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+     * the document.
+     */
     interface DsModal {
-        "closeButtonMods"?: string[];
-        "darkBackground"?: boolean;
-        "isClosingDisabled"?: boolean;
-        "isFooterDisabled"?: boolean;
-        "isHeaderDisabled"?: boolean;
-        "isLayoutDisabled"?: boolean;
-        "isSubtitleDisabled"?: boolean;
+        /**
+          * The accessible name of the dialog (`aria-label`), for a dialog without a `slot="title"` element.
+         */
+        "label"?: string;
+        /**
+          * @default { '--dialog': true }
+         */
         "lightboxClass"?: any;
         "lightboxClassObject"?: any;
         "onModalClose"?: (event: DsModalCustomEvent<any>) => void;
         "onModalOpen"?: (event: DsModalCustomEvent<any>) => void;
+        /**
+          * @default false
+         */
         "overlay"?: boolean;
-        "redirectToSmoodOnClose"?: boolean;
+        /**
+          * @default false
+         */
         "shown"?: boolean;
-        "useSnack"?: boolean;
     }
+    /**
+     * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+     * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+     * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+     */
     interface DsNav {
         "currentActiveItemId"?: string;
-        "mods"?: string|string[];
+        /**
+          * The accessible name of the navigation landmark (`aria-label`), which tells it from the other navigations of the page: "Main", "Footer". Not rendered on a sub-navigation.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
     }
+    /**
+     * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+     * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+     * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+     * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+     * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+     * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+     * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+     * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+     * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
+     */
     interface DsNavItem {
+        /**
+          * @default 0
+         */
         "depth"?: number;
+        /**
+          * @default false
+         */
         "hasChildren"?: boolean;
+        /**
+          * The item of the current page: its link gets `aria-current="page"` (unless it has an `aria-current` of its own).
+          * @default false
+         */
         "isActive"?: boolean;
+        /**
+          * Whether the expand button animates the height of the sub-navigation (`false`: the theme opens it, on `--open`).
+          * @default true
+         */
         "isAnimated"?: boolean;
         "itemId"?: string;
+        /**
+          * The name of the item in the name of its expand button. Default: the text of its link.
+         */
+        "label"?: string;
         "onDsMenuItemClick"?: (event: DsNavItemCustomEvent<any>) => void;
+        /**
+          * The name of the expand button (`aria-label`): `{label}` is the name of the item.
+          * @default '{label} submenu'
+         */
+        "toggleLabel"?: string;
+        /**
+          * @default 'page'
+         */
         "type"?: string;
     }
-    interface DsNewsletter {
-        "dsDisplayedBy"?: string;
-        "dsInputValue"?: string;
-        "dsPlaceholder"?: string;
-        "dsSubscribeUrl"?: string;
-    }
-    interface DsPage {
-        "cartUrl"?: string;
-        "locale"?: AppLocale;
+    /**
+     * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+     * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+     * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+     * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+     * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+     * next and last ones: rendered in their place, not focusable.
+     * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+     * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+     * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+     * when that control became unavailable): it is never lost.
+     * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+     * controls (and first and last) around "Page 3 of 10", with the same names.
+     */
+    interface DsPagination {
+        /**
+          * The number of pages shown at each end of the list: `1` by default (the first and the last page), `10` at most.
+          * @default 1
+         */
+        "boundaries"?: number | string;
+        /**
+          * Always compact: "Page 3 of 10" between the previous and next controls, whatever the width of the viewport.
+          * @default false
+         */
+        "compact"?: boolean;
+        /**
+          * The breakpoint of the theme below which the pagination is compact (`xs`, `sm`, `md`…: the media query of `break-p(null, <breakpoint>)`): `sm` by default; `none` never.
+          * @default 'sm'
+         */
+        "compactBelow"?: string;
+        /**
+          * The current page, from 1 to `total` (a number out of that range is the closest page). A page change in button mode sets it.
+          * @default 1
+         */
+        "current"?: number | string;
+        /**
+          * Renders the controls of the first and of the last page, at each end.
+          * @default false
+         */
+        "firstLast"?: boolean;
+        /**
+          * The link of a page, `{page}` its number (`?page={page}`, `/results/page/{page}`): the controls are then links (links mode). Without it, they are buttons, and a page change emits `pageChange` (buttons mode).
+         */
+        "hrefTemplate"?: string;
+        /**
+          * The name of the navigation landmark (`aria-label`): `Pagination` by default. Give it in the language of the page.
+         */
+        "label"?: string;
+        /**
+          * The texts of the pagination (JSON as an attribute), to translate them: `first`, `previous`, `next`, `last` (the names of the controls), `page` (the name of a page, `{page}` its number), `status` (the compact text, `{page}`, `{total}`).
+          * @default {}
+         */
+        "labels"?: DSPaginationLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
-        "token"?: string;
+        /**
+          * Emitted in buttons mode when the user asks for another page (`detail.page`; `detail.previous`, the current page), before `current` changes: `preventDefault()` keeps the current page. Not emitted in links mode, nor when a script sets `current`.
+         */
+        "onPageChange"?: (event: DsPaginationCustomEvent<DSPaginationChangeDetail>) => void;
+        /**
+          * The number of pages shown on each side of the current page: `1` by default, `10` at most.
+          * @default 1
+         */
+        "siblings"?: number | string;
+        /**
+          * The number of pages. Without pages (`0`, or not a number), nothing is rendered.
+         */
+        "total"?: number | string;
     }
+    /**
+     * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+     * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+     *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+     *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+     *   that button.
+     * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+     *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+     * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+     * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+     * (at once when there is none).
+     */
     interface DsPanel {
+        /**
+          * Whether the content is shown.
+          * @default false
+         */
         "expanded"?: boolean;
+        /**
+          * The place of the panel in its `ds-panel-group` (set by the group).
+         */
         "index"?: number;
+        /**
+          * The heading level (1 to 6) of the title of a collapsible panel: the title is then a heading (`role="heading"`, `aria-level`) that holds its button, as in the WAI-ARIA accordion pattern. Default: the level of an `h1`…`h6` element put in the `title` slot (which gets `role="none"`: the title is the heading), else none.
+         */
+        "level"?: number | string;
+        /**
+          * The minimum height of the content (a CSS length).
+          * @default '0'
+         */
         "minHeight"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * Emitted when the panel is collapsed, at the end of the transition of its content (at once when there is none).
+         */
         "onPanelHidden"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * Emitted when the panel starts to collapse (`detail.index`: its index).
+         */
         "onPanelHide"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * Emitted when the panel starts to expand (`detail.index`: its index).
+         */
         "onPanelShow"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * Emitted when the panel is expanded, at the end of the transition of its content (at once when there is none).
+         */
         "onPanelShown"?: (event: DsPanelCustomEvent<any>) => void;
+        /**
+          * `tab` (in a `ds-panel-group` of tabs) or `collapsible`. `ds-panel-group` sets it on its panels.
+          * @default 'tab'
+         */
         "type"?: PanelType;
     }
-    interface DsPanelConfigurator {
-        "isMain"?: boolean;
-        "onPanelChange"?: (event: DsPanelConfiguratorCustomEvent<any>) => void;
-        "onRequestDeletePanel"?: (event: DsPanelConfiguratorCustomEvent<any>) => void;
-        "panelId"?: string;
-        "settings"?: any;
-    }
+    /**
+     * Groups `ds-panel` elements, and gives them its `type`:
+     * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+     *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+     *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+     *   and select it.
+     * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+     *   expanded at a time.
+     * The panels of the group are its own: not those of a group or a panel nested in one of them.
+     */
     interface DsPanelGroup {
+        /**
+          * `false`: the group does not set the type of its panels, which are all shown (no tab list).
+          * @default true
+         */
         "isActive"?: boolean;
+        /**
+          * The accessible name of the tab list (`aria-label`) of a `tab` group.
+         */
+        "label"?: string;
+        /**
+          * The id of a visible label of the tab list of a `tab` group (`aria-labelledby`), instead of `label`.
+         */
+        "labelledby"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * A `collapsible` group expands one panel at a time.
+          * @default false
+         */
         "soloContent"?: boolean;
-        "type"?: PanelType1;
+        /**
+          * @default 'tab'
+         */
+        "type"?: PanelType;
     }
-    interface DsPanelsConfigurator {
-        "name"?: string;
-        "onConfigChange"?: (event: DsPanelsConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsPanelsConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-        "showActions"?: boolean;
-    }
-    interface DsPassword {
-        "defaultValue"?: string;
-        "mods"?: string | string[];
-        "name"?: string;
-        "pattern"?: string;
-        "type"?: 'text' | 'password';
-    }
-    interface DsPostList {
-        "dsMods"?: string | string[];
-    }
-    interface DsProduct {
-        "isLoading"?: boolean;
-        "productId"?: string;
-    }
-    interface DsProductBlock {
-        "params"?: string | ProductBlockParams;
-        "size"?: string;
-    }
-    interface DsProductList {
-        "infiniteScroll"?: boolean;
-        "infiniteScrollDelay"?: number;
-        "listUrl"?: string;
-    }
-    interface DsProductListHeader {
-        "labels"?: Record<string, string>;
-    }
-    interface DsProductPage {
-    }
-    interface DsProductPageConfigurator {
-        "defaultValue"?: string;
-        "onConfigChange"?: (event: DsProductPageConfiguratorCustomEvent<any>) => void;
-        "onPreview"?: (event: DsProductPageConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsProductPageConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
-    interface DsProductSearch {
-        "onValueChange"?: (event: DsProductSearchCustomEvent<any>) => void;
-        "route"?: string;
-        "value"?: string | string[];
-    }
-    interface DsProductsConfigurator {
-        "associatedRoute"?: string;
-        "defaultValue"?: string;
-        "onConfigChange"?: (event: DsProductsConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
-    }
-    interface DsRatingList {
-        "dsAverage"?: string|number;
-        "dsRatings"?: string|any[];
-    }
-    interface DsReassurance {
-    }
-    interface DsRegister {
-    }
+    /**
+     * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+     * attribute the properties their `data-rsp` attribute declares for it (see the README).
+     * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+     * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
+     * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
+     * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+     * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+     * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
+     */
     interface DsRsp {
-        "breakpointsFromProp"?: Record<string, number>;
+        /**
+          * Breakpoints to use instead of the theme ones: label: minimum width in px. As an attribute, a JSON string: `breakpoints='{"sm": 0, "lg": 992}'`. A new value is applied as by `refresh()`.
+         */
+        "breakpointsFromProp"?: string | RawBreakpoint;
+        /**
+          * The delay, in ms, of the debounced `resize` listener ds-rsp used before. ds-rsp now follows the breakpoints with media queries (`matchMedia()`) and applies a change at once: it is ignored, with a console warning.
+          * @deprecated Ignored: remove it.
+          * @default 500
+         */
         "debounceDelay"?: number;
-        "onBreakpointChange"?: (event: DsRspCustomEvent<any>) => void;
+        /**
+          * Emitted by ds-rsp when the breakpoint changes (and when it starts), once the subscribers have their params. It bubbles. Each subscriber also receives a `breakpointChange` event on itself, which does not bubble: a subscriber that contains ds-rsp gets both, and should only handle the one whose target is itself.
+         */
+        "onBreakpointChange"?: (event: DsRspCustomEvent<BreakpointChangeDetail>) => void;
+        /**
+          * @default 'data-rsp'
+         */
         "propertyName"?: string;
+        /**
+          * @default '[data-use-rsp]:not([data-rsp-init])'
+         */
         "subscriberSelector"?: string;
     }
-    interface DsSearch {
-        "placeholder"?: string;
-        "url"?: string;
-        "value"?: string;
-    }
-    interface DsSearchBar {
-        "dsPlaceholder"?: string;
-        "dsSearchString"?: string;
-        "dsSearchUrl"?: string;
-    }
+    /**
+     * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+     * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+     * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+     * (the id of the select).
+     * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+     * a disabled fieldset disables it, and the box follows a form reset.
+     */
     interface DsSelect {
         "defaultValue"?: string;
+        /**
+          * Disables the native select: it cannot be focused or changed, and submits nothing. A disabled `<fieldset>` around it does the same.
+         */
         "disabled"?: boolean;
+        /**
+          * The accessible name of the select (`aria-label`), without a visible label.
+         */
+        "label"?: string;
+        /**
+          * The ids of the elements that name the select (a visible label): its `aria-labelledby`.
+         */
+        "labelledby"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * The `name` of the native select, and its `id` (a `<label for>` with it names the select).
+         */
         "name"?: string;
         "onValueChange"?: (event: DsSelectCustomEvent<any>) => void;
+        /**
+          * Makes the native select required: the form is not submitted while its selected option is a placeholder (a first option with an empty value), and the browser shows its own message.
+         */
+        "required"?: boolean;
     }
+    /**
+     * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+     * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+     * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+     * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+     * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+     */
     interface DsSidebar {
+        /**
+          * @default true
+         */
         "ctx"?: boolean;
+        /**
+          * @default SIDEBAR_POSITION.LEFT
+         */
         "hPos"?: 'left' | 'right';
+        /**
+          * @default false
+         */
         "isShown"?: boolean;
+        /**
+          * The accessible name of the sidebar (`aria-label`), which tells it from the other landmarks of the page.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
         "onSidebarHidden"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarHide"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarShow"?: (event: DsSidebarCustomEvent<any>) => void;
         "onSidebarShown"?: (event: DsSidebarCustomEvent<any>) => void;
+        /**
+          * @default SIDEBAR_POSITION.TOP
+         */
         "vPos"?: 'top' | 'bottom';
     }
+    /**
+     * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+     * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+     * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+     * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+     * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+     * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+     * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+     */
     interface DsSlider {
+        /**
+          * The accessible name of the carousel (`aria-label`): what its slides are ("Featured products").
+         */
+        "label"?: string;
+        /**
+          * The texts read by assistive technologies, to translate them (JSON as an attribute): `carousel` and `slide` (the `aria-roledescription` of the slider and of a slide), `slideName` (the name of a slide, `{index} of {count}`), `previous`, `next`, `play`, `pause` (the names of the buttons), `menu` and `menuItem` (the names of the menu and of a dot, `Slide {index}`). Each one has an English default.
+          * @default {}
+         */
+        "labels"?: DSSliderLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
-        "onSliderEvent"?: (event: DsSliderCustomEvent<{slide: string; direction: number; currentIndex?: number;}>) => void;
+        "onSliderEvent"?: (event: DsSliderCustomEvent<{ slide: string; direction: number; currentIndex?: number }>) => void;
+        /**
+          * @default {}
+         */
         "params"?: DSSliderParams | string;
+        /**
+          * @default `slide-${sliderId++}`
+         */
         "sliderId"?: string;
+        /**
+          * @default 'sld'
+         */
         "type"?: string;
     }
+    /**
+     * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+     */
     interface DsSliderItem {
     }
+    /**
+     * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+     * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+     * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+     */
     interface DsSliderMenu {
+        /**
+          * @default 0
+         */
         "dsCurrentItemIndex"?: number;
+        /**
+          * @default 0
+         */
         "dsItemCount"?: number;
+        /**
+          * The accessible name of a dot: `{index}` is the number of its slide, `{count}` the number of slides.
+          * @default 'Slide {index}'
+         */
+        "itemLabel"?: string;
+        /**
+          * The accessible name of the menu (`aria-label` of its list).
+          * @default 'Choose a slide'
+         */
+        "label"?: string;
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
-    interface DsSocialLink {
-        "dsNetworks"?: any[]|string;
-    }
-    interface DsStickyCartButton {
-        "offset"?: string | number;
-        "scrollBehavior"?: "smooth" | "instant" | "auto";
-    }
-    interface DsTag {
-        "onRequestDeleteTag"?: (event: DsTagCustomEvent<any>) => void;
-        "tagId"?: string;
-    }
+    /**
+     * A block of text, in the paragraph font style of the theme.
+     */
     interface DsText {
-        "bold"?: boolean;
-        "color"?: string;
-        "content"?: boolean;
-        "highlight"?: boolean;
-        "italic"?: boolean;
-        "main"?: boolean;
+        "inline"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
-        "size"?: string | number;
         "sub"?: boolean;
-        "text"?: boolean;
-        "type"?: string;
+        "sup"?: boolean;
+        /**
+          * @default 'p'
+         */
+        "type"?: 'p' | 'code' | 'quote';
+        "weight"?: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
+    /**
+     * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+     * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+     */
     interface DsTitle {
         "article"?: boolean;
         "block"?: boolean;
         "form"?: boolean;
+        /**
+          * The heading level (1 to 6) of a text title: the element is a heading (`role="heading"`, `aria-level`). Not applied when the title holds a heading element, which has its own level.
+         */
+        "level"?: number | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
         "page"?: boolean;
         "section"?: boolean;
         "sub"?: boolean;
         "sup"?: boolean;
-        "useContext"?: boolean;
     }
+    /**
+     * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+     */
     interface DsTitleBar {
         "ctx"?: boolean;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
     }
-    interface DsTitleConfigurator {
-        "onValueChange"?: (event: DsTitleConfiguratorCustomEvent<any>) => void;
-        "toolbar"?: string;
-        "validElements"?: string;
-        "value"?: string;
-    }
+    /**
+     * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+     * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+     * at the end of that transition.
+     * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+     * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+     * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+     * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+     * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+     * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
+     */
     interface DsToaster {
+        /**
+          * Delay in ms before `displayToast()` hides the toaster; `0` keeps it shown. The countdown pauses while the pointer is over the toasts or the focus is in the toaster, and starts again from this delay when they leave it. Leave the time to read the messages: 5000 at least for a sentence, more for a longer text (see the Accessibility section of the readme).
+          * @default 3000
+         */
         "closingDelay"?: number;
+        /**
+          * Maximum number of toasts displayed: the last `maxDisplayedToast` messages, the oldest ones are dropped first. `0` displays them all.
+          * @default 3
+         */
         "maxDisplayedToast"?: number;
+        /**
+          * The messages, one toast each, from the oldest to the newest: an array, or a comma-separated string.
+         */
         "messages"?: string | string[];
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
         "onToasterHidden"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterHide"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShow"?: (event: DsToasterCustomEvent<any>) => void;
         "onToasterShown"?: (event: DsToasterCustomEvent<any>) => void;
+        /**
+          * Vertical then horizontal position: `[TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION]`, or as an attribute a comma-separated string (`position="bottom,right"`). Vertical: `top`, `middle`, `bottom`; horizontal: `left`, `center`, `right`.
+          * @default [     TOASTER_VERTICAL_POSITION.TOP,     TOASTER_HORIZONTAL_POSITION.LEFT,   ]
+         */
         "position"?: string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
     }
+    /**
+     * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+     * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+     * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+     * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+     * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+     * cannot be focused.
+     * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+     * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+     * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
+     */
     interface DsToggle {
+        /**
+          * Whether the toggle is checked (pressed, for an `icon` toggle). Its value at the load is the default one, which a form reset gives back.
+         */
         "checked"?: boolean;
+        /**
+          * A disabled toggle ignores clicks and keys, cannot be focused (`aria-disabled="true"`, no `tabindex`) and submits nothing. A disabled `<fieldset>` or `ds-toggle-group` disables it too, without changing this prop.
+         */
         "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The accessible name of the toggle (`aria-label`), for a toggle without a text in it. A visible label elsewhere names it with a `<label>` element (`<label for="<id>">`, or around it) or with `aria-labelledby` (its id) on the element instead.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * The name of the value in the form data (a toggle without a name submits nothing). A `ds-toggle-group` with a `name` gives it its own.
+         */
         "name"?: string;
         "onToggle"?: (event: DsToggleCustomEvent<any>) => void;
-        "type"?: "radio" | "icon" | "checkbox" | "switch" | string;
-        "value"?: any;
-    }
-    interface DsToggleGroup {
-        "count"?: number[] | string;
-        "disabled"?: boolean;
-        "mods"?: string | string[];
-        "name"?: string;
-        "onToggleValueChange"?: (event: DsToggleGroupCustomEvent<any>) => void;
-        "type"?: string;
+        /**
+          * The toggle must be checked for its form to be submitted (`valueMissing`, `aria-required` on a checkbox or a switch). A radio of a `ds-toggle-group` makes its group required instead.
+         */
+        "required"?: boolean;
+        /**
+          * The message of a required toggle left unchecked, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage"?: string;
+        /**
+          * `radio`, `checkbox`, `switch` or `icon`. Without it, the toggle uses the type its parent gives with `setType()` (`ds-toggle-group`), else `switch`: its own type always wins.
+         */
+        "type"?: 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        /**
+          * The message of an invalid toggle, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage"?: string;
+        /**
+          * The validity of the toggle, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity"?: ValidityState;
+        /**
+          * The value the toggle submits with its form while it is checked: `on` without one (as a native checkbox). Also sent in the `toggle` event.
+         */
+        "value"?: DSToggleValue;
+        /**
+          * Whether the form validates the toggle (read-only), as the browser tells it: not while its `disabled` or a disabled fieldset disables it (a toggle its group disables is valid).
+          * @readonly
+         */
+        "willValidate"?: boolean;
     }
     /**
-     * Simple icon tooltip component
+     * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+     * The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
+     * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
+     * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
+     * MutationObserver, in browsers).
+     * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+     * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+     * focus and the selection between the enabled radios.
+     * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+     * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+     * it, and a disabled fieldset disables it with its toggles.
+     */
+    interface DsToggleGroup {
+        /**
+          * `[min, max]` number of selected values (JSON as an attribute: `count="[0, 3]"`). `max` 1 is a single selection: checking a toggle unchecks the others. A click that would leave fewer than `min` values, or select more than `max` (0 for no maximum), is undone. Default `[1, 1]`: exactly one value.
+          * @default [1, 1]
+         */
+        "count"?: number[] | string;
+        /**
+          * Disables the group and all its toggles (`aria-disabled` on the group, and on each toggle, which leaves the toggles' own `disabled` as it is). A disabled `<fieldset>` around it does the same.
+         */
+        "disabled"?: boolean;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The accessible name of the group (`aria-label`). A visible label (a heading, a text) names it with `aria-labelledby` (its id) on the element, or a `<label>` element (`<label for="<id of the group>">`) instead.
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The name of its toggles, which submit their values under it with their form (it replaces their own).
+         */
+        "name"?: string;
+        "onToggleValueChange"?: (event: DsToggleGroupCustomEvent<any>) => void;
+        /**
+          * At least one toggle must be checked for the form to be submitted (`valueMissing`; `aria-required` on a radio group). A radio of the group with `required` makes it required too, as a native radio.
+         */
+        "required"?: boolean;
+        /**
+          * The message of a required group without a checked toggle, instead of the browser's own (`validationMessage`).
+         */
+        "requiredMessage"?: string;
+        /**
+          * The type of its toggles that have none of their own (`radio`, `checkbox`, `switch`, `icon`).
+         */
+        "type"?: string;
+        /**
+          * The message of an invalid group, as the `validationMessage` of a native control (read-only): `required-message`, else the browser's own.
+          * @readonly
+         */
+        "validationMessage"?: string;
+        /**
+          * The validity of the group, as the `validity` of a native control (read-only; once the component is loaded).
+          * @readonly
+         */
+        "validity"?: ValidityState;
+        /**
+          * Whether the form validates the group (read-only): not while it is disabled.
+          * @readonly
+         */
+        "willValidate"?: boolean;
+    }
+    /**
+     * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+     * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+     * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+     * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+     * moving the focus or the pointer. On touch screens, a tap shows or hides it.
      */
     interface DsTooltip {
+        /**
+          * @default ''
+         */
         "containerSelector"?: string;
+        /**
+          * @default true
+         */
         "hasArrow"?: boolean;
         /**
           * Displayed tooltip icon
+          * @default ''
          */
         "icon"?: string;
-        "isActive"?: boolean;
         /**
           * @type {boolean} isDisabled( attr => disabled ) Specify wether the tooltip is disabled or not
+          * @default false
          */
         "isDisabled"?: boolean;
         /**
-          * Used for applying modifier on main container
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
          */
-        "mode"?: string;
         "mods"?: string | string[];
         /**
           * @type {string} Tooltip position (top, left, right or bottom)
+          * @default TooltipPosition.TOP
          */
         "position"?: TooltipPosition;
     }
+    /**
+     * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+     * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+     * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+     * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+     * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+     * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
+     */
     interface DsTrigger {
+        /**
+          * Method of the target to call, optionally followed by its JSON arguments (`goTo:[2]`).
+         */
         "action"?: string;
+        /**
+          * A disabled trigger does not call the action; when it is the control, it is `aria-disabled` and cannot be focused.
+          * @default false
+         */
         "disabled"?: boolean;
+        /**
+          * The accessible name of the trigger (`aria-label`) when it is the control, for a trigger without a text (an icon).
+         */
+        "label"?: string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
         "mods"?: string | string[];
+        /**
+          * Event of the trigger that calls the action. With another event than `click`, the trigger is not a button.
+          * @default 'click'
+         */
         "on"?: string;
+        /**
+          * The target: a CSS selector, `window` or `document`.
+         */
         "target"?: string;
+        /**
+          * `control` (no skin), `button` (the `.ds-button` skin) or `link` (the `.ds-link` skin): the look only, all are buttons.
+          * @default 'control'
+         */
         "type"?: 'button' | 'control' | 'link';
     }
-    interface DsTxtImgConfigurator {
-        "defaultValue"?: string;
-        "onConfigChange"?: (event: DsTxtImgConfiguratorCustomEvent<any>) => void;
-        "onSaveConfiguration"?: (event: DsTxtImgConfiguratorCustomEvent<any>) => void;
-        "settings"?: string | any;
+
+    interface DsAjaxAttributes {
+        "on": 'load' | 'click';
+        "target": 'self' | string;
+        "suffix": string;
+        "errorMessage": string;
     }
-    interface DsVideo {
-        "autoplay"?: boolean;
-        "controls"?: boolean;
-        "loop"?: boolean;
-        "mods"?: string[];
-        "playsinline"?: boolean;
-        "poster"?: string;
-        "sources"?: string | string[];
+    interface DsAlertAttributes {
+        "type": DSAlertType;
+        "heading": string;
+        "level": string;
+        "live": DSAlertLive;
+        "dismissible": boolean;
+        "labels": DSAlertLabels | string;
+        "mods": string | string[];
     }
-    interface DsVimeo {
-        "loadingDelay"?: string;
-        "mods"?: string[];
-        "videoId"?: string;
+    interface DsBackToTopAttributes {
+        "threshold": string;
+        "target": string;
+        "label": string;
+        "mods": string | string[];
     }
-    interface DsWishlistButton {
-        "dsIsLogged"?: string;
-        "dsProductAttributeId"?: string;
-        "dsProductId"?: string;
-        "dsUrl"?: string;
+    interface DsBadgeAttributes {
+        "type": DSBadgeType;
+        "count": string;
+        "max": string;
+        "label": PluralLabel;
+        "dot": boolean;
+        "mods": string | string[];
     }
-    interface ProntoContentAdmin {
-        "active"?: string | boolean;
-        "adminUrl"?: string;
-        "blockTitle"?: string;
-        "componentType"?: string;
-        "controllerUrl"?: string;
-        "endDate"?: string;
-        "filemanagerUrl"?: string;
-        "hook"?: string;
-        "linkedId"?: string;
-        "modifiers"?: string;
-        "onSaveConfiguration"?: (event: ProntoContentAdminCustomEvent<any>) => void;
-        "onSettingsChange"?: (event: ProntoContentAdminCustomEvent<any>) => void;
-        "orderPosition"?: string;
-        "pageType"?: string;
-        "settings"?: any;
-        "startDate"?: string;
+    interface DsBlockAttributes {
+        "section": boolean;
+        "block": boolean;
+        "article": boolean;
+        "form": boolean;
+        "modal": boolean;
+        "type": string;
+        "name": string;
+        "mods": string | string[];
+        "label": string;
     }
-    interface ProntoField {
-        "associatedRoute"?: string;
-        "defaultValue"?: string;
-        "label"?: string;
-        "mods"?: string | string[];
-        "onValueChange"?: (event: ProntoFieldCustomEvent<any>) => void;
-        "positions"?: MediaPosition[];
-        "type"?: string;
-        "values"?: { label: string; value: string; }[];
+    interface DsBreadcrumbAttributes {
+        "label": string;
+        "labels": DSBreadcrumbLabels | string;
+        "collapse": string;
+        "mods": string | string[];
     }
-    interface ProntoFieldset {
-        "defaultValue"?: any;
-        "depth"?: number;
-        "fields"?: any[];
-        "label"?: string;
-        "name"?: string;
-        "onValueChange"?: (event: ProntoFieldsetCustomEvent<any>) => void;
+    interface DsComboAttributes {
+        "options": string | DSOption[];
+        "name": string;
+        "mode": string;
+        "customLabel": string;
+        "multiple": boolean;
+        "overlay": boolean;
+        "position": DSComboPosition;
+        "selected": string | DSComboSelection;
+        "mods": string | string[];
+        "label": string;
+        "labelledby": string;
+        "disabled": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "validationMessage": string;
+        "willValidate": boolean;
     }
-    interface ProntoForm {
-        "fields"?: any[];
-        "mods"?: string | string[];
-        "onValueChange"?: (event: ProntoFormCustomEvent<any>) => void;
-        "size"?: "sm" | "md" | "lg" | "xl";
+    interface DsFieldAttributes {
+        "label": string;
+        "hint": string;
+        "messages": DSFieldMessages | string;
+        "errorMessage": string;
+        "counter": boolean;
+        "labels": DSFieldLabels | string;
+        "mods": string | string[];
     }
-    interface ProntoIcon {
-        "type"?: string;
+    interface DsGridAttributes {
+        "dataUseRsp": boolean;
+        "mods": string | string[];
+        "type": string | DSGridType;
+        "cols": string;
+        "hGap": string;
+        "vGap": string;
+        "align": string | DSGridAlignment;
+        "vAlign": string | DSGridAlignment;
+        "cellRatio": string;
     }
-    interface ProntoModal {
-        "associatedRoute"?: string;
-        "mods"?: string | string[];
-        "name"?: string;
-        "onModalClose"?: (event: ProntoModalCustomEvent<any>) => void;
-        "onModalOpen"?: (event: ProntoModalCustomEvent<any>) => void;
-        "overlay"?: boolean;
-        "type"?: string;
-        "value"?: any;
+    interface DsGridItemAttributes {
+        "ratioFromProps": string;
+        "width": number;
     }
-    interface ProntoProductList {
-        "associatedRoute"?: string;
-        "inputProps"?: any;
-        "onValueChange"?: (event: ProntoProductListCustomEvent<any>) => void;
-        "value"?: any[];
+    interface DsHeadingAttributes {
+        "useContext": boolean;
+        "mods": string | string[];
+        "section": boolean;
+        "block": boolean;
+        "imagePosition": string;
+        "level": string;
     }
+    interface DsIconAttributes {
+        "type": string;
+        "label": string;
+    }
+    interface DsLoaderAttributes {
+        "value": string;
+        "max": string;
+        "label": string;
+        "showLabel": boolean;
+        "inline": boolean;
+        "size": DSLoaderSize;
+        "mods": string | string[];
+    }
+    interface DsModalAttributes {
+        "shown": boolean;
+        "overlay": boolean;
+        "lightboxClass": string;
+        "lightboxClassObject": string;
+        "label": string;
+    }
+    interface DsNavAttributes {
+        "currentActiveItemId": string;
+        "mods": string | string[];
+        "label": string;
+    }
+    interface DsNavItemAttributes {
+        "itemId": string;
+        "type": string;
+        "depth": number;
+        "hasChildren": boolean;
+        "isActive": boolean;
+        "isAnimated": boolean;
+        "label": string;
+        "toggleLabel": string;
+    }
+    interface DsPaginationAttributes {
+        "total": string;
+        "current": string;
+        "siblings": string;
+        "boundaries": string;
+        "hrefTemplate": string;
+        "firstLast": boolean;
+        "compact": boolean;
+        "compactBelow": string;
+        "label": string;
+        "labels": DSPaginationLabels | string;
+        "mods": string | string[];
+    }
+    interface DsPanelAttributes {
+        "mods": string | string[];
+        "minHeight": string;
+        "expanded": boolean;
+        "index": number;
+        "type": PanelType;
+        "level": string;
+    }
+    interface DsPanelGroupAttributes {
+        "type": PanelType;
+        "mods": string | string[];
+        "isActive": boolean;
+        "soloContent": boolean;
+        "label": string;
+        "labelledby": string;
+    }
+    interface DsRspAttributes {
+        "debounceDelay": number;
+        "subscriberSelector": string;
+        "propertyName": string;
+        "breakpointsFromProp": string | RawBreakpoint;
+    }
+    interface DsSelectAttributes {
+        "name": string;
+        "disabled": boolean;
+        "required": boolean;
+        "mods": string | string[];
+        "defaultValue": string;
+        "label": string;
+        "labelledby": string;
+    }
+    interface DsSidebarAttributes {
+        "ctx": boolean;
+        "isShown": boolean;
+        "hPos": 'left' | 'right';
+        "vPos": 'top' | 'bottom';
+        "mods": string | string[];
+        "label": string;
+    }
+    interface DsSliderAttributes {
+        "sliderId": string;
+        "mods": string | string[];
+        "params": DSSliderParams | string;
+        "type": string;
+        "label": string;
+        "labels": DSSliderLabels | string;
+    }
+    interface DsSliderMenuAttributes {
+        "dsItemCount": number;
+        "dsCurrentItemIndex": number;
+        "label": string;
+        "itemLabel": string;
+    }
+    interface DsTextAttributes {
+        "mods": string | string[];
+        "type": 'p' | 'code' | 'quote';
+        "inline": boolean;
+        "sup": boolean;
+        "sub": boolean;
+        "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
+    }
+    interface DsTitleAttributes {
+        "mods": string | string[];
+        "article": boolean;
+        "form": boolean;
+        "page": boolean;
+        "section": boolean;
+        "block": boolean;
+        "sub": boolean;
+        "sup": boolean;
+        "level": string;
+    }
+    interface DsTitleBarAttributes {
+        "ctx": boolean;
+        "mods": string | string[];
+    }
+    interface DsToasterAttributes {
+        "position": string | [TOASTER_VERTICAL_POSITION, TOASTER_HORIZONTAL_POSITION];
+        "mods": string | string[];
+        "messages": string | string[];
+        "maxDisplayedToast": number;
+        "closingDelay": number;
+    }
+    interface DsToggleAttributes {
+        "mods": string | string[];
+        "value": string;
+        "name": string;
+        "type": 'radio' | 'icon' | 'checkbox' | 'switch' | string;
+        "disabled": boolean;
+        "checked": boolean;
+        "required": boolean;
+        "requiredMessage": string;
+        "label": string;
+        "validationMessage": string;
+        "willValidate": boolean;
+    }
+    interface DsToggleGroupAttributes {
+        "name": string;
+        "type": string;
+        "disabled": boolean;
+        "count": number[] | string;
+        "mods": string | string[];
+        "required": boolean;
+        "requiredMessage": string;
+        "label": string;
+        "validationMessage": string;
+        "willValidate": boolean;
+    }
+    interface DsTooltipAttributes {
+        "icon": string;
+        "position": TooltipPosition;
+        "isDisabled": boolean;
+        "hasArrow": boolean;
+        "mods": string | string[];
+        "containerSelector": string;
+    }
+    interface DsTriggerAttributes {
+        "disabled": boolean;
+        "action": string;
+        "on": string;
+        "target": string;
+        "type": 'button' | 'control' | 'link';
+        "mods": string | string[];
+        "label": string;
+    }
+
     interface IntrinsicElements {
-        "ds-account-block": DsAccountBlock;
-        "ds-address": DsAddress;
-        "ds-ajax": DsAjax;
-        "ds-app": DsApp;
-        "ds-app-menu": DsAppMenu;
-        "ds-auth": DsAuth;
-        "ds-back-to-top-button": DsBackToTopButton;
-        "ds-banner": DsBanner;
-        "ds-block": DsBlock;
-        "ds-block-builder": DsBlockBuilder;
-        "ds-breadcrumb": DsBreadcrumb;
-        "ds-button-configurator": DsButtonConfigurator;
-        "ds-cart": DsCart;
-        "ds-cart-block": DsCartBlock;
-        "ds-category-list": DsCategoryList;
-        "ds-category-search": DsCategorySearch;
-        "ds-checkout-page": DsCheckoutPage;
-        "ds-checkout-path": DsCheckoutPath;
-        "ds-cms-image": DsCmsImage;
-        "ds-cms-search": DsCmsSearch;
-        "ds-cms-video": DsCmsVideo;
-        "ds-combo": DsCombo;
-        "ds-contact-block": DsContactBlock;
-        "ds-contact-form": DsContactForm;
-        "ds-content-block": DsContentBlock;
-        "ds-customer-page": DsCustomerPage;
-        "ds-dropdown": DsDropdown;
-        "ds-dropdown-item": DsDropdownItem;
-        "ds-faq": DsFaq;
-        "ds-feature-configurator": DsFeatureConfigurator;
-        "ds-features-configurator": DsFeaturesConfigurator;
-        "ds-filemanager": DsFilemanager;
-        "ds-filters": DsFilters;
-        "ds-footer": DsFooter;
-        "ds-giftcard": DsGiftcard;
-        "ds-grade-star": DsGradeStar;
-        "ds-grid": DsGrid;
-        "ds-grid-item": DsGridItem;
-        "ds-heading": DsHeading;
-        "ds-html": DsHtml;
-        "ds-html-editor": DsHtmlEditor;
-        "ds-icon": DsIcon;
-        "ds-info-window": DsInfoWindow;
-        "ds-input-date": DsInputDate;
-        "ds-input-modal": DsInputModal;
-        "ds-input-number": DsInputNumber;
-        "ds-json": DsJson;
-        "ds-lang": DsLang;
-        "ds-lang-selector": DsLangSelector;
-        "ds-links-list": DsLinksList;
-        "ds-login": DsLogin;
-        "ds-main-configurator": DsMainConfigurator;
-        "ds-map": DsMap;
-        "ds-map-location": DsMapLocation;
-        "ds-map-marker": DsMapMarker;
-        "ds-marquee": DsMarquee;
-        "ds-marquee-configurator": DsMarqueeConfigurator;
-        "ds-media": DsMedia;
-        "ds-message": DsMessage;
-        "ds-modal": DsModal;
-        "ds-nav": DsNav;
-        "ds-nav-item": DsNavItem;
-        "ds-newsletter": DsNewsletter;
-        "ds-page": DsPage;
-        "ds-panel": DsPanel;
-        "ds-panel-configurator": DsPanelConfigurator;
-        "ds-panel-group": DsPanelGroup;
-        "ds-panels-configurator": DsPanelsConfigurator;
-        "ds-password": DsPassword;
-        "ds-post-list": DsPostList;
-        "ds-product": DsProduct;
-        "ds-product-block": DsProductBlock;
-        "ds-product-list": DsProductList;
-        "ds-product-list-header": DsProductListHeader;
-        "ds-product-page": DsProductPage;
-        "ds-product-page-configurator": DsProductPageConfigurator;
-        "ds-product-search": DsProductSearch;
-        "ds-products-configurator": DsProductsConfigurator;
-        "ds-rating-list": DsRatingList;
-        "ds-reassurance": DsReassurance;
-        "ds-register": DsRegister;
-        "ds-rsp": DsRsp;
-        "ds-search": DsSearch;
-        "ds-search-bar": DsSearchBar;
-        "ds-select": DsSelect;
-        "ds-sidebar": DsSidebar;
-        "ds-slider": DsSlider;
+        "ds-ajax": Omit<DsAjax, keyof DsAjaxAttributes> & { [K in keyof DsAjax & keyof DsAjaxAttributes]?: DsAjax[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `attr:${K}`]?: DsAjaxAttributes[K] } & { [K in keyof DsAjax & keyof DsAjaxAttributes as `prop:${K}`]?: DsAjax[K] };
+        "ds-alert": Omit<DsAlert, keyof DsAlertAttributes> & { [K in keyof DsAlert & keyof DsAlertAttributes]?: DsAlert[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `attr:${K}`]?: DsAlertAttributes[K] } & { [K in keyof DsAlert & keyof DsAlertAttributes as `prop:${K}`]?: DsAlert[K] };
+        "ds-back-to-top": Omit<DsBackToTop, keyof DsBackToTopAttributes> & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes]?: DsBackToTop[K] } & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes as `attr:${K}`]?: DsBackToTopAttributes[K] } & { [K in keyof DsBackToTop & keyof DsBackToTopAttributes as `prop:${K}`]?: DsBackToTop[K] };
+        "ds-badge": Omit<DsBadge, keyof DsBadgeAttributes> & { [K in keyof DsBadge & keyof DsBadgeAttributes]?: DsBadge[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `attr:${K}`]?: DsBadgeAttributes[K] } & { [K in keyof DsBadge & keyof DsBadgeAttributes as `prop:${K}`]?: DsBadge[K] };
+        "ds-block": Omit<DsBlock, keyof DsBlockAttributes> & { [K in keyof DsBlock & keyof DsBlockAttributes]?: DsBlock[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `attr:${K}`]?: DsBlockAttributes[K] } & { [K in keyof DsBlock & keyof DsBlockAttributes as `prop:${K}`]?: DsBlock[K] };
+        "ds-breadcrumb": Omit<DsBreadcrumb, keyof DsBreadcrumbAttributes> & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes]?: DsBreadcrumb[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `attr:${K}`]?: DsBreadcrumbAttributes[K] } & { [K in keyof DsBreadcrumb & keyof DsBreadcrumbAttributes as `prop:${K}`]?: DsBreadcrumb[K] };
+        "ds-combo": Omit<DsCombo, keyof DsComboAttributes> & { [K in keyof DsCombo & keyof DsComboAttributes]?: DsCombo[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `attr:${K}`]?: DsComboAttributes[K] } & { [K in keyof DsCombo & keyof DsComboAttributes as `prop:${K}`]?: DsCombo[K] };
+        "ds-field": Omit<DsField, keyof DsFieldAttributes> & { [K in keyof DsField & keyof DsFieldAttributes]?: DsField[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `attr:${K}`]?: DsFieldAttributes[K] } & { [K in keyof DsField & keyof DsFieldAttributes as `prop:${K}`]?: DsField[K] };
+        "ds-grid": Omit<DsGrid, keyof DsGridAttributes> & { [K in keyof DsGrid & keyof DsGridAttributes]?: DsGrid[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `attr:${K}`]?: DsGridAttributes[K] } & { [K in keyof DsGrid & keyof DsGridAttributes as `prop:${K}`]?: DsGrid[K] };
+        "ds-grid-item": Omit<DsGridItem, keyof DsGridItemAttributes> & { [K in keyof DsGridItem & keyof DsGridItemAttributes]?: DsGridItem[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `attr:${K}`]?: DsGridItemAttributes[K] } & { [K in keyof DsGridItem & keyof DsGridItemAttributes as `prop:${K}`]?: DsGridItem[K] };
+        "ds-heading": Omit<DsHeading, keyof DsHeadingAttributes> & { [K in keyof DsHeading & keyof DsHeadingAttributes]?: DsHeading[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `attr:${K}`]?: DsHeadingAttributes[K] } & { [K in keyof DsHeading & keyof DsHeadingAttributes as `prop:${K}`]?: DsHeading[K] };
+        "ds-icon": Omit<DsIcon, keyof DsIconAttributes> & { [K in keyof DsIcon & keyof DsIconAttributes]?: DsIcon[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `attr:${K}`]?: DsIconAttributes[K] } & { [K in keyof DsIcon & keyof DsIconAttributes as `prop:${K}`]?: DsIcon[K] };
+        "ds-loader": Omit<DsLoader, keyof DsLoaderAttributes> & { [K in keyof DsLoader & keyof DsLoaderAttributes]?: DsLoader[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `attr:${K}`]?: DsLoaderAttributes[K] } & { [K in keyof DsLoader & keyof DsLoaderAttributes as `prop:${K}`]?: DsLoader[K] };
+        "ds-modal": Omit<DsModal, keyof DsModalAttributes> & { [K in keyof DsModal & keyof DsModalAttributes]?: DsModal[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `attr:${K}`]?: DsModalAttributes[K] } & { [K in keyof DsModal & keyof DsModalAttributes as `prop:${K}`]?: DsModal[K] };
+        "ds-nav": Omit<DsNav, keyof DsNavAttributes> & { [K in keyof DsNav & keyof DsNavAttributes]?: DsNav[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `attr:${K}`]?: DsNavAttributes[K] } & { [K in keyof DsNav & keyof DsNavAttributes as `prop:${K}`]?: DsNav[K] };
+        "ds-nav-item": Omit<DsNavItem, keyof DsNavItemAttributes> & { [K in keyof DsNavItem & keyof DsNavItemAttributes]?: DsNavItem[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `attr:${K}`]?: DsNavItemAttributes[K] } & { [K in keyof DsNavItem & keyof DsNavItemAttributes as `prop:${K}`]?: DsNavItem[K] };
+        "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
+        "ds-panel": Omit<DsPanel, keyof DsPanelAttributes> & { [K in keyof DsPanel & keyof DsPanelAttributes]?: DsPanel[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `attr:${K}`]?: DsPanelAttributes[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `prop:${K}`]?: DsPanel[K] };
+        "ds-panel-group": Omit<DsPanelGroup, keyof DsPanelGroupAttributes> & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes]?: DsPanelGroup[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `attr:${K}`]?: DsPanelGroupAttributes[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `prop:${K}`]?: DsPanelGroup[K] };
+        "ds-rsp": Omit<DsRsp, keyof DsRspAttributes> & { [K in keyof DsRsp & keyof DsRspAttributes]?: DsRsp[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `attr:${K}`]?: DsRspAttributes[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `prop:${K}`]?: DsRsp[K] };
+        "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
+        "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
+        "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-slider-item": DsSliderItem;
-        "ds-slider-menu": DsSliderMenu;
-        "ds-social-link": DsSocialLink;
-        "ds-sticky-cart-button": DsStickyCartButton;
-        "ds-tag": DsTag;
-        "ds-text": DsText;
-        "ds-title": DsTitle;
-        "ds-title-bar": DsTitleBar;
-        "ds-title-configurator": DsTitleConfigurator;
-        "ds-toaster": DsToaster;
-        "ds-toggle": DsToggle;
-        "ds-toggle-group": DsToggleGroup;
-        "ds-tooltip": DsTooltip;
-        "ds-trigger": DsTrigger;
-        "ds-txt-img-configurator": DsTxtImgConfigurator;
-        "ds-video": DsVideo;
-        "ds-vimeo": DsVimeo;
-        "ds-wishlist-button": DsWishlistButton;
-        "pronto-content-admin": ProntoContentAdmin;
-        "pronto-field": ProntoField;
-        "pronto-fieldset": ProntoFieldset;
-        "pronto-form": ProntoForm;
-        "pronto-icon": ProntoIcon;
-        "pronto-modal": ProntoModal;
-        "pronto-product-list": ProntoProductList;
+        "ds-slider-menu": Omit<DsSliderMenu, keyof DsSliderMenuAttributes> & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes]?: DsSliderMenu[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `attr:${K}`]?: DsSliderMenuAttributes[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `prop:${K}`]?: DsSliderMenu[K] };
+        "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-title": Omit<DsTitle, keyof DsTitleAttributes> & { [K in keyof DsTitle & keyof DsTitleAttributes]?: DsTitle[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `attr:${K}`]?: DsTitleAttributes[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `prop:${K}`]?: DsTitle[K] };
+        "ds-title-bar": Omit<DsTitleBar, keyof DsTitleBarAttributes> & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes]?: DsTitleBar[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `attr:${K}`]?: DsTitleBarAttributes[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `prop:${K}`]?: DsTitleBar[K] };
+        "ds-toaster": Omit<DsToaster, keyof DsToasterAttributes> & { [K in keyof DsToaster & keyof DsToasterAttributes]?: DsToaster[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `attr:${K}`]?: DsToasterAttributes[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `prop:${K}`]?: DsToaster[K] };
+        "ds-toggle": Omit<DsToggle, keyof DsToggleAttributes> & { [K in keyof DsToggle & keyof DsToggleAttributes]?: DsToggle[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `attr:${K}`]?: DsToggleAttributes[K] } & { [K in keyof DsToggle & keyof DsToggleAttributes as `prop:${K}`]?: DsToggle[K] };
+        "ds-toggle-group": Omit<DsToggleGroup, keyof DsToggleGroupAttributes> & { [K in keyof DsToggleGroup & keyof DsToggleGroupAttributes]?: DsToggleGroup[K] } & { [K in keyof DsToggleGroup & keyof DsToggleGroupAttributes as `attr:${K}`]?: DsToggleGroupAttributes[K] } & { [K in keyof DsToggleGroup & keyof DsToggleGroupAttributes as `prop:${K}`]?: DsToggleGroup[K] };
+        "ds-tooltip": Omit<DsTooltip, keyof DsTooltipAttributes> & { [K in keyof DsTooltip & keyof DsTooltipAttributes]?: DsTooltip[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `attr:${K}`]?: DsTooltipAttributes[K] } & { [K in keyof DsTooltip & keyof DsTooltipAttributes as `prop:${K}`]?: DsTooltip[K] };
+        "ds-trigger": Omit<DsTrigger, keyof DsTriggerAttributes> & { [K in keyof DsTrigger & keyof DsTriggerAttributes]?: DsTrigger[K] } & { [K in keyof DsTrigger & keyof DsTriggerAttributes as `attr:${K}`]?: DsTriggerAttributes[K] } & { [K in keyof DsTrigger & keyof DsTriggerAttributes as `prop:${K}`]?: DsTrigger[K] };
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "ds-account-block": LocalJSX.DsAccountBlock & JSXBase.HTMLAttributes<HTMLDsAccountBlockElement>;
-            "ds-address": LocalJSX.DsAddress & JSXBase.HTMLAttributes<HTMLDsAddressElement>;
-            "ds-ajax": LocalJSX.DsAjax & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
-            "ds-app": LocalJSX.DsApp & JSXBase.HTMLAttributes<HTMLDsAppElement>;
-            "ds-app-menu": LocalJSX.DsAppMenu & JSXBase.HTMLAttributes<HTMLDsAppMenuElement>;
-            "ds-auth": LocalJSX.DsAuth & JSXBase.HTMLAttributes<HTMLDsAuthElement>;
-            "ds-back-to-top-button": LocalJSX.DsBackToTopButton & JSXBase.HTMLAttributes<HTMLDsBackToTopButtonElement>;
-            "ds-banner": LocalJSX.DsBanner & JSXBase.HTMLAttributes<HTMLDsBannerElement>;
-            "ds-block": LocalJSX.DsBlock & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
-            "ds-block-builder": LocalJSX.DsBlockBuilder & JSXBase.HTMLAttributes<HTMLDsBlockBuilderElement>;
-            "ds-breadcrumb": LocalJSX.DsBreadcrumb & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
-            "ds-button-configurator": LocalJSX.DsButtonConfigurator & JSXBase.HTMLAttributes<HTMLDsButtonConfiguratorElement>;
-            "ds-cart": LocalJSX.DsCart & JSXBase.HTMLAttributes<HTMLDsCartElement>;
-            "ds-cart-block": LocalJSX.DsCartBlock & JSXBase.HTMLAttributes<HTMLDsCartBlockElement>;
-            "ds-category-list": LocalJSX.DsCategoryList & JSXBase.HTMLAttributes<HTMLDsCategoryListElement>;
-            "ds-category-search": LocalJSX.DsCategorySearch & JSXBase.HTMLAttributes<HTMLDsCategorySearchElement>;
-            "ds-checkout-page": LocalJSX.DsCheckoutPage & JSXBase.HTMLAttributes<HTMLDsCheckoutPageElement>;
-            "ds-checkout-path": LocalJSX.DsCheckoutPath & JSXBase.HTMLAttributes<HTMLDsCheckoutPathElement>;
-            "ds-cms-image": LocalJSX.DsCmsImage & JSXBase.HTMLAttributes<HTMLDsCmsImageElement>;
-            "ds-cms-search": LocalJSX.DsCmsSearch & JSXBase.HTMLAttributes<HTMLDsCmsSearchElement>;
-            "ds-cms-video": LocalJSX.DsCmsVideo & JSXBase.HTMLAttributes<HTMLDsCmsVideoElement>;
-            "ds-combo": LocalJSX.DsCombo & JSXBase.HTMLAttributes<HTMLDsComboElement>;
-            "ds-contact-block": LocalJSX.DsContactBlock & JSXBase.HTMLAttributes<HTMLDsContactBlockElement>;
-            "ds-contact-form": LocalJSX.DsContactForm & JSXBase.HTMLAttributes<HTMLDsContactFormElement>;
-            "ds-content-block": LocalJSX.DsContentBlock & JSXBase.HTMLAttributes<HTMLDsContentBlockElement>;
-            "ds-customer-page": LocalJSX.DsCustomerPage & JSXBase.HTMLAttributes<HTMLDsCustomerPageElement>;
-            "ds-dropdown": LocalJSX.DsDropdown & JSXBase.HTMLAttributes<HTMLDsDropdownElement>;
-            "ds-dropdown-item": LocalJSX.DsDropdownItem & JSXBase.HTMLAttributes<HTMLDsDropdownItemElement>;
-            "ds-faq": LocalJSX.DsFaq & JSXBase.HTMLAttributes<HTMLDsFaqElement>;
-            "ds-feature-configurator": LocalJSX.DsFeatureConfigurator & JSXBase.HTMLAttributes<HTMLDsFeatureConfiguratorElement>;
-            "ds-features-configurator": LocalJSX.DsFeaturesConfigurator & JSXBase.HTMLAttributes<HTMLDsFeaturesConfiguratorElement>;
-            "ds-filemanager": LocalJSX.DsFilemanager & JSXBase.HTMLAttributes<HTMLDsFilemanagerElement>;
-            "ds-filters": LocalJSX.DsFilters & JSXBase.HTMLAttributes<HTMLDsFiltersElement>;
-            "ds-footer": LocalJSX.DsFooter & JSXBase.HTMLAttributes<HTMLDsFooterElement>;
-            "ds-giftcard": LocalJSX.DsGiftcard & JSXBase.HTMLAttributes<HTMLDsGiftcardElement>;
-            "ds-grade-star": LocalJSX.DsGradeStar & JSXBase.HTMLAttributes<HTMLDsGradeStarElement>;
-            "ds-grid": LocalJSX.DsGrid & JSXBase.HTMLAttributes<HTMLDsGridElement>;
-            "ds-grid-item": LocalJSX.DsGridItem & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
-            "ds-heading": LocalJSX.DsHeading & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
-            "ds-html": LocalJSX.DsHtml & JSXBase.HTMLAttributes<HTMLDsHtmlElement>;
-            "ds-html-editor": LocalJSX.DsHtmlEditor & JSXBase.HTMLAttributes<HTMLDsHtmlEditorElement>;
-            "ds-icon": LocalJSX.DsIcon & JSXBase.HTMLAttributes<HTMLDsIconElement>;
-            "ds-info-window": LocalJSX.DsInfoWindow & JSXBase.HTMLAttributes<HTMLDsInfoWindowElement>;
-            "ds-input-date": LocalJSX.DsInputDate & JSXBase.HTMLAttributes<HTMLDsInputDateElement>;
-            "ds-input-modal": LocalJSX.DsInputModal & JSXBase.HTMLAttributes<HTMLDsInputModalElement>;
-            "ds-input-number": LocalJSX.DsInputNumber & JSXBase.HTMLAttributes<HTMLDsInputNumberElement>;
-            "ds-json": LocalJSX.DsJson & JSXBase.HTMLAttributes<HTMLDsJsonElement>;
-            "ds-lang": LocalJSX.DsLang & JSXBase.HTMLAttributes<HTMLDsLangElement>;
-            "ds-lang-selector": LocalJSX.DsLangSelector & JSXBase.HTMLAttributes<HTMLDsLangSelectorElement>;
-            "ds-links-list": LocalJSX.DsLinksList & JSXBase.HTMLAttributes<HTMLDsLinksListElement>;
-            "ds-login": LocalJSX.DsLogin & JSXBase.HTMLAttributes<HTMLDsLoginElement>;
-            "ds-main-configurator": LocalJSX.DsMainConfigurator & JSXBase.HTMLAttributes<HTMLDsMainConfiguratorElement>;
-            "ds-map": LocalJSX.DsMap & JSXBase.HTMLAttributes<HTMLDsMapElement>;
-            "ds-map-location": LocalJSX.DsMapLocation & JSXBase.HTMLAttributes<HTMLDsMapLocationElement>;
-            "ds-map-marker": LocalJSX.DsMapMarker & JSXBase.HTMLAttributes<HTMLDsMapMarkerElement>;
-            "ds-marquee": LocalJSX.DsMarquee & JSXBase.HTMLAttributes<HTMLDsMarqueeElement>;
-            "ds-marquee-configurator": LocalJSX.DsMarqueeConfigurator & JSXBase.HTMLAttributes<HTMLDsMarqueeConfiguratorElement>;
-            "ds-media": LocalJSX.DsMedia & JSXBase.HTMLAttributes<HTMLDsMediaElement>;
-            "ds-message": LocalJSX.DsMessage & JSXBase.HTMLAttributes<HTMLDsMessageElement>;
-            "ds-modal": LocalJSX.DsModal & JSXBase.HTMLAttributes<HTMLDsModalElement>;
-            "ds-nav": LocalJSX.DsNav & JSXBase.HTMLAttributes<HTMLDsNavElement>;
-            "ds-nav-item": LocalJSX.DsNavItem & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
-            "ds-newsletter": LocalJSX.DsNewsletter & JSXBase.HTMLAttributes<HTMLDsNewsletterElement>;
-            "ds-page": LocalJSX.DsPage & JSXBase.HTMLAttributes<HTMLDsPageElement>;
-            "ds-panel": LocalJSX.DsPanel & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
-            "ds-panel-configurator": LocalJSX.DsPanelConfigurator & JSXBase.HTMLAttributes<HTMLDsPanelConfiguratorElement>;
-            "ds-panel-group": LocalJSX.DsPanelGroup & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
-            "ds-panels-configurator": LocalJSX.DsPanelsConfigurator & JSXBase.HTMLAttributes<HTMLDsPanelsConfiguratorElement>;
-            "ds-password": LocalJSX.DsPassword & JSXBase.HTMLAttributes<HTMLDsPasswordElement>;
-            "ds-post-list": LocalJSX.DsPostList & JSXBase.HTMLAttributes<HTMLDsPostListElement>;
-            "ds-product": LocalJSX.DsProduct & JSXBase.HTMLAttributes<HTMLDsProductElement>;
-            "ds-product-block": LocalJSX.DsProductBlock & JSXBase.HTMLAttributes<HTMLDsProductBlockElement>;
-            "ds-product-list": LocalJSX.DsProductList & JSXBase.HTMLAttributes<HTMLDsProductListElement>;
-            "ds-product-list-header": LocalJSX.DsProductListHeader & JSXBase.HTMLAttributes<HTMLDsProductListHeaderElement>;
-            "ds-product-page": LocalJSX.DsProductPage & JSXBase.HTMLAttributes<HTMLDsProductPageElement>;
-            "ds-product-page-configurator": LocalJSX.DsProductPageConfigurator & JSXBase.HTMLAttributes<HTMLDsProductPageConfiguratorElement>;
-            "ds-product-search": LocalJSX.DsProductSearch & JSXBase.HTMLAttributes<HTMLDsProductSearchElement>;
-            "ds-products-configurator": LocalJSX.DsProductsConfigurator & JSXBase.HTMLAttributes<HTMLDsProductsConfiguratorElement>;
-            "ds-rating-list": LocalJSX.DsRatingList & JSXBase.HTMLAttributes<HTMLDsRatingListElement>;
-            "ds-reassurance": LocalJSX.DsReassurance & JSXBase.HTMLAttributes<HTMLDsReassuranceElement>;
-            "ds-register": LocalJSX.DsRegister & JSXBase.HTMLAttributes<HTMLDsRegisterElement>;
-            "ds-rsp": LocalJSX.DsRsp & JSXBase.HTMLAttributes<HTMLDsRspElement>;
-            "ds-search": LocalJSX.DsSearch & JSXBase.HTMLAttributes<HTMLDsSearchElement>;
-            "ds-search-bar": LocalJSX.DsSearchBar & JSXBase.HTMLAttributes<HTMLDsSearchBarElement>;
-            "ds-select": LocalJSX.DsSelect & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
-            "ds-sidebar": LocalJSX.DsSidebar & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
-            "ds-slider": LocalJSX.DsSlider & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
-            "ds-slider-item": LocalJSX.DsSliderItem & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
-            "ds-slider-menu": LocalJSX.DsSliderMenu & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
-            "ds-social-link": LocalJSX.DsSocialLink & JSXBase.HTMLAttributes<HTMLDsSocialLinkElement>;
-            "ds-sticky-cart-button": LocalJSX.DsStickyCartButton & JSXBase.HTMLAttributes<HTMLDsStickyCartButtonElement>;
-            "ds-tag": LocalJSX.DsTag & JSXBase.HTMLAttributes<HTMLDsTagElement>;
-            "ds-text": LocalJSX.DsText & JSXBase.HTMLAttributes<HTMLDsTextElement>;
-            "ds-title": LocalJSX.DsTitle & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
-            "ds-title-bar": LocalJSX.DsTitleBar & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
-            "ds-title-configurator": LocalJSX.DsTitleConfigurator & JSXBase.HTMLAttributes<HTMLDsTitleConfiguratorElement>;
-            "ds-toaster": LocalJSX.DsToaster & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
-            "ds-toggle": LocalJSX.DsToggle & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
-            "ds-toggle-group": LocalJSX.DsToggleGroup & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
             /**
-             * Simple icon tooltip component
+             * A simple component to load ajax content: on `click` (default) or `load`, it requests the URL of its link
+             * as text (HTML) and puts the content of the response's `.ds-ajax-content` element in the target.
+             * While it loads, the target is `aria-busy="true"`. Loaded in the component itself (the link is replaced), the content
+             * takes the focus when the link had it; loaded in another target after a click, the target is a polite live region, which
+             * screen readers read. A failed load shows `error-message` in an alert (`role="alert"`) after the link, and emits
+             * `ajaxError`; a load emits `ajaxLoaded`.
+             * Version: 1.0
              */
-            "ds-tooltip": LocalJSX.DsTooltip & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
-            "ds-trigger": LocalJSX.DsTrigger & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
-            "ds-txt-img-configurator": LocalJSX.DsTxtImgConfigurator & JSXBase.HTMLAttributes<HTMLDsTxtImgConfiguratorElement>;
-            "ds-video": LocalJSX.DsVideo & JSXBase.HTMLAttributes<HTMLDsVideoElement>;
-            "ds-vimeo": LocalJSX.DsVimeo & JSXBase.HTMLAttributes<HTMLDsVimeoElement>;
-            "ds-wishlist-button": LocalJSX.DsWishlistButton & JSXBase.HTMLAttributes<HTMLDsWishlistButtonElement>;
-            "pronto-content-admin": LocalJSX.ProntoContentAdmin & JSXBase.HTMLAttributes<HTMLProntoContentAdminElement>;
-            "pronto-field": LocalJSX.ProntoField & JSXBase.HTMLAttributes<HTMLProntoFieldElement>;
-            "pronto-fieldset": LocalJSX.ProntoFieldset & JSXBase.HTMLAttributes<HTMLProntoFieldsetElement>;
-            "pronto-form": LocalJSX.ProntoForm & JSXBase.HTMLAttributes<HTMLProntoFormElement>;
-            "pronto-icon": LocalJSX.ProntoIcon & JSXBase.HTMLAttributes<HTMLProntoIconElement>;
-            "pronto-modal": LocalJSX.ProntoModal & JSXBase.HTMLAttributes<HTMLProntoModalElement>;
-            "pronto-product-list": LocalJSX.ProntoProductList & JSXBase.HTMLAttributes<HTMLProntoProductListElement>;
+            "ds-ajax": LocalJSX.IntrinsicElements["ds-ajax"] & JSXBase.HTMLAttributes<HTMLDsAjaxElement>;
+            /**
+             * An inline message of the page (not a toast): `info`, `success`, `warning` or `error` (`type`), with an optional title
+             * (`heading`, or a `slot="title"` element) and its content. The theme draws the icon of its type, decorative: a prefix
+             * hidden on the screen (`Error:`, `labels`) tells the type to assistive technologies, before the title or the content.
+             * It is not a live region by default (`live="off"`): a message that is part of the page is read where it is. An alert that
+             * a script inserts, shows or fills is announced with `live`: `polite` (`role="status"`) or `assertive` (`role="alert"`).
+             * Its region is rendered before its content reaches assistive technologies (`DS_ALERT_LIVE_DELAY`), so that the content
+             * is announced; a change of its content is announced too, the whole region (`aria-atomic`).
+             * `dismissible` renders a dismiss button: `alertDismiss` (cancelable), then the alert is hidden (`hidden`), the focus
+             * goes to the next element of the Tab order (else the previous one) when it was in the alert, and `alertDismissed`.
+             */
+            "ds-alert": LocalJSX.IntrinsicElements["ds-alert"] & JSXBase.HTMLAttributes<HTMLDsAlertElement>;
+            /**
+             * A "Back to top" link, fixed in the bottom corner of the end side of the viewport, shown once the page is scrolled past
+             * `threshold` (one viewport height by default). It is a native link to `#top`, which a browser follows by itself (the top
+             * of the document); a click or Enter scrolls to the top (smoothly, at once with less motion) and moves the focus to the
+             * `target` (else the `#top` element, the main landmark, the first heading, else the body), so that the keyboard and
+             * screen readers go on from the top too, then emits `backToTop`.
+             * Hidden, it is not rendered for the pointer, the keyboard or assistive technologies (`visibility: hidden`, `inert`), and
+             * takes no room (fixed): the page does not move when it shows. It follows the scroll with a passive listener, read once
+             * per animation frame, removed when it leaves the document.
+             */
+            "ds-back-to-top": LocalJSX.IntrinsicElements["ds-back-to-top"] & JSXBase.HTMLAttributes<HTMLDsBackToTopElement>;
+            /**
+             * A small label or count, not interactive: a text (`New`), or a `count` (`3`; `99+` above `max`), in the color of its
+             * `type`. `label` gives assistive technologies the text to read instead of the visible one, with the count in it and its
+             * plural (`3 unread messages`): the visible text is then `aria-hidden`, the label hidden on the screen. `dot` shows a dot
+             * instead of the text, which is then hidden on the screen only. It is not a live region: a page that must tell a change of
+             * the count does it with a live region of its own.
+             */
+            "ds-badge": LocalJSX.IntrinsicElements["ds-badge"] & JSXBase.HTMLAttributes<HTMLDsBadgeElement>;
+            /**
+             * A block: a body, plus a header and a footer wrapper when it has `slot="header"` / `slot="footer"` children.
+             * Its main class, `ds[-<name>]-<type or context>`, is on the host and prefixes the element classes
+             * (`ds-home-hero__header`, `__body`, `__footer`).
+             * An `article` block is an article (`role="article"`); a `section` block named by `label` is a region landmark
+             * (`role="region"`). The other blocks have no role. A `role` of the element is kept.
+             */
+            "ds-block": LocalJSX.IntrinsicElements["ds-block"] & JSXBase.HTMLAttributes<HTMLDsBlockElement>;
+            /**
+             * A breadcrumb trail (WAI-ARIA breadcrumb pattern): the links to the pages above the current one, from the top level. The
+             * page writes the trail in the element, as an ordered list of links (`<ol><li><a href="/">Home</a></li>…</ol>`), which
+             * works without the script; the last item is the current page, a link or a text. The component never moves nor replaces
+             * those nodes. It makes the element a navigation landmark (`role="navigation"`) named by `label` ("Breadcrumb"), unless the
+             * element is in a `nav` element (or another navigation landmark) or holds one, and marks the last item as the current page
+             * (`aria-current="page"` on its link, else on the item) when no element of the list has an `aria-current` of its own. The
+             * theme draws the separators between the items, in CSS: they are not read.
+             * `collapse` shortens a long trail: the first item, a "Show full path" button (`aria-expanded="false"`), and the last
+             * items; the hidden items are `hidden` (not rendered, not focusable, not read). The button shows them all, moves the focus
+             * to the first one, and goes away. The component inserts the item of that button in the list, after the first item, while
+             * the trail is collapsed.
+             */
+            "ds-breadcrumb": LocalJSX.IntrinsicElements["ds-breadcrumb"] & JSXBase.HTMLAttributes<HTMLDsBreadcrumbElement>;
+            /**
+             * A custom select: a toggle button opens a list of options, given as an array or a JSON string in `options`.
+             * Single selection (a click selects an option and closes the list) or `multiple` selection (a click toggles
+             * an option and keeps the list open). An option with a `url` renders a link; `mode="image"` shows the options'
+             * images; `mode="dropdown"` renders no toggle button (open the list with `open()` or `toggle()`, e.g. from a
+             * `ds-trigger`). A click outside the component closes the list.
+             * It follows the WAI-ARIA select-only combobox pattern: the toggle button is a `combobox` that keeps the focus and
+             * points to the active option (`aria-activedescendant`) of the `listbox`; the arrow keys, Home, End, Page Up, Page
+             * Down and the typed characters move the active option, Enter and Space select it, Escape closes the list. In
+             * `dropdown` mode, `open()` moves the focus to the list, and closing it gives the focus back.
+             * It is form-associated, as a native select: it submits the value of its selected option (of each one, in a multiple
+             * combo) under its `name`; a `<label>` names it and a click on the label focuses it; a disabled fieldset disables it; a
+             * form reset gives it back its selection of the load; `required` makes it invalid without a selected option.
+             */
+            "ds-combo": LocalJSX.IntrinsicElements["ds-combo"] & JSXBase.HTMLAttributes<HTMLDsComboElement>;
+            /**
+             * A form field around a native control the page writes in it: an `input` (a text box: text, email, number, tel, url,
+             * search, password; a date or a time), a `textarea`, a `select` or a `ds-select`. The field renders a label, a hint, an
+             * error message, a character counter and a password toggle around the control, and links them to it (`<label for>`,
+             * `aria-describedby`); the control stays the form control: it is submitted, autofilled, validated and restored by the
+             * browser as without the field, which never creates, moves nor names a form control, and submits nothing.
+             * The error message shows once the user should see it, as `:user-invalid`: after an `invalid` event of the control (a
+             * submission, `checkValidity()`, `reportValidity()`) or once the user changed its value (`change`), until it is valid or
+             * the form is reset. Its text is the message of the browser, or `messages` and `error-message`.
+             */
+            "ds-field": LocalJSX.IntrinsicElements["ds-field"] & JSXBase.HTMLAttributes<HTMLDsFieldElement>;
+            /**
+             * A grid of columns: its children, `ds-grid-item` elements, are laid out in `cols` columns by CSS Grid, each one spanning
+             * the number of columns of its `width`. The props set custom properties on the `.ds-grid` element (`--ds-grid-cols`,
+             * `--ds-grid-h-gap`, `--ds-grid-v-gap`, `--ds-grid-cell-ratio`) and classes, which the component stylesheet reads: the
+             * component computes no size. They can change per breakpoint with `ds-rsp` (`data-rsp`, the grid is a subscriber).
+             */
+            "ds-grid": LocalJSX.IntrinsicElements["ds-grid"] & JSXBase.HTMLAttributes<HTMLDsGridElement>;
+            /**
+             * A cell of a `ds-grid`: it spans the number of columns of its `width` (`--ds-grid-span`, which the grid stylesheet reads),
+             * and, with a `ratio`, it is as high as that ratio of its width (`--ds-grid-item-ratio`, `aspect-ratio`). The component
+             * writes these custom properties on itself and computes no size: `width` can change per breakpoint with `ds-rsp`.
+             */
+            "ds-grid-item": LocalJSX.IntrinsicElements["ds-grid-item"] & JSXBase.HTMLAttributes<HTMLDsGridItemElement>;
+            /**
+             * A heading block: an image, a main title (a `ds-title`), a sub-title and a description, in an `hgroup`. The main title is
+             * the heading: put a heading element (`h1`…`h6`) in the default slot, or set `level`. The sub-title and the description
+             * are not headings: put a text or a `p` in their slots.
+             */
+            "ds-heading": LocalJSX.IntrinsicElements["ds-heading"] & JSXBase.HTMLAttributes<HTMLDsHeadingElement>;
+            /**
+             * An icon of the theme (`type`): an SVG image, as large as the text and of its color. Decorative by default: hidden from
+             * assistive technologies (`aria-hidden="true"`), the text next to it says what it means. With `label` (or an `aria-label`
+             * / `aria-labelledby` of its own), it is an image with that name (`role="img"`), for an icon that stands alone.
+             */
+            "ds-icon": LocalJSX.IntrinsicElements["ds-icon"] & JSXBase.HTMLAttributes<HTMLDsIconElement>;
+            /**
+             * A loading indicator (WAI-ARIA `progressbar`), named by `label` ("Loading" by default). Indeterminate by default: a
+             * spinner, without a value. Determinate when `value` is a number: a bar filled to `value` of `max` (100 by default), with
+             * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, as a native `<progress>`. Block by default (centered in its
+             * container, a bar as wide as it), or `inline` (in the line of the text, at its size); `size` `sm`, `md` or `lg`.
+             * It is not a live region: a page tells the start and the end of a load with `aria-busy` on the region that loads, and a
+             * status message (a polite `ds-alert`) when it matters. With less motion, the spinner keeps turning, more slowly.
+             */
+            "ds-loader": LocalJSX.IntrinsicElements["ds-loader"] & JSXBase.HTMLAttributes<HTMLDsLoaderElement>;
+            /**
+             * A modal dialog in a lightbox (WAI-ARIA dialog pattern), shown while `shown` is set: a `role="dialog"` element with
+             * `aria-modal="true"`, named by its `slot="title"` element (`aria-labelledby`) or by `label` (`aria-label`), and described by
+             * its `slot="description"` element (`aria-describedby`). Shown, it moves the focus into the dialog (its first element
+             * with `autofocus`, else its first focusable element, else the dialog itself), keeps Tab and Shift+Tab in it, closes on
+             * Escape and on a mouse down outside the dialog, and gives the focus back, when it is hidden, to the element that had it.
+             * While at least one modal of the document is shown, the body has the `ds-js--modal-open` class, which locks the page
+             * scroll (`overflow: hidden`, no inline style): the class is removed when the last shown modal is hidden or removed from
+             * the document.
+             */
+            "ds-modal": LocalJSX.IntrinsicElements["ds-modal"] & JSXBase.HTMLAttributes<HTMLDsModalElement>;
+            /**
+             * A navigation: a list of `ds-nav-item` elements. A main `ds-nav` is a navigation landmark (`role="navigation"`, or the
+             * `role` its element has), named by `label`; a `ds-nav` in a `ds-nav-item` (a sub-navigation), or in a `nav` element or
+             * another navigation landmark, is a list only. Its items are the items of the list (`role="list"`, `role="listitem"`).
+             */
+            "ds-nav": LocalJSX.IntrinsicElements["ds-nav"] & JSXBase.HTMLAttributes<HTMLDsNavElement>;
+            /**
+             * An item of a `ds-nav`: a link (the default slot) and, with `has-children`, a sub-navigation (slot `children`, a
+             * `ds-nav`) and its expand button. It follows the WAI-ARIA disclosure navigation pattern (not a menu): the expand button
+             * (`aria-expanded`, `aria-controls`) shows and hides the sub-navigation, which is hidden from the keyboard and from
+             * assistive technologies while it is collapsed (the theme: `visibility: hidden` once it has collapsed); Escape closes the
+             * sub-navigation that has the focus and gives the focus back to its button. Where the theme drops the sub-navigation
+             * down on hover and focus instead (from `md`: no expand button), Escape hides it until the focus or the pointer leaves
+             * the item. `is-active` marks the current page: its link gets `aria-current="page"`.
+             * The item knows the mode of the theme from the same breakpoint, `md`: the media query `(min-width: <--ds-bp-md>)`
+             * (`matchMedia()`). When the viewport crosses it, the item starts again as at load in the new mode.
+             */
+            "ds-nav-item": LocalJSX.IntrinsicElements["ds-nav-item"] & JSXBase.HTMLAttributes<HTMLDsNavItemElement>;
+            /**
+             * A pagination: a navigation landmark (`role="navigation"`) named by `label` ("Pagination"), with a list of the pages
+             * (`total`) around the current one (`current`): the first and last pages (`boundaries`), the pages next to the current one
+             * (`siblings`), and an ellipsis for the others (decorative, `aria-hidden`); the previous and next controls around it, and
+             * the first and last ones with `first-last`. Each page shows its number and is named "Page 3" (`labels`); the current
+             * page has `aria-current="page"`. On the first page, the previous and first controls are unavailable, on the last page the
+             * next and last ones: rendered in their place, not focusable.
+             * With `href-template` (`?page={page}`), the controls are links to the pages: the browser follows them, no script changes
+             * the page, and the next page is a new page. Without it, they are buttons: a click emits `pageChange` (`detail.page`, cancelable), then
+             * `current` changes, and the focus stays on the control the user pressed, or goes to the equivalent one (the current page,
+             * when that control became unavailable): it is never lost.
+             * Below a breakpoint of the theme (`compact-below`, `sm`), or with `compact`, it is compact: the previous and next
+             * controls (and first and last) around "Page 3 of 10", with the same names.
+             */
+            "ds-pagination": LocalJSX.IntrinsicElements["ds-pagination"] & JSXBase.HTMLAttributes<HTMLDsPaginationElement>;
+            /**
+             * A panel: a title and a content, which expands and collapses. Two types, which `ds-panel-group` sets on its panels:
+             * - `collapsible` (WAI-ARIA disclosure / accordion pattern): the title holds a button (`role="button"`, `aria-expanded`,
+             *   `aria-controls`), which Enter, Space and a click toggle; with a heading level (`level`, or the level of a heading put
+             *   in the `title` slot, which then gets `role="none"`), the title is a heading (`role="heading"`, `aria-level`) around
+             *   that button.
+             * - `tab`: in a `ds-panel-group` (WAI-ARIA tabs pattern), the title is a `tab` (`aria-selected`, `aria-controls`) of the
+             *   tab list of the group and the content a `tabpanel` (`aria-labelledby`); the group handles the arrow keys.
+             * The content of a panel that is not expanded is inert: out of the Tab order and of the accessibility tree.
+             * `panelShow` / `panelHide` are emitted when the state changes, `panelShown` / `panelHidden` at the end of its transition
+             * (at once when there is none).
+             */
+            "ds-panel": LocalJSX.IntrinsicElements["ds-panel"] & JSXBase.HTMLAttributes<HTMLDsPanelElement>;
+            /**
+             * Groups `ds-panel` elements, and gives them its `type`:
+             * - `tab` (WAI-ARIA tabs pattern, automatic activation): the titles of the panels are the tabs of a tab list, rendered by
+             *   the group (`role="tablist"`, named by `label` or `labelledby`, owning the tabs with `aria-owns`), one expanded at a
+             *   time. Tab reaches the selected tab, then its panel; Left and Right Arrow, Home and End move the focus to another tab
+             *   and select it.
+             * - `collapsible`: accordion panels, each one expanded and collapsed by its title button; `solo-content` keeps one
+             *   expanded at a time.
+             * The panels of the group are its own: not those of a group or a panel nested in one of them.
+             */
+            "ds-panel-group": LocalJSX.IntrinsicElements["ds-panel-group"] & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
+            /**
+             * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
+             * attribute the properties their `data-rsp` attribute declares for it (see the README).
+             * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
+             * once, when the viewport crosses a boundary, and only then, at the widths where the media queries of the theme change.
+             * Subscribers added later (`subscribe()`, or inserted in the document) get the params of the current breakpoint at once.
+             * The theme breakpoints are its `--ds-bp-labels` and `--ds-bp-<label>` custom properties (`tokens.getBreakpoints()`).
+             * Without breakpoints (theme stylesheet not loaded and no `breakpoints` property) it only logs a warning, and starts
+             * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
+             */
+            "ds-rsp": LocalJSX.IntrinsicElements["ds-rsp"] & JSXBase.HTMLAttributes<HTMLDsRspElement>;
+            /**
+             * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
+             * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
+             * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
+             * (the id of the select).
+             * The native select is the form control: it submits its value under the `name`, the browser validates it (`required`),
+             * a disabled fieldset disables it, and the box follows a form reset.
+             */
+            "ds-select": LocalJSX.IntrinsicElements["ds-select"] & JSXBase.HTMLAttributes<HTMLDsSelectElement>;
+            /**
+             * A panel fixed on a side of the screen, that slides in (`show()`) and out (`hide()`). Not modal: the page stays usable
+             * while it is shown. It is a `complementary` landmark (or the `role` its element has, such as `navigation`), named by
+             * `label` (`aria-label`). Hidden, it is inert: its content is neither focusable nor read by screen readers. `show()`
+             * moves the focus into it (its first element with `autofocus`, else its first focusable element, else the sidebar
+             * itself); Escape hides it while the focus is in it; `hide()` gives the focus back to the element that had it before.
+             */
+            "ds-sidebar": LocalJSX.IntrinsicElements["ds-sidebar"] & JSXBase.HTMLAttributes<HTMLDsSidebarElement>;
+            /**
+             * A carousel (WAI-ARIA carousel pattern): its slides (`ds-slider-item`) slide in a row, moved by the previous and next
+             * buttons, the dots of its menu (`params.menu`), a swipe, or the automatic rotation (`params.autoplay`).
+             * The slider is a `region` (`aria-roledescription="carousel"`) named by `label`; each slide a `group`
+             * (`aria-roledescription="slide"`) named "2 of 5"; the slides out of view are inert. With the automatic rotation, the
+             * slider renders a button that stops and starts it, first in the Tab order; the rotation stops when the focus enters the
+             * slider, and pauses while the pointer is over it; it does not start with less motion. The list of slides is a polite
+             * live region (`aria-live`) but while it rotates. The texts read by assistive technologies are `labels`.
+             */
+            "ds-slider": LocalJSX.IntrinsicElements["ds-slider"] & JSXBase.HTMLAttributes<HTMLDsSliderElement>;
+            /**
+             * A slide of `ds-slider`, which makes it a `group` named by its place ("2 of 5").
+             */
+            "ds-slider-item": LocalJSX.IntrinsicElements["ds-slider-item"] & JSXBase.HTMLAttributes<HTMLDsSliderItemElement>;
+            /**
+             * The menu of `ds-slider` (`params.menu`): a list of dots, one per slide, each one a button that shows its slide. The
+             * list is named by `label`, each button by `item-label` ("Slide 2"); the button of the current slide has
+             * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
+             */
+            "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
+            /**
+             * A block of text, in the paragraph font style of the theme.
+             */
+            "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            /**
+             * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
+             * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
+             */
+            "ds-title": LocalJSX.IntrinsicElements["ds-title"] & JSXBase.HTMLAttributes<HTMLDsTitleElement>;
+            /**
+             * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+             */
+            "ds-title-bar": LocalJSX.IntrinsicElements["ds-title-bar"] & JSXBase.HTMLAttributes<HTMLDsTitleBarElement>;
+            /**
+             * Toast messages in a fixed box. Hidden until `show()` or `displayToast()`; a click hides it.
+             * The `--shown` / `--hidden` classes fade it in and out: `toasterShown` and `toasterHidden` are emitted
+             * at the end of that transition.
+             * Screen readers announce the messages through a live region, rendered from the start, empty, and hidden on the
+             * screen: `role="status"` (`aria-live="polite"`), or `role="alert"` (`aria-live="assertive"`) with the `error`
+             * modifier. Shown, the toaster writes its messages in it; hidden, it empties it. The toasts on the screen are
+             * `aria-hidden`: the live region holds the same text. The toaster never takes the focus.
+             * The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster, and starts
+             * again, from `closingDelay`, when they leave it (WCAG 2.2.1, Timing Adjustable).
+             */
+            "ds-toaster": LocalJSX.IntrinsicElements["ds-toaster"] & JSXBase.HTMLAttributes<HTMLDsToasterElement>;
+            /**
+             * A radio, checkbox, switch or icon toggle. A click checks a radio (it cannot be unchecked by a click)
+             * and checks or unchecks the other types; each change emits `toggle` with `{ name, value, checked }`.
+             * The element is the control: it has the role of its type (`switch`, `checkbox`, `radio`, `button` with
+             * `aria-pressed` for an `icon`), its state (`aria-checked`), and takes the focus (`tabindex="0"`); Space
+             * toggles it (checks a radio), Enter too for a switch or an icon. A disabled toggle is `aria-disabled` and
+             * cannot be focused.
+             * It is form-associated, as a native checkbox or radio: checked, it submits its `value` (`on` by default) under its
+             * `name` with its form; a `<label>` names it and a click on the label toggles it; a disabled fieldset disables it; a
+             * form reset gives it back its checked state of the load; `required` makes it invalid while it is not checked.
+             */
+            "ds-toggle": LocalJSX.IntrinsicElements["ds-toggle"] & JSXBase.HTMLAttributes<HTMLDsToggleElement>;
+            /**
+             * Groups `ds-toggle` elements and keeps their selected values (emitted with `toggleValueChange`).
+             * The group's `name` and `mods`, when set, replace those of its toggles, and its `type` applies to the toggles
+             * without a type of their own; changes after the load are passed on too, and removing the group's `name` or `mods`
+             * gives the toggles back the ones they had when they joined. Toggles added later join the group (with
+             * MutationObserver, in browsers).
+             * The element is a `radiogroup` when its toggles are radios with a single selection (`count` max 1), else a `group`.
+             * In a radio group, Tab reaches one radio (the checked one, else the first), and the arrow keys, Home and End move the
+             * focus and the selection between the enabled radios.
+             * It is form-associated: each of its toggles submits its own value (under the group's `name`), as native radios or
+             * checkboxes that share a name, and the group submits nothing; it validates the choice (`required`), a `<label>` names
+             * it, and a disabled fieldset disables it with its toggles.
+             */
+            "ds-toggle-group": LocalJSX.IntrinsicElements["ds-toggle-group"] & JSXBase.HTMLAttributes<HTMLDsToggleGroupElement>;
+            /**
+             * A tooltip (WAI-ARIA tooltip pattern): a message (`slot="message"`, given `role="tooltip"` and an id) that describes the
+             * content of the tooltip. The first focusable element of the content gets the message in its `aria-describedby`; without
+             * one, the tooltip box (`.ds-tooltip`) is made focusable (`tabindex="0"`) and gets it. The message is shown while the
+             * pointer is over the content or the message, and while the content has the keyboard focus; Escape hides it, without
+             * moving the focus or the pointer. On touch screens, a tap shows or hides it.
+             */
+            "ds-tooltip": LocalJSX.IntrinsicElements["ds-tooltip"] & JSXBase.HTMLAttributes<HTMLDsTooltipElement>;
+            /**
+             * Calls a method of a target element on an event: `<ds-trigger target="#slider" action="next">`.
+             * `action` is the method name, optionally followed by JSON arguments: `action='goTo:[2]'`.
+             * When it is the control (it calls on `click`, and its content has no link, button or other control of its own), the
+             * element is a button (WAI-ARIA button pattern): `role="button"` (or the `role` it already has), `tabindex="0"`, Enter
+             * and Space click it, and a disabled trigger is `aria-disabled` and cannot be focused. A content with its own control
+             * (a native `button`, a link) keeps its semantics: the trigger adds nothing, and the click of that control calls the action.
+             */
+            "ds-trigger": LocalJSX.IntrinsicElements["ds-trigger"] & JSXBase.HTMLAttributes<HTMLDsTriggerElement>;
         }
     }
 }

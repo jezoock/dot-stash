@@ -1,0 +1,46 @@
+@use '../tokens' as *;
+
+// ds-select: a box with the label and a chevron. The custom properties are documented in components/core/select/readme.md;
+// the native select that covers the box is in the component stylesheet.
+
+ds-select {
+  --ds-select-background: #{ds-color(gray, white)};
+  --ds-select-border-color: #{ds-color(gray, base)};
+  --ds-select-radius: #{ds-radius(sm)};
+  --ds-select-padding: #{ds-spacing(2) ds-spacing(7) ds-spacing(2) ds-spacing(3)};
+  --ds-select-invalid-color: #{ds-color(status, error)};
+}
+
+.ds-select {
+  border: 1px solid var(--ds-select-border-color);
+  border-radius: var(--ds-select-radius);
+  background-color: var(--ds-select-background);
+
+  &__label {
+    padding: var(--ds-select-padding);
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      right: ds-spacing(3);
+      transform: translateY(-50%);
+      @include ds-icon(angle-down);
+    }
+  }
+
+  // Invalid (its native select, once the user should see it): the border of the box in the error color.
+  &.--invalid {
+    border-color: var(--ds-select-invalid-color);
+  }
+
+  // The native select, which has the focus, is transparent: the box draws its focus indicator.
+  &:has(> .ds-select__input:focus-visible) {
+    @include ds-focus-ring();
+  }
+
+  // Disabled: its `disabled` (`--disabled`), or a disabled fieldset around it, which disables the native select.
+  &.--disabled,
+  &:has(> .ds-select__input:disabled) {
+    opacity: 0.5;
+  }
+}

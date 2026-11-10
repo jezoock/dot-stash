@@ -1,0 +1,145 @@
+@use './tokens' as *;
+
+// The keyframes of the engine mixins and base element styles.
+
+@include ds-keyframes();
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  @include ds-font-styles(page);
+  line-height: 1.5;
+  color: ds-color(gray, darkest);
+  background-color: ds-color(gray, white);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 ds-spacing(3);
+  font-family: ds-font-family(title);
+  font-weight: ds-font-weight(title);
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: ds-font-size(title, page-main);
+}
+
+h2 {
+  font-size: ds-font-size(title, section-main);
+}
+
+h3 {
+  font-size: ds-font-size(title, block-main);
+}
+
+h4,
+h5,
+h6 {
+  font-size: ds-font-size(title, block-sub);
+}
+
+p,
+ul,
+ol,
+figure,
+blockquote,
+pre {
+  margin: 0 0 ds-spacing(4);
+}
+
+a {
+  color: ds-colorset-text(link, primary);
+  text-decoration: ds-font-decoration(link);
+  text-underline-offset: 0.15em;
+
+  &:hover {
+    color: ds-color(primary, darker);
+  }
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+code,
+pre {
+  font-family: ds-font-family(text, code);
+  font-size: ds-font-size(text, code);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+input:not([type='checkbox'], [type='radio'], [type='range']),
+select,
+textarea {
+  padding: ds-spacing(2) ds-spacing(3);
+  border: 1px solid ds-color(gray, base);
+  border-radius: ds-radius(sm);
+  background-color: ds-color(gray, white);
+  caret-color: ds-color(input, caret);
+}
+
+hr {
+  margin: ds-spacing(6) 0;
+  border: 0;
+  border-top: 1px solid ds-color(gray, light);
+}
+
+// The focus indicator: an outline around the element that has the keyboard focus (or the focus a script gives after a
+// key press), from the focus tokens (--ds-focus-color, --ds-focus-width, --ds-focus-style, --ds-focus-offset). No rule of
+// the theme or of the components removes it: an element that draws its own focus state does it on :focus-visible too.
+:focus-visible {
+  @include ds-focus-ring();
+}
+
+// Less motion (prefers-reduced-motion: reduce): the transitions and animations end at once. Their durations become
+// 0.01ms, not 0, so that the transitionend and animationend events still come (ds-panel and ds-nav-item wait for them, or
+// for the end of the duration; ds-sidebar, ds-toaster and the slides of ds-slider drop their transitions with less
+// motion, and do not wait). The loading indicators keep turning, slowly (the spin() mixin). Smooth scrolling is off.
+// !important: wins over the transitions and animations of the skins and of the component stylesheets.
+@include ds-reduced-motion() {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Hidden on the screen, read by screen readers: the text of an icon button, a label, an announcement.
+// !important: the class wins over the rules of the element it is set on (a component class, a skin).
+.ds-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}

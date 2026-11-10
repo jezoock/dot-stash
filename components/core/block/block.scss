@@ -1,16 +1,27 @@
+// The structure of ds-block: a block element, and its header and footer wrappers, hidden when empty. The spacing and the
+// width of the body are the look of the theme (components/_block.scss), from the custom properties below.
+
+/**
+ * @prop --ds-block-header-gap: Space between the header (`__header`) and the body.
+ * @prop --ds-block-footer-gap: Space between the body and the footer (`__footer`).
+ * @prop --ds-block-max-width: Maximum width of the body (`__body`), centered. Not set by default (no maximum width): the `sm`, `md`, `lg` and `full-width` modifiers set it, and the bodies of the blocks nested in the block inherit it.
+ */
+
 .ds-section,
 .ds-block {
+  display: block;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  
+
+  // An empty wrapper is hidden. The slots are `header` and `footer` (block.tsx).
   &__header {
-    &:not(:has([slot="block-header"])) {
+    &:not(:has([slot='header'])) {
       display: none;
     }
   }
   &__footer {
-    &:not(:has([slot="block-footer"])) {
+    &:not(:has([slot='footer'])) {
       display: none;
     }
   }

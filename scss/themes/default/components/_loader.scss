@@ -1,0 +1,73 @@
+@use '../tokens' as *;
+
+// ds-loader: a spinner (the spinner icon, turning: spin(), which keeps turning with less motion, more slowly) or a bar in the
+// primary color on a light gray track. The custom properties are documented in components/core/loader/readme.md; the row
+// of the indicator and its label is in the component stylesheet.
+
+// The sizes of the indicator: its font size.
+$-sizes: (
+  sm: ds-token(font-size, 200),
+  md: ds-token(font-size, 400),
+  lg: ds-token(font-size, 800),
+);
+
+ds-loader {
+  --ds-loader-size: #{ds-token(font-size, 400)};
+  --ds-loader-color: #{ds-color(primary, base)};
+  --ds-loader-track-color: #{ds-color(gray, light)};
+  --ds-loader-bar-height: 0.25em;
+  --ds-loader-bar-width: 6em;
+  --ds-loader-radius: #{ds-radius(pill)};
+  --ds-loader-gap: #{ds-spacing(2)};
+}
+
+.ds-loader {
+  // Inline: the size of the text around it, unless a size is given (below).
+  &.--inline {
+    --ds-loader-size: 1em;
+  }
+
+  @each $name, $size in $-sizes {
+    &.--#{$name} {
+      --ds-loader-size: #{$size};
+    }
+  }
+
+  &__spinner,
+  &__track {
+    font-size: var(--ds-loader-size);
+  }
+
+  // The spinner: decorative (the element is a named progress bar), in the color of the loader.
+  &__spinner::before {
+    color: var(--ds-loader-color);
+    @include ds-icon(spinner, block, $alt: '');
+  }
+
+  &__spinner::before {
+    @include spin();
+  }
+
+  // The track: a transparent border, which the browser draws in the color of the text in forced colors, around the bar.
+  &__track {
+    height: calc(var(--ds-loader-bar-height) + 2px);
+    border: 1px solid transparent;
+    border-radius: var(--ds-loader-radius);
+    background-color: var(--ds-loader-track-color);
+  }
+
+  // The filled part: painted with the color of its text, so that in forced colors it takes the color of the text around it
+  // (as an icon), instead of the background of the page.
+  &__bar {
+    border-radius: var(--ds-loader-radius);
+    color: var(--ds-loader-color);
+    background-color: currentColor;
+    transition: width 0.2s ease;
+    forced-color-adjust: none;
+    forced-color-adjust: preserve-parent-color;
+
+    @media (forced-colors: active) {
+      color: inherit;
+    }
+  }
+}

@@ -1,0 +1,207 @@
+@use '../tools/references' as *;
+
+// *** COLORS *** //
+// Color families and their shades. A theme replaces the whole map: keep the families and shade names, the tools
+// and the colorset below read them.
+
+$colors: (
+  primary: (
+    darker: #1e3a8a,
+    dark: #1d4ed8,
+    base: #2563eb,
+    light: #dbeafe,
+  ),
+  secondary: (
+    darker: #0f172a,
+    dark: #1e293b,
+    base: #334155,
+    light: #94a3b8,
+  ),
+  gray: (
+    white: #ffffff,
+    lightest: #f8fafc,
+    lighter: #f1f5f9,
+    light: #e2e8f0,
+    base: #cbd5e1,
+    dark: #64748b,
+    darker: #334155,
+    darkest: #0f172a,
+    black: #000000,
+  ),
+  status: (
+    success: #15803d,
+    warning: #b45309,
+    error: #dc2626,
+    info: #2563eb,
+    busy: #94a3b8,
+    disabled: #64748b,
+    discount: #dc2626,
+    new: #0e7490,
+  ),
+  input: (
+    caret: #2563eb,
+    // Toggles (ds-toggle): the border and mark of a radio or a checkbox, unchecked, checked or disabled, and the track
+    // and knob of a switch.
+    unchecked: #000000,
+    checked: #ff0000,
+    disabled: #808080,
+    track: #dddddd,
+    track-disabled: #eeeeee,
+    knob: #777777,
+    knob-checked: #00cc00,
+    knob-disabled: #dddddd,
+  ),
+  shadow: (
+    base: rgb(15 23 42 / 16%),
+    strong: rgb(0 0 0 / 60%),
+  ),
+  // Position indicators: the dots of a slider menu, the current one active.
+  indicator: (
+      base: #283583,
+      active: #e1388c,
+    ),
+) !default;
+
+// *** COLORSETS *** //
+// Named sets of text, border and background colors, by type (solid, outlined, link) and variant. Their colors are references
+// to $colors (ds-ref(color, <family>, <shade>)): they follow the configured $colors, and their custom properties
+// (--ds-colorset-…) are var(--ds-color-…), so they follow a color set at runtime on :root too.
+
+$colorset: (
+  default: (
+    text: ds-ref(color, primary, base),
+    border: transparent,
+    background: transparent,
+  ),
+  solid: (
+    default: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    primary: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    primary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, dark),
+      background: ds-ref(color, primary, dark),
+    ),
+    primary-light: (
+      text: ds-ref(color, primary, darker),
+      border: ds-ref(color, primary, light),
+      background: ds-ref(color, primary, light),
+    ),
+    primary-light-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    secondary: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, secondary, base),
+    ),
+    secondary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, secondary, dark),
+      background: ds-ref(color, secondary, dark),
+    ),
+    white: (
+      text: ds-ref(color, gray, darkest),
+      border: ds-ref(color, gray, white),
+      background: ds-ref(color, gray, white),
+    ),
+    white-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, gray, darkest),
+      background: ds-ref(color, gray, darkest),
+    ),
+    gray: (
+      text: ds-ref(color, gray, darkest),
+      border: ds-ref(color, gray, light),
+      background: ds-ref(color, gray, light),
+    ),
+    gray-hover: (
+      text: ds-ref(color, gray, darkest),
+      border: ds-ref(color, gray, base),
+      background: ds-ref(color, gray, base),
+    ),
+    disabled: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, status, disabled),
+      background: ds-ref(color, status, disabled),
+    ),
+  ),
+  outlined: (
+    default: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: transparent,
+    ),
+    primary: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: transparent,
+    ),
+    primary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, primary, base),
+      background: ds-ref(color, primary, base),
+    ),
+    secondary: (
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: transparent,
+    ),
+    secondary-hover: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, secondary, base),
+      background: ds-ref(color, secondary, base),
+    ),
+    white: (
+      text: ds-ref(color, gray, white),
+      border: ds-ref(color, gray, white),
+      background: transparent,
+    ),
+    white-hover: (
+      text: ds-ref(color, gray, darkest),
+      border: ds-ref(color, gray, white),
+      background: ds-ref(color, gray, white),
+    ),
+    disabled: (
+      text: ds-ref(color, status, disabled),
+      border: ds-ref(color, status, disabled),
+      background: transparent,
+    ),
+  ),
+  link: (
+    default: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: transparent,
+    ),
+    primary: (
+      text: ds-ref(color, primary, base),
+      border: ds-ref(color, primary, base),
+      background: transparent,
+    ),
+    secondary: (
+      text: ds-ref(color, secondary, base),
+      border: ds-ref(color, secondary, base),
+      background: transparent,
+    ),
+    disabled: (
+      text: ds-ref(color, status, disabled),
+      border: ds-ref(color, status, disabled),
+      background: transparent,
+    ),
+  ),
+) !default;
+
+// *** GRADIENTS *** //
+// Named gradients for the gradient() function and mixin: (name: (fallback: <color>, from: <color>, to: <color>)).
+
+$gradients: () !default;

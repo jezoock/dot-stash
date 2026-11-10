@@ -1,0 +1,137 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+@use '../variables' as *;
+
+// *** Icons *** //
+// An icon is an SVG image of $icons drawn as a mask: its element (a pseudo-element, mostly) is a 1em square painted with
+// the color of its text (`background-color: currentColor`), through the image of the icon (`mask-image`). Its size is its
+// font size, its color its text color; no font or image file is requested.
+//
+// The image of an icon is a custom property, --ds-icons-<name>: url(…), on :root. A stylesheet writes those of the icons
+// it draws, once each: ds-tokens() (at the end of the index.scss of a theme) writes the icons the mixins below drew before
+// it, and ds-icon-tokens() those of a page stylesheet. A stylesheet that loads after the theme replaces an icon by its
+// property (`:root { --ds-icons-plus: url(…); }`). The ds-icon component owns the --ds-icon-… properties (--ds-icon-size).
+
+// The icons the mixins drew in this stylesheet, in the order of their first use.
+$-drawn: ();
+
+$-name-chars: 'abcdefghijklmnopqrstuvwxyz0123456789-';
+
+// The custom property of the image of an icon: ds-icon-property(plus) → --ds-icons-plus. An unknown icon is an error.
+@function ds-icon-property($name) {
+  @if not map.has-key($icons, $name) {
+    @error string.unquote('Unknown icon: #{$name}. Icons: #{map.keys($icons)}.');
+  }
+
+  $name: '#{$name}';
+
+  @for $i from 1 through string.length($name) {
+    @if not string.index($-name-chars, string.slice($name, $i, $i)) {
+      @error string.unquote('The icon name #{$name} is not in kebab-case (a-z, 0-9, -): it names a custom property, --ds-icons-#{$name}.');
+    }
+  }
+
+  @return string.unquote('--ds-icons-#{$name}');
+}
+
+// The image of an icon of $icons, to draw in the box of ds-icon(): ds-icon-content(angle-down), in the rule of a state
+// that changes the icon of an element (the minus of an open item). It reads the custom property of the icon
+// (`mask-image: var(--ds-icons-angle-down)`), which ds-tokens() then writes, and paints the box in the color of the text.
+// An unknown name is an error; null draws no image (the box stays empty).
+//
+// `$alt`: the alternative text of the icon for assistive technologies (`content: "" / <alt>`), after `content: ""` for the
+// browsers that do not read that syntax. The box of an icon holds no text: without `$alt`, it is not read, nor part of the
+// name of its element; `$alt: ''` says that it is decorative.
+@mixin ds-icon-content($type: null, $alt: null) {
+  @if $type != null {
+    $property: ds-icon-property($type);
+    $-drawn: map.set($-drawn, $type, true) !global;
+
+    -webkit-mask-image: var($property);
+    mask-image: var($property);
+    background-color: currentColor;
+  }
+
+  @if $alt != null {
+    content: '';
+    content: list.slash('', $alt);
+  }
+}
+
+// An icon of $icons: ds-icon(angle-down), in a pseudo-element (or an empty element). A box of 1em × 1em, the size of a
+// glyph of the font size of the element, in the color of its text: `$display` (inline-block by default: an inline box on
+// the line of the text, its bottom 0.125em below the baseline, as the glyph of an icon font; null leaves the display, of
+// a flex item or of an absolute box), the image of the icon (ds-icon-content()), `$alt` (its alternative text, see
+// ds-icon-content()). With `$type: null`, the box only: a rule of each state then gives its icon with ds-icon-content().
+//
+// In forced colors (a high contrast theme of the system), the browser replaces the colors of the page with the system
+// colors: the box keeps its background, and takes the color its parent is given (CanvasText in a text, LinkText in a
+// link, ButtonText in a button), so that the icon stays visible, in the color of the text around it.
+//
+// It ends with that @media rule: the declarations that follow its @include in a rule are written in a rule of their own.
+@mixin ds-icon($type: null, $display: inline-block, $alt: null) {
+  @if $display != null {
+    display: $display;
+  }
+
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  content: '';
+
+  @if $alt != null {
+    content: list.slash('', $alt);
+  }
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  @include ds-icon-content($type);
+  // none first, for the browsers that do not know preserve-parent-color: the box keeps the color of the page.
+  forced-color-adjust: none;
+  forced-color-adjust: preserve-parent-color;
+
+  @media (forced-colors: active) {
+    color: inherit;
+  }
+}
+
+// The custom properties of the images of the icons drawn so far in this stylesheet: (--ds-icons-<name>: url(…)).
+@function ds-icon-declarations() {
+  $declarations: ();
+
+  @each $name in map.keys($-drawn) {
+    $declarations: map.set($declarations, ds-icon-property($name), map.get($icons, $name));
+  }
+
+  @return $declarations;
+}
+
+// The licence notice of the icons, when the stylesheet draws some: a /*! */ comment, which the compressed output keeps.
+@mixin ds-icon-notice() {
+  @if list.length(map.keys($-drawn)) > 0 and $icons-notice != null {
+    /*! #{$icons-notice} */
+  }
+}
+
+// Writes the custom properties of the icons drawn so far (ds-tokens() writes them with the tokens): at the root of a
+// stylesheet, on :root, followed by the licence notice of the icons; in a rule, in that rule. A page stylesheet that draws
+// icons ends with it (`@include ds-icon-tokens();`); an icon the theme draws too is then written twice, with the same value.
+@mixin ds-icon-tokens() {
+  @if & {
+    @each $name, $value in ds-icon-declarations() {
+      #{$name}: #{$value};
+    }
+  } @else if list.length(map.keys($-drawn)) > 0 {
+    :root {
+      @include ds-icon-tokens();
+    }
+
+    @include ds-icon-notice();
+  }
+}

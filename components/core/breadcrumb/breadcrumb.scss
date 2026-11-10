@@ -1,0 +1,41 @@
+// The structure of ds-breadcrumb: the trail the page writes in it, a list of links, on a line that wraps (a small screen
+// gets more lines, never a horizontal scroll), each item a row of its separator and its link, a long name broken rather
+// than overflowing. The items a collapsed trail hides (`hidden`) are not rendered: not focusable, not read. The look (the
+// separators, the colors, the current page, the "Show full path" button) is the theme's (components/_breadcrumb.scss),
+// from the custom properties below.
+
+/**
+ * @prop --ds-breadcrumb-font-size: Font size of the trail.
+ * @prop --ds-breadcrumb-gap: Space on each side of a separator.
+ * @prop --ds-breadcrumb-color: Text color of the links, and of the "Show full path" button.
+ * @prop --ds-breadcrumb-hover-color: Text color of a link, or of the button, under the pointer.
+ * @prop --ds-breadcrumb-current-color: Text color of the current page (the element with `aria-current`).
+ * @prop --ds-breadcrumb-separator-color: Color of the separators.
+ * @prop --ds-breadcrumb-separator-size: Size of the separators (their font size: the icon is a square of 1em).
+ */
+
+.ds-breadcrumb {
+  display: block;
+
+  // The trail: the list of the page, without its markers (the separators of the theme mark the items).
+  :where(ol, ul) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  // Hidden in a collapsed trail: the attribute wins over the display of the item.
+  li[hidden] {
+    display: none;
+  }
+}

@@ -1,21 +1,38 @@
+// The structure of ds-slider-menu: a row of dots, one per item of its ds-slider, over the bottom of the slider; each dot
+// holds a button, as large as the dot, that shows its item. The dots are the look of the theme (components/_slider.scss),
+// from the custom properties below; the button draws nothing (the focus indicator of the theme draws around it).
+
+/**
+ * @prop --ds-slider-menu-offset: Vertical offset of the menu from its place below the slider (negative: over the slider).
+ * @prop --ds-slider-menu-dot-size: Width and height of a dot.
+ * @prop --ds-slider-menu-dot-gap: Space on each side of a dot.
+ * @prop --ds-slider-menu-dot-color: Color of a dot.
+ * @prop --ds-slider-menu-dot-active-color: Color of the dot of the current item (`--active`).
+ */
+
 .ds-slider-menu {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: -4rem 0 0 0;
+  margin: var(--ds-slider-menu-offset, -4rem) 0 0 0;
   position: relative;
   z-index: 1000;
   &__item {
-    margin: 0 0.5rem;
-    width: 1.125rem;
-    height: 1.125rem;
-    border-radius: 50%;
-    background-color: #283583;
     cursor: pointer;
-    transition: background-color ease 0.4s;
-    &.--active {
-      background-color: #e1388c;
-    }
+  }
+  // Inline: a block would open a line of its own after the list marker of the dot, which would grow.
+  &__button {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    cursor: inherit;
+    appearance: none;
   }
   &__label {
     display: none;

@@ -1,0 +1,51 @@
+@use '../tokens' as *;
+
+// ds-badge: a pill in bold small text, white on the color of its type (the secondary color for `neutral`, the status color
+// of the same name for the others: a contrast of 4.5:1 at least with the white text). A dot is a disc in that color. The
+// custom properties are documented in components/core/badge/readme.md; the box and the hidden texts are in the component
+// stylesheet.
+
+$-badge-types: info, success, warning, error;
+
+ds-badge {
+  --ds-badge-background: #{ds-color(secondary, base)};
+  --ds-badge-color: #{ds-color(gray, white)};
+  --ds-badge-font-size: #{ds-token(font-size, 100)};
+  --ds-badge-padding: 0 0.375em;
+  --ds-badge-radius: #{ds-radius(pill)};
+  --ds-badge-dot-size: 0.625em;
+}
+
+.ds-badge {
+  // A circle around a figure: as wide as high (the line and the borders).
+  min-width: calc(1.5em + 2px);
+  padding: var(--ds-badge-padding);
+  // Transparent: in forced colors, the browser draws it in the color of the text, the outline of the badge.
+  border: 1px solid transparent;
+  border-radius: var(--ds-badge-radius);
+  background-color: var(--ds-badge-background);
+  color: var(--ds-badge-color);
+  font-size: var(--ds-badge-font-size);
+  font-weight: ds-font-weight(page, strong);
+  line-height: 1.5;
+
+  @each $type in $-badge-types {
+    &.--#{$type} {
+      --ds-badge-background: #{ds-color(status, $type)};
+    }
+  }
+
+  // A dot: a disc in the color of the type, painted with the color of its text, so that in forced colors it takes the color
+  // of the text around it (as an icon), instead of the background of the page.
+  &.--dot {
+    border-width: 0;
+    color: var(--ds-badge-background);
+    background-color: currentColor;
+    forced-color-adjust: none;
+    forced-color-adjust: preserve-parent-color;
+
+    @media (forced-colors: active) {
+      color: inherit;
+    }
+  }
+}

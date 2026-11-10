@@ -1,152 +1,77 @@
+// The structure of ds-toggle: an inline box that takes the pointer. A radio or a checkbox is a square box whose mark
+// (`::after`, centered) is shown when it is checked; a switch is a track whose knob (`::after`) is on the left, on the
+// right when it is checked. The colors, borders and radii are the look of the theme (components/_toggle.scss), from the
+// custom properties below.
+
+/**
+ * @prop --ds-toggle-color: Border and mark color of a radio or a checkbox.
+ * @prop --ds-toggle-checked-color: Border and mark color of a checked radio or checkbox.
+ * @prop --ds-toggle-disabled-color: Border and mark color of a disabled radio or checkbox.
+ * @prop --ds-toggle-track-color: Track color of a switch.
+ * @prop --ds-toggle-track-disabled-color: Track color of a disabled switch.
+ * @prop --ds-toggle-knob-color: Knob color of a switch.
+ * @prop --ds-toggle-knob-checked-color: Knob color of a checked switch.
+ * @prop --ds-toggle-knob-disabled-color: Knob color of a disabled switch.
+ * @prop --ds-toggle-invalid-color: Border color of an invalid radio or checkbox, and ring of an invalid switch or toggle button (`--invalid`, or in an invalid `ds-toggle-group`).
+ */
+
 ds-toggle {
   border: none;
   background: transparent;
-  outline: none;
   position: relative;
-  transition: all ease 0.4s;
+  // The changes of state are animated: the properties the states change, listed rather than `all`, which would animate
+  // the focus outline (it shows at once) and the visibility (a toggle shown, or hydrated, would be hidden for the first
+  // frame of the transition, and could not take the focus in it).
+  transition-property: border-color, background-color, color, box-shadow, opacity;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
   cursor: pointer;
   display: inline-block;
-
-  &:focus {
-    outline: none;
-  }
 
   &.--switch,
   &.--checkbox,
   &.--radio {
-    &:after {
+    &::after {
       display: block;
       content: '';
       position: absolute;
       top: 50%;
       width: 1.5rem;
       height: 1.5rem;
-      transition: all ease 0.4s;
+      // The mark (opacity) and the knob (left), and their colors.
+      transition-property: opacity, left, background-color, border-color, transform;
+      transition-duration: 0.4s;
+      transition-timing-function: ease;
     }
   }
 
-  /* ----------- RADIO ----------- */
+  /* ----------- RADIO AND CHECKBOX ----------- */
 
-  &.--radio {
-    height: 2rem;
-    width: 2rem;
-    border-radius: 50%;
-    border-width: 2px;
-    border-style: solid;
-
-    &:after {
-      left: 50%;
-      border-radius: 50%;
-      transform: translate3d(-50%, -50%, 0);
-    }
-  }
-
-  &:not([checked]) {
-    &.--radio {
-      &:after {
-        opacity: 0;
-      }
-    }
-  }
-
-  &[checked] {
-    &.--radio {
-      &:after {
-        opacity: 1;
-      }
-    }
-  }
-
-  &:not([disabled]):not([checked]) {
-    &.--radio {
-      border-color: #000;
-
-      &:after {
-        background-color: #000;
-      }
-    }
-  }
-
-  &[checked]:not([disabled]) {
-    &.--radio {
-      border-color: #f00;
-
-      &:after {
-        background-color: #f00;
-      }
-    }
-  }
-
-  &[disabled] {
-    &.--radio {
-      border-color: gray;
-
-      &:after {
-        background-color: gray;
-      }
-    }
-  }
-
-  /* ----------- CHECKBOX ----------- */
-
+  &.--radio,
   &.--checkbox {
     height: 2rem;
     width: 2rem;
-    border-width: 2px;
-    border-style: solid;
-    border-radius: 4px;
 
-    &:after {
+    &::after {
       left: 50%;
-      width: 1.5rem;
-      height: 1.5rem;
       transform: translate3d(-50%, -50%, 0);
-      border-radius: 2px;
     }
   }
 
   &:not([checked]) {
+    &.--radio,
     &.--checkbox {
-      &:after {
+      &::after {
         opacity: 0;
       }
     }
   }
 
   &[checked] {
+    &.--radio,
     &.--checkbox {
-      &:after {
+      &::after {
         opacity: 1;
-      }
-    }
-  }
-
-  &:not([disabled]):not([checked]) {
-    &.--checkbox {
-      border-color: #000;
-
-      &:after {
-        background-color: #000;
-      }
-    }
-  }
-
-  &[checked]:not([disabled]) {
-    &.--checkbox {
-      border-color: #f00;
-
-      &:after {
-        background-color: #f00;
-      }
-    }
-  }
-
-  &[disabled] {
-    &.--checkbox {
-      border-color: gray;
-
-      &:after {
-        background-color: gray;
       }
     }
   }
@@ -156,19 +81,15 @@ ds-toggle {
   &.--switch {
     height: 2rem;
     width: 3.5rem;
-    border-radius: 1rem;
 
-    &:after {
-      border-radius: 50%;
-      width: 1.5rem;
-      height: 1.5rem;
+    &::after {
       transform: translateY(-50%);
     }
   }
 
   &:not([checked]) {
     &.--switch {
-      &:after {
+      &::after {
         left: 0.25rem;
       }
     }
@@ -176,40 +97,8 @@ ds-toggle {
 
   &[checked] {
     &.--switch {
-      &:after {
+      &::after {
         left: calc(100% - 1.75rem);
-      }
-    }
-  }
-
-  &:not([disabled]) {
-    &.--switch {
-      background: #ddd;
-    }
-  }
-
-  &:not([disabled]):not([checked]) {
-    &.--switch {
-      &:after {
-        background-color: #777;
-      }
-    }
-  }
-
-  &[checked]:not([disabled]) {
-    &.--switch {
-      &:after {
-        background-color: #0c0;
-      }
-    }
-  }
-
-  &[disabled] {
-    &.--switch {
-      background: #eee;
-
-      &:after {
-        background-color: #ddd;
       }
     }
   }

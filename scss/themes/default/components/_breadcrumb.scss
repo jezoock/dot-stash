@@ -1,0 +1,84 @@
+@use '../tokens' as *;
+
+// ds-breadcrumb: a trail of links in small text, a chevron between the items, the current page in the text color and in
+// bold, not underlined (the links are), and the "Show full path" button of a collapsed trail, three dots. The custom
+// properties are documented in components/core/breadcrumb/readme.md; the line that wraps and the hidden items are in the
+// component stylesheet.
+
+ds-breadcrumb {
+  --ds-breadcrumb-font-size: #{ds-token(font-size, 100)};
+  --ds-breadcrumb-gap: #{ds-spacing(2)};
+  --ds-breadcrumb-color: #{ds-colorset-text(link, primary)};
+  --ds-breadcrumb-hover-color: #{ds-color(primary, darker)};
+  --ds-breadcrumb-current-color: #{ds-color(gray, darkest)};
+  --ds-breadcrumb-separator-color: #{ds-color(gray, dark)};
+  --ds-breadcrumb-separator-size: 1em;
+}
+
+.ds-breadcrumb {
+  margin-bottom: ds-spacing(4);
+  font-size: var(--ds-breadcrumb-font-size);
+  line-height: 1.5;
+
+  :where(ol, ul) {
+    row-gap: ds-spacing(1);
+  }
+
+  a {
+    color: var(--ds-breadcrumb-color);
+
+    &:hover {
+      color: var(--ds-breadcrumb-hover-color);
+    }
+  }
+
+  // The current page: not only a color (bold, and no underline where the links have one), in forced colors too.
+  [aria-current]:not([aria-current='false']) {
+    color: var(--ds-breadcrumb-current-color);
+    font-weight: ds-font-weight(page, strong);
+    text-decoration: none;
+  }
+
+  // The separator before each item but the first: a chevron to the next level, decorative (its alternative text is empty:
+  // not read, nor part of the name of the item).
+  li + li::before {
+    margin-inline: var(--ds-breadcrumb-gap);
+    color: var(--ds-breadcrumb-separator-color);
+    font-size: var(--ds-breadcrumb-separator-size);
+    @include ds-icon(angle-right, $alt: '');
+  }
+
+  // Right to left, the next level is on the left: the chevron is mirrored. `[dir='rtl']` on an ancestor, as `:dir(rtl)`
+  // needs Chrome 120: a trail in a `dir="ltr"` element of a right-to-left page is mirrored too.
+  [dir='rtl'] & li + li::before {
+    transform: scaleX(-1);
+  }
+
+  // The button of a collapsed trail: three dots, decorative (the button is named "Show full path"), in a box of 24 px at
+  // least (a target of 24 × 24 px). Transparent border: in forced colors, the browser draws it, the outline of the button.
+  &__expand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    margin: 0;
+    padding: 0 ds-spacing(1);
+    border: 1px solid transparent;
+    border-radius: ds-radius(sm);
+    background-color: transparent;
+    color: var(--ds-breadcrumb-color);
+    font-size: inherit;
+    line-height: 1;
+    cursor: pointer;
+
+    &::before {
+      @include ds-icon(ellipsis, block, $alt: '');
+    }
+
+    &:hover {
+      background-color: ds-color(gray, light);
+      color: var(--ds-breadcrumb-hover-color);
+    }
+  }
+}

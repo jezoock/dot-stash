@@ -1,0 +1,42 @@
+@use '../tokens' as *;
+
+// ds-toaster: the toasts, in the dark secondary color, or the status color of their modifier (mods="success", "warning",
+// "error"). The custom properties are documented in components/core/toaster/readme.md; the component stylesheet reads
+// the minimum width and the stack level.
+
+$-toast-types: success, warning, error;
+
+ds-toaster {
+  --ds-toaster-background: #{ds-color(secondary, dark)};
+  --ds-toaster-color: #{ds-color(gray, white)};
+  --ds-toaster-font-size: #{ds-font-size(text)};
+  --ds-toaster-padding: 1.25rem;
+  --ds-toaster-gap: #{ds-spacing(3)};
+  --ds-toaster-shadow: 0 0 10px #{ds-color(shadow, strong)};
+  --ds-toaster-min-width: 500px;
+  --ds-toaster-z-index: 10000;
+}
+
+.ds-toaster {
+  @each $type in $-toast-types {
+    &.--#{$type} {
+      --ds-toaster-background: #{ds-color(status, $type)};
+    }
+  }
+
+  &__container {
+    padding: var(--ds-toaster-padding);
+    background-color: var(--ds-toaster-background);
+    color: var(--ds-toaster-color);
+    font-size: var(--ds-toaster-font-size);
+    box-shadow: var(--ds-toaster-shadow);
+  }
+
+  &__toast + &__toast {
+    margin-top: var(--ds-toaster-gap);
+  }
+
+  &__content {
+    line-height: 20px;
+  }
+}

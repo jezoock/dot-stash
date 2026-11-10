@@ -1,40 +1,29 @@
-import { Prop, Component, h, Watch, Host } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { Prop, Component, h, Host } from '@stencil/core';
+import { toClassList } from '../../utils/props';
 
-
+/**
+ * A block of text, in the paragraph font style of the theme.
+ *
+ * @slot - The text: paragraphs, lists, inline text.
+ */
 @Component({
   tag: 'ds-text',
+  styleUrl: 'text.scss',
 })
 export class DSText {
-  @Prop() mods: string | string[] = "default";
-	@Prop() type: "code" | "quote" = "p";
-	@Prop() inline: boolean;
-	@Prop() sup: boolean;
-	@Prop() sub: boolean;
-	@Prop() weight: "thin" | "light" | "normal" | "bold" | "bolder";
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
+  @Prop({ reflect: true }) mods: string | string[] = [];
+  @Prop() type: 'p' | 'code' | 'quote' = 'p';
+  @Prop() inline: boolean;
+  @Prop() sup: boolean;
+  @Prop() sub: boolean;
+  @Prop() weight: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
 
-
-	CSSClassList: CssClassList;
-
-	@Watch('mods')
-  modsChangeHandler( newMods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-text", newMods);
-  }
-
-	componentWillLoad() {
-		this.CSSClassList = _ds.props.toClassList("ds-text", this.mods);
-	}
-	
-	render() {
-		return (
-			<Host
-				class={{
-					...this.CSSClassList,
-				}}
-			>
-				<slot />
-			</Host>
+  render() {
+    return (
+      <Host class={toClassList('ds-text', this.mods)}>
+        <slot />
+      </Host>
     );
   }
 }

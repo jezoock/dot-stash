@@ -1,7 +1,25 @@
+// The structure of ds-combo: the toggle button (a native button, its browser styles reset) and the list of options, which
+// hangs from a wrapper (__menu) below the button (above it with the top position), `--ds-combo-list-offset` away, above the
+// page. The button, the list and the options are the look of the theme (components/_combo.scss), from the custom properties
+// below.
+
+/**
+ * @prop --ds-combo-background: Background of the toggle button and of the list.
+ * @prop --ds-combo-color: Text color of the toggle button and of the options.
+ * @prop --ds-combo-border-color: Border color of the toggle button.
+ * @prop --ds-combo-active-color: Border color of the toggle button while the list is open.
+ * @prop --ds-combo-hover-background: Background of a hovered option.
+ * @prop --ds-combo-selected-background: Background of a selected option.
+ * @prop --ds-combo-selected-color: Text color of a selected option.
+ * @prop --ds-combo-list-offset: Distance between the toggle button and the list (positions `left`, `right` and `top`).
+ * @prop --ds-combo-invalid-color: Border color of the toggle button of an invalid combo (`--invalid`).
+ */
+
 .ds-combo {
   cursor: pointer;
   display: inline-block;
   vertical-align: inherit;
+  position: relative;
 
   &__selected-option {
     white-space: nowrap;
@@ -9,47 +27,50 @@
     text-overflow: ellipsis;
   }
 
-  & > menu {
+  &__menu {
     position: relative;
   }
-  
+
   &__option-list {
     position: absolute;
-    top: 0.5rem;
+    top: var(--ds-combo-list-offset, 0.5rem);
     z-index: 100;
     overflow-x: hidden;
-    width: 100%;
+    // At least as wide as the toggle button, and as wide as the options (they do not wrap).
+    min-width: 100%;
+    width: max-content;
     > * {
       user-select: none;
-      -moz-user-select: none;
       -webkit-user-drag: none;
       -webkit-user-select: none;
-      -ms-user-select: none;
     }
   }
 
+  // Above the toggle button: the list hangs from a wrapper placed at the top of the component.
   &.--position-top {
-    &__option-list {
-      bottom: 0;
-    }
-  }
-
-  &.--position-right {
-    &__option-list {
+    & > .ds-combo__menu {
+      position: absolute;
       left: 0;
-    }
-  }
-
-  &.--position-bottom {
-    &__option-list {
-      top: 0;
-    }
-  }
-
-  &.--position-left {
-    &__option-list {
       right: 0;
+      bottom: 100%;
     }
+
+    & .ds-combo__option-list {
+      top: auto;
+      bottom: var(--ds-combo-list-offset, 0.5rem);
+    }
+  }
+
+  &.--position-right .ds-combo__option-list {
+    left: 0;
+  }
+
+  &.--position-bottom .ds-combo__option-list {
+    top: 0;
+  }
+
+  &.--position-left .ds-combo__option-list {
+    right: 0;
   }
 
   &__option {
@@ -58,45 +79,19 @@
       display: block;
       white-space: nowrap;
     }
-    
-    &.--selected {
-    }
   }
 
   &__overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
   }
 
-  &.--default {
-    & .ds-combo {
-      &__selected-option {
-      }
-      &__option {
-        &-list {
-          top: 3.25rem;
-          right: -1px;
-        }
-      }
-      &.--open {
-      }
-    }
+  &.--default .ds-combo__option-list {
+    top: 3.25rem;
+    right: -1px;
   }
 
-  &.--alt {
-    & .ds-combo {
-      &__option {
-        &-list {
-        }
-      }
-      &__selected-option {
-      }
-    }
-  }
-
+  // Image mode: the options are a wrapping row of images, each name over its image.
   &.--image {
     & .ds-combo__option-list {
       display: flex;
@@ -119,4 +114,25 @@
       }
     }
   }
+
+  // The list of an image combo stays in the DOM while closed (its images load): after the --image rules, which set its display.
+  & .ds-combo__option-list.--hidden {
+    display: none;
+  }
+}
+
+// The toggle is a native button: reset its browser styles. :where() keeps the specificity at 0, so the theme skin always wins.
+:where(.ds-combo__selected-option) {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  cursor: inherit;
 }

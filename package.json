@@ -1,72 +1,93 @@
 {
   "name": "dot-stash",
-  "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "version": "0.1.0",
+  "description": "A standalone UI library: light-DOM web components (ds-* custom elements, Stencil) and a SCSS theming toolkit, with no runtime dependency.",
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "stencil",
+    "light-dom",
+    "design-system",
+    "ui",
+    "scss",
+    "sass",
+    "theming",
+    "design-tokens",
+    "accessibility",
+    "forms"
+  ],
+  "homepage": "https://github.com/jezoock/dot-stash#readme",
+  "bugs": {
+    "url": "https://github.com/jezoock/dot-stash/issues"
+  },
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
-  "es2015": "dist/esm/index.mjs",
-  "es2017": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "unpkg": "dist/dot-stash/dot-stash.esm.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./loader": {
+      "types": "./loader/index.d.ts",
+      "import": "./loader/index.js",
+      "require": "./loader/index.cjs.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ionic-team/stencil-component-starter.git"
+    "url": "https://github.com/jezoock/dot-stash.git"
   },
   "files": [
     "dist/",
-    "loader/"
+    "loader/",
+    "CHANGELOG.md"
   ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "stencil build --docs",
-    "start": "stencil build --dev --watch --serve",
-    "dev": "stencil build --dev",
-    "test": "stencil test --spec --e2e",
-    "test.watch": "stencil test --spec --e2e --watchAll",
-    "generate": "stencil generate"
-  },
-  "dependencies": {
-    "@alenaksu/json-viewer": "^2.0.1",
-    "@stencil/core": "^4.21.0",
-    "@stencil/sass": "^2.0.3",
-    "@stencil/store": "^2.0.15",
-    "@tinymce/tinymce-webcomponent": "^2.1.0",
-    "browser-sync": "^2.27.11",
-    "flatpickr": "^4.6.13",
-    "gulp-autoprefixer": "^8.0.0",
-    "gulp-cli": "^2.3.0",
-    "gulp-imagemin": "^8.0.0",
-    "gulp-newer": "^1.4.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "js-beautify": "^1.15.1",
-    "merge-stream": "^2.0.0",
-    "merge2": "^1.4.1",
-    "stencil-fragment": "^1.0.1",
-    "tinymce": "^7.0.0",
-    "typescript": "^5.1.3"
+    "build:css": "node scripts/build-css.mjs",
+    "build:icons": "node scripts/build-icons.mjs",
+    "build:all": "npm run clean && npm run build:css && npm run build",
+    "clean": "node -e \"for (const dir of ['dist', 'www', '.stencil', 'loader']) require('fs').rmSync(dir, { recursive: true, force: true })\"",
+    "start": "node scripts/dev.mjs",
+    "test": "vitest run --project unit --project styles",
+    "test:watch": "vitest --project unit --project styles",
+    "test:browser": "vitest run --project browser",
+    "generate": "stencil generate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:css": "stylelint \"scss/**/*.scss\" \"components/**/*.scss\"",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,mts,scss,json,html,yml,yaml,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,mts,scss,json,html,yml,yaml,md}\""
   },
   "devDependencies": {
-    "@stencil/react-output-target": "^0.5.3",
-    "@types/google.maps": "^3.52.0",
-    "@types/jest": "^27.5.2",
-    "@types/jquery": "^3.5.29",
-    "@types/node": "^16.18.11",
-    "@typescript-eslint/eslint-plugin": "^5.53.0",
-    "@typescript-eslint/parser": "^5.53.0",
-    "del": "^7.0.0",
-    "eslint": "^8.34.0",
-    "eslint-plugin-react": "^7.32.2",
-    "gulp": "^4.0.2",
-    "gulp-clean": "^0.4.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-sass": "^5.1.0",
-    "gulp-webp": "^4.0.1",
-    "jest": "^27.5.1",
-    "jest-cli": "^27.5.1",
-    "puppeteer": "^19.5.2",
-    "sass": "^1.58.0",
-    "workbox-build": "^4.3.1"
+    "@eslint/js": "^10.0.1",
+    "@stencil/core": "^4.45.2",
+    "@stencil/sass": "^3.3.3",
+    "@stencil/vitest": "1.16.1",
+    "@types/node": "22.20.5",
+    "@vitest/browser-playwright": "5.0.5",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "playwright": "1.64.1",
+    "prettier": "^3.9.10",
+    "sass": "^1.107.1",
+    "stylelint": "^17.16.0",
+    "stylelint-config-standard-scss": "^17.0.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
   },
   "license": "MIT"
 }

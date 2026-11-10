@@ -1,0 +1,128 @@
+@use '../tokens' as *;
+
+// ds-toggle: the borders, radii and colors of the radios, checkboxes and switches (the `icon` type has none). The custom
+// properties are documented in components/core/toggle/readme.md; the sizes and the place of the mark and of the knob are in
+// the component stylesheet. A disabled toggle has the `--disabled` class: its own `disabled`, or a disabled
+// ds-toggle-group or fieldset around it.
+
+ds-toggle {
+  --ds-toggle-color: #{ds-color(input, unchecked)};
+  --ds-toggle-checked-color: #{ds-color(input, checked)};
+  --ds-toggle-disabled-color: #{ds-color(input, disabled)};
+  --ds-toggle-track-color: #{ds-color(input, track)};
+  --ds-toggle-track-disabled-color: #{ds-color(input, track-disabled)};
+  --ds-toggle-knob-color: #{ds-color(input, knob)};
+  --ds-toggle-knob-checked-color: #{ds-color(input, knob-checked)};
+  --ds-toggle-knob-disabled-color: #{ds-color(input, knob-disabled)};
+  --ds-toggle-invalid-color: #{ds-color(status, error)};
+}
+
+.ds-toggle {
+  // Radio and checkbox: a box with a border, and a mark of the same color.
+  &.--radio,
+  &.--checkbox {
+    border-width: 2px;
+    border-style: solid;
+  }
+
+  &.--radio {
+    border-radius: ds-radius(circle);
+
+    &::after {
+      border-radius: ds-radius(circle);
+    }
+  }
+
+  &.--checkbox {
+    border-radius: ds-radius(sm);
+
+    &::after {
+      border-radius: 2px;
+    }
+  }
+
+  &:not(.--disabled):not([checked]) {
+    &.--radio,
+    &.--checkbox {
+      border-color: var(--ds-toggle-color);
+
+      &::after {
+        background-color: var(--ds-toggle-color);
+      }
+    }
+  }
+
+  &[checked]:not(.--disabled) {
+    &.--radio,
+    &.--checkbox {
+      border-color: var(--ds-toggle-checked-color);
+
+      &::after {
+        background-color: var(--ds-toggle-checked-color);
+      }
+    }
+  }
+
+  &.--disabled {
+    &.--radio,
+    &.--checkbox {
+      border-color: var(--ds-toggle-disabled-color);
+
+      &::after {
+        background-color: var(--ds-toggle-disabled-color);
+      }
+    }
+  }
+
+  // Switch: a rounded track and a round knob.
+  &.--switch {
+    border-radius: ds-radius(lg);
+
+    &::after {
+      border-radius: ds-radius(circle);
+    }
+  }
+
+  &:not(.--disabled) {
+    &.--switch {
+      background: var(--ds-toggle-track-color);
+    }
+  }
+
+  &:not(.--disabled):not([checked]) {
+    &.--switch::after {
+      background-color: var(--ds-toggle-knob-color);
+    }
+  }
+
+  &[checked]:not(.--disabled) {
+    &.--switch::after {
+      background-color: var(--ds-toggle-knob-checked-color);
+    }
+  }
+
+  &.--disabled {
+    &.--switch {
+      background: var(--ds-toggle-track-disabled-color);
+
+      &::after {
+        background-color: var(--ds-toggle-knob-disabled-color);
+      }
+    }
+  }
+
+  // Invalid (required and not checked, once the user should see it): the toggle, or its ds-toggle-group, has `--invalid`.
+  // The border of a radio or a checkbox, a ring around a switch or a toggle button, in the error color.
+  &.--invalid:not(.--disabled),
+  .ds-toggle-group.--invalid &:not(.--disabled) {
+    &.--radio,
+    &.--checkbox {
+      border-color: var(--ds-toggle-invalid-color);
+    }
+
+    &.--switch,
+    &.--icon {
+      box-shadow: 0 0 0 2px var(--ds-toggle-invalid-color);
+    }
+  }
+}

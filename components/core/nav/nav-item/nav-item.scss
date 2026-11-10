@@ -1,0 +1,17 @@
+// The structure of ds-nav-item: the item is the anchor of its expand button and of its sub-navigation. How the
+// sub-navigation opens is in the theme (components/_nav.scss), as it depends on the breakpoints, which the component
+// stylesheets cannot read: below md, it is collapsed (ds-nav-item animates its height) and opened by the expand button;
+// from md, it drops down on hover. The look is in the same skin, from the custom properties below.
+
+/**
+ * @prop --ds-nav-item-color: Text color of the link.
+ * @prop --ds-nav-item-active-color: Text color of the link of an active item (`--active`), and of a hovered link.
+ * @prop --ds-nav-item-padding: Padding of the link (from `md`, the links of a drop-down sub-navigation have their own).
+ * @prop --ds-nav-item-border-color: Color of the line under each item (below `md`) and of the border of a drop-down sub-navigation (from `md`).
+ * @prop --ds-nav-item-sub-nav-background: Background of a drop-down sub-navigation (from `md`).
+ * @prop --ds-nav-item-sub-nav-shadow: Shadow of a drop-down sub-navigation (from `md`).
+ */
+
+.ds-nav-item {
+  position: relative;
+}

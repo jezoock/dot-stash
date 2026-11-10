@@ -1,0 +1,24 @@
+@use '../tokens' as *;
+
+// ds-sidebar: a white panel with a shadow, as wide as the screen up to the xxs breakpoint. The custom properties are
+// documented in components/core/sidebar/readme.md; the component stylesheet reads the size, stack level and duration.
+
+ds-sidebar {
+  --ds-sidebar-width: 100%;
+  --ds-sidebar-max-width: #{ds-breakpoint(xxs)};
+  --ds-sidebar-z-index: 10;
+  --ds-sidebar-transition-duration: 0.4s;
+  --ds-sidebar-padding: #{ds-spacing(6) ds-spacing(4)};
+  --ds-sidebar-background: #{ds-color(gray, white)};
+  --ds-sidebar-shadow: 0 0 24px #{ds-color(shadow, base)};
+}
+
+.ds-sidebar {
+  background-color: var(--ds-sidebar-background);
+  box-shadow: var(--ds-sidebar-shadow);
+
+  // The padding is inside the scrolling content: the focus indicator of the elements at its edges is not cut.
+  & > .ds-sidebar__content {
+    padding: var(--ds-sidebar-padding);
+  }
+}

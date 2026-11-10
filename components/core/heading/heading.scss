@@ -1,27 +1,31 @@
-.ds-heading {
-  &__image {
-    &:not(:has([slot="image"])) {
-      display: none;
-    }
-  }
+// The structure of ds-heading: a block element, and its image, sub-title and description wrappers, hidden when empty. The
+// spacing and colors are the look of the theme (components/_heading.scss), from the custom properties below.
 
-  &__title {
-    &:not(:has([slot="title"])) {
+/**
+ * @prop --ds-heading-gap: Space below the heading.
+ * @prop --ds-heading-image-gap: Space between the image (`__image`) and the titles.
+ * @prop --ds-heading-description-color: Text color of the description (`__description`).
+ * @prop --ds-heading-description-max-width: Maximum width of the description (centered in a `section` heading).
+ */
+
+.ds-heading {
+  display: block;
+
+  &__image {
+    &:not(:has([slot='image'])) {
       display: none;
     }
   }
 
   &__sub-title {
-    &:not(:has([slot="sub-title"])) {
+    &:not(:has([slot='sub-title'])) {
       display: none;
     }
   }
 
   &__description {
-    &:not(:has([slot="description"])) {
+    &:not(:has([slot='description'])) {
       display: none;
     }
   }
-
-  &__content { }
 }

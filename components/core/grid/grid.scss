@@ -1,68 +1,81 @@
+// The structure of ds-grid: its row lays the items out in columns with CSS Grid, from custom properties that the
+// components set from their props: ds-grid on its .ds-grid element (cols, h-gap, v-gap, cell-ratio), each ds-grid-item on
+// itself (its width, --ds-grid-span). CSS Grid aligns an item in its cell, but cannot move the items of a row that does not
+// fill the grid: with align center or end, the row is a wrapping flex row instead, each item as wide as the columns it
+// spans, so that such a row is centered or pushed to the end, as before. The grid has no look of its own: the theme sets
+// none of these properties (the props do), and only makes the images of a grid fluid.
+
+/**
+ * @prop --ds-grid-cols: Number of columns. Set by ds-grid from `cols`, on its `.ds-grid` element.
+ * @prop --ds-grid-h-gap: Space between the columns. Set by ds-grid from `h-gap`.
+ * @prop --ds-grid-v-gap: Space between the rows of a `fixed` grid, and below its last row (a `fluid` grid has none). Set by ds-grid from `v-gap`.
+ * @prop --ds-grid-cell-ratio: Height of the items as a ratio of their width (`0.75`: 4:3), with `cell-ratio`. Set by ds-grid from `cell-ratio`.
+ * @prop --ds-grid-span: Number of columns an item spans, at most `--ds-grid-cols` (1 for a child that does not set it). Set by ds-grid-item from its `width`, on itself.
+ */
 
 .ds-grid {
   &__row {
+    // A child that does not set it spans one column, whatever the span of an item around the grid (it is inherited).
+    --ds-grid-span: 1;
+
+    display: grid;
+    grid-template-columns: repeat(var(--ds-grid-cols, 1), minmax(0, 1fr));
+    justify-items: stretch;
+    column-gap: var(--ds-grid-h-gap, 0);
+
+    & > * {
+      grid-column: span min(var(--ds-grid-span), var(--ds-grid-cols, 1));
+    }
+  }
+
+  // A fixed grid: the space between its rows, and below its last row (its items had it as a bottom padding).
+  &.--fixed > .ds-grid__row {
+    row-gap: var(--ds-grid-v-gap, 0);
+    padding-block-end: var(--ds-grid-v-gap, 0);
+  }
+
+  // A row that does not fill the grid, centered or at the end: a flex row, its items as wide as the columns they span.
+  &.--align-center > .ds-grid__row,
+  &.--align-end > .ds-grid__row {
     display: flex;
     flex-wrap: wrap;
-  }
-  &.--fixed {
-    & .ds-grid {
-      &__row {
-      }
-    }
-  }
-  
-  &.--fluid {
-    & .ds-grid {
-      &__row {
-      }
+
+    // span columns and the span - 1 gaps between them: span × (100% + gap) / cols - gap.
+    & > * {
+      flex: none;
+      box-sizing: border-box;
+      width: calc(min(var(--ds-grid-span), var(--ds-grid-cols, 1)) * (100% + var(--ds-grid-h-gap, 0px)) / var(--ds-grid-cols, 1) - var(--ds-grid-h-gap, 0px));
     }
   }
 
-  &.--align-start {
-    & .ds-grid {
-      &__row {
-        justify-content: flex-start;
-      }
-    }
+  &.--align-center > .ds-grid__row {
+    justify-content: center;
   }
 
-  &.--align-center {
-    & .ds-grid {
-      &__row {
-        justify-content: center;
-      }
-    }
-  }
-  
-  &.--align-end {
-    & .ds-grid {
-      &__row {
-        justify-content: flex-end;
-      }
-    }
+  &.--align-end > .ds-grid__row {
+    justify-content: flex-end;
   }
 
-  &.--v-align-start {
-    & .ds-grid {
-      &__row {
-        align-items: flex-start;
-      }
-    }
+  &.--v-align-start > .ds-grid__row {
+    align-items: start;
   }
 
-  &.--v-align-center {
-    & .ds-grid {
-      &__row {
-        align-items: center;
-      }
-    }
+  &.--v-align-center > .ds-grid__row {
+    align-items: center;
   }
 
-  &.--v-align-end {
-    & .ds-grid {
-      &__row {
-        align-items: flex-end;
-      }
-    }
+  &.--v-align-end > .ds-grid__row {
+    align-items: end;
   }
+}
+
+// Items as high as a ratio of their width, and the content of a ds-grid-item fills it. Without specificity: the own
+// ratio of an item (ds-grid-item `ratio`) wins.
+:where(.ds-grid.--with-cell-ratio > .ds-grid__row) > * {
+  aspect-ratio: 1 / var(--ds-grid-cell-ratio);
+}
+
+:where(.ds-grid.--with-cell-ratio > .ds-grid__row > ds-grid-item) > .ds-grid-item__content {
+  position: absolute;
+  inset: 0;
 }

@@ -1,0 +1,39 @@
+@use '../tokens' as *;
+
+// ds-modal: a dark translucent backdrop over the page, and a white dialog box with rounded corners and a shadow, in the
+// center, at most as wide as the xs breakpoint. The custom properties are documented in components/core/modal/readme.md;
+// the component stylesheet places the dialog and reads the stack level and the maximum width.
+
+ds-modal {
+  --ds-modal-z-index: 1000;
+  --ds-modal-max-width: #{ds-breakpoint(xs)};
+  --ds-modal-margin: #{ds-spacing(4)};
+  --ds-modal-backdrop: #{ds-color(shadow, strong)};
+  --ds-modal-background: #{ds-color(gray, white)};
+  --ds-modal-color: #{ds-color(gray, darkest)};
+  --ds-modal-padding: #{ds-spacing(5)};
+  --ds-modal-radius: #{ds-radius(md)};
+  --ds-modal-shadow: 0 10px 30px #{ds-color(shadow, base)};
+}
+
+.ds-lightbox {
+  background-color: var(--ds-modal-backdrop);
+
+  & > .ds-lightbox__container {
+    padding: var(--ds-modal-margin);
+
+    // Child combinator: not a ds-block in the `modal` context (its main class is ds-modal too).
+    & > .ds-modal {
+      padding: var(--ds-modal-padding);
+      border-radius: var(--ds-modal-radius);
+      background-color: var(--ds-modal-background);
+      color: var(--ds-modal-color);
+      box-shadow: var(--ds-modal-shadow);
+
+      // The padding is the space under the content: not the margin of its last paragraph.
+      & > .ds-modal__content > :last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+@use './tokens' as *;
+
+// The accessors return the custom property of the token (var(--ds-…), see ds-tokens()); their -value variants return the
+// Sass value, for computations.
+
+// *** Functions *** //
+
+// A font style property (family, size, weight, decoration): the `$variant` of `$type`, else the `default` variant of `$type`,
+// else the top-level `default`. ds-font-style(size, title, page-main) → var(--ds-font-style-title-page-main-size).
+// An unknown type or variant is an error.
+@function ds-font-style($prop, $type: default, $variant: null) {
+  @return ds-token-style(font-style, $prop, $type, $variant);
+}
+
+@function ds-font-style-value($prop, $type: default, $variant: null) {
+  @return ds-token-style-value(font-style, $prop, $type, $variant);
+}
+
+@function ds-font-family($type: default, $variant: null) {
+  @return ds-font-style(family, $type, $variant);
+}
+
+@function ds-font-family-value($type: default, $variant: null) {
+  @return ds-font-style-value(family, $type, $variant);
+}
+
+@function ds-font-weight($type: default, $variant: null) {
+  @return ds-font-style(weight, $type, $variant);
+}
+
+@function ds-font-weight-value($type: default, $variant: null) {
+  @return ds-font-style-value(weight, $type, $variant);
+}
+
+@function ds-font-decoration($type: default, $variant: null) {
+  @return ds-font-style(decoration, $type, $variant);
+}
+
+@function ds-font-decoration-value($type: default, $variant: null) {
+  @return ds-font-style-value(decoration, $type, $variant);
+}
+
+@function ds-font-size($type: default, $variant: null) {
+  @return ds-font-style(size, $type, $variant);
+}
+
+@function ds-font-size-value($type: default, $variant: null) {
+  @return ds-font-style-value(size, $type, $variant);
+}
+
+// *** Mixins *** //
+
+@mixin ds-font-styles($type: page, $variant: null) {
+  font-family: ds-font-style(family, $type, $variant);
+  font-size: ds-font-style(size, $type, $variant);
+  font-weight: ds-font-style(weight, $type, $variant);
+  text-decoration: ds-font-style(decoration, $type, $variant);
+}

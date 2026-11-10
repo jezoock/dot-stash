@@ -1,0 +1,62 @@
+// The structure of ds-back-to-top: a box fixed in the bottom corner of the end side of the viewport (the right, the left
+// from right to left), away from the edges by `--ds-back-to-top-offset` and the safe areas of the screen (a notch, the
+// home indicator), above the page. Hidden (`--hidden`), it fades out and is not rendered (`visibility: hidden`: no pointer,
+// no focus, not read). It takes no room in the page. The name of the link is hidden on the screen. The look (the button,
+// its icon, its colors) is the theme's (components/_back-to-top.scss), from the custom properties below.
+
+/**
+ * @prop --ds-back-to-top-offset: Distance from the bottom and end edges of the viewport (and their safe areas).
+ * @prop --ds-back-to-top-z-index: Stack level of the link, above the page.
+ * @prop --ds-back-to-top-transition-duration: Duration of the fade in and out.
+ * @prop --ds-back-to-top-size: Width and height of the link.
+ * @prop --ds-back-to-top-icon-size: Size of the arrow (its font size: the icon is a square of 1em).
+ * @prop --ds-back-to-top-background: Background of the link.
+ * @prop --ds-back-to-top-hover-background: Background of the link under the pointer.
+ * @prop --ds-back-to-top-color: Color of the arrow.
+ * @prop --ds-back-to-top-radius: Corner radius of the link.
+ * @prop --ds-back-to-top-shadow: Shadow of the link.
+ */
+
+.ds-back-to-top {
+  position: fixed;
+  // The safe areas are physical: the larger of the left and right ones, on the end side whichever the direction.
+  bottom: calc(var(--ds-back-to-top-offset, 1rem) + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: calc(var(--ds-back-to-top-offset, 1rem) + max(env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)));
+  z-index: var(--ds-back-to-top-z-index, 9);
+  transition:
+    opacity var(--ds-back-to-top-transition-duration, 0.2s) ease,
+    visibility var(--ds-back-to-top-transition-duration, 0.2s) ease;
+
+  &.--hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // The name of the link: read, hidden on the screen (the arrow shows).
+  &__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+
+  // Less motion: it shows and hides at once.
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: none;
+  }
+
+  @media print {
+    display: none;
+  }
+}

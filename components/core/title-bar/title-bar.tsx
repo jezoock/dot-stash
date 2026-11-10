@@ -1,43 +1,36 @@
-import { Component, h, Prop, Watch, Element, Host } from '@stencil/core/internal';
-import _ds from '../../../typescript/dot-stash';
-import CssClassList from '../../types/css-class-list.interface';
+import { Component, h, Prop, Element, Host } from '@stencil/core';
+import { toClassList } from '../../utils/props';
 
+/**
+ * A row of three parts: content before, the main content (which takes the remaining width), and content after.
+ *
+ * @slot - The main content (`__content`), a title.
+ * @slot before - Content before it (`__before`, rendered with a `slot="before"` child): an icon, a back link.
+ * @slot after - Content after it (`__after`, rendered with a `slot="after"` child): actions.
+ */
 @Component({
   tag: 'ds-title-bar',
   styleUrl: 'title-bar.scss',
 })
 export class DSTitleBar {
-  contextName = "title-bar";
-  CSSClassList: CssClassList;
+  contextName = 'title-bar';
   hasContentBefore: boolean;
   hasContentAfter: boolean;
 
   @Element() container: HTMLElement;
 
   @Prop({ reflect: true }) ctx: boolean;
+  /** Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component. */
   @Prop({ reflect: true }) mods: string | string[] = [];
-
-  @Watch('mods')
-  modsChangeHandler( mods: string | string[] ) {
-    this.CSSClassList = _ds.props.toClassList("ds-title-bar", _ds.props.toArray(mods));
-  }
 
   connectedCallback() {
     this.hasContentBefore = this.container.querySelector("[slot='before']") !== null;
     this.hasContentAfter = this.container.querySelector("[slot='after']") !== null;
   }
 
-  componentWillLoad() {
-    this.CSSClassList = _ds.props.toClassList("ds-title-bar", _ds.props.toArray(this.mods));
-  }
-  
   render() {
     return (
-      <Host
-        class={{
-          ...this.CSSClassList,
-        }}
-      >
+      <Host class={toClassList('ds-title-bar', this.mods)}>
         {this.hasContentBefore && (
           <div class="ds-title-bar__before">
             <slot name="before" />

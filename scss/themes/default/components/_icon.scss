@@ -1,0 +1,64 @@
+@use '../tokens' as *;
+
+// The types of ds-icon (`type` → `--<type>` class) and their icon in $icons.
+$-icon-types: (
+  cart: basket,
+  help: help,
+  account: user-o,
+  voucher: ticket,
+  returns: truck,
+  location: location,
+  search: search,
+  orders: calendar,
+  filter: menu,
+  arrow-up: angle-up,
+  arrow-left: angle-left,
+  arrow-right: angle-right,
+  arrow-down: angle-down,
+  up: up,
+  down: down,
+  left: left,
+  right: right,
+  dir-up: up-dir,
+  dir-down: down-dir,
+  dir-left: left-dir,
+  dir-right: right-dir,
+  show: eye,
+  hide: eye-off,
+  cancel: cancel,
+  delete: trash,
+  plus: plus,
+  minus: minus,
+  refresh: arrows-cw,
+  loading: arrows-cw,
+);
+
+// The size and color of the icons (documented in components/core/icon/readme.md): by default, those of the text.
+ds-icon {
+  --ds-icon-size: 1em;
+  --ds-icon-color: currentColor;
+}
+
+// The icon is the ::before of the element, a block of 1em: the element is a box of the size of the icon, vertically
+// centered on the text. A type that is not in the map above draws nothing (an empty box).
+.ds-icon {
+  display: inline-block;
+  font-size: var(--ds-icon-size);
+  color: var(--ds-icon-color);
+  line-height: 1;
+  vertical-align: middle;
+
+  &::before {
+    @include ds-icon(null, block);
+  }
+
+  @each $type, $icon in $-icon-types {
+    &.--#{$type}::before {
+      @include ds-icon-content($icon);
+    }
+  }
+
+  &.--loading::before {
+    @include spin();
+  }
+}

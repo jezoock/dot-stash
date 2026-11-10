@@ -1,0 +1,10 @@
+// ds-title-bar: the space between its parts (documented in components/core/title-bar/readme.md). The default theme puts
+// none: the parts touch.
+
+ds-title-bar {
+  --ds-title-bar-gap: normal;
+}
+
+.ds-title-bar {
+  gap: var(--ds-title-bar-gap);
+}

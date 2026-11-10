@@ -1,3 +1,10 @@
+// The structure of ds-title-bar: a row, the content between the `before` and `after` parts. The space between the parts
+// is the look of the theme (components/_title-bar.scss), from the custom property below.
+
+/**
+ * @prop --ds-title-bar-gap: Space between the `before` part, the content and the `after` part.
+ */
+
 .ds-title-bar {
   display: flex;
   justify-content: space-between;
