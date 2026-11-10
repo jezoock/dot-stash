@@ -7,7 +7,7 @@ A standalone UI library made of two parts:
 
 Each component keeps its structure in its own stylesheet (`styleUrl`), which Stencil injects into the document, and gets its look from the theme stylesheet, through a few component custom properties (`--ds-tooltip-background`, `--ds-sidebar-width`…): see [Styling a component](#styling-a-component).
 
-This README describes the current state of the library (version 0.1.0). What changed since the original code, with the breaking changes and what to do, is in the [changelog](CHANGELOG.md).
+This README describes the current state of the library (version 0.1.0). What changed since the original code, with the breaking changes and what to do, is in the [changelog](CHANGELOG.md). The remaining work, split into small tasks, is in [docs/backlog.md](docs/backlog.md) (in French).
 
 ## Requirements
 
@@ -150,7 +150,7 @@ tsconfig.build.json    TypeScript configuration of the Stencil build (the compon
 vitest.config.mts      Vitest configuration: the unit, styles and browser projects (npm test, npm run test:browser)
 eslint.config.mjs      ESLint configuration (npm run lint)
 stylelint.config.mjs   Stylelint configuration (npm run lint:css)
-docs/                  project notes (archives)
+docs/                  project notes: the archives, the backlog (in French)
 ```
 
 ## Build output

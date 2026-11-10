@@ -6,7 +6,7 @@ The readme of each component (`components/core/<component>/readme.md`) ends its 
 
 ## [Unreleased]
 
-Nothing yet.
+Nothing yet. The remaining work, split into small tasks (bugs, accessibility checks, browser support, components, theme, tooling, release and the owner actions outside of the repository), is listed in [docs/backlog.md](docs/backlog.md), in French.
 
 ## [0.1.0] - 2026-11-10
 
@@ -86,7 +86,7 @@ Each change of the API since `main`, with what to do. The removed components and
 - **Component custom properties** (the styling API): each component documents its `--ds-<component>-…` properties (`@prop`), set by the theme from the tokens; each readme has a Styling section.
 - **JavaScript utilities**: the `tokens` module (`getToken()`, `getBreakpoints()`); `responsive.widthQuery()`, `matchesWidth()`, `watchMedia()`, `watchBreakpoint()`, `watchThemeBreakpoint()`, `isSameBreakpoint()`, `isStylesheetLoad()`; the package entry exports each module as a namespace, `ds`, `debounce`, `throttle`, `uuid`, `AppStatus`, `DsComponentContext` and the public types.
 - **Tooling**: Node build scripts (`scripts/build-css.mjs` with `--watch`, `--strict` and `--source-map`, `scripts/build-icons.mjs`, `scripts/dev.mjs`), ESLint (flat configuration with typescript-eslint), Stylelint, Prettier, `npm run typecheck`, and CI (GitHub Actions: build, formatting, lint, types, unit and stylesheet tests, and the browser tests in Chromium).
-- **Tests**: Vitest 5 and `@stencil/vitest`: the unit tests in Stencil's simulated DOM, the stylesheet tests (every theme and component stylesheet compiled without a warning, the custom properties, the styling contract, the accessibility rules, the icons, the slots and the paths of the documentation) and the browser tests in Chromium (keyboard, focus, forms, layout, viewport, transitions, accessibility tree, icons). 1367 unit and stylesheet tests and 182 browser tests in this release.
+- **Tests**: Vitest 5 and `@stencil/vitest`: the unit tests in Stencil's simulated DOM, the stylesheet tests (every theme and component stylesheet compiled without a warning, the custom properties, the styling contract, the accessibility rules, the icons, the slots and the paths of the documentation) and the browser tests in Chromium (keyboard, focus, forms, layout, viewport, transitions, accessibility tree, icons). 1369 unit and stylesheet tests and 182 browser tests in this release.
 - **Documentation**: the README (requirements, install, use in another project from a built clone, build output, theming, using the components, forms, styling, accessibility, tests, browser support), a readme per component, `docs/propal-archive.md` (the archive branches), and this changelog.
 
 ### Changed

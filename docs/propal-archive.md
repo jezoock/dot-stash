@@ -104,6 +104,8 @@ What became of the recommendations of the table, in the library of the developme
 | `sticky-cart-button`, `form-store`, `page`           | Not adapted.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | The **Drop** folders (`vimeo`, `account`, `cart`, …) | Dropped.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
+The folders not recovered are ideas of the [backlog](backlog.md) (category `idée`), to decide.
+
 ### Follow-ups
 
 - **`ds-rating-list`** (archived, `archived/components/ds-rating-list/`): its `rating-list.scss` styles `ds-grade-star`.
