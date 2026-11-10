@@ -5,7 +5,7 @@ import { focused, mount, nextEvent, setReducedMotion } from '../../../test/helpe
 type Slider = HTMLDsSliderElement & HTMLElement;
 type SliderEvent = CustomEvent<{ slide: string; direction: number; currentIndex?: number }>;
 
-/** A slider 500 px wide of `count` slides of 200 px: two in view, so the list scrolls. */
+/** A slider 500 px wide of `count` slides, each one as wide as the slider (`ds-slider-item` is 100% wide): one in view, so the list scrolls. */
 const SLIDER = (params: object = {}, count = 5) =>
   `<button id="before">Before</button>
   <ds-slider label="Featured" style="display: block; width: 500px" params='${JSON.stringify(params)}'>
@@ -14,7 +14,8 @@ const SLIDER = (params: object = {}, count = 5) =>
   <button id="after">After</button>`;
 
 describe('ds-slider in a browser', () => {
-  const render = async (params: object = {}) => {
+  /** `buttons`: the previous / next buttons the slider shows (without loop, not before the first slide nor after the last one). */
+  const render = async (params: object = {}, buttons: ('prev' | 'next')[] = ['prev', 'next']) => {
     await mount(SLIDER(params));
     const slider = document.querySelector<Slider>('ds-slider');
     const button = (name: 'prev' | 'next' | 'rotation') => slider.querySelector<HTMLElement>(`.ds-slider__${name}-button`);
@@ -27,7 +28,7 @@ describe('ds-slider in a browser', () => {
       }
     };
     // The buttons are rendered once the slider has measured its slides, then shown (their hydrated visibility).
-    await expect.poll(() => ['prev', 'next'].every((name: 'prev' | 'next') => button(name) && getComputedStyle(button(name)).visibility === 'visible')).toBe(true);
+    await expect.poll(() => buttons.every(name => button(name) && getComputedStyle(button(name)).visibility === 'visible')).toBe(true);
     const slidesInView = () => Array.from(list.querySelectorAll<HTMLElement>('ds-slider-item')).filter(item => !item.inert);
     return { slider, button, list, slideEnd, slidesInView };
   };
@@ -77,6 +78,44 @@ describe('ds-slider in a browser', () => {
       await end;
 
       await expect.poll(() => dots().map(dot => dot.getAttribute('aria-current'))).toEqual([null, null, null, 'true', null]);
+    });
+  });
+
+  describe('params.index', () => {
+    /** The text of the slides in view, from the start of the slider: those whose box is in the box of the slider. */
+    const shown = (slider: Slider) => {
+      const { left, right } = slider.querySelector('.ds-slider__container').getBoundingClientRect();
+      return Array.from(slider.querySelectorAll<HTMLElement>('ds-slider-item'))
+        .filter(item => {
+          const box = item.getBoundingClientRect();
+          return box.left >= left - 1 && box.left < right - 1;
+        })
+        .sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left)
+        .map(item => item.textContent.trim());
+    };
+
+    it.each([
+      ['with loop', { index: 2, menu: true }, ['prev', 'next'] as ('prev' | 'next')[], 2],
+      // Without loop, the last slide: no next button.
+      ['without loop', { index: 4, loop: false, menu: true }, ['prev'] as ('prev' | 'next')[], 4],
+    ])('%s, the slide of the index is the one in view, the current one of the menu, and the other ones are inert', async (_, params, buttons, index) => {
+      const { slider, slidesInView, slideEnd, button } = await render(params, buttons);
+      const inView = [`Slide ${index + 1}`];
+      const dots = () => Array.from(slider.querySelectorAll<HTMLElement>('ds-slider-menu button'));
+      await expect.poll(() => dots().length).toBe(5);
+
+      expect(shown(slider)).toEqual(inView);
+      expect(slidesInView().map(item => item.textContent.trim())).toEqual(inView);
+      expect(slidesInView().map(item => item.getAttribute('aria-label'))).toEqual([`${index + 1} of 5`]);
+      expect(button('next') === null).toBe(!buttons.includes('next'));
+      expect(dots().map(dot => dot.getAttribute('aria-current'))).toEqual([0, 1, 2, 3, 4].map(dot => (dot === index ? 'true' : null)));
+
+      button('prev').focus();
+      const end = slideEnd();
+      await userEvent.keyboard('{Enter}');
+      expect(await end).toBe(index - 1);
+      await expect.poll(() => shown(slider)[0]).toBe(`Slide ${index}`);
+      await expect.poll(() => dots().findIndex(dot => dot.getAttribute('aria-current') === 'true')).toBe(index - 1);
     });
   });
 

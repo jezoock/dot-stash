@@ -27,6 +27,7 @@ The slider follows the [WAI-ARIA carousel pattern](https://www.w3.org/WAI/ARIA/a
 - **Buttons**: the previous and next buttons are `ds-trigger` buttons (`role="button"`, in the Tab order, Enter and Space), named "Previous slide" and "Next slide" (`labels.previous`, `labels.next`). Without `loop`, the previous button is not rendered on the first slide, the next one on the last: when one of them had the focus, the focus goes to the other one.
 - **Live region**: the list of slides is a polite live region (`aria-live="polite"`): a screen reader reads the slides that come in view after a button or a dot. While the slides rotate on their own, it is `aria-live="off"`.
 - **Automatic rotation** (`params.autoplay`): the slider renders a rotation button, first in the Tab order of the slider, named "Stop automatic slide show" while the slides rotate and "Start automatic slide show" once stopped (`labels.pause`, `labels.play`). The rotation stops when the focus enters the slider (from outside of it) and starts again only from that button (or `play()`); it pauses while the pointer is over the slider, and goes on when it leaves. `stop()` and `play()` stop and start it.
+- **First slide** (`params.index`, from 0): the slide shown first, at the load and on `refresh(true)`: the first slide in view, the current dot of the menu, the slides named by their place, those out of view inert. With `loop`, an index out of the slides counts round them (`-1` is the last one); without, it is at most the first slide of the last view.
 - **Less motion** (`prefers-reduced-motion: reduce`): the automatic rotation does not start (the rotation button can start it), and the slides change at once, without sliding.
 - **Texts**: `labels` translates the texts read by assistive technologies (JSON as an attribute), each with an English default:
 
@@ -51,7 +52,7 @@ The slider follows the [WAI-ARIA carousel pattern](https://www.w3.org/WAI/ARIA/a
 <ds-slider label="Produits" labels='{"slideName": "{index} sur {count}", "previous": "Diapositive précédente", "next": "Diapositive suivante"}'>…</ds-slider>
 ```
 
-**Changed**: `label`, `labels`, the roles and names, the inert slides, the live region and the rotation button are new; `stop()` stops the rotation at once (it let one more slide go) and `play()` starts it again (it did not); the slider no longer hangs when the slide does not run (it only ended on `transitionend`); the index of the current slide goes round the slides (`prev()` from the first one gave `-1`); the previous and next buttons are named "Previous slide" and "Next slide" (they were "Previous image" and "Next image").
+**Changed**: `label`, `labels`, the roles and names, the inert slides, the live region and the rotation button are new; `stop()` stops the rotation at once (it let one more slide go) and `play()` starts it again (it did not); the slider no longer hangs when the slide does not run (it only ended on `transitionend`); the index of the current slide goes round the slides (`prev()` from the first one gave `-1`); the previous and next buttons are named "Previous slide" and "Next slide" (they were "Previous image" and "Next image"); `params.index` shows its slide first (the slider showed the first slide, while its index, its menu and its buttons were those of `params.index`).
 
 <!-- Auto Generated Below -->
 

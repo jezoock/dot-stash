@@ -187,6 +187,68 @@ describe('ds-slider', () => {
     expect(dots().map(dot => dot.getAttribute('aria-current'))).toEqual([null, null, 'true', null]);
   });
 
+  describe('params.index: the first slide in view', () => {
+    const current = (page: Awaited<ReturnType<typeof render>>['page']) =>
+      Array.from(page.root.querySelectorAll('ds-slider-menu button')).findIndex(dot => dot.getAttribute('aria-current') === 'true');
+
+    it('shows the slide of index first, its dot current, the slides named by their place and those out of view inert', async () => {
+      const { page, events, names, inert } = await render(`params='{"index": 2, "menu": true}'`);
+
+      expect(names()).toEqual(['3 of 4', '4 of 4', '1 of 4', '2 of 4']);
+      expect(inert()).toEqual([false, false, false, true]);
+      expect(current(page)).toBe(2);
+
+      await page.root.next();
+      await wait(80);
+      await page.waitForChanges();
+      expect(events.map(({ slide, currentIndex }) => `${slide}:${currentIndex}`)).toEqual(['start-slide:2', 'stop-slide:3']);
+      expect(names()).toEqual(['4 of 4', '1 of 4', '2 of 4', '3 of 4']);
+      expect(current(page)).toBe(3);
+    });
+
+    it('a dot goes to its slide from there', async () => {
+      const { page, events, names } = await render(`params='{"index": 3, "menu": true}'`);
+
+      page.root.querySelectorAll<HTMLElement>('ds-slider-menu button')[1].click();
+      await wait(80);
+      await page.waitForChanges();
+
+      expect(events.map(({ slide, currentIndex }) => `${slide}:${currentIndex}`)).toEqual(['start-slide:3', 'stop-slide:1']);
+      expect(names()[0]).toBe('2 of 4');
+      expect(current(page)).toBe(1);
+    });
+
+    it('loops: an index out of the slides counts round them (-1 is the last one)', async () => {
+      const { page, names } = await render(`params='{"index": -1, "menu": true}'`);
+
+      expect(names()[0]).toBe('4 of 4');
+      expect(current(page)).toBe(3);
+    });
+
+    it('without loop: the first slide of the last view at most, the previous button shown, not the next one', async () => {
+      const { page, names, inert, button } = await render(`params='{"index": 3, "loop": false, "menu": true}'`);
+
+      // Three slides in view: the last view starts at the second slide.
+      expect(names()).toEqual(['2 of 4', '3 of 4', '4 of 4', '1 of 4']);
+      expect(inert()).toEqual([false, false, false, true]);
+      expect(current(page)).toBe(1);
+      expect(button('prev')).not.toBeNull();
+      expect(button('next')).toBeNull();
+    });
+
+    it('refresh(true) shows the slide of index again', async () => {
+      const { page, names } = await render(`params='{"index": 1}'`);
+
+      await page.root.next();
+      await wait(80);
+      await page.waitForChanges();
+      expect(names()[0]).toBe('3 of 4');
+
+      await page.root.refresh(true);
+      expect(names()[0]).toBe('2 of 4');
+    });
+  });
+
   it('gives the focus to the other button when the focused one is removed (no loop, first slide)', async () => {
     const { page, button } = await render(`params='{"loop": false}'`);
     const getFocused = trackFocus();

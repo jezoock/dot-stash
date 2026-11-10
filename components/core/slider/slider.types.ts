@@ -8,6 +8,10 @@ export interface DSSliderSelectors {
 export interface DSSliderParams {
   orientation?: 'hrt' | 'vtc';
   direction?: number;
+  /**
+   * The slide shown first, from 0 (`0` by default), at the load and on `refresh(true)`. With `loop`, an index out of the
+   * slides counts round them (`-1` is the last one); without, it is at most the first slide of the last view.
+   */
   index?: number;
   loop?: boolean;
   autoplay?: boolean;

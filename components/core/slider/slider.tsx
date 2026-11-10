@@ -327,6 +327,33 @@ export class DSSlider {
   }
 
   /**
+   * The index of the slide to show first (`params.index`, from 0). With the loop, an index out of the slides counts round
+   * them (`-1` is the last one); without the loop, it is at most the first slide of the last view, so that the slider
+   * never shows the first slides after the last one.
+   */
+  getStartIndex(): number {
+    const count = this.listLen;
+    const index = Math.trunc(Number(this.options.index) || 0);
+    if (this.options.loop) {
+      return ((index % count) + count) % count;
+    }
+    return Math.max(0, Math.min(index, count - this.dspItems));
+  }
+
+  /**
+   * Puts the slide of an index (its place among the slides, from 0) first in the list, and the slides before it after the
+   * last one, in their order: the order a slide leaves the list in, as the slider shows the first slides of its list. The
+   * slides are moved, not copied.
+   */
+  putSlideFirst(index: number) {
+    const items = this.getListItems();
+    const first = items.findIndex(item => this.slideIndexes.get(item) === index);
+    if (first > 0) {
+      this.list.append(...items.slice(0, first));
+    }
+  }
+
+  /**
    * The slides out of view are inert (out of the Tab order and of the accessibility tree): those out of
    * `[first, first + the number of slides in view)` in the list. Without a slide to scroll, they are all in view.
    */
@@ -456,11 +483,17 @@ export class DSSlider {
         this.isScrollable = false;
       }
 
+      // The slides are numbered from their place before the slide of params.index is put first.
+      this.labelSlides();
+
       if (this.isScrollable) {
         if (this.currentItem.obj === null || reset || false) {
+          const index = this.getStartIndex();
+          this.putSlideFirst(index);
+          this.items = this.getListItems();
           this.currentItem = {
-            index: this.options.index,
-            obj: this.items[this.options.index],
+            index,
+            obj: this.items[0],
             dTime: this.options.duration,
           };
         }
@@ -468,7 +501,6 @@ export class DSSlider {
         this.continue();
       }
 
-      this.labelSlides();
       this.setVisibleSlides(0);
 
       setCss({ opacity: '1' } as Partial<CSSStyleDeclaration>, [this.sliderContener]);
