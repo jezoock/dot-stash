@@ -5,14 +5,14 @@
 - **Classes**: `<ds-toaster>` renders a `div` with the main class, `ds-toaster`, its modifiers (the default theme reads `--success`, `--warning` and `--error`), `--v-pos-<top|middle|bottom>` and `--h-pos-<left|center|right>` (`position`), and `--shown` or `--hidden`.
 - **Elements**: `__container` (the box of the toasts), `__toast` (one per displayed message), its `__content` and `__message`; `__live`, the live region (see [Accessibility](#accessibility)), a paragraph per displayed message while the toaster is shown.
 - **Attributes** (reflected): `position`, `messages`, `max-displayed-toast`, `mods`.
-- **Structure** (`toaster.scss`): a fixed box on the side and at the edge of its position, above the page (`--ds-toaster-z-index`), that slides in from its top or bottom edge when it is rendered. `--hidden` fades it out (opacity and visibility, 0.3 s): `show()` and `hide()` emit `toasterShown` and `toasterHidden` at the end of that transition, or at once when it does not run (durations of 0), or once its duration is over when the event does not come. With less motion (`prefers-reduced-motion: reduce`), it neither slides in nor fades. The pointer goes through the toaster, except on the box, which is at least `--ds-toaster-min-width` wide, at most half the screen. The live region is hidden on the screen (a 1 px clipped box), but not from screen readers, even while the toaster is hidden.
+- **Structure** (`toaster.scss`): a fixed box on the side and at the edge of its position, above the page (`--ds-toaster-z-index`), that slides in from its top or bottom edge when it is rendered. `--hidden` fades it out (opacity and visibility, 0.3 s): `show()` and `hide()` emit `toasterShown` and `toasterHidden` at the end of that transition, or at once when it does not run (durations of 0), or once its duration is over when the event does not come. With less motion (`prefers-reduced-motion: reduce`), it neither slides in nor fades. The pointer goes through the toaster, except on the box, which is at least `--ds-toaster-min-width` wide (but never wider than the viewport less 2rem, so that it fits a small screen: 343 px at 375 px, 288 px at 320 px), at most half the screen (when the minimum width allows it). The live region is hidden on the screen (a 1 px clipped box), but not from screen readers, even while the toaster is hidden.
 - **Look** (default theme, `components/_toaster.scss`): the box of the toasts (padding, colors, font, shadow) and the space between the toasts, from the custom properties below, set on `ds-toaster`. The `success`, `warning` and `error` modifiers set `--ds-toaster-background` to their status color.
 
 Override them after the theme stylesheet (see [Styling a component](../../../README.md#styling-a-component)):
 
 ```css
 ds-toaster {
-  --ds-toaster-min-width: min(500px, 100vw - 2rem);
+  --ds-toaster-min-width: 20rem;
 }
 
 .ds-toaster.--success {
@@ -46,7 +46,7 @@ notices.messages = ['Changes saved'];
 notices.displayToast(); // "Changes saved", announced when the screen reader is idle
 ```
 
-**Changed**: the live region and the `aria-hidden` box are new. The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster (it ran to its end before).
+**Changed**: the live region and the `aria-hidden` box are new. The countdown of `displayToast()` pauses while the pointer is over the toasts or the focus is in the toaster (it ran to its end before). The box of the toasts is never wider than the viewport less 2rem (its minimum width, 500 px in the default theme, pushed it out of a small screen).
 
 <!-- Auto Generated Below -->
 
@@ -122,16 +122,16 @@ Type: `Promise<void>`
 
 ## CSS Custom Properties
 
-| Name                      | Description                                                                                            |
-| ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `--ds-toaster-background` | Background of the toasts. The `success`, `warning` and `error` modifiers set it to their status color. |
-| `--ds-toaster-color`      | Text color of the toasts.                                                                              |
-| `--ds-toaster-font-size`  | Font size of the toasts.                                                                               |
-| `--ds-toaster-gap`        | Space between two toasts.                                                                              |
-| `--ds-toaster-min-width`  | Minimum width of the box of the toasts.                                                                |
-| `--ds-toaster-padding`    | Padding of the box of the toasts.                                                                      |
-| `--ds-toaster-shadow`     | Shadow of the box of the toasts.                                                                       |
-| `--ds-toaster-z-index`    | Stack level of the toaster.                                                                            |
+| Name                      | Description                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `--ds-toaster-background` | Background of the toasts. The `success`, `warning` and `error` modifiers set it to their status color.         |
+| `--ds-toaster-color`      | Text color of the toasts.                                                                                      |
+| `--ds-toaster-font-size`  | Font size of the toasts.                                                                                       |
+| `--ds-toaster-gap`        | Space between two toasts.                                                                                      |
+| `--ds-toaster-min-width`  | Minimum width of the box of the toasts; on a small screen, the box is never wider than the viewport less 2rem. |
+| `--ds-toaster-padding`    | Padding of the box of the toasts.                                                                              |
+| `--ds-toaster-shadow`     | Shadow of the box of the toasts.                                                                               |
+| `--ds-toaster-z-index`    | Stack level of the toaster.                                                                                    |
 
 
 ----------------------------------------------

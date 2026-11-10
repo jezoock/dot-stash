@@ -9,7 +9,7 @@
  * @prop --ds-toaster-padding: Padding of the box of the toasts.
  * @prop --ds-toaster-gap: Space between two toasts.
  * @prop --ds-toaster-shadow: Shadow of the box of the toasts.
- * @prop --ds-toaster-min-width: Minimum width of the box of the toasts.
+ * @prop --ds-toaster-min-width: Minimum width of the box of the toasts; on a small screen, the box is never wider than the viewport less 2rem.
  * @prop --ds-toaster-z-index: Stack level of the toaster.
  */
 
@@ -31,7 +31,9 @@
     box-sizing: border-box;
     display: block;
     max-width: 50vw;
-    min-width: var(--ds-toaster-min-width, 500px);
+    // Never wider than the viewport, less a gutter of 1rem on each side (wider than a classic scrollbar, which 100vw
+    // includes): on a small screen (320 px, 375 px), the minimum width would push the toasts out of it.
+    min-width: min(var(--ds-toaster-min-width, 500px), 100vw - 2rem);
     min-height: 3rem;
     transform-origin: center;
     pointer-events: initial;

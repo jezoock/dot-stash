@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { mount, nextEvent } from '../../../test/helpers/browser';
 
 type Toaster = HTMLDsToasterElement & HTMLElement;
@@ -42,6 +42,30 @@ describe('ds-toaster in a browser', () => {
       await userEvent.unhover(container);
       await new Promise(resolve => setTimeout(resolve, 300));
       expect(isShown()).toBe(true);
+    });
+  });
+
+  describe('layout', () => {
+    const LONG = 'Your changes to the delivery address were saved, and they apply to your next order';
+    const positions = ['top,left', 'top,center', 'middle,center', 'bottom,right'];
+
+    it.each([320, 375])('at %i px, the box of the toasts is within the viewport, less 1rem on each side, in every position', async width => {
+      await page.viewport(width, 700);
+      for (const position of positions) {
+        const { container } = await render(`position="${position}" messages="${LONG}"`);
+        const { left, right, width: boxWidth } = container.getBoundingClientRect();
+        expect([position, left >= 0, right <= document.documentElement.clientWidth, boxWidth]).toEqual([position, true, true, width - 32]);
+        // The text wraps in the box: nothing overflows it.
+        expect(container.scrollWidth).toBeLessThanOrEqual(container.clientWidth);
+      }
+    });
+
+    it.each([800, 1280])('at %i px, the box keeps its minimum width, 500 px (the default theme)', async width => {
+      await page.viewport(width, 700);
+      for (const position of positions) {
+        const { container } = await render(`position="${position}"`);
+        expect([position, container.getBoundingClientRect().width]).toEqual([position, 500]);
+      }
     });
   });
 });
