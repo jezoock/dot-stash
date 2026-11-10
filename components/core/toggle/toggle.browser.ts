@@ -56,6 +56,46 @@ describe('ds-toggle in a browser', () => {
     });
   });
 
+  describe('focus right after it is shown', () => {
+    it.each(['checkbox', 'radio', 'switch', 'icon'])('a toggle of type %s takes the focus in the frame it is shown: its visibility does not transition', async type => {
+      await mount(`<div id="box" style="visibility: hidden"><ds-toggle type="${type}" label="Option"></ds-toggle></div>`);
+      const toggle = document.querySelector<Toggle>('ds-toggle');
+
+      document.querySelector<HTMLElement>('#box').style.visibility = 'visible';
+      toggle.focus();
+
+      expect(focused()).toBe(toggle);
+      expect(toggle.getAnimations().map(animation => (animation as CSSTransition).transitionProperty)).not.toContain('visibility');
+    });
+
+    it('takes the focus as soon as it is hydrated, without waiting for a frame', async () => {
+      document.body.innerHTML = '<ds-toggle type="checkbox" label="Option"></ds-toggle>';
+      const toggle = document.querySelector<Toggle>('ds-toggle');
+      await customElements.whenDefined('ds-toggle');
+      await toggle.componentOnReady();
+
+      toggle.focus();
+      expect(focused()).toBe(toggle);
+    });
+
+    it('still animates its changes of state: the border, the mark and the knob', async () => {
+      const checkbox = await mount<Toggle>('<ds-toggle type="checkbox" label="Option"></ds-toggle>');
+      checkbox.click();
+      const properties = (element: Element, pseudo?: string) =>
+        element
+          .getAnimations({ subtree: true })
+          .filter(animation => (animation.effect as KeyframeEffect).pseudoElement === (pseudo ?? null))
+          .map(animation => (animation as CSSTransition).transitionProperty)
+          .sort();
+      await expect.poll(() => properties(checkbox)).toEqual(['border-bottom-color', 'border-left-color', 'border-right-color', 'border-top-color']);
+      expect(properties(checkbox, '::after')).toEqual(['background-color', 'opacity']);
+
+      const toggle = await mount<Toggle>('<ds-toggle type="switch" label="Option"></ds-toggle>');
+      toggle.click();
+      await expect.poll(() => properties(toggle, '::after')).toEqual(['background-color', 'left']);
+    });
+  });
+
   describe('form', () => {
     it.each([
       ['checkbox', 'value="accepted"', [['terms', 'accepted']]],

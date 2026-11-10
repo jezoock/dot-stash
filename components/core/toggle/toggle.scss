@@ -19,11 +19,12 @@ ds-toggle {
   border: none;
   background: transparent;
   position: relative;
-  // The changes of state are animated, not the focus outline: it shows at once.
-  transition:
-    all ease 0.4s,
-    outline 0s,
-    outline-offset 0s;
+  // The changes of state are animated: the properties the states change, listed rather than `all`, which would animate
+  // the focus outline (it shows at once) and the visibility (a toggle shown, or hydrated, would be hidden for the first
+  // frame of the transition, and could not take the focus in it).
+  transition-property: border-color, background-color, color, box-shadow, opacity;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
   cursor: pointer;
   display: inline-block;
 
@@ -37,7 +38,10 @@ ds-toggle {
       top: 50%;
       width: 1.5rem;
       height: 1.5rem;
-      transition: all ease 0.4s;
+      // The mark (opacity) and the knob (left), and their colors.
+      transition-property: opacity, left, background-color, border-color, transform;
+      transition-duration: 0.4s;
+      transition-timing-function: ease;
     }
   }
 

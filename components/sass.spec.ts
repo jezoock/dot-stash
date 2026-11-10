@@ -903,6 +903,24 @@ describe('Sass stylesheets', () => {
       },
     );
 
+    // `all` would also animate the focus outline, which shows at once, and the visibility: an element shown (or hydrated:
+    // Stencil hides a component until then) would be hidden for the first frame of the transition, and not take the focus.
+    it.each(['scss/themes/default/index.scss', ...scssFilesIn(path.join(root, 'components')).map(file => path.relative(root, file))])(
+      '%s names the properties it transitions (no `all`)',
+      file => {
+        const css = sass.compile(path.join(root, file)).css.replace(/\/\*[\s\S]*?\*\//g, '');
+        const transitions = [...css.matchAll(/(?<![\w-])transition(-property)?\s*:\s*([^;{}]+)/g)].map(([, longhand, value]) => [
+          longhand ? 'transition-property' : 'transition',
+          value.trim(),
+        ]);
+        const toAll = transitions.filter(([name, value]) =>
+          value.split(/,(?![^(]*\))/).some(item => (name === 'transition-property' ? item.trim() === 'all' : /^(all\b|[\d.]+m?s\b)/.test(item.trim()))),
+        );
+
+        expect(toAll).toEqual([]);
+      },
+    );
+
     it('the default theme ends the transitions and animations at once with less motion, but for the loading indicators', () => {
       const rules = (selector: string) =>
         [...themeCss.matchAll(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([^{}]+)\{([^{}]*)\}\}/g)]
