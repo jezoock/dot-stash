@@ -1,6 +1,6 @@
 # Backlog
 
-La liste de travail de dot-stash après la version 0.1.0 (10 novembre 2026) : tout ce qui reste à faire, découpé en tâches aussi petites que possible, chacune faisable seule, dans une session. Les tâches qui changent l'API ou le rendu ajoutent leur entrée au [CHANGELOG](../CHANGELOG.md), section [Unreleased].
+La liste de travail de dot-stash après la version 0.1.0 (10 novembre 2026) : tout ce qui reste à faire, découpé en tâches aussi petites que possible, chacune faisable seule, dans une session. Les tâches qui changent l'API ou le rendu ajoutent leur entrée au [CHANGELOG](../CHANGELOG.md), section [Unreleased]. Les tâches faites sont retirées des listes et notées à la fin, dans [Terminées](#terminées).
 
 **Taille** : XS, une heure au plus ; S, une demi-journée au plus ; M, un à deux jours. **Décision** : « oui » quand la tâche attend un choix de votre part (ou une action de votre part, hors du dépôt) avant de commencer, ou en est un.
 
@@ -16,21 +16,21 @@ La liste de travail de dot-stash après la version 0.1.0 (10 novembre 2026) : to
 | [Outillage](#outillage)                                 | 17      | 7   | 10  | 0   | 1             |
 | [Tests](#tests)                                         | 5       | 3   | 2   | 0   | 1             |
 | [Documentation](#documentation)                         | 7       | 6   | 1   | 0   | 0             |
-| [Release](#release)                                     | 8       | 3   | 5   | 0   | 6             |
-| [Sécurité et hors dépôt](#sécurité-et-hors-dépôt)       | 6       | 5   | 1   | 0   | 6             |
+| [Release](#release)                                     | 6       | 1   | 5   | 0   | 5             |
+| [Sécurité et hors dépôt](#sécurité-et-hors-dépôt)       | 2       | 1   | 1   | 0   | 2             |
 | [Idées](#idées)                                         | 8       | 1   | 0   | 7   | 6             |
-| **Total**                                               | **137** | 45  | 78  | 14  | 68            |
+| **Total**                                               | **131** | 39  | 78  | 14  | 63            |
 
 ## Ordre suggéré
 
-1. **Fusion et secrets** : relire et fusionner la pull request (B-116), puis les actions de sécurité, hors du dépôt (B-125, B-127, B-128, B-124, B-126, B-129).
-2. **Petits correctifs sûrs** : B-053, B-001, B-002 ; puis le tag et le README après la fusion (B-117, B-118).
+1. **Tag et secrets** : poser le tag `v0.1.0` (B-117), puis les dernières actions de sécurité, hors du dépôt (B-128, B-129).
+2. **Petits correctifs sûrs** : B-053, B-001, B-002.
 3. **Décisions groupées** (une séance avec vous) : tokens hérités (B-074), props sans effet (B-067), délai du toaster (B-066), page de développement (B-101), installation depuis git (B-119), et les autres tâches marquées « oui ».
 4. **Compatibilité** : Firefox puis WebKit en CI (B-038, B-039), le tri par domaine, et la déclaration de support (B-052).
 5. **Accessibilité manuelle** : la page de test (B-004), puis les passes au lecteur d'écran et les audits, groupe par groupe.
 6. **Outillage** : export des tokens, contrastes, parité, générateurs ; puis les composants, le thème, les tests et la documentation au fil de l'eau ; les idées sur décision.
 
-Les cinq premières tâches suggérées : B-116 (Relire et fusionner la pull request de la 0.1.0 dans `main`), B-125 (Révoquer et remplacer la clé du webservice PrestaShop), B-053 (ds-select : garder l'état désactivé sans `:has()`), B-001 (ds-slider : les diapositives sont remplacées par des copies à chaque défilement), B-038 (Ajouter Firefox aux tests navigateur (local et CI)).
+Les cinq premières tâches suggérées : B-117 (Poser le tag `v0.1.0` sur le commit de fusion de la 0.1.0), B-128 (Renommer le dossier d'administration exposé), B-053 (ds-select : garder l'état désactivé sans `:has()`), B-001 (ds-slider : les diapositives sont remplacées par des copies à chaque défilement), B-038 (Ajouter Firefox aux tests navigateur (local et CI)).
 
 ## Toutes les tâches
 
@@ -151,18 +151,12 @@ Les cinq premières tâches suggérées : B-116 (Relire et fusionner la pull req
 | [B-113](#b-113) | Décrire les props sans description : superpositions et formulaires                                                       | documentation             | XS     | —                          | non      |
 | [B-114](#b-114) | Test : toute API publique a une description                                                                              | documentation             | XS     | B-111, B-112, B-113        | non      |
 | [B-115](#b-115) | README : une section des limites connues                                                                                 | documentation             | XS     | —                          | non      |
-| [B-116](#b-116) | Relire et fusionner la pull request de la 0.1.0 dans `main`                                                              | release                   | XS     | —                          | oui      |
-| [B-117](#b-117) | Poser le tag `v0.1.0` sur le commit de fusion                                                                            | release                   | XS     | B-116                      | oui      |
-| [B-118](#b-118) | Retirer du README la mention de la branche de la 0.1.0                                                                   | release                   | XS     | B-116                      | non      |
+| [B-117](#b-117) | Poser le tag `v0.1.0` sur le commit de fusion de la 0.1.0                                                                | release                   | XS     | —                          | oui      |
 | [B-119](#b-119) | Installer depuis git : script `prepare` ou fichiers construits attachés à une release                                    | release                   | S      | —                          | oui      |
 | [B-120](#b-120) | Workflow de release : tag → build → archive attachée à une release GitHub                                                | release                   | S      | B-119, B-117               | oui      |
 | [B-121](#b-121) | Publier sur un registre npm (public ou privé)                                                                            | release                   | S      | B-120                      | oui      |
 | [B-122](#b-122) | Ajouter la cible `dist-custom-elements` (imports par composant)                                                          | release                   | S      | —                          | oui      |
 | [B-123](#b-123) | Tester les imports par composant dans un projet consommateur                                                             | release                   | S      | B-122                      | non      |
-| [B-124](#b-124) | Révoquer et remplacer la clé Google Maps                                                                                 | sécurité/hors dépôt       | XS     | —                          | oui      |
-| [B-125](#b-125) | Révoquer et remplacer la clé du webservice PrestaShop                                                                    | sécurité/hors dépôt       | XS     | —                          | oui      |
-| [B-126](#b-126) | Révoquer et remplacer la clé TinyMCE                                                                                     | sécurité/hors dépôt       | XS     | —                          | oui      |
-| [B-127](#b-127) | Révoquer le jeton d'administration                                                                                       | sécurité/hors dépôt       | XS     | —                          | oui      |
 | [B-128](#b-128) | Renommer le dossier d'administration exposé                                                                              | sécurité/hors dépôt       | XS     | —                          | oui      |
 | [B-129](#b-129) | Vérifier qu'aucun clone ni fork de l'ancien historique ne subsiste                                                       | sécurité/hors dépôt       | S      | —                          | oui      |
 | [B-130](#b-130) | Reprendre `grade-star` (note de 0 à 5) avec `ds-rating-list`                                                             | idée                      | M      | —                          | oui      |
@@ -1150,32 +1144,14 @@ Critères d'acceptation communs :
 
 ## Release
 
-### B-116
-
-**Relire et fusionner la pull request de la 0.1.0 dans `main`**
-
-- **Catégorie** : release · **Taille** : XS · **Dépend de** : — · **Décision** : oui (action de votre part)
-- **Contexte** : Le travail est sur la branche `claude/intelligent-pasteur-rwiqsn` (150 commits du travail précédent et ceux de la 0.1.0), CI verte.
-- **Critères d'acceptation** :
-  - La pull request est relue et fusionnée ; la CI est verte sur `main`.
-
 ### B-117
 
-**Poser le tag `v0.1.0` sur le commit de fusion**
+**Poser le tag `v0.1.0` sur le commit de fusion de la 0.1.0**
 
-- **Catégorie** : release · **Taille** : XS · **Dépend de** : [B-116](#b-116) · **Décision** : oui (action de votre part)
-- **Contexte** : Les liens de bas de page du CHANGELOG (`[0.1.0]`, `[Unreleased]`) visent le tag `v0.1.0`, qui n'existe pas encore.
+- **Catégorie** : release · **Taille** : XS · **Dépend de** : — · **Décision** : oui (action de votre part)
+- **Contexte** : La pull request de la 0.1.0 est fusionnée dans `main` (commit `3d9e2de`, « Release 0.1.0 (#1) »). Les liens de bas de page du CHANGELOG (`[0.1.0]`, `[Unreleased]`) visent le tag `v0.1.0`, qui n'existe pas encore : la session de travail ne peut pousser que sa branche, pas de tag. À faire de votre côté, depuis un clone à jour : `git tag -a v0.1.0 3d9e2de -m "dot-stash 0.1.0"` puis `git push origin v0.1.0` (ou une release GitHub créée sur ce commit avec ce tag).
 - **Critères d'acceptation** :
-  - Le tag `v0.1.0` existe sur `main` ; les liens du CHANGELOG fonctionnent.
-
-### B-118
-
-**Retirer du README la mention de la branche de la 0.1.0**
-
-- **Catégorie** : release · **Taille** : XS · **Dépend de** : [B-116](#b-116) · **Décision** : non
-- **Contexte** : Le README (Install) dit que, jusqu'à la fusion, le code est sur `claude/intelligent-pasteur-rwiqsn`.
-- **Critères d'acceptation** :
-  - La phrase est retirée (ou remplacée par `git clone --branch v0.1.0` après le tag).
+  - Le tag `v0.1.0` existe sur `3d9e2de` ; les liens du CHANGELOG fonctionnent.
 
 ### B-119
 
@@ -1226,46 +1202,6 @@ Critères d'acceptation communs :
   - README (From the package) à jour.
 
 ## Sécurité et hors dépôt
-
-### B-124
-
-**Révoquer et remplacer la clé Google Maps**
-
-- **Catégorie** : sécurité/hors dépôt · **Taille** : XS · **Dépend de** : — · **Décision** : oui (action de votre part)
-- **Contexte** : Une clé Google Maps figurait dans l'exemple commenté de `ds-map`. Les valeurs ont été purgées de l'historique git (commit `997b49e` : `***REMOVED***`), mais elles étaient publiques avant la purge.
-- **Critères d'acceptation** :
-  - L'ancienne valeur est révoquée chez le fournisseur ; une nouvelle est en place là où elle sert (hors de ce dépôt).
-  - L'ancienne valeur ne donne plus accès (essai).
-
-### B-125
-
-**Révoquer et remplacer la clé du webservice PrestaShop**
-
-- **Catégorie** : sécurité/hors dépôt · **Taille** : XS · **Dépend de** : — · **Décision** : oui (action de votre part)
-- **Contexte** : La clé du webservice PrestaShop figurait dans le composant de démonstration (appel `api()` à la boutique). Les valeurs ont été purgées de l'historique git (commit `997b49e` : `***REMOVED***`), mais elles étaient publiques avant la purge.
-- **Critères d'acceptation** :
-  - L'ancienne valeur est révoquée chez le fournisseur ; une nouvelle est en place là où elle sert (hors de ce dépôt).
-  - L'ancienne valeur ne donne plus accès (essai).
-
-### B-126
-
-**Révoquer et remplacer la clé TinyMCE**
-
-- **Catégorie** : sécurité/hors dépôt · **Taille** : XS · **Dépend de** : — · **Décision** : oui (action de votre part)
-- **Contexte** : La clé du service cloud TinyMCE figurait dans `ds-html-editor`. Les valeurs ont été purgées de l'historique git (commit `997b49e` : `***REMOVED***`), mais elles étaient publiques avant la purge.
-- **Critères d'acceptation** :
-  - L'ancienne valeur est révoquée chez le fournisseur ; une nouvelle est en place là où elle sert (hors de ce dépôt).
-  - L'ancienne valeur ne donne plus accès (essai).
-
-### B-127
-
-**Révoquer le jeton d'administration**
-
-- **Catégorie** : sécurité/hors dépôt · **Taille** : XS · **Dépend de** : — · **Décision** : oui (action de votre part)
-- **Contexte** : Le jeton d'administration du back-office figurait dans la page de développement, dans l'URL du contrôleur. Les valeurs ont été purgées de l'historique git (commit `997b49e` : `***REMOVED***`), mais elles étaient publiques avant la purge.
-- **Critères d'acceptation** :
-  - L'ancienne valeur est révoquée chez le fournisseur ; une nouvelle est en place là où elle sert (hors de ce dépôt).
-  - L'ancienne valeur ne donne plus accès (essai).
 
 ### B-128
 
@@ -1359,3 +1295,29 @@ Critères d'acceptation communs :
 - **Contexte** : Stencil 5 retire son exécuteur de tests intégré (déjà remplacé par Vitest) et peut changer le runtime des composants en DOM léger (emplacements, `formAssociated`).
 - **Critères d'acceptation** :
   - Liste des changements de Stencil 5 qui touchent la bibliothèque, essai sur une branche, tâches créées pour chaque écart.
+
+## Terminées
+
+### B-116
+
+**Relire et fusionner la pull request de la 0.1.0 dans `main`** — terminée le 10 novembre 2026 : pull request #1 fusionnée (commit `3d9e2de`, « Release 0.1.0 (#1) »), CI verte.
+
+### B-118
+
+**Retirer du README la mention de la branche de la 0.1.0** — terminée le 10 novembre 2026 : la section Install du README ne renvoie plus à la branche de travail ; le code se prend sur `main`.
+
+### B-124
+
+**Révoquer et remplacer la clé Google Maps** — terminée : révoquée par le propriétaire.
+
+### B-125
+
+**Révoquer et remplacer la clé du webservice PrestaShop** — terminée : révoquée par le propriétaire.
+
+### B-126
+
+**Révoquer et remplacer la clé TinyMCE** — terminée : révoquée par le propriétaire.
+
+### B-127
+
+**Révoquer le jeton d'administration** — terminée : révoqué par le propriétaire.
