@@ -17,7 +17,7 @@ const sources = (dir: string): string[] =>
   });
 
 /** The components that expect content of the page without rendering a `<slot>`: they enhance it in place. */
-const CONTENT_WITHOUT_SLOT = ['ds-ajax', 'ds-breadcrumb', 'ds-field', 'ds-range'];
+const CONTENT_WITHOUT_SLOT = ['ds-ajax', 'ds-breadcrumb', 'ds-field', 'ds-range', 'ds-sortable'];
 
 /** The default slot is `''`. */
 const unique = (names: string[]) => [...new Set(names)].sort();

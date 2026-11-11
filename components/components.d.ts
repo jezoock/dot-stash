@@ -21,6 +21,7 @@ import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "
 import { Element } from "@stencil/core";
 import { DSScrollerLabels, DSScrollerOrientation } from "./core/scroller/scroller.types";
 import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+import { DSSortableLabels, DSSortableOrderChangeDetail, DSSortableOrientation } from "./core/sortable/sortable.types";
 import { DSThumbLoading } from "./core/thumb/thumb.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
@@ -41,6 +42,7 @@ export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "
 export { Element } from "@stencil/core";
 export { DSScrollerLabels, DSScrollerOrientation } from "./core/scroller/scroller.types";
 export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+export { DSSortableLabels, DSSortableOrderChangeDetail, DSSortableOrientation } from "./core/sortable/sortable.types";
 export { DSThumbLoading } from "./core/thumb/thumb.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
@@ -1154,6 +1156,43 @@ export namespace Components {
         "label": string;
     }
     /**
+     * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+     * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+     * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+     * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+     * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+     * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+     * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+     * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+     * read), never the one that has the focus: the focus stays on it.
+     */
+    interface DsSortable {
+        /**
+          * Gives each item two buttons that move it one place back or forward (named by `labels`).
+          * @default false
+         */
+        "buttons": boolean;
+        /**
+          * The name of the list (`aria-label`): what the items are ("Order of the services").
+         */
+        "label": string;
+        /**
+          * The texts of the list (JSON as an attribute), to translate them: the instructions, the announcements, the names of the buttons (see the readme).
+          * @default {}
+         */
+        "labels": DSSortableLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The direction of the list, and of the arrow keys that move an item: `vertical` (Up and Down, by default) or `horizontal` (Left and Right).
+          * @default 'vertical'
+         */
+        "orientation": DSSortableOrientation;
+    }
+    /**
      * A block of text, in the paragraph font style of the theme.
      */
     interface DsText {
@@ -1592,6 +1631,10 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
 export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
+}
+export interface DsSortableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSortableElement;
 }
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2159,6 +2202,34 @@ declare global {
         prototype: HTMLDsSliderMenuElement;
         new (): HTMLDsSliderMenuElement;
     };
+    interface HTMLDsSortableElementEventMap {
+        "orderChange": DSSortableOrderChangeDetail;
+    }
+    /**
+     * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+     * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+     * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+     * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+     * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+     * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+     * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+     * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+     * read), never the one that has the focus: the focus stays on it.
+     */
+    interface HTMLDsSortableElement extends Components.DsSortable, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSortableElementEventMap>(type: K, listener: (this: HTMLDsSortableElement, ev: DsSortableCustomEvent<HTMLDsSortableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSortableElementEventMap>(type: K, listener: (this: HTMLDsSortableElement, ev: DsSortableCustomEvent<HTMLDsSortableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSortableElement: {
+        prototype: HTMLDsSortableElement;
+        new (): HTMLDsSortableElement;
+    };
     /**
      * A block of text, in the paragraph font style of the theme.
      */
@@ -2346,6 +2417,7 @@ declare global {
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
+        "ds-sortable": HTMLDsSortableElement;
         "ds-text": HTMLDsTextElement;
         "ds-thumb": HTMLDsThumbElement;
         "ds-title": HTMLDsTitleElement;
@@ -3400,6 +3472,47 @@ declare namespace LocalJSX {
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
     /**
+     * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+     * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+     * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+     * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+     * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+     * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+     * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+     * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+     * read), never the one that has the focus: the focus stays on it.
+     */
+    interface DsSortable {
+        /**
+          * Gives each item two buttons that move it one place back or forward (named by `labels`).
+          * @default false
+         */
+        "buttons"?: boolean;
+        /**
+          * The name of the list (`aria-label`): what the items are ("Order of the services").
+         */
+        "label"?: string;
+        /**
+          * The texts of the list (JSON as an attribute), to translate them: the instructions, the announcements, the names of the buttons (see the readme).
+          * @default {}
+         */
+        "labels"?: DSSortableLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The user committed a new order (an item dropped where it was not, or moved by a button): the keys in their new order.
+         */
+        "onOrderChange"?: (event: DsSortableCustomEvent<DSSortableOrderChangeDetail>) => void;
+        /**
+          * The direction of the list, and of the arrow keys that move an item: `vertical` (Up and Down, by default) or `horizontal` (Left and Right).
+          * @default 'vertical'
+         */
+        "orientation"?: DSSortableOrientation;
+    }
+    /**
      * A block of text, in the paragraph font style of the theme.
      */
     interface DsText {
@@ -3971,6 +4084,13 @@ declare namespace LocalJSX {
         "label": string;
         "itemLabel": string;
     }
+    interface DsSortableAttributes {
+        "label": string;
+        "orientation": DSSortableOrientation;
+        "buttons": boolean;
+        "labels": DSSortableLabels | string;
+        "mods": string | string[];
+    }
     interface DsTextAttributes {
         "mods": string | string[];
         "type": 'p' | 'code' | 'quote';
@@ -4083,6 +4203,7 @@ declare namespace LocalJSX {
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": Omit<DsSliderMenu, keyof DsSliderMenuAttributes> & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes]?: DsSliderMenu[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `attr:${K}`]?: DsSliderMenuAttributes[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `prop:${K}`]?: DsSliderMenu[K] };
+        "ds-sortable": Omit<DsSortable, keyof DsSortableAttributes> & { [K in keyof DsSortable & keyof DsSortableAttributes]?: DsSortable[K] } & { [K in keyof DsSortable & keyof DsSortableAttributes as `attr:${K}`]?: DsSortableAttributes[K] } & { [K in keyof DsSortable & keyof DsSortableAttributes as `prop:${K}`]?: DsSortable[K] };
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
         "ds-thumb": Omit<DsThumb, keyof DsThumbAttributes> & { [K in keyof DsThumb & keyof DsThumbAttributes]?: DsThumb[K] } & { [K in keyof DsThumb & keyof DsThumbAttributes as `attr:${K}`]?: DsThumbAttributes[K] } & { [K in keyof DsThumb & keyof DsThumbAttributes as `prop:${K}`]?: DsThumb[K] };
         "ds-title": Omit<DsTitle, keyof DsTitleAttributes> & { [K in keyof DsTitle & keyof DsTitleAttributes]?: DsTitle[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `attr:${K}`]?: DsTitleAttributes[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `prop:${K}`]?: DsTitle[K] };
@@ -4364,6 +4485,18 @@ declare module "@stencil/core" {
              * `aria-current="true"`. `ds-slider` renders it and gives it its texts (its `labels`).
              */
             "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
+            /**
+             * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+             * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+             * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+             * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+             * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+             * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+             * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+             * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+             * read), never the one that has the focus: the focus stays on it.
+             */
+            "ds-sortable": LocalJSX.IntrinsicElements["ds-sortable"] & JSXBase.HTMLAttributes<HTMLDsSortableElement>;
             /**
              * A block of text, in the paragraph font style of the theme.
              */
