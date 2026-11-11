@@ -1,0 +1,59 @@
+@use '../tokens' as *;
+
+// ds-scroller: the gap between the items, the room for their focus outline, a thin scrollbar, and the previous / next
+// buttons (ds-trigger with the button skin): round, with a chevron, as those of ds-slider. The custom properties are
+// documented in components/core/scroller/readme.md; the viewport, the row and the place of the buttons are in the component
+// stylesheet.
+
+ds-scroller {
+  --ds-scroller-gap: #{ds-spacing(4)};
+  --ds-scroller-padding: #{ds-spacing(1)};
+  --ds-scroller-focus-margin: #{ds-spacing(5)};
+  --ds-scroller-button-offset: #{ds-spacing(2)};
+  --ds-scroller-button-size: #{ds-spacing(7)};
+  --ds-scroller-button-background: #{ds-color(gray, white)};
+  --ds-scroller-button-border-color: #{ds-color(gray, light)};
+}
+
+.ds-scroller__viewport {
+  scrollbar-width: thin;
+}
+
+.ds-button.--scroller {
+  --ds-trigger-border-color: var(--ds-scroller-button-border-color);
+  --ds-trigger-background: var(--ds-scroller-button-background);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-scroller-button-size);
+  height: var(--ds-scroller-button-size);
+  padding: 0;
+  border-radius: ds-radius(circle);
+
+  &.--prev::before {
+    @include ds-icon(angle-left, $alt: '');
+  }
+
+  &.--next::before {
+    @include ds-icon(angle-right, $alt: '');
+  }
+
+  // Right to left, the previous items are on the right: the chevrons are mirrored (as those of ds-pagination).
+  [dir='rtl'] &::before {
+    transform: scaleX(-1);
+  }
+}
+
+.ds-scroller.--vertical .ds-button.--scroller {
+  &.--prev::before {
+    @include ds-icon-content(angle-up);
+  }
+
+  &.--next::before {
+    @include ds-icon-content(angle-down);
+  }
+
+  &::before {
+    transform: none;
+  }
+}

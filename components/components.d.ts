@@ -16,9 +16,13 @@ import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.
 import { DSLoaderSize } from "./core/loader/loader.types";
 import { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
 import { PanelType } from "./core/panel/panel.types";
+import { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { Element } from "@stencil/core";
+import { DSScrollerLabels, DSScrollerOrientation } from "./core/scroller/scroller.types";
 import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+import { DSSortableLabels, DSSortableOrderChangeDetail, DSSortableOrientation } from "./core/sortable/sortable.types";
+import { DSThumbLoading } from "./core/thumb/thumb.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
@@ -33,9 +37,13 @@ export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.
 export { DSLoaderSize } from "./core/loader/loader.types";
 export { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
 export { PanelType } from "./core/panel/panel.types";
+export { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { Element } from "@stencil/core";
+export { DSScrollerLabels, DSScrollerOrientation } from "./core/scroller/scroller.types";
 export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+export { DSSortableLabels, DSSortableOrderChangeDetail, DSSortableOrientation } from "./core/sortable/sortable.types";
+export { DSThumbLoading } from "./core/thumb/thumb.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
@@ -835,6 +843,42 @@ export namespace Components {
         "type": PanelType;
     }
     /**
+     * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+     * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+     * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+     * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+     * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+     * already: `--ds-range-buffer`).
+     * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+     * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+     * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+     * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+     */
+    interface DsRange {
+        /**
+          * A second value, on the scale of the input (from its `min` to its `max`): the track is filled to it, under the fill of the value (`__buffer`, `--ds-range-buffer`). The part of a video loaded already. None by default.
+         */
+        "buffer": number | string;
+        /**
+          * Gives the text of the value (`aria-valuetext`) instead of `labels.valueText`: a function, set as a property (a time, a unit).
+         */
+        "formatter": DSRangeFormatter;
+        /**
+          * The texts of the range (JSON as an attribute), to translate them: `valueText`, the template of `aria-valuetext` (see the readme).
+          * @default {}
+         */
+        "labels": DSRangeLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Reads the input again: after a value set by a script on its `value` property, which tells no event.
+         */
+        "refresh": () => Promise<void>;
+    }
+    /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
      * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
@@ -886,6 +930,62 @@ export namespace Components {
           * @default '[data-use-rsp]:not([data-rsp-init])'
          */
         "subscriberSelector": string;
+    }
+    /**
+     * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+     * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+     * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+     * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+     * (`scroll-snap-type`).
+     * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+     * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+     * finds them) and the scroller follows it.
+     * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+     * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+     * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+     */
+    interface DsScroller {
+        /**
+          * Renders a previous and a next button, which scroll by a page, each one hidden at its end.
+          * @default false
+         */
+        "controls": boolean;
+        /**
+          * The name of the scroller (`aria-label`): with it, the scroller is a region of the page (`role="region"`), a landmark.
+         */
+        "label": string;
+        /**
+          * The texts of the scroller (JSON as an attribute), to translate them: `previous`, `next` (the names of the buttons).
+          * @default {}
+         */
+        "labels": DSScrollerLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Scrolls forward by a page: the width of the viewport less its margins (its height, `vertical`).
+         */
+        "next": () => Promise<void>;
+        /**
+          * The direction it scrolls in: `horizontal` (a row, by default) or `vertical` (a column; give the scroller a height).
+          * @default 'horizontal'
+         */
+        "orientation": DSScrollerOrientation;
+        /**
+          * Scrolls back by a page.
+         */
+        "previous": () => Promise<void>;
+        /**
+          * Measures the content again: whether it overflows, and is at its start or its end (after a change no observer saw).
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Stops the scroll on the start of an item (`scroll-snap-type: mandatory`, `scroll-snap-align: start`).
+          * @default false
+         */
+        "snap": boolean;
     }
     /**
      * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
@@ -1056,6 +1156,43 @@ export namespace Components {
         "label": string;
     }
     /**
+     * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+     * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+     * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+     * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+     * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+     * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+     * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+     * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+     * read), never the one that has the focus: the focus stays on it.
+     */
+    interface DsSortable {
+        /**
+          * Gives each item two buttons that move it one place back or forward (named by `labels`).
+          * @default false
+         */
+        "buttons": boolean;
+        /**
+          * The name of the list (`aria-label`): what the items are ("Order of the services").
+         */
+        "label": string;
+        /**
+          * The texts of the list (JSON as an attribute), to translate them: the instructions, the announcements, the names of the buttons (see the readme).
+          * @default {}
+         */
+        "labels": DSSortableLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The direction of the list, and of the arrow keys that move an item: `vertical` (Up and Down, by default) or `horizontal` (Left and Right).
+          * @default 'vertical'
+         */
+        "orientation": DSSortableOrientation;
+    }
+    /**
      * A block of text, in the paragraph font style of the theme.
      */
     interface DsText {
@@ -1072,6 +1209,57 @@ export namespace Components {
          */
         "type": 'p' | 'code' | 'quote';
         "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
+    }
+    /**
+     * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+     * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+     * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+     * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+     * theme, so that the initials stay readable.
+     * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+     * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+     */
+    interface DsThumb {
+        /**
+          * The text alternative of the image (and of the placeholder). Without it, `label`. An empty `alt` makes it decorative.
+         */
+        "alt": string;
+        /**
+          * A decorative thumbnail: no text alternative, out of the accessibility tree (a text next to it names the same thing).
+          * @default false
+         */
+        "decorative": boolean;
+        /**
+          * The text the placeholder takes its initials and its color from: the title of the poster, the name of the album. The name of the image without `alt`.
+         */
+        "label": string;
+        /**
+          * When the image loads: `lazy` (as it nears the viewport, by default) or `eager` (at once: a thumbnail at the top of the page).
+          * @default 'lazy'
+         */
+        "loading": DSThumbLoading;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The proportions, width / height: `2/3`, `16/9`, `1.5`, `1` (`16:9` too). A square by default, and for a value that is not one.
+          * @default '1'
+         */
+        "ratio": string;
+        /**
+          * The widths of the image in the layout, for a `srcset` of widths (`sizes` of the `img`).
+         */
+        "sizes": string;
+        /**
+          * The URL of the image. Without it, the placeholder.
+         */
+        "src": string;
+        /**
+          * The candidates of the image for the densities or widths of the screen (`srcset` of the `img`).
+         */
+        "srcset": string;
     }
     /**
      * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
@@ -1443,6 +1631,10 @@ export interface DsSliderCustomEvent<T> extends CustomEvent<T> {
 export interface DsSliderMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLDsSliderMenuElement;
+}
+export interface DsSortableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLDsSortableElement;
 }
 export interface DsToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1837,6 +2029,24 @@ declare global {
         prototype: HTMLDsPanelGroupElement;
         new (): HTMLDsPanelGroupElement;
     };
+    /**
+     * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+     * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+     * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+     * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+     * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+     * already: `--ds-range-buffer`).
+     * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+     * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+     * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+     * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+     */
+    interface HTMLDsRangeElement extends Components.DsRange, HTMLStencilElement {
+    }
+    var HTMLDsRangeElement: {
+        prototype: HTMLDsRangeElement;
+        new (): HTMLDsRangeElement;
+    };
     interface HTMLDsRspElementEventMap {
         "breakpointChange": BreakpointChangeDetail;
     }
@@ -1863,6 +2073,25 @@ declare global {
     var HTMLDsRspElement: {
         prototype: HTMLDsRspElement;
         new (): HTMLDsRspElement;
+    };
+    /**
+     * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+     * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+     * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+     * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+     * (`scroll-snap-type`).
+     * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+     * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+     * finds them) and the scroller follows it.
+     * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+     * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+     * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+     */
+    interface HTMLDsScrollerElement extends Components.DsScroller, HTMLStencilElement {
+    }
+    var HTMLDsScrollerElement: {
+        prototype: HTMLDsScrollerElement;
+        new (): HTMLDsScrollerElement;
     };
     interface HTMLDsSelectElementEventMap {
         "valueChange": any;
@@ -1973,6 +2202,34 @@ declare global {
         prototype: HTMLDsSliderMenuElement;
         new (): HTMLDsSliderMenuElement;
     };
+    interface HTMLDsSortableElementEventMap {
+        "orderChange": DSSortableOrderChangeDetail;
+    }
+    /**
+     * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+     * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+     * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+     * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+     * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+     * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+     * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+     * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+     * read), never the one that has the focus: the focus stays on it.
+     */
+    interface HTMLDsSortableElement extends Components.DsSortable, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLDsSortableElementEventMap>(type: K, listener: (this: HTMLDsSortableElement, ev: DsSortableCustomEvent<HTMLDsSortableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLDsSortableElementEventMap>(type: K, listener: (this: HTMLDsSortableElement, ev: DsSortableCustomEvent<HTMLDsSortableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLDsSortableElement: {
+        prototype: HTMLDsSortableElement;
+        new (): HTMLDsSortableElement;
+    };
     /**
      * A block of text, in the paragraph font style of the theme.
      */
@@ -1981,6 +2238,21 @@ declare global {
     var HTMLDsTextElement: {
         prototype: HTMLDsTextElement;
         new (): HTMLDsTextElement;
+    };
+    /**
+     * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+     * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+     * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+     * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+     * theme, so that the initials stay readable.
+     * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+     * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+     */
+    interface HTMLDsThumbElement extends Components.DsThumb, HTMLStencilElement {
+    }
+    var HTMLDsThumbElement: {
+        prototype: HTMLDsThumbElement;
+        new (): HTMLDsThumbElement;
     };
     /**
      * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
@@ -2137,13 +2409,17 @@ declare global {
         "ds-pagination": HTMLDsPaginationElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
+        "ds-range": HTMLDsRangeElement;
         "ds-rsp": HTMLDsRspElement;
+        "ds-scroller": HTMLDsScrollerElement;
         "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
+        "ds-sortable": HTMLDsSortableElement;
         "ds-text": HTMLDsTextElement;
+        "ds-thumb": HTMLDsThumbElement;
         "ds-title": HTMLDsTitleElement;
         "ds-title-bar": HTMLDsTitleBarElement;
         "ds-toaster": HTMLDsToasterElement;
@@ -2942,6 +3218,38 @@ declare namespace LocalJSX {
         "type"?: PanelType;
     }
     /**
+     * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+     * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+     * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+     * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+     * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+     * already: `--ds-range-buffer`).
+     * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+     * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+     * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+     * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+     */
+    interface DsRange {
+        /**
+          * A second value, on the scale of the input (from its `min` to its `max`): the track is filled to it, under the fill of the value (`__buffer`, `--ds-range-buffer`). The part of a video loaded already. None by default.
+         */
+        "buffer"?: number | string;
+        /**
+          * Gives the text of the value (`aria-valuetext`) instead of `labels.valueText`: a function, set as a property (a time, a unit).
+         */
+        "formatter"?: DSRangeFormatter;
+        /**
+          * The texts of the range (JSON as an attribute), to translate them: `valueText`, the template of `aria-valuetext` (see the readme).
+          * @default {}
+         */
+        "labels"?: DSRangeLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+    }
+    /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
      * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
@@ -2974,6 +3282,50 @@ declare namespace LocalJSX {
           * @default '[data-use-rsp]:not([data-rsp-init])'
          */
         "subscriberSelector"?: string;
+    }
+    /**
+     * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+     * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+     * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+     * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+     * (`scroll-snap-type`).
+     * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+     * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+     * finds them) and the scroller follows it.
+     * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+     * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+     * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+     */
+    interface DsScroller {
+        /**
+          * Renders a previous and a next button, which scroll by a page, each one hidden at its end.
+          * @default false
+         */
+        "controls"?: boolean;
+        /**
+          * The name of the scroller (`aria-label`): with it, the scroller is a region of the page (`role="region"`), a landmark.
+         */
+        "label"?: string;
+        /**
+          * The texts of the scroller (JSON as an attribute), to translate them: `previous`, `next` (the names of the buttons).
+          * @default {}
+         */
+        "labels"?: DSScrollerLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The direction it scrolls in: `horizontal` (a row, by default) or `vertical` (a column; give the scroller a height).
+          * @default 'horizontal'
+         */
+        "orientation"?: DSScrollerOrientation;
+        /**
+          * Stops the scroll on the start of an item (`scroll-snap-type: mandatory`, `scroll-snap-align: start`).
+          * @default false
+         */
+        "snap"?: boolean;
     }
     /**
      * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
@@ -3120,6 +3472,47 @@ declare namespace LocalJSX {
         "onRequest_displaySliderItem_event"?: (event: DsSliderMenuCustomEvent<any>) => void;
     }
     /**
+     * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+     * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+     * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+     * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+     * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+     * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+     * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+     * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+     * read), never the one that has the focus: the focus stays on it.
+     */
+    interface DsSortable {
+        /**
+          * Gives each item two buttons that move it one place back or forward (named by `labels`).
+          * @default false
+         */
+        "buttons"?: boolean;
+        /**
+          * The name of the list (`aria-label`): what the items are ("Order of the services").
+         */
+        "label"?: string;
+        /**
+          * The texts of the list (JSON as an attribute), to translate them: the instructions, the announcements, the names of the buttons (see the readme).
+          * @default {}
+         */
+        "labels"?: DSSortableLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The user committed a new order (an item dropped where it was not, or moved by a button): the keys in their new order.
+         */
+        "onOrderChange"?: (event: DsSortableCustomEvent<DSSortableOrderChangeDetail>) => void;
+        /**
+          * The direction of the list, and of the arrow keys that move an item: `vertical` (Up and Down, by default) or `horizontal` (Left and Right).
+          * @default 'vertical'
+         */
+        "orientation"?: DSSortableOrientation;
+    }
+    /**
      * A block of text, in the paragraph font style of the theme.
      */
     interface DsText {
@@ -3136,6 +3529,57 @@ declare namespace LocalJSX {
          */
         "type"?: 'p' | 'code' | 'quote';
         "weight"?: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
+    }
+    /**
+     * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+     * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+     * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+     * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+     * theme, so that the initials stay readable.
+     * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+     * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+     */
+    interface DsThumb {
+        /**
+          * The text alternative of the image (and of the placeholder). Without it, `label`. An empty `alt` makes it decorative.
+         */
+        "alt"?: string;
+        /**
+          * A decorative thumbnail: no text alternative, out of the accessibility tree (a text next to it names the same thing).
+          * @default false
+         */
+        "decorative"?: boolean;
+        /**
+          * The text the placeholder takes its initials and its color from: the title of the poster, the name of the album. The name of the image without `alt`.
+         */
+        "label"?: string;
+        /**
+          * When the image loads: `lazy` (as it nears the viewport, by default) or `eager` (at once: a thumbnail at the top of the page).
+          * @default 'lazy'
+         */
+        "loading"?: DSThumbLoading;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The proportions, width / height: `2/3`, `16/9`, `1.5`, `1` (`16:9` too). A square by default, and for a value that is not one.
+          * @default '1'
+         */
+        "ratio"?: string;
+        /**
+          * The widths of the image in the layout, for a `srcset` of widths (`sizes` of the `img`).
+         */
+        "sizes"?: string;
+        /**
+          * The URL of the image. Without it, the placeholder.
+         */
+        "src"?: string;
+        /**
+          * The candidates of the image for the densities or widths of the screen (`srcset` of the `img`).
+         */
+        "srcset"?: string;
     }
     /**
      * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
@@ -3590,11 +4034,24 @@ declare namespace LocalJSX {
         "label": string;
         "labelledby": string;
     }
+    interface DsRangeAttributes {
+        "buffer": string;
+        "labels": DSRangeLabels | string;
+        "mods": string | string[];
+    }
     interface DsRspAttributes {
         "debounceDelay": number;
         "subscriberSelector": string;
         "propertyName": string;
         "breakpointsFromProp": string | RawBreakpoint;
+    }
+    interface DsScrollerAttributes {
+        "label": string;
+        "orientation": DSScrollerOrientation;
+        "snap": boolean;
+        "controls": boolean;
+        "labels": DSScrollerLabels | string;
+        "mods": string | string[];
     }
     interface DsSelectAttributes {
         "name": string;
@@ -3627,6 +4084,13 @@ declare namespace LocalJSX {
         "label": string;
         "itemLabel": string;
     }
+    interface DsSortableAttributes {
+        "label": string;
+        "orientation": DSSortableOrientation;
+        "buttons": boolean;
+        "labels": DSSortableLabels | string;
+        "mods": string | string[];
+    }
     interface DsTextAttributes {
         "mods": string | string[];
         "type": 'p' | 'code' | 'quote';
@@ -3634,6 +4098,17 @@ declare namespace LocalJSX {
         "sup": boolean;
         "sub": boolean;
         "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
+    }
+    interface DsThumbAttributes {
+        "src": string;
+        "srcset": string;
+        "sizes": string;
+        "alt": string;
+        "label": string;
+        "decorative": boolean;
+        "ratio": string;
+        "loading": DSThumbLoading;
+        "mods": string | string[];
     }
     interface DsTitleAttributes {
         "mods": string | string[];
@@ -3720,13 +4195,17 @@ declare namespace LocalJSX {
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel": Omit<DsPanel, keyof DsPanelAttributes> & { [K in keyof DsPanel & keyof DsPanelAttributes]?: DsPanel[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `attr:${K}`]?: DsPanelAttributes[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `prop:${K}`]?: DsPanel[K] };
         "ds-panel-group": Omit<DsPanelGroup, keyof DsPanelGroupAttributes> & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes]?: DsPanelGroup[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `attr:${K}`]?: DsPanelGroupAttributes[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `prop:${K}`]?: DsPanelGroup[K] };
+        "ds-range": Omit<DsRange, keyof DsRangeAttributes> & { [K in keyof DsRange & keyof DsRangeAttributes]?: DsRange[K] } & { [K in keyof DsRange & keyof DsRangeAttributes as `attr:${K}`]?: DsRangeAttributes[K] } & { [K in keyof DsRange & keyof DsRangeAttributes as `prop:${K}`]?: DsRange[K] };
         "ds-rsp": Omit<DsRsp, keyof DsRspAttributes> & { [K in keyof DsRsp & keyof DsRspAttributes]?: DsRsp[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `attr:${K}`]?: DsRspAttributes[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `prop:${K}`]?: DsRsp[K] };
+        "ds-scroller": Omit<DsScroller, keyof DsScrollerAttributes> & { [K in keyof DsScroller & keyof DsScrollerAttributes]?: DsScroller[K] } & { [K in keyof DsScroller & keyof DsScrollerAttributes as `attr:${K}`]?: DsScrollerAttributes[K] } & { [K in keyof DsScroller & keyof DsScrollerAttributes as `prop:${K}`]?: DsScroller[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": Omit<DsSliderMenu, keyof DsSliderMenuAttributes> & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes]?: DsSliderMenu[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `attr:${K}`]?: DsSliderMenuAttributes[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `prop:${K}`]?: DsSliderMenu[K] };
+        "ds-sortable": Omit<DsSortable, keyof DsSortableAttributes> & { [K in keyof DsSortable & keyof DsSortableAttributes]?: DsSortable[K] } & { [K in keyof DsSortable & keyof DsSortableAttributes as `attr:${K}`]?: DsSortableAttributes[K] } & { [K in keyof DsSortable & keyof DsSortableAttributes as `prop:${K}`]?: DsSortable[K] };
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-thumb": Omit<DsThumb, keyof DsThumbAttributes> & { [K in keyof DsThumb & keyof DsThumbAttributes]?: DsThumb[K] } & { [K in keyof DsThumb & keyof DsThumbAttributes as `attr:${K}`]?: DsThumbAttributes[K] } & { [K in keyof DsThumb & keyof DsThumbAttributes as `prop:${K}`]?: DsThumb[K] };
         "ds-title": Omit<DsTitle, keyof DsTitleAttributes> & { [K in keyof DsTitle & keyof DsTitleAttributes]?: DsTitle[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `attr:${K}`]?: DsTitleAttributes[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `prop:${K}`]?: DsTitle[K] };
         "ds-title-bar": Omit<DsTitleBar, keyof DsTitleBarAttributes> & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes]?: DsTitleBar[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `attr:${K}`]?: DsTitleBarAttributes[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `prop:${K}`]?: DsTitleBar[K] };
         "ds-toaster": Omit<DsToaster, keyof DsToasterAttributes> & { [K in keyof DsToaster & keyof DsToasterAttributes]?: DsToaster[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `attr:${K}`]?: DsToasterAttributes[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `prop:${K}`]?: DsToaster[K] };
@@ -3932,6 +4411,19 @@ declare module "@stencil/core" {
              */
             "ds-panel-group": LocalJSX.IntrinsicElements["ds-panel-group"] & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
             /**
+             * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+             * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+             * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+             * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+             * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+             * already: `--ds-range-buffer`).
+             * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+             * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+             * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+             * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+             */
+            "ds-range": LocalJSX.IntrinsicElements["ds-range"] & JSXBase.HTMLAttributes<HTMLDsRangeElement>;
+            /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
              * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
@@ -3942,6 +4434,20 @@ declare module "@stencil/core" {
              * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
              */
             "ds-rsp": LocalJSX.IntrinsicElements["ds-rsp"] & JSXBase.HTMLAttributes<HTMLDsRspElement>;
+            /**
+             * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+             * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+             * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+             * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+             * (`scroll-snap-type`).
+             * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+             * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+             * finds them) and the scroller follows it.
+             * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+             * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+             * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+             */
+            "ds-scroller": LocalJSX.IntrinsicElements["ds-scroller"] & JSXBase.HTMLAttributes<HTMLDsScrollerElement>;
             /**
              * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
              * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
@@ -3980,9 +4486,31 @@ declare module "@stencil/core" {
              */
             "ds-slider-menu": LocalJSX.IntrinsicElements["ds-slider-menu"] & JSXBase.HTMLAttributes<HTMLDsSliderMenuElement>;
             /**
+             * A list the user puts in order: each child of the list is an item, identified by its `data-key`. With the keyboard, an
+             * item that has the focus is picked up with Space or Enter, moved with the arrow keys (Up and Down; Left and Right,
+             * `horizontal`, reversed from right to left), Home and End, dropped with Space or Enter, or put back with Escape (Tab, or
+             * a click elsewhere, drops it). With `buttons`, each item also gets two buttons that move it one place back or forward,
+             * for the pointer and the touch. Each move is told by a polite live region (`labels`: "Netflix moved to position 2 of
+             * 5"), and each order the user commits (a drop, a button) emits `orderChange`, with the keys in their new order.
+             * The list is a WAI-ARIA `list` (named by `label`) of `listitem` elements, each in the Tab order and described by the
+             * instructions of the keyboard. The list moves the items in the page (their order in the DOM is the order shown and
+             * read), never the one that has the focus: the focus stays on it.
+             */
+            "ds-sortable": LocalJSX.IntrinsicElements["ds-sortable"] & JSXBase.HTMLAttributes<HTMLDsSortableElement>;
+            /**
              * A block of text, in the paragraph font style of the theme.
              */
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            /**
+             * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+             * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+             * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+             * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+             * theme, so that the initials stay readable.
+             * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+             * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+             */
+            "ds-thumb": LocalJSX.IntrinsicElements["ds-thumb"] & JSXBase.HTMLAttributes<HTMLDsThumbElement>;
             /**
              * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
              * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).

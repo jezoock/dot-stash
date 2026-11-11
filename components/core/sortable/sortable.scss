@@ -1,0 +1,58 @@
+// The structure of ds-sortable: its items in a column (or a row that wraps, `--horizontal`), `--ds-sortable-gap` apart;
+// with `buttons`, each item a row of its content and its buttons, at its end. The live region is hidden on the screen and
+// read (visually hidden, as the counter of ds-field). The look (the items, the item picked up, the buttons) is the
+// theme's (components/_sortable.scss).
+
+/**
+ * @prop --ds-sortable-gap: Space between the items.
+ * @prop --ds-sortable-item-padding: Padding of an item.
+ * @prop --ds-sortable-item-background: Background of an item.
+ * @prop --ds-sortable-item-border-color: Border color of an item.
+ * @prop --ds-sortable-item-radius: Corner radius of an item.
+ * @prop --ds-sortable-grabbed-background: Background of the item picked up.
+ * @prop --ds-sortable-grabbed-border-color: Border color of the item picked up.
+ * @prop --ds-sortable-grabbed-shadow: Shadow of the item picked up.
+ * @prop --ds-sortable-button-size: Width and height of the buttons of an item (`buttons`).
+ */
+
+.ds-sortable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-sortable-gap, 0);
+
+  &.--horizontal {
+    flex-flow: row wrap;
+  }
+
+  &.--buttons > .ds-sortable__item {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-sortable-gap, 0);
+  }
+
+  &__actions {
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-inline-start: auto;
+  }
+
+  &__move {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ds-sortable-button-size, 2rem);
+    height: var(--ds-sortable-button-size, 2rem);
+  }
+
+  &__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,92 @@
+// The structure of ds-range: the native input over its track. The input keeps its role, its keys and its value; its own
+// track is transparent, and its thumb is a box of `--ds-range-thumb-size`. The track of the range (`__track`, created by
+// the component before the input) is under it, centered on its height, and holds the buffer and the fill, from its
+// start side (the right, from right to left) to the shares the component sets (`--ds-range-buffer`, `--ds-range-fill`).
+// The fill ends under the thumb, whatever the value. The look (the colors, the thumb, the radius) is the theme's
+// (components/_range.scss).
+
+/**
+ * @prop --ds-range-fill: The share of the range up to the value of the input (`42.5%`): the width of the fill. Set by the component, from the input.
+ * @prop --ds-range-buffer: The share of the range up to `buffer` (`80%`): the width of the buffer. Set by the component, from `buffer`.
+ * @prop --ds-range-thumb-size: Width and height of the thumb, and height of the input.
+ * @prop --ds-range-track-height: Thickness of the track.
+ * @prop --ds-range-track-color: Color of the track that is not filled.
+ * @prop --ds-range-buffer-color: Color of the buffer (`buffer`), under the fill.
+ * @prop --ds-range-fill-color: Color of the fill, up to the value.
+ * @prop --ds-range-thumb-color: Color of the thumb.
+ * @prop --ds-range-thumb-border-color: Color of the border of the thumb.
+ * @prop --ds-range-radius: Corner radius of the track and of the thumb.
+ */
+
+.ds-range {
+  position: relative;
+  display: block;
+
+  &__input {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: var(--ds-range-thumb-size, 1rem);
+    margin: 0;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &::-webkit-slider-runnable-track {
+      height: 100%;
+      background: transparent;
+    }
+
+    &::-moz-range-track {
+      height: 100%;
+      background: transparent;
+    }
+
+    &::-webkit-slider-thumb {
+      box-sizing: border-box;
+      width: var(--ds-range-thumb-size, 1rem);
+      height: var(--ds-range-thumb-size, 1rem);
+      appearance: none;
+    }
+
+    &::-moz-range-thumb {
+      box-sizing: border-box;
+      width: var(--ds-range-thumb-size, 1rem);
+      height: var(--ds-range-thumb-size, 1rem);
+    }
+  }
+
+  &__track {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: var(--ds-range-track-height, 0.25rem);
+    overflow: hidden;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  &__buffer,
+  &__fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+  }
+
+  &__buffer {
+    display: none;
+    width: var(--ds-range-buffer, 0%);
+  }
+
+  &.--buffer &__buffer {
+    display: block;
+  }
+
+  &__fill {
+    width: var(--ds-range-fill, 0%);
+  }
+}

@@ -1,0 +1,72 @@
+@use '../tokens' as *;
+
+// ds-sortable: each item a box with a light border; the item picked up raised (a shadow, a primary border, a light
+// primary background); the buttons of the items round, with a chevron (up and down; left and right, `--horizontal`). The
+// custom properties are documented in components/core/sortable/readme.md; the column of the items is in the component
+// stylesheet.
+
+ds-sortable {
+  --ds-sortable-gap: #{ds-spacing(2)};
+  --ds-sortable-item-padding: #{ds-spacing(2) ds-spacing(3)};
+  --ds-sortable-item-background: #{ds-color(gray, white)};
+  --ds-sortable-item-border-color: #{ds-color(gray, light)};
+  --ds-sortable-item-radius: #{ds-radius(md)};
+  --ds-sortable-grabbed-background: #{ds-color(primary, light)};
+  --ds-sortable-grabbed-border-color: #{ds-color(primary, base)};
+  --ds-sortable-grabbed-shadow: 0 4px 12px #{ds-color(shadow, base)};
+  --ds-sortable-button-size: #{ds-spacing(6)};
+}
+
+.ds-sortable__item {
+  padding: var(--ds-sortable-item-padding);
+  border: 1px solid var(--ds-sortable-item-border-color);
+  border-radius: var(--ds-sortable-item-radius);
+  background-color: var(--ds-sortable-item-background);
+  cursor: default;
+  transition: box-shadow 0.15s ease;
+
+  // The item picked up: a border twice as thick (in forced colors too), in the primary color.
+  &.--grabbed {
+    border-color: var(--ds-sortable-grabbed-border-color);
+    background-color: var(--ds-sortable-grabbed-background);
+    box-shadow: var(--ds-sortable-grabbed-shadow);
+    outline-style: dashed;
+  }
+}
+
+.ds-sortable__move {
+  padding: 0;
+  border: 1px solid var(--ds-sortable-item-border-color);
+  border-radius: ds-radius(circle);
+  background-color: var(--ds-sortable-item-background);
+  color: inherit;
+  cursor: pointer;
+
+  &.--before::before {
+    @include ds-icon(angle-up, $alt: '');
+  }
+
+  &.--after::before {
+    @include ds-icon(angle-down, $alt: '');
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.ds-sortable.--horizontal .ds-sortable__move {
+  &.--before::before {
+    @include ds-icon-content(angle-left);
+  }
+
+  &.--after::before {
+    @include ds-icon-content(angle-right);
+  }
+
+  // Right to left, the items before are on the right: the chevrons are mirrored (as those of ds-pagination).
+  [dir='rtl'] &::before {
+    transform: scaleX(-1);
+  }
+}

@@ -1321,3 +1321,19 @@ Critères d'acceptation communs :
 ### B-127
 
 **Révoquer le jeton d'administration** — terminée : révoqué par le propriétaire.
+
+### B-138
+
+**ds-range : une jauge sur un `<input type="range">` natif** — terminée le 11 novembre 2026, sur la branche `mire/composants-generiques` (pull request à relire) : `components/core/range/`, le skin `scss/themes/default/components/_range.scss`. L'input natif garde son rôle, son nom, son clavier et son formulaire ; le composant dessine la piste remplie jusqu'à la valeur (`--ds-range-fill`, posée par le composant) et, en option, jusqu'à `buffer` (`--ds-range-buffer`) ; il suit les événements, les attributs, un `fieldset` désactivé et la réinitialisation du formulaire, et `refresh()` après une valeur posée par un script ; `aria-valuetext` par gabarit traduisible (`labels.valueText`) ou par fonction (`formatter`). Tests unitaires et navigateur, readme, entrée du CHANGELOG. Reste à vérifier à la main : la lecture de `aria-valuetext` aux lecteurs d'écran (le protocole de Chromium ne la donne pas), Firefox et Safari (pseudo-éléments du curseur).
+
+### B-139
+
+**ds-thumb : une vignette à proportions fixes, avec un carton de remplacement** — terminée le 11 novembre 2026, sur la branche `mire/composants-generiques` (pull request à relire) : `components/core/thumb/`, le skin `scss/themes/default/components/_thumb.scss`. Image recadrée aux proportions de `ratio`, chargée en différé (`loading="lazy"`, `decoding="async"`), classes d'état `--loading`, `--loaded`, `--error` ; sans source ou en échec, les initiales de `label` sur une teinte tirée du texte (`--ds-thumb-hue`), saturation et luminosité du thème (contraste de 4,5:1 au moins sur toutes les teintes) ; nom par `alt` (sinon `label`), ou `decorative`. Tests unitaires et navigateur, readme, entrée du CHANGELOG. Reste à vérifier à la main : lecteurs d'écran, Firefox et Safari (unités `cqmin`).
+
+### B-140
+
+**ds-scroller : une rangée défilante qui suit le focus, sans rendre inerte** — terminée le 11 novembre 2026, sur la branche `mire/composants-generiques` (pull request à relire) : `components/core/scroller/`, le skin `scss/themes/default/components/_scroller.scss`. Défilement natif, horizontal ou vertical ; l'élément focalisé est gardé visible, au plus près, à `--ds-scroller-focus-margin` des bords (le `scroll-padding` du viewport), à partir de la position d'avant le défilement de Chromium (qui centre l'élément avant `focusin`) ; `snap` en option ; aucun élément rendu inerte ni masqué ; boutons précédent et suivant facultatifs (`controls`, `labels`), d'une page, masqués aux extrémités ; classes `--overflowing`, `--at-start`, `--at-end` ; région nommée par `label`. Tests unitaires et navigateur, readme, entrée du CHANGELOG. Reste à vérifier à la main : la navigation à la manette dans Mire, lecteurs d'écran, Firefox et Safari (leur défilement d'un élément focalisé diffère de celui de Chromium).
+
+### B-141
+
+**ds-sortable : une liste ordonnable au clavier, annoncée** — terminée le 11 novembre 2026, sur la branche `mire/composants-generiques` (pull request à relire) : `components/core/sortable/`, le skin `scss/themes/default/components/_sortable.scss`. Enfants identifiés par `data-key` ; saisir (Espace ou Entrée), déplacer (flèches, Début, Fin), déposer (Espace, Entrée ou Tab), annuler (Échap) ; boutons « avant » et « après » en option (`buttons`) ; le focus reste sur l'élément déplacé (les autres bougent autour) ; chaque étape annoncée par une région live polie, gabarits traduisibles (`labels`) ; événement `orderChange` avec les clés dans le nouvel ordre ; un `element.click()` (le bouton A de la manette) saisit et dépose. Pas de glisser-déposer à la souris (les boutons en tiennent lieu). Tests unitaires et navigateur, readme, entrée du CHANGELOG. Reste à vérifier à la main : lecteurs d'écran (les annonces, le nom et la description des éléments), la manette dans Mire, Firefox et Safari.

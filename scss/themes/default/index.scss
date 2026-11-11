@@ -12,7 +12,7 @@
 @use './components/badge';
 @use './components/block';
 @use './components/breadcrumb';
-// The .ds-button and .ds-link skins of ds-trigger: before the skins that add button variants (nav, slider).
+// The .ds-button and .ds-link skins of ds-trigger: before the skins that add button variants (nav, scroller, slider).
 @use './components/trigger';
 @use './components/combo';
 @use './components/field';
@@ -26,10 +26,14 @@
 @use './components/nav';
 @use './components/pagination';
 @use './components/panel';
+@use './components/range';
+@use './components/scroller';
 @use './components/select';
 @use './components/sidebar';
 @use './components/slider';
+@use './components/sortable';
 @use './components/text';
+@use './components/thumb';
 @use './components/title';
 @use './components/title-bar';
 @use './components/toaster';

@@ -1,0 +1,60 @@
+@use '../tokens' as *;
+
+// ds-range: a pill track in light gray, filled in the primary color up to the value (and in a darker gray up to the
+// buffer), under a round white thumb with a primary border. The custom properties are documented in
+// components/core/range/readme.md; the track under the input, its buffer and its fill are placed by the component stylesheet.
+
+ds-range {
+  --ds-range-thumb-size: 1.125rem;
+  --ds-range-track-height: 0.375rem;
+  --ds-range-track-color: #{ds-color(gray, lighter)};
+  --ds-range-buffer-color: #{ds-color(gray, base)};
+  --ds-range-fill-color: #{ds-color(primary, base)};
+  --ds-range-thumb-color: #{ds-color(gray, white)};
+  --ds-range-thumb-border-color: #{ds-color(primary, base)};
+  --ds-range-radius: #{ds-radius(pill)};
+}
+
+.ds-range {
+  // The track: a transparent border, which the browser draws in the color of the text in forced colors.
+  &__track {
+    border: 1px solid transparent;
+    border-radius: var(--ds-range-radius);
+    background-color: var(--ds-range-track-color);
+  }
+
+  &__buffer {
+    background-color: var(--ds-range-buffer-color);
+  }
+
+  // The fill: painted with the color of its text, so that in forced colors it takes the color of the text around it.
+  &__fill {
+    color: var(--ds-range-fill-color);
+    background-color: currentColor;
+    forced-color-adjust: none;
+    forced-color-adjust: preserve-parent-color;
+
+    @media (forced-colors: active) {
+      color: inherit;
+    }
+  }
+
+  &__input::-webkit-slider-thumb {
+    border: 2px solid var(--ds-range-thumb-border-color);
+    border-radius: var(--ds-range-radius);
+    background-color: var(--ds-range-thumb-color);
+    box-shadow: 0 1px 3px ds-color(shadow, base);
+  }
+
+  &__input::-moz-range-thumb {
+    border: 2px solid var(--ds-range-thumb-border-color);
+    border-radius: var(--ds-range-radius);
+    background-color: var(--ds-range-thumb-color);
+    box-shadow: 0 1px 3px ds-color(shadow, base);
+  }
+
+  // Disabled (the input, or a fieldset around it): dimmed.
+  &.--disabled {
+    opacity: 0.5;
+  }
+}
