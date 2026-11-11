@@ -17,7 +17,32 @@ This README describes the current state of the library (version 0.1.0). What cha
 
 ## Install
 
-The library is used from its repository: clone it, install its dependencies and build it.
+The package is not published to a registry. A project installs it from a release, by the address of its archive, or takes it from a built clone of the repository.
+
+### From a release
+
+Each release (a tag `v<version>`, see [Releasing](#releasing)) has the package attached, built: the archive of `npm pack`, `dot-stash-<version>.tgz` (the files of `files`, see [Build output](#build-output)). A project installs it by its address, which stays the same for that version:
+
+```sh
+npm install https://github.com/jezoock/dot-stash/releases/download/v0.2.0/dot-stash-0.2.0.tgz
+```
+
+npm writes the address in the `dependencies` of the project and the checksum of the archive in its lockfile; nothing is built on install (no Node.js 22, no devDependencies of the library), and the package has no dependency of its own. To change the version, install the address of another release. The project then imports the package as in [From the package](#from-the-package).
+
+While the repository is private, GitHub serves the files of its releases to an authenticated request of the API only, which npm cannot make: the address above answers "Not Found" to npm. Download the archive first, with the GitHub CLI (signed in with access to the repository; in a GitHub Actions workflow of another repository, a token with read access to this one), then install the file, which the project can commit (`vendor/`):
+
+```sh
+gh release download v0.2.0 --repo jezoock/dot-stash --pattern 'dot-stash-*.tgz' --dir vendor
+npm install ./vendor/dot-stash-0.2.0.tgz
+```
+
+The first version with an archive is the first one tagged after the release workflow was added (0.2.0 in the examples): the tag `v0.1.0` predates it, and 0.1.0 has no archive.
+
+A git dependency (`npm install github:jezoock/dot-stash`, or a git URL in `package.json`) does not work: it installs the files of the repository, and `dist/` and `loader/`, built and not committed, are not among them. The package has no `prepare` script that would build them on install, on purpose: the project would need Node.js 22 and every devDependency of the library (Stencil, Sass, Vitest, Playwright…), and each install would build it. Install the archive of a release instead.
+
+### From the repository
+
+Clone the repository, install its dependencies and build it:
 
 ```sh
 git clone https://github.com/jezoock/dot-stash.git
@@ -27,6 +52,25 @@ npm run build:all
 ```
 
 The build writes `dist/` and `loader/` (see [Build output](#build-output)), which are not committed. A project then takes the library from the clone, as a local path dependency or as built files: see [In another project](#in-another-project).
+
+### Releasing
+
+The release workflow (`.github/workflows/release.yml`, GitHub Actions) runs on a tag `v*`, pushed or created with a GitHub release. It checks that the tag is `v` and the version of `package.json` and that `CHANGELOG.md` has the section of that version (`npm run release:notes -- --tag <tag>`), runs `npm ci`, `npm run build:all` and `npm test`, packs the package (`npm pack`), installs the archive by its address in a new project (`npm run check:package`, see [Tooling](#tooling)), then attaches it to the GitHub release of the tag: it creates the release, titled `dot-stash <version>`, with the section of the changelog as its notes (a pre-release for a version such as `0.2.0-beta.1`), or adds the archive to the release when it exists (its notes are kept). Its only permission is the write access to the contents of the repository (`contents: write`), which a release and its files need. It publishes nothing to a registry.
+
+To make a release, once the version is merged into `main`:
+
+1. In a pull request: set the version in `package.json` and `package-lock.json` (`npm version 0.2.0 --no-git-tag-version`), and rename the section `[Unreleased]` of the changelog to `[0.2.0] - <date>`, with a new empty `[Unreleased]` above it, and update the links at the end of the file (`[Unreleased]` compares from `v0.2.0`, `[0.2.0]` leads to its release). CI checks that the changelog has the section of the version.
+2. After the merge, tag the merge commit and push the tag:
+
+   ```sh
+   git switch main && git pull
+   git tag -a v0.2.0 -m "dot-stash 0.2.0"
+   git push origin v0.2.0
+   ```
+
+   Or create a release on GitHub (Releases, Draft a new release) with a new tag `v0.2.0` on `main`: the workflow attaches the archive to it.
+
+3. Check the run (Actions, Release) and the release: its file `dot-stash-0.2.0.tgz`. A tag that does not match the version fails the run, before anything is attached: delete the tag (`git push --delete origin <tag>`), fix it, and tag again.
 
 ## Browser support
 
@@ -69,24 +113,26 @@ The components also need ES modules and `import()` (Stencil's loader), `Intl.Plu
 
 ## npm scripts
 
-| Script                 | What it does                                                                                                                                                                                                                               |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `npm start`            | Development: the CSS watcher and the Stencil dev server, in one terminal (`scripts/dev.mjs`, see [Tooling](#tooling)). Serves `www/` (page `components/index.html`) on `http://localhost:3333/`.                                           |
-| `npm run build`        | Stencil production build: the package in `dist/` and `loader/`, the dev page in `www/`. Also regenerates `components/components.d.ts` and the component `readme.md` files.                                                                 |
-| `npm run build:css`    | Compiles every theme and its page stylesheets into `dist/css/` (`scripts/build-css.mjs`, see [Tooling](#tooling)).                                                                                                                         |
-| `npm run build:icons`  | Generates the icon map of the engine, `scss/engine/variables/_icons.scss`, from the SVG files of `scss/engine/icons/` (`scripts/build-icons.mjs`, see [Icons](#icons)); `-- --check` writes nothing and fails when the map is out of date. |
-| `npm run build:all`    | Runs `clean`, `build:css`, then `build`.                                                                                                                                                                                                   |
-| `npm run clean`        | Deletes `dist/`, `www/`, `.stencil/` and `loader/`.                                                                                                                                                                                        |
-| `npm test`             | Unit tests: the spec files (`*.spec.ts`, `*.spec.tsx`) with Vitest, the `unit` and `styles` projects of `vitest.config.mts`, without a browser and without a build. See [Tests](#tests).                                                   |
-| `npm run test:watch`   | Same as `npm test`, in watch mode.                                                                                                                                                                                                         |
-| `npm run test:browser` | Browser tests: the `*.browser.ts` files in Chromium (Vitest browser mode, Playwright), on the build: run `npm run build:all` first. See [Tests](#tests).                                                                                   |
-| `npm run generate`     | Stencil component generator (interactive).                                                                                                                                                                                                 |
-| `npm run lint`         | ESLint on the repository: the components, the scripts and the configuration files (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                                                         |
-| `npm run lint:fix`     | Same as `lint`, applying automatic fixes.                                                                                                                                                                                                  |
-| `npm run lint:css`     | Stylelint on the `.scss` files of `scss/` and `components/` (`stylelint.config.mjs`, see [Tooling](#tooling)).                                                                                                                             |
-| `npm run typecheck`    | `tsc --noEmit`: type-checks the components and the tests (`tsconfig.json`; the build only compiles the components, `tsconfig.build.json`).                                                                                                 |
-| `npm run format`       | Prettier on the `ts`, `tsx`, `js`, `mjs`, `mts`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files).                            |
-| `npm run format:check` | Checks the same files without writing.                                                                                                                                                                                                     |
+| Script                  | What it does                                                                                                                                                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`             | Development: the CSS watcher and the Stencil dev server, in one terminal (`scripts/dev.mjs`, see [Tooling](#tooling)). Serves `www/` (page `components/index.html`) on `http://localhost:3333/`.                                                                                                  |
+| `npm run build`         | Stencil production build: the package in `dist/` and `loader/`, the dev page in `www/`. Also regenerates `components/components.d.ts` and the component `readme.md` files.                                                                                                                        |
+| `npm run build:css`     | Compiles every theme and its page stylesheets into `dist/css/` (`scripts/build-css.mjs`, see [Tooling](#tooling)).                                                                                                                                                                                |
+| `npm run build:icons`   | Generates the icon map of the engine, `scss/engine/variables/_icons.scss`, from the SVG files of `scss/engine/icons/` (`scripts/build-icons.mjs`, see [Icons](#icons)); `-- --check` writes nothing and fails when the map is out of date.                                                        |
+| `npm run build:all`     | Runs `clean`, `build:css`, then `build`.                                                                                                                                                                                                                                                          |
+| `npm run check:package` | Packs the package (`npm pack`), serves the archive on `127.0.0.1` and installs it by its address in a new project, then checks there its entry points (`import`, `require`), its stylesheets and its types (`scripts/check-package.mjs`, see [Tooling](#tooling)): run `npm run build:all` first. |
+| `npm run clean`         | Deletes `dist/`, `www/`, `.stencil/` and `loader/`.                                                                                                                                                                                                                                               |
+| `npm run release:notes` | Prints the section of `CHANGELOG.md` for the version of `package.json`, the notes of its release (`scripts/release-notes.mjs`, see [Tooling](#tooling)); `-- --tag <tag>` fails unless the tag is `v<version>`.                                                                                   |
+| `npm test`              | Unit tests: the spec files (`*.spec.ts`, `*.spec.tsx`) with Vitest, the `unit` and `styles` projects of `vitest.config.mts`, without a browser and without a build. See [Tests](#tests).                                                                                                          |
+| `npm run test:watch`    | Same as `npm test`, in watch mode.                                                                                                                                                                                                                                                                |
+| `npm run test:browser`  | Browser tests: the `*.browser.ts` files in Chromium (Vitest browser mode, Playwright), on the build: run `npm run build:all` first. See [Tests](#tests).                                                                                                                                          |
+| `npm run generate`      | Stencil component generator (interactive).                                                                                                                                                                                                                                                        |
+| `npm run lint`          | ESLint on the repository: the components, the scripts and the configuration files (`eslint.config.mjs`: ESLint recommended + typescript-eslint recommended rules).                                                                                                                                |
+| `npm run lint:fix`      | Same as `lint`, applying automatic fixes.                                                                                                                                                                                                                                                         |
+| `npm run lint:css`      | Stylelint on the `.scss` files of `scss/` and `components/` (`stylelint.config.mjs`, see [Tooling](#tooling)).                                                                                                                                                                                    |
+| `npm run typecheck`     | `tsc --noEmit`: type-checks the components and the tests (`tsconfig.json`; the build only compiles the components, `tsconfig.build.json`).                                                                                                                                                        |
+| `npm run format`        | Prettier on the `ts`, `tsx`, `js`, `mjs`, `mts`, `scss`, `json`, `html`, `yml`, `yaml` and `md` files (`.prettierignore` excludes build output and generated files, including the component `readme.md` files).                                                                                   |
+| `npm run format:check`  | Checks the same files without writing.                                                                                                                                                                                                                                                            |
 
 ## Tooling
 
@@ -98,13 +144,15 @@ The build uses Stencil for the components and the `sass` package for the theme s
   - `--source-map`: writes a source map, `<stylesheet>.css.map`, next to each stylesheet, with the SCSS sources in it.
 - **`scripts/build-icons.mjs`** (`npm run build:icons`) generates `scss/engine/variables/_icons.scss`, the `$icons` map of the engine, from the SVG files and `icons.json` of `scss/engine/icons/`: each icon as an SVG data URI (see [Icons](#icons)). The generated file is committed; with `--check`, the script writes nothing and exits with code 1 when the file is not the one it generates (CI, and `npm test`).
 - **`scripts/dev.mjs`** (`npm start`) runs `build-css.mjs --watch` and, once the stylesheets are compiled, the Stencil dev server (`stencil build --dev --watch --serve`), in one terminal; Ctrl+C stops both, and when one of them stops, the other is stopped too. The dev server serves `www/`, with the dev page `components/index.html`: add `ds-*` markup there to try the components. The Stencil build copies `dist/css/` to `www/css/`, and watches `dist/css/` (`watchExternalDirs` in `stencil.config.ts`): a stylesheet the watcher recompiles makes a rebuild, which copies it, and the page reloads. A change of a component reloads it as before (Stencil's hot module replacement).
+- **`scripts/check-package.mjs`** (`npm run check:package`) checks the package as a project installs it from a release: it packs it (`npm pack`, into a temporary folder; or takes the archive given as argument), serves the archive over HTTP on `127.0.0.1`, installs it by its address in a new, empty project (`npm install http://127.0.0.1:<port>/dot-stash-<version>.tgz`), then checks there the entry points `dot-stash` and `dot-stash/loader` (ES modules and CommonJS), the theme stylesheet and `LICENSE-icons.txt`, the browser build, and the types (compiled by the TypeScript of the repository, module resolution `bundler`, with the typings of the elements). Nothing is fetched from a registry; the temporary folders are deleted. It fails (exit code 1) when a check fails. CI and the release workflow run it.
+- **`scripts/release-notes.mjs`** (`npm run release:notes`) prints the section of `CHANGELOG.md` for the version of `package.json`, with its relative links made absolute to the files of the repository at the tag: the notes of the GitHub release. With `--tag <tag>`, it fails unless the tag is `v<version>`; it also fails when the changelog has no section for the version, or an empty one. The release workflow runs it (see [Releasing](#releasing)), and a unit test (`components/release.spec.ts`) too, so the version is never bumped without its changelog.
 - **`dot-stash.config.mjs`** is the configuration of the stylesheet build: `themes` (the folders of `scss/themes/` to compile), `paths` (`scss`, the sources; `css`, the output, `dist/css`) and `css` (`style`, `compressed` or `expanded`; `sourceMap`).
 - **Stylelint** (`npm run lint:css`, `stylelint.config.mjs`) checks the SCSS with the standard SCSS configuration (`stylelint-config-standard-scss`), adapted to the conventions of the project, each change explained in the configuration: the class names `ds-<block>__<element>--<modifier>` and `--<modifier>`, the custom properties `--ds-…`, the blank lines that group the lines of a block, the explicit `== null` tests of the engine, the values the compiled theme writes as they are (six-digit colors, font names), and the `-webkit-mask-*` properties of the icons (Chrome before 120 needs them). Prettier formats the files (Stylelint has no formatting rule left).
 - **TypeScript** (`typescript`, `~5.8.3`) is the version Stencil 4.45 compiles with (it bundles its own copy): typescript-eslint and the editors use this one. `tsconfig.json` covers the components and the tests (`components/`, `test/`), with the module resolution of Vite (`bundler`): the editors and `npm run typecheck` (`tsc --noEmit`) use it. The Stencil build uses `tsconfig.build.json` (`tsconfig` in `stencil.config.ts`): the same options, the module resolution of the build (`node`), and only the components, without the test files (`*.spec.ts(x)`, `*.browser.ts`): the build compiles every file of its program, and would publish the test helpers they import.
 
 The dev page only loads the components (`/build/dot-stash.esm.js`) and the `default` theme stylesheet (`/css/default.css`, the copy of `dist/css/default.css`); a page stylesheet is at `/css/pages/<theme>/<page>.css`. The former demo (the `ds-main` component, the theme switcher and the runtime color control of the dev pages) is archived on `archive/propal` (see [Archived code](#archived-code)).
 
-CI (`.github/workflows/ci.yml`, GitHub Actions) runs two jobs on every push and pull request. The first one runs `npm ci`, `build:all` (then checks that the main build outputs exist), `build:icons -- --check` (the icon map is up to date), `format:check`, `lint`, `typecheck`, `lint:css` and `npm test`; the second one, in parallel, `npm ci`, `build:all`, `npx playwright install --with-deps chromium` (the Chromium of the Playwright version of the lockfile) and `npm run test:browser`. Every step is blocking: a build, formatting, lint, type or test error fails the run.
+CI (`.github/workflows/ci.yml`, GitHub Actions) runs two jobs on every push and pull request. The first one runs `npm ci`, `build:all` (then checks that the main build outputs exist), `build:icons -- --check` (the icon map is up to date), `format:check`, `lint`, `typecheck`, `lint:css`, `npm test` and `check:package` (the archive of `npm pack`, installed by its address in a new project); the second one, in parallel, `npm ci`, `build:all`, `npx playwright install --with-deps chromium` (the Chromium of the Playwright version of the lockfile) and `npm run test:browser`. Every step is blocking: a build, formatting, lint, type or test error fails the run.
 
 ## Project structure
 
@@ -121,6 +169,7 @@ components/
                    transition.ts, labels.ts, form-control.ts), and shared types and enums (interfaces/); their
                    unit tests (<module>.spec.ts) and transition.browser.ts
   sass.spec.ts     the stylesheet tests (npm test)
+  release.spec.ts  the release notes and the release workflow (npm test)
   index.ts         package entry point
   index.html       dev page served by the Stencil dev server (npm start)
   components.d.ts  component typings, generated by Stencil
@@ -137,7 +186,9 @@ scss/
 scripts/
   build-css.mjs        theme stylesheet build and watcher (npm run build:css)
   build-icons.mjs      icon map of the engine, generated from scss/engine/icons/ (npm run build:icons)
+  check-package.mjs    the archive of npm pack, installed by its address in a new project (npm run check:package)
   dev.mjs              npm start: the CSS watcher and the Stencil dev server
+  release-notes.mjs    the notes of a release, from the changelog (npm run release:notes)
 test/
   helpers/             shared helpers of the tests: the unit tests (index.ts) and the browser tests (browser.ts)
   setup/               setup files of the Vitest projects: unit.ts (simulated DOM), browser.ts (Chromium)
@@ -149,6 +200,7 @@ vitest.config.mts      Vitest configuration: the unit, styles and browser projec
 eslint.config.mjs      ESLint configuration (npm run lint)
 stylelint.config.mjs   Stylelint configuration (npm run lint:css)
 docs/                  project notes: the archives, the backlog (in French)
+.github/workflows/     CI (ci.yml) and the release workflow (release.yml)
 ```
 
 ## Build output
@@ -456,12 +508,12 @@ await rsp.refresh();
 
 ### In another project
 
-The package is not published to a registry: a project takes it from a clone of the repository, built with `npm ci` and `npm run build:all` (see [Install](#install)), in one of two ways.
+A project installs the archive of a release by its address (see [From a release](#from-a-release)), or takes the package from a clone of the repository, built with `npm ci` and `npm run build:all` (see [From the repository](#from-the-repository)), in one of two ways.
 
 - **A local path dependency**: in the project, `npm install ../dot-stash` (the path of the clone), which writes `"dot-stash": "file:../dot-stash"` in its `package.json` and links `node_modules/dot-stash` to the clone. The project imports the loader, the utilities (with their types) and the theme stylesheet from `dot-stash`: see [From the package](#from-the-package). After a `git pull` in the clone, `npm run build:all` there gives the project the new build. A tarball made by `npm pack` in the clone (`dot-stash-0.1.0.tgz`, the files of `files` only) installs the same way, as a copy: `npm install ../dot-stash/dot-stash-0.1.0.tgz`.
 - **The built files**: copy `dist/dot-stash/` (the browser build, which loads the code of each component from its own folder) and `dist/css/<theme>.css` (with `dist/css/LICENSE-icons.txt`, the licence texts of its icons) to the static files of the site, and load them with a script tag and a stylesheet link: see [Script tags](#script-tags).
 
-A git dependency (`npm install github:jezoock/dot-stash`, or a git URL in `package.json`) does not work: it installs the files of the repository, and `dist/` and `loader/`, built and not committed, are not among them (the package has no `prepare` script that would build them on install), so the imports of `dot-stash` and `dot-stash/loader` and the stylesheets are missing. Use a built clone.
+A git dependency does not work (see [From a release](#from-a-release)).
 
 ### Script tags
 
@@ -480,7 +532,7 @@ Each component's code is loaded on first use, from the same folder.
 
 ### From the package
 
-In a project that has the package as a dependency (a local path, see [In another project](#in-another-project)), register the components with the loader, from the code the bundler of the project builds:
+In a project that has the package as a dependency (the archive of a release, or a local path, see [In another project](#in-another-project)), register the components with the loader, from the code the bundler of the project builds:
 
 ```js
 import { defineCustomElements } from 'dot-stash/loader';
@@ -910,7 +962,7 @@ The simulated DOM has no focus, no layout, no computed style, no viewport and no
 | `fakeMatchMedia()` (`media.ts`)                                                        | a `matchMedia()` that evaluates the width media queries at a width and, when the test resizes, dispatches `change` on the lists whose state changes, as a browser does      |
 | `mockElementInternals()`, `formCallbacks()` (`form.ts`)                                | a fake `ElementInternals` that records the form value, the state and the validity and dispatches `invalid`, and the form callbacks a browser calls (`formResetCallback()`…) |
 
-`components/core/slots.spec.ts` checks the slots of the components: each one documents with a JSDoc `@slot` tag every slot it renders (`<slot name="title">`), every slot marker its code reads (`slot="hint"`) and the content it enhances without a slot (`ds-ajax`, `ds-breadcrumb`, `ds-field`, `ds-range`, `ds-sortable`), and the Slots section of its generated readme lists them. `components/docs.spec.ts` checks that the repository paths the README, the changelog and the notes of `docs/` name (`scss/…`, `components/…`) and their relative links exist.
+`components/core/slots.spec.ts` checks the slots of the components: each one documents with a JSDoc `@slot` tag every slot it renders (`<slot name="title">`), every slot marker its code reads (`slot="hint"`) and the content it enhances without a slot (`ds-ajax`, `ds-breadcrumb`, `ds-field`, `ds-range`, `ds-sortable`), and the Slots section of its generated readme lists them. `components/docs.spec.ts` checks that the repository paths the README, the changelog and the notes of `docs/` name (`scss/…`, `components/…`) and their relative links exist. `components/release.spec.ts` checks the notes of a release (`scripts/release-notes.mjs`: the section of the changelog for the version of `package.json` exists) and the release workflow (its triggers, its only permission, the order of its steps).
 
 `test/setup/unit.ts` gives each test a fresh page (a new body, no listeners), and `vitest.config.mts` restores the spies (`vi.spyOn()`) and the globals of `vi.stubGlobal()` before each test. The setup also gives the runtime the build flags of Stencil's former spec pages (the development mode, form association, no `hydrated` class) and the window the `on…` properties and the event listeners of a browser window, which the components rely on.
 

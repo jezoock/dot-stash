@@ -1,0 +1,73 @@
+name: Release
+
+# A tag v<version> (pushed, or created with a GitHub release) builds and tests the package, checks its archive installed by
+# its address, and attaches the archive of npm pack, dot-stash-<version>.tgz, to the GitHub release of the tag: the
+# release is created, with the section of the version in CHANGELOG.md as its notes, or completed when it exists (its
+# notes are kept). A project then installs the package by the address of the archive (README, Install). Nothing is
+# published to a registry.
+
+on:
+  push:
+    tags: ['v*']
+  release:
+    types: [published]
+
+# A release created on GitHub with a new tag may start two runs (the tag, the release): one after the other, the second
+# one replaces the archive with the same one.
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and attach the archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The tag must be v<version of package.json>, and the changelog must have the section of that version.
+      - name: Check the tag and write the release notes
+        run: node scripts/release-notes.mjs --tag "$TAG" > "$RUNNER_TEMP/release-notes.md"
+
+      - name: Build
+        run: npm run build:all
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Pack
+        run: |
+          archive="$(npm pack --json --pack-destination "$RUNNER_TEMP" | node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(0, "utf8"))[0].filename)')"
+          echo "ARCHIVE=$RUNNER_TEMP/$archive" >> "$GITHUB_ENV"
+
+      - name: Check the archive installed by its address
+        run: node scripts/check-package.mjs "$ARCHIVE"
+
+      - name: Attach the archive to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "$ARCHIVE" --clobber
+          else
+            prerelease=()
+            # A version with a pre-release part (0.2.0-beta.1) makes a pre-release.
+            if [[ "$TAG" == *-* ]]; then prerelease=(--prerelease); fi
+            gh release create "$TAG" "$ARCHIVE" --verify-tag --title "dot-stash ${TAG#v}" --notes-file "$RUNNER_TEMP/release-notes.md" "${prerelease[@]}"
+          fi

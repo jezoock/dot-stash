@@ -66,6 +66,11 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      # The archive of npm pack, installed by its address in a new project, as a project installs the archive of a release
+      # (.github/workflows/release.yml): the entry points, the stylesheets and the types.
+      - name: Check the package
+        run: npm run check:package
+
   browser:
     name: Browser tests (Chromium)
     runs-on: ubuntu-latest

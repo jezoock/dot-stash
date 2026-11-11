@@ -16,16 +16,16 @@ La liste de travail de dot-stash après la version 0.1.0 (10 novembre 2026) : to
 | [Outillage](#outillage)                                 | 17      | 7   | 10  | 0   | 1             |
 | [Tests](#tests)                                         | 5       | 3   | 2   | 0   | 1             |
 | [Documentation](#documentation)                         | 7       | 6   | 1   | 0   | 0             |
-| [Release](#release)                                     | 6       | 1   | 5   | 0   | 5             |
+| [Release](#release)                                     | 4       | 1   | 3   | 0   | 3             |
 | [Sécurité et hors dépôt](#sécurité-et-hors-dépôt)       | 2       | 1   | 1   | 0   | 2             |
 | [Idées](#idées)                                         | 8       | 1   | 0   | 7   | 6             |
-| **Total**                                               | **131** | 39  | 78  | 14  | 63            |
+| **Total**                                               | **129** | 39  | 76  | 14  | 61            |
 
 ## Ordre suggéré
 
 1. **Tag et secrets** : poser le tag `v0.1.0` (B-117), puis les dernières actions de sécurité, hors du dépôt (B-128, B-129).
 2. **Petits correctifs sûrs** : B-053, B-001, B-002.
-3. **Décisions groupées** (une séance avec vous) : tokens hérités (B-074), props sans effet (B-067), délai du toaster (B-066), page de développement (B-101), installation depuis git (B-119), et les autres tâches marquées « oui ».
+3. **Décisions groupées** (une séance avec vous) : tokens hérités (B-074), props sans effet (B-067), délai du toaster (B-066), page de développement (B-101), et les autres tâches marquées « oui ».
 4. **Compatibilité** : Firefox puis WebKit en CI (B-038, B-039), le tri par domaine, et la déclaration de support (B-052).
 5. **Accessibilité manuelle** : la page de test (B-004), puis les passes au lecteur d'écran et les audits, groupe par groupe.
 6. **Outillage** : export des tokens, contrastes, parité, générateurs ; puis les composants, le thème, les tests et la documentation au fil de l'eau ; les idées sur décision.
@@ -152,8 +152,6 @@ Les cinq premières tâches suggérées : B-117 (Poser le tag `v0.1.0` sur le co
 | [B-114](#b-114) | Test : toute API publique a une description                                                                              | documentation             | XS     | B-111, B-112, B-113        | non      |
 | [B-115](#b-115) | README : une section des limites connues                                                                                 | documentation             | XS     | —                          | non      |
 | [B-117](#b-117) | Poser le tag `v0.1.0` sur le commit de fusion de la 0.1.0                                                                | release                   | XS     | —                          | oui      |
-| [B-119](#b-119) | Installer depuis git : script `prepare` ou fichiers construits attachés à une release                                    | release                   | S      | —                          | oui      |
-| [B-120](#b-120) | Workflow de release : tag → build → archive attachée à une release GitHub                                                | release                   | S      | B-119, B-117               | oui      |
 | [B-121](#b-121) | Publier sur un registre npm (public ou privé)                                                                            | release                   | S      | B-120                      | oui      |
 | [B-122](#b-122) | Ajouter la cible `dist-custom-elements` (imports par composant)                                                          | release                   | S      | —                          | oui      |
 | [B-123](#b-123) | Tester les imports par composant dans un projet consommateur                                                             | release                   | S      | B-122                      | non      |
@@ -1153,25 +1151,6 @@ Critères d'acceptation communs :
 - **Critères d'acceptation** :
   - Le tag `v0.1.0` existe sur `3d9e2de` ; les liens du CHANGELOG fonctionnent.
 
-### B-119
-
-**Installer depuis git : script `prepare` ou fichiers construits attachés à une release**
-
-- **Catégorie** : release · **Taille** : S · **Dépend de** : — · **Décision** : oui
-- **Contexte** : Une dépendance git (`npm install github:jezoock/dot-stash`) n'installe pas `dist/` ni `loader/`, construits et non versionnés (README, In another project). Deux options : un script `prepare` (npm construit le paquet à l'installation : Node 22 et toutes les devDependencies chez le projet consommateur, installation lente), ou une archive construite attachée à une release GitHub (voir le workflow de release).
-- **Critères d'acceptation** :
-  - Décision prise et notée dans le README ; si `prepare` : installation depuis git testée dans un projet vierge (import du loader, feuille du thème, types).
-
-### B-120
-
-**Workflow de release : tag → build → archive attachée à une release GitHub**
-
-- **Catégorie** : release · **Taille** : S · **Dépend de** : [B-119](#b-119), [B-117](#b-117) · **Décision** : oui
-- **Contexte** : Aujourd'hui, un projet prend la bibliothèque d'un clone construit. Un workflow sur les tags `v*` pourrait construire, tester et attacher l'archive de `npm pack` à une release GitHub, installable par URL.
-- **Critères d'acceptation** :
-  - Un tag `v*` crée une release avec l'archive `dot-stash-<version>.tgz` et l'extrait du CHANGELOG.
-  - Installation testée depuis l'URL de l'archive dans un projet vierge.
-
 ### B-121
 
 **Publier sur un registre npm (public ou privé)**
@@ -1305,6 +1284,14 @@ Critères d'acceptation communs :
 ### B-118
 
 **Retirer du README la mention de la branche de la 0.1.0** — terminée le 10 novembre 2026 : la section Install du README ne renvoie plus à la branche de travail ; le code se prend sur `main`.
+
+### B-119
+
+**Installer depuis git : script `prepare` ou fichiers construits attachés à une release** — terminée le 11 novembre 2026, sur la branche `mire/ds-01-release` (pull request à relire) : décision, l'archive construite attachée à une release GitHub, sans script `prepare` (il imposerait Node 22 et toutes les devDependencies au projet consommateur, et un build à chaque installation). Notée dans le README (Install : From a release, From the repository) ; une dépendance git reste refusée, avec la raison. Tant que le dépôt est privé, l'adresse de l'archive ne s'installe pas directement par npm (GitHub ne sert les fichiers d'une release privée qu'à une requête authentifiée de l'API) : le README donne la voie `gh release download`, puis l'installation du fichier.
+
+### B-120
+
+**Workflow de release : tag → build → archive attachée à une release GitHub** — terminée le 11 novembre 2026, sur la branche `mire/ds-01-release` (pull request à relire) : `.github/workflows/release.yml`, sur un tag `v*` poussé ou une release publiée, avec la seule permission `contents: write`. Il vérifie que le tag est `v<version de package.json>` et que le CHANGELOG a la section de la version (`scripts/release-notes.mjs`), lance `npm ci`, `npm run build:all`, `npm test`, `npm pack`, installe l'archive par son adresse dans un projet vierge (`scripts/check-package.mjs` : points d'entrée `import` et `require`, feuille du thème, types), puis crée la release avec l'archive `dot-stash-<version>.tgz` et l'extrait du CHANGELOG (liens relatifs rendus absolus), ou ajoute l'archive à la release existante. La CI lance la même vérification de l'archive (`npm run check:package`) à chaque push ; test unitaire `components/release.spec.ts`. Reste à faire par le propriétaire : la première release (version et section du CHANGELOG dans une pull request, puis le tag, README : Releasing) et l'installation depuis l'adresse réelle de l'archive ; `v0.1.0`, posé avant le workflow, n'a pas d'archive.
 
 ### B-124
 
