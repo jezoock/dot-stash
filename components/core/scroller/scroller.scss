@@ -1,0 +1,91 @@
+// The structure of ds-scroller: a viewport that scrolls (natively: the wheel, a swipe, the scrollbar, the keys), its
+// items in a row (or a column, `--vertical`), each at its own size. The viewport has its padding inside it, so that the
+// focus outline of an item at its edges shows, and its scroll padding (`--ds-scroller-focus-margin`) keeps an item that
+// takes the focus away from its edges (the component scrolls to it), and the snap positions (`--snap`) too. The previous
+// and next buttons (`--controls`) are over its sides (over its top and bottom, `--vertical`). The look (the gap, the
+// padding, the buttons) is the theme's (components/_scroller.scss).
+
+/**
+ * @prop --ds-scroller-gap: Space between the items.
+ * @prop --ds-scroller-padding: Padding inside the viewport, around the items: room for their focus outline.
+ * @prop --ds-scroller-focus-margin: Space kept between an item that takes the focus and the edges of the viewport (its `scroll-padding`).
+ * @prop --ds-scroller-button-offset: Distance between the previous / next buttons and the sides of the scroller.
+ * @prop --ds-scroller-button-size: Width and height of the previous / next buttons.
+ * @prop --ds-scroller-button-background: Background of the previous / next buttons.
+ * @prop --ds-scroller-button-border-color: Border color of the previous / next buttons.
+ */
+
+.ds-scroller {
+  position: relative;
+  display: block;
+
+  &__viewport {
+    display: flex;
+    gap: var(--ds-scroller-gap, 0);
+    padding: var(--ds-scroller-padding, 0);
+    overflow: auto hidden;
+    overscroll-behavior-inline: contain;
+    scroll-padding-inline: var(--ds-scroller-focus-margin, 0);
+
+    > * {
+      flex: 0 0 auto;
+    }
+  }
+
+  &.--vertical {
+    height: 100%;
+  }
+
+  &.--vertical &__viewport {
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden auto;
+    overscroll-behavior-block: contain;
+    scroll-padding-block: var(--ds-scroller-focus-margin, 0);
+  }
+
+  &.--snap &__viewport {
+    scroll-snap-type: x mandatory;
+
+    > * {
+      scroll-snap-align: start;
+    }
+  }
+
+  &.--snap.--vertical &__viewport {
+    scroll-snap-type: y mandatory;
+  }
+
+  // The previous and next buttons, over the sides (the start and the end: from right to left, the previous one is on the
+  // right), centered on the height of the scroller.
+  &__prev,
+  &__next {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__prev {
+    inset-inline-start: var(--ds-scroller-button-offset, 0);
+  }
+
+  &__next {
+    inset-inline-end: var(--ds-scroller-button-offset, 0);
+  }
+
+  &.--vertical &__prev,
+  &.--vertical &__next {
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.--vertical &__prev {
+    top: var(--ds-scroller-button-offset, 0);
+  }
+
+  &.--vertical &__next {
+    bottom: var(--ds-scroller-button-offset, 0);
+  }
+}

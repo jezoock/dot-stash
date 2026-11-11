@@ -19,6 +19,7 @@ import { PanelType } from "./core/panel/panel.types";
 import { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { Element } from "@stencil/core";
+import { DSScrollerLabels, DSScrollerOrientation } from "./core/scroller/scroller.types";
 import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 import { DSThumbLoading } from "./core/thumb/thumb.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
@@ -38,6 +39,7 @@ export { PanelType } from "./core/panel/panel.types";
 export { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { Element } from "@stencil/core";
+export { DSScrollerLabels, DSScrollerOrientation } from "./core/scroller/scroller.types";
 export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
 export { DSThumbLoading } from "./core/thumb/thumb.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
@@ -926,6 +928,62 @@ export namespace Components {
           * @default '[data-use-rsp]:not([data-rsp-init])'
          */
         "subscriberSelector": string;
+    }
+    /**
+     * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+     * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+     * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+     * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+     * (`scroll-snap-type`).
+     * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+     * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+     * finds them) and the scroller follows it.
+     * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+     * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+     * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+     */
+    interface DsScroller {
+        /**
+          * Renders a previous and a next button, which scroll by a page, each one hidden at its end.
+          * @default false
+         */
+        "controls": boolean;
+        /**
+          * The name of the scroller (`aria-label`): with it, the scroller is a region of the page (`role="region"`), a landmark.
+         */
+        "label": string;
+        /**
+          * The texts of the scroller (JSON as an attribute), to translate them: `previous`, `next` (the names of the buttons).
+          * @default {}
+         */
+        "labels": DSScrollerLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Scrolls forward by a page: the width of the viewport less its margins (its height, `vertical`).
+         */
+        "next": () => Promise<void>;
+        /**
+          * The direction it scrolls in: `horizontal` (a row, by default) or `vertical` (a column; give the scroller a height).
+          * @default 'horizontal'
+         */
+        "orientation": DSScrollerOrientation;
+        /**
+          * Scrolls back by a page.
+         */
+        "previous": () => Promise<void>;
+        /**
+          * Measures the content again: whether it overflows, and is at its start or its end (after a change no observer saw).
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Stops the scroll on the start of an item (`scroll-snap-type: mandatory`, `scroll-snap-align: start`).
+          * @default false
+         */
+        "snap": boolean;
     }
     /**
      * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
@@ -1973,6 +2031,25 @@ declare global {
         prototype: HTMLDsRspElement;
         new (): HTMLDsRspElement;
     };
+    /**
+     * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+     * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+     * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+     * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+     * (`scroll-snap-type`).
+     * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+     * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+     * finds them) and the scroller follows it.
+     * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+     * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+     * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+     */
+    interface HTMLDsScrollerElement extends Components.DsScroller, HTMLStencilElement {
+    }
+    var HTMLDsScrollerElement: {
+        prototype: HTMLDsScrollerElement;
+        new (): HTMLDsScrollerElement;
+    };
     interface HTMLDsSelectElementEventMap {
         "valueChange": any;
     }
@@ -2263,6 +2340,7 @@ declare global {
         "ds-panel-group": HTMLDsPanelGroupElement;
         "ds-range": HTMLDsRangeElement;
         "ds-rsp": HTMLDsRspElement;
+        "ds-scroller": HTMLDsScrollerElement;
         "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
         "ds-slider": HTMLDsSliderElement;
@@ -3134,6 +3212,50 @@ declare namespace LocalJSX {
         "subscriberSelector"?: string;
     }
     /**
+     * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+     * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+     * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+     * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+     * (`scroll-snap-type`).
+     * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+     * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+     * finds them) and the scroller follows it.
+     * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+     * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+     * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+     */
+    interface DsScroller {
+        /**
+          * Renders a previous and a next button, which scroll by a page, each one hidden at its end.
+          * @default false
+         */
+        "controls"?: boolean;
+        /**
+          * The name of the scroller (`aria-label`): with it, the scroller is a region of the page (`role="region"`), a landmark.
+         */
+        "label"?: string;
+        /**
+          * The texts of the scroller (JSON as an attribute), to translate them: `previous`, `next` (the names of the buttons).
+          * @default {}
+         */
+        "labels"?: DSScrollerLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The direction it scrolls in: `horizontal` (a row, by default) or `vertical` (a column; give the scroller a height).
+          * @default 'horizontal'
+         */
+        "orientation"?: DSScrollerOrientation;
+        /**
+          * Stops the scroll on the start of an item (`scroll-snap-type: mandatory`, `scroll-snap-align: start`).
+          * @default false
+         */
+        "snap"?: boolean;
+    }
+    /**
      * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
      * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`
      * (`aria-label`), `labelledby` (`aria-labelledby`), a `<label>` around the component or a `<label for>` with the `name`
@@ -3810,6 +3932,14 @@ declare namespace LocalJSX {
         "propertyName": string;
         "breakpointsFromProp": string | RawBreakpoint;
     }
+    interface DsScrollerAttributes {
+        "label": string;
+        "orientation": DSScrollerOrientation;
+        "snap": boolean;
+        "controls": boolean;
+        "labels": DSScrollerLabels | string;
+        "mods": string | string[];
+    }
     interface DsSelectAttributes {
         "name": string;
         "disabled": boolean;
@@ -3947,6 +4077,7 @@ declare namespace LocalJSX {
         "ds-panel-group": Omit<DsPanelGroup, keyof DsPanelGroupAttributes> & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes]?: DsPanelGroup[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `attr:${K}`]?: DsPanelGroupAttributes[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `prop:${K}`]?: DsPanelGroup[K] };
         "ds-range": Omit<DsRange, keyof DsRangeAttributes> & { [K in keyof DsRange & keyof DsRangeAttributes]?: DsRange[K] } & { [K in keyof DsRange & keyof DsRangeAttributes as `attr:${K}`]?: DsRangeAttributes[K] } & { [K in keyof DsRange & keyof DsRangeAttributes as `prop:${K}`]?: DsRange[K] };
         "ds-rsp": Omit<DsRsp, keyof DsRspAttributes> & { [K in keyof DsRsp & keyof DsRspAttributes]?: DsRsp[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `attr:${K}`]?: DsRspAttributes[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `prop:${K}`]?: DsRsp[K] };
+        "ds-scroller": Omit<DsScroller, keyof DsScrollerAttributes> & { [K in keyof DsScroller & keyof DsScrollerAttributes]?: DsScroller[K] } & { [K in keyof DsScroller & keyof DsScrollerAttributes as `attr:${K}`]?: DsScrollerAttributes[K] } & { [K in keyof DsScroller & keyof DsScrollerAttributes as `prop:${K}`]?: DsScroller[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
         "ds-slider": Omit<DsSlider, keyof DsSliderAttributes> & { [K in keyof DsSlider & keyof DsSliderAttributes]?: DsSlider[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `attr:${K}`]?: DsSliderAttributes[K] } & { [K in keyof DsSlider & keyof DsSliderAttributes as `prop:${K}`]?: DsSlider[K] };
@@ -4182,6 +4313,20 @@ declare module "@stencil/core" {
              * when `refresh()` finds some: ds-rsp calls it when a stylesheet `<link>` loads.
              */
             "ds-rsp": LocalJSX.IntrinsicElements["ds-rsp"] & JSXBase.HTMLAttributes<HTMLDsRspElement>;
+            /**
+             * A row of items that scrolls, with the native scrolling of the browser (the wheel, a swipe, the scrollbar, the keys of
+             * a focused scroller): horizontal by default, or `vertical`. It keeps the element that takes the focus in it in view,
+             * scrolling as little as it can (to the nearest edge, not to the center), with a margin from the edges: the
+             * `scroll-padding` of the viewport, `--ds-scroller-focus-margin`. With `snap`, it stops on the start of an item
+             * (`scroll-snap-type`).
+             * Unlike `ds-slider`, it never makes the items out of view inert nor hidden: they stay in the Tab order and in the
+             * accessibility tree, so that the focus can reach every item (a spatial navigation of the page, with a game pad,
+             * finds them) and the scroller follows it.
+             * With `controls`, a previous and a next button (`ds-trigger`, named by `labels`) scroll by a page; each one is hidden at
+             * its end. Its classes tell whether its content overflows (`--overflowing`) and whether it is at its start or its end
+             * (`--at-start`, `--at-end`). A `label` makes it a region of the page, with that name.
+             */
+            "ds-scroller": LocalJSX.IntrinsicElements["ds-scroller"] & JSXBase.HTMLAttributes<HTMLDsScrollerElement>;
             /**
              * A native `select` (its `option` elements are the children of the component), transparent over a box that shows the
              * label of the selected option. The native select keeps its role, its keyboard and its list: name it with `label`

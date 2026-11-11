@@ -97,12 +97,14 @@ and Space click it, and a disabled trigger is `aria-disabled` and cannot be focu
 ### Used by
 
  - [ds-nav-item](../nav/nav-item)
+ - [ds-scroller](../scroller)
  - [ds-slider](../slider)
 
 ### Graph
 ```mermaid
 graph TD;
   ds-nav-item --> ds-trigger
+  ds-scroller --> ds-trigger
   ds-slider --> ds-trigger
   style ds-trigger fill:#f9f,stroke:#333,stroke-width:4px
 ```
