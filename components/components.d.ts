@@ -20,6 +20,7 @@ import { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { Element } from "@stencil/core";
 import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+import { DSThumbLoading } from "./core/thumb/thumb.types";
 import { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 import { DSToggleValue } from "./core/toggle/toggle.types";
 import { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
@@ -38,6 +39,7 @@ export { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { Element } from "@stencil/core";
 export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
+export { DSThumbLoading } from "./core/thumb/thumb.types";
 export { TOASTER_HORIZONTAL_POSITION, TOASTER_VERTICAL_POSITION } from "./core/toaster/toaster-positions.enum";
 export { DSToggleValue } from "./core/toggle/toggle.types";
 export { TooltipPosition } from "./core/tooltip/tooltip-position.enum";
@@ -1112,6 +1114,57 @@ export namespace Components {
         "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
     /**
+     * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+     * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+     * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+     * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+     * theme, so that the initials stay readable.
+     * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+     * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+     */
+    interface DsThumb {
+        /**
+          * The text alternative of the image (and of the placeholder). Without it, `label`. An empty `alt` makes it decorative.
+         */
+        "alt": string;
+        /**
+          * A decorative thumbnail: no text alternative, out of the accessibility tree (a text next to it names the same thing).
+          * @default false
+         */
+        "decorative": boolean;
+        /**
+          * The text the placeholder takes its initials and its color from: the title of the poster, the name of the album. The name of the image without `alt`.
+         */
+        "label": string;
+        /**
+          * When the image loads: `lazy` (as it nears the viewport, by default) or `eager` (at once: a thumbnail at the top of the page).
+          * @default 'lazy'
+         */
+        "loading": DSThumbLoading;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * The proportions, width / height: `2/3`, `16/9`, `1.5`, `1` (`16:9` too). A square by default, and for a value that is not one.
+          * @default '1'
+         */
+        "ratio": string;
+        /**
+          * The widths of the image in the layout, for a `srcset` of widths (`sizes` of the `img`).
+         */
+        "sizes": string;
+        /**
+          * The URL of the image. Without it, the placeholder.
+         */
+        "src": string;
+        /**
+          * The candidates of the image for the densities or widths of the screen (`srcset` of the `img`).
+         */
+        "srcset": string;
+    }
+    /**
      * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
      * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
      */
@@ -2039,6 +2092,21 @@ declare global {
         new (): HTMLDsTextElement;
     };
     /**
+     * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+     * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+     * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+     * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+     * theme, so that the initials stay readable.
+     * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+     * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+     */
+    interface HTMLDsThumbElement extends Components.DsThumb, HTMLStencilElement {
+    }
+    var HTMLDsThumbElement: {
+        prototype: HTMLDsThumbElement;
+        new (): HTMLDsThumbElement;
+    };
+    /**
      * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
      * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
      */
@@ -2201,6 +2269,7 @@ declare global {
         "ds-slider-item": HTMLDsSliderItemElement;
         "ds-slider-menu": HTMLDsSliderMenuElement;
         "ds-text": HTMLDsTextElement;
+        "ds-thumb": HTMLDsThumbElement;
         "ds-title": HTMLDsTitleElement;
         "ds-title-bar": HTMLDsTitleBarElement;
         "ds-toaster": HTMLDsToasterElement;
@@ -3227,6 +3296,57 @@ declare namespace LocalJSX {
         "weight"?: 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
     /**
+     * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+     * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+     * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+     * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+     * theme, so that the initials stay readable.
+     * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+     * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+     */
+    interface DsThumb {
+        /**
+          * The text alternative of the image (and of the placeholder). Without it, `label`. An empty `alt` makes it decorative.
+         */
+        "alt"?: string;
+        /**
+          * A decorative thumbnail: no text alternative, out of the accessibility tree (a text next to it names the same thing).
+          * @default false
+         */
+        "decorative"?: boolean;
+        /**
+          * The text the placeholder takes its initials and its color from: the title of the poster, the name of the album. The name of the image without `alt`.
+         */
+        "label"?: string;
+        /**
+          * When the image loads: `lazy` (as it nears the viewport, by default) or `eager` (at once: a thumbnail at the top of the page).
+          * @default 'lazy'
+         */
+        "loading"?: DSThumbLoading;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+        /**
+          * The proportions, width / height: `2/3`, `16/9`, `1.5`, `1` (`16:9` too). A square by default, and for a value that is not one.
+          * @default '1'
+         */
+        "ratio"?: string;
+        /**
+          * The widths of the image in the layout, for a `srcset` of widths (`sizes` of the `img`).
+         */
+        "sizes"?: string;
+        /**
+          * The URL of the image. Without it, the placeholder.
+         */
+        "src"?: string;
+        /**
+          * The candidates of the image for the densities or widths of the screen (`srcset` of the `img`).
+         */
+        "srcset"?: string;
+    }
+    /**
      * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
      * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).
      */
@@ -3729,6 +3849,17 @@ declare namespace LocalJSX {
         "sub": boolean;
         "weight": 'thin' | 'light' | 'normal' | 'bold' | 'bolder';
     }
+    interface DsThumbAttributes {
+        "src": string;
+        "srcset": string;
+        "sizes": string;
+        "alt": string;
+        "label": string;
+        "decorative": boolean;
+        "ratio": string;
+        "loading": DSThumbLoading;
+        "mods": string | string[];
+    }
     interface DsTitleAttributes {
         "mods": string | string[];
         "article": boolean;
@@ -3822,6 +3953,7 @@ declare namespace LocalJSX {
         "ds-slider-item": DsSliderItem;
         "ds-slider-menu": Omit<DsSliderMenu, keyof DsSliderMenuAttributes> & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes]?: DsSliderMenu[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `attr:${K}`]?: DsSliderMenuAttributes[K] } & { [K in keyof DsSliderMenu & keyof DsSliderMenuAttributes as `prop:${K}`]?: DsSliderMenu[K] };
         "ds-text": Omit<DsText, keyof DsTextAttributes> & { [K in keyof DsText & keyof DsTextAttributes]?: DsText[K] } & { [K in keyof DsText & keyof DsTextAttributes as `attr:${K}`]?: DsTextAttributes[K] } & { [K in keyof DsText & keyof DsTextAttributes as `prop:${K}`]?: DsText[K] };
+        "ds-thumb": Omit<DsThumb, keyof DsThumbAttributes> & { [K in keyof DsThumb & keyof DsThumbAttributes]?: DsThumb[K] } & { [K in keyof DsThumb & keyof DsThumbAttributes as `attr:${K}`]?: DsThumbAttributes[K] } & { [K in keyof DsThumb & keyof DsThumbAttributes as `prop:${K}`]?: DsThumb[K] };
         "ds-title": Omit<DsTitle, keyof DsTitleAttributes> & { [K in keyof DsTitle & keyof DsTitleAttributes]?: DsTitle[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `attr:${K}`]?: DsTitleAttributes[K] } & { [K in keyof DsTitle & keyof DsTitleAttributes as `prop:${K}`]?: DsTitle[K] };
         "ds-title-bar": Omit<DsTitleBar, keyof DsTitleBarAttributes> & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes]?: DsTitleBar[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `attr:${K}`]?: DsTitleBarAttributes[K] } & { [K in keyof DsTitleBar & keyof DsTitleBarAttributes as `prop:${K}`]?: DsTitleBar[K] };
         "ds-toaster": Omit<DsToaster, keyof DsToasterAttributes> & { [K in keyof DsToaster & keyof DsToasterAttributes]?: DsToaster[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `attr:${K}`]?: DsToasterAttributes[K] } & { [K in keyof DsToaster & keyof DsToasterAttributes as `prop:${K}`]?: DsToaster[K] };
@@ -4091,6 +4223,16 @@ declare module "@stencil/core" {
              * A block of text, in the paragraph font style of the theme.
              */
             "ds-text": LocalJSX.IntrinsicElements["ds-text"] & JSXBase.HTMLAttributes<HTMLDsTextElement>;
+            /**
+             * A thumbnail: an image of fixed proportions (`ratio`: `2/3` for a poster, `1` for a cover, `16/9` for a still), cropped
+             * to fill them, loaded lazily (`loading="lazy"`, `decoding="async"`). Its state is a class: `--loading`, `--loaded`,
+             * `--error`. Without a source, or when it fails, a placeholder takes its place: the initials of `label` (one or two
+             * letters) on a color of its own, its hue taken from the text (`--ds-thumb-hue`), its saturation and lightness from the
+             * theme, so that the initials stay readable.
+             * The image is named by `alt` (else by `label`), as the placeholder that replaces it (`role="img"`); `decorative` (or an
+             * empty `alt`) leaves both out of the accessibility tree, for a thumbnail next to a text that names it.
+             */
+            "ds-thumb": LocalJSX.IntrinsicElements["ds-thumb"] & JSXBase.HTMLAttributes<HTMLDsThumbElement>;
             /**
              * A title, styled by the theme (`page`, `section`, `block`, `sub`). It renders no heading of its own: put a heading
              * (`h1`…`h6`) in it, or set `level` to make a text title a heading (`role="heading"`, `aria-level`).

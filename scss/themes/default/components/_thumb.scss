@@ -1,0 +1,42 @@
+@use '../tokens' as *;
+
+// ds-thumb: a light gray block while its image loads, which fades in once loaded; the placeholder a color of its own, its
+// hue taken from its label (--ds-thumb-hue, set by the component), its saturation and lightness set here, dark enough for
+// white initials (a contrast of 4.5:1 at least for every hue), in the heading font. The custom properties are documented
+// in components/core/thumb/readme.md; the proportions and the crop are in the component stylesheet.
+
+ds-thumb {
+  --ds-thumb-background: #{ds-color(gray, lighter)};
+  --ds-thumb-radius: #{ds-radius(md)};
+  --ds-thumb-placeholder-saturation: 45%;
+  --ds-thumb-placeholder-lightness: 30%;
+  --ds-thumb-initials-color: #{ds-color(gray, white)};
+  --ds-thumb-initials-size: 40cqmin;
+}
+
+.ds-thumb {
+  border-radius: var(--ds-thumb-radius);
+  background-color: var(--ds-thumb-background);
+
+  // The image fades in once loaded (at once with less motion: the base styles).
+  &.--loading &__image {
+    opacity: 0;
+  }
+
+  &__image {
+    transition: opacity 0.2s ease;
+  }
+
+  // The color of the placeholder: the only color of the theme computed from custom properties (a hue per label), not a
+  // token. Its saturation and lightness are those of the theme.
+  &__placeholder {
+    background-color: hsl(var(--ds-thumb-hue, 0) var(--ds-thumb-placeholder-saturation) var(--ds-thumb-placeholder-lightness));
+    color: var(--ds-thumb-initials-color);
+  }
+
+  &__initials {
+    font-family: ds-font-family(title);
+    font-size: var(--ds-thumb-initials-size);
+    font-weight: 700;
+  }
+}
