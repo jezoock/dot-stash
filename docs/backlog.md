@@ -1321,3 +1321,7 @@ Critères d'acceptation communs :
 ### B-127
 
 **Révoquer le jeton d'administration** — terminée : révoqué par le propriétaire.
+
+### B-138
+
+**ds-range : une jauge sur un `<input type="range">` natif** — terminée le 11 novembre 2026, sur la branche `mire/composants-generiques` (pull request à relire) : `components/core/range/`, le skin `scss/themes/default/components/_range.scss`. L'input natif garde son rôle, son nom, son clavier et son formulaire ; le composant dessine la piste remplie jusqu'à la valeur (`--ds-range-fill`, posée par le composant) et, en option, jusqu'à `buffer` (`--ds-range-buffer`) ; il suit les événements, les attributs, un `fieldset` désactivé et la réinitialisation du formulaire, et `refresh()` après une valeur posée par un script ; `aria-valuetext` par gabarit traduisible (`labels.valueText`) ou par fonction (`formatter`). Tests unitaires et navigateur, readme, entrée du CHANGELOG. Reste à vérifier à la main : la lecture de `aria-valuetext` aux lecteurs d'écran (le protocole de Chromium ne la donne pas), Firefox et Safari (pseudo-éléments du curseur).

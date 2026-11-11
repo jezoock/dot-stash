@@ -845,8 +845,9 @@ describe('Sass stylesheets', () => {
       expect([...documented].filter(name => !readByTheme.includes(name) && !readBySheets.includes(name))).toEqual([]);
     });
 
-    // The layout of ds-grid comes from the props of ds-grid and ds-grid-item (and their values per breakpoint, ds-rsp).
-    it('documents the custom properties ds-grid and ds-grid-item set from their props, and only those are set by a component', () => {
+    // The layout of ds-grid comes from the props of ds-grid and ds-grid-item (and their values per breakpoint, ds-rsp); the
+    // fill of ds-range from its input and its buffer.
+    it('documents the custom properties ds-grid, ds-grid-item and ds-range set from their props and their input, and only those are set by a component', () => {
       expect([...documented].filter(isSetByComponent).sort()).toEqual([
         '--ds-grid-cell-ratio',
         '--ds-grid-cols',
@@ -854,6 +855,8 @@ describe('Sass stylesheets', () => {
         '--ds-grid-item-ratio',
         '--ds-grid-span',
         '--ds-grid-v-gap',
+        '--ds-range-buffer',
+        '--ds-range-fill',
       ]);
     });
 

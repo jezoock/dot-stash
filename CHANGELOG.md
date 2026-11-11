@@ -6,7 +6,11 @@ The readme of each component (`components/core/<component>/readme.md`) ends its 
 
 ## [Unreleased]
 
-Nothing yet. The remaining work, split into small tasks (bugs, accessibility checks, browser support, components, theme, tooling, release and the owner actions outside of the repository), is listed in [docs/backlog.md](docs/backlog.md), in French.
+The remaining work, split into small tasks (bugs, accessibility checks, browser support, components, theme, tooling, release and the owner actions outside of the repository), is listed in [docs/backlog.md](docs/backlog.md), in French.
+
+### Added
+
+- **`ds-range`**: enhances a native `<input type="range">` written in it, which stays the slider (its role, name, keys, value and form): a track filled up to the value, from the `--ds-range-fill` custom property (a percentage the component sets), and optionally up to a second value (`buffer`, `--ds-range-buffer`: the part of a video loaded already). It follows the user's events, the attributes of the input, a disabled fieldset and a form reset; `refresh()` reads a value set by a script. `labels.valueText` (a template: `{value}`, `{min}`, `{max}`, `{percent}`) or `formatter` (a function) give the input an `aria-valuetext`. A skin in the `default` theme (`scss/themes/default/components/_range.scss`), with its custom properties (`--ds-range-thumb-size`, `--ds-range-fill-color`…). See its [readme](components/core/range/readme.md).
 
 ## [0.1.0] - 2026-11-10
 

@@ -16,6 +16,7 @@ import { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.
 import { DSLoaderSize } from "./core/loader/loader.types";
 import { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
 import { PanelType } from "./core/panel/panel.types";
+import { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 import { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 import { Element } from "@stencil/core";
 import { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
@@ -33,6 +34,7 @@ export { DSGridAlignment, DSGridItemStyles, DSGridType } from "./core/grid/grid.
 export { DSLoaderSize } from "./core/loader/loader.types";
 export { DSPaginationChangeDetail, DSPaginationLabels } from "./core/pagination/pagination.types";
 export { PanelType } from "./core/panel/panel.types";
+export { DSRangeFormatter, DSRangeLabels } from "./core/range/range.types";
 export { Breakpoint, BreakpointChangeDetail, Breakpoints, RawBreakpoint } from "./utils/interfaces/breakpoints";
 export { Element } from "@stencil/core";
 export { DSSliderLabels, DSSliderParams } from "./core/slider/slider.types";
@@ -833,6 +835,42 @@ export namespace Components {
           * @default 'tab'
          */
         "type": PanelType;
+    }
+    /**
+     * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+     * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+     * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+     * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+     * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+     * already: `--ds-range-buffer`).
+     * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+     * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+     * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+     * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+     */
+    interface DsRange {
+        /**
+          * A second value, on the scale of the input (from its `min` to its `max`): the track is filled to it, under the fill of the value (`__buffer`, `--ds-range-buffer`). The part of a video loaded already. None by default.
+         */
+        "buffer": number | string;
+        /**
+          * Gives the text of the value (`aria-valuetext`) instead of `labels.valueText`: a function, set as a property (a time, a unit).
+         */
+        "formatter": DSRangeFormatter;
+        /**
+          * The texts of the range (JSON as an attribute), to translate them: `valueText`, the template of `aria-valuetext` (see the readme).
+          * @default {}
+         */
+        "labels": DSRangeLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods": string | string[];
+        /**
+          * Reads the input again: after a value set by a script on its `value` property, which tells no event.
+         */
+        "refresh": () => Promise<void>;
     }
     /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
@@ -1837,6 +1875,24 @@ declare global {
         prototype: HTMLDsPanelGroupElement;
         new (): HTMLDsPanelGroupElement;
     };
+    /**
+     * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+     * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+     * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+     * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+     * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+     * already: `--ds-range-buffer`).
+     * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+     * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+     * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+     * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+     */
+    interface HTMLDsRangeElement extends Components.DsRange, HTMLStencilElement {
+    }
+    var HTMLDsRangeElement: {
+        prototype: HTMLDsRangeElement;
+        new (): HTMLDsRangeElement;
+    };
     interface HTMLDsRspElementEventMap {
         "breakpointChange": BreakpointChangeDetail;
     }
@@ -2137,6 +2193,7 @@ declare global {
         "ds-pagination": HTMLDsPaginationElement;
         "ds-panel": HTMLDsPanelElement;
         "ds-panel-group": HTMLDsPanelGroupElement;
+        "ds-range": HTMLDsRangeElement;
         "ds-rsp": HTMLDsRspElement;
         "ds-select": HTMLDsSelectElement;
         "ds-sidebar": HTMLDsSidebarElement;
@@ -2942,6 +2999,38 @@ declare namespace LocalJSX {
         "type"?: PanelType;
     }
     /**
+     * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+     * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+     * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+     * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+     * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+     * already: `--ds-range-buffer`).
+     * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+     * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+     * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+     * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+     */
+    interface DsRange {
+        /**
+          * A second value, on the scale of the input (from its `min` to its `max`): the track is filled to it, under the fill of the value (`__buffer`, `--ds-range-buffer`). The part of a video loaded already. None by default.
+         */
+        "buffer"?: number | string;
+        /**
+          * Gives the text of the value (`aria-valuetext`) instead of `labels.valueText`: a function, set as a property (a time, a unit).
+         */
+        "formatter"?: DSRangeFormatter;
+        /**
+          * The texts of the range (JSON as an attribute), to translate them: `valueText`, the template of `aria-valuetext` (see the readme).
+          * @default {}
+         */
+        "labels"?: DSRangeLabels | string;
+        /**
+          * Comma-separated list (or array) of modifiers, rendered as `--<modifier>` classes on the component.
+          * @default []
+         */
+        "mods"?: string | string[];
+    }
+    /**
      * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
      * attribute the properties their `data-rsp` attribute declares for it (see the README).
      * It watches one media query per breakpoint boundary (`matchMedia()`, `(min-width: 768px)`…): a change is applied at
@@ -3590,6 +3679,11 @@ declare namespace LocalJSX {
         "label": string;
         "labelledby": string;
     }
+    interface DsRangeAttributes {
+        "buffer": string;
+        "labels": DSRangeLabels | string;
+        "mods": string | string[];
+    }
     interface DsRspAttributes {
         "debounceDelay": number;
         "subscriberSelector": string;
@@ -3720,6 +3814,7 @@ declare namespace LocalJSX {
         "ds-pagination": Omit<DsPagination, keyof DsPaginationAttributes> & { [K in keyof DsPagination & keyof DsPaginationAttributes]?: DsPagination[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `attr:${K}`]?: DsPaginationAttributes[K] } & { [K in keyof DsPagination & keyof DsPaginationAttributes as `prop:${K}`]?: DsPagination[K] };
         "ds-panel": Omit<DsPanel, keyof DsPanelAttributes> & { [K in keyof DsPanel & keyof DsPanelAttributes]?: DsPanel[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `attr:${K}`]?: DsPanelAttributes[K] } & { [K in keyof DsPanel & keyof DsPanelAttributes as `prop:${K}`]?: DsPanel[K] };
         "ds-panel-group": Omit<DsPanelGroup, keyof DsPanelGroupAttributes> & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes]?: DsPanelGroup[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `attr:${K}`]?: DsPanelGroupAttributes[K] } & { [K in keyof DsPanelGroup & keyof DsPanelGroupAttributes as `prop:${K}`]?: DsPanelGroup[K] };
+        "ds-range": Omit<DsRange, keyof DsRangeAttributes> & { [K in keyof DsRange & keyof DsRangeAttributes]?: DsRange[K] } & { [K in keyof DsRange & keyof DsRangeAttributes as `attr:${K}`]?: DsRangeAttributes[K] } & { [K in keyof DsRange & keyof DsRangeAttributes as `prop:${K}`]?: DsRange[K] };
         "ds-rsp": Omit<DsRsp, keyof DsRspAttributes> & { [K in keyof DsRsp & keyof DsRspAttributes]?: DsRsp[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `attr:${K}`]?: DsRspAttributes[K] } & { [K in keyof DsRsp & keyof DsRspAttributes as `prop:${K}`]?: DsRsp[K] };
         "ds-select": Omit<DsSelect, keyof DsSelectAttributes> & { [K in keyof DsSelect & keyof DsSelectAttributes]?: DsSelect[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `attr:${K}`]?: DsSelectAttributes[K] } & { [K in keyof DsSelect & keyof DsSelectAttributes as `prop:${K}`]?: DsSelect[K] };
         "ds-sidebar": Omit<DsSidebar, keyof DsSidebarAttributes> & { [K in keyof DsSidebar & keyof DsSidebarAttributes]?: DsSidebar[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `attr:${K}`]?: DsSidebarAttributes[K] } & { [K in keyof DsSidebar & keyof DsSidebarAttributes as `prop:${K}`]?: DsSidebar[K] };
@@ -3931,6 +4026,19 @@ declare module "@stencil/core" {
              * The panels of the group are its own: not those of a group or a panel nested in one of them.
              */
             "ds-panel-group": LocalJSX.IntrinsicElements["ds-panel-group"] & JSXBase.HTMLAttributes<HTMLDsPanelGroupElement>;
+            /**
+             * Enhances a native `<input type="range">` the page writes in it, which stays the control: its role (`slider`), its name
+             * (a `<label>` of the page), its keys (the arrows, Page Up, Page Down, Home, End), its value and its form are the
+             * browser's. The range draws a track under the input, filled from its start side to the value: the share of the range is
+             * the `--ds-range-fill` custom property (`42.5%`), which the component sets on itself, and the theme draws the track and
+             * the thumb from it. `buffer` adds a second part, from the start to another value (the part of a video that is loaded
+             * already: `--ds-range-buffer`).
+             * The range follows the input: the user's `input` and `change` events, the attributes `min`, `max`, `step`, `value` and
+             * `disabled` (its own, or that of a `<fieldset>` around it). A value set by a script on the `value` property tells no
+             * event: call `refresh()` after it. `labels.valueText` (a template) or `formatter` (a function) give the input an
+             * `aria-valuetext`, the text assistive technologies read for its value ("1:23 of 45:00", "40 %").
+             */
+            "ds-range": LocalJSX.IntrinsicElements["ds-range"] & JSXBase.HTMLAttributes<HTMLDsRangeElement>;
             /**
              * Tracks the theme breakpoints and, when the breakpoint changes, sets on the elements with a `data-use-rsp`
              * attribute the properties their `data-rsp` attribute declares for it (see the README).
