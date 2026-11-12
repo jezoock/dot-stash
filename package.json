@@ -38,6 +38,7 @@
       "require": "./loader/index.cjs.js"
     },
     "./dist/*": "./dist/*",
+    "./scss/*": "./scss/*",
     "./package.json": "./package.json"
   },
   "repository": {
@@ -47,6 +48,7 @@
   "files": [
     "dist/",
     "loader/",
+    "scss/",
     "CHANGELOG.md"
   ],
   "engines": {

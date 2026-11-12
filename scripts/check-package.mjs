@@ -10,8 +10,11 @@
 // (`npm install http://127.0.0.1:<port>/dot-stash-<version>.tgz`), then checks in that project what the README promises
 // (Using the components): the entry points `dot-stash` and `dot-stash/loader` as ES modules and CommonJS, the theme
 // stylesheet and the licence texts of its icons, and the types, compiled by the TypeScript of the repository with the
-// module resolution `bundler` (the typings of the elements included). The package has no dependency: nothing is fetched
-// from a registry. The temporary folders are deleted at the end. Exits with code 1 when a check fails. CI runs it.
+// module resolution `bundler` (the typings of the elements included), and the SCSS engine (Creating a theme): two small
+// stylesheets of the project, compiled by the Sass of the repository, load the engine and the `default` theme from the
+// installed package, by a load path (`@use 'dot-stash/scss/engine'`) and by the Node package importer
+// (`@use 'pkg:dot-stash/scss/engine'`), with a configuration, without any warning. The package has no dependency: nothing
+// is fetched from a registry. The temporary folders are deleted at the end. Exits with code 1 when a check fails. CI runs it.
 
 import { execFile } from 'node:child_process';
 import fs from 'node:fs';
@@ -20,6 +23,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import * as sass from 'sass';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const run = promisify(execFile);
@@ -106,6 +110,64 @@ const TSCONFIG = {
   files: ['index.ts'],
 };
 
+/** The stylesheets of the project that use the SCSS engine of the package (README: Creating a theme), with what their CSS holds. */
+const SCSS_CHECKS = [
+  {
+    // A load path: the folder node_modules of the project.
+    file: 'engine.scss',
+    source: `@use 'dot-stash/scss/engine' as ds with ($grid-md: 1024);
+
+.check {
+  color: ds.ds-color(primary, base);
+
+  @include ds.break-p(md) {
+    margin: ds.ds-spacing(2);
+  }
+}
+`,
+    expected: ['color: var(--ds-color-primary-base)', '(min-width: 1024px)', 'margin: var(--ds-space-2)'],
+  },
+  {
+    // The Node package importer (pkg:, the exports of package.json): the engine configured, then the default theme on it.
+    file: 'theme.scss',
+    source: `@use 'pkg:dot-stash/scss/engine' with ($grid-md: 1100);
+@use 'pkg:dot-stash/scss/themes/default';
+`,
+    expected: ['--ds-bp-md: 1100px', '--ds-bp-labels:', '--ds-color-primary-base:'],
+  },
+];
+
+/** Compiles the stylesheets of SCSS_CHECKS in the project with the Sass of the repository; throws with what failed. */
+const checkScss = project => {
+  const modules = fs.realpathSync(path.join(project, 'node_modules', 'dot-stash'));
+  for (const { file, source, expected } of SCSS_CHECKS) {
+    fs.writeFileSync(path.join(project, file), source);
+    const warnings = [];
+    let result;
+    try {
+      result = sass.compile(path.join(project, file), {
+        loadPaths: [path.join(project, 'node_modules')],
+        importers: [new sass.NodePackageImporter(project)],
+        logger: { warn: message => warnings.push(message), debug: message => warnings.push(message) },
+      });
+    } catch (error) {
+      throw new Error(`the SCSS engine of the installed package (${file}):\n${error.message}`, { cause: error });
+    }
+    const failures = [
+      ...warnings.map(warning => `warning: ${warning}`),
+      ...expected.filter(text => !result.css.includes(text)).map(text => `no ${text} in the CSS`),
+      ...result.loadedUrls
+        .filter(url => url.protocol === 'file:' && path.basename(fileURLToPath(url)) !== file)
+        .map(url => fs.realpathSync(fileURLToPath(url)))
+        .filter(loaded => !loaded.startsWith(modules + path.sep))
+        .map(loaded => `${loaded}: loaded from outside of the installed package`),
+    ];
+    if (failures.length) {
+      throw new Error(`the SCSS engine of the installed package (${file}):\n${failures.join('\n')}`);
+    }
+  }
+};
+
 /** Packs the package into a folder; the path of the archive. */
 const pack = async destination => {
   const [{ filename }] = JSON.parse(await runNpm(['pack', '--json', '--pack-destination', destination], root));
@@ -149,6 +211,9 @@ export const checkPackage = async archive => {
       throw new Error(`the types of the installed package:\n${error.stdout || error.stderr || error.message}`, { cause: error });
     }
     console.log('Types (moduleResolution bundler): ok');
+
+    checkScss(project);
+    console.log('SCSS engine and default theme (load path, pkg:): ok');
     return file;
   } finally {
     await server?.close();
