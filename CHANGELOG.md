@@ -8,6 +8,10 @@ The readme of each component (`components/core/<component>/readme.md`) ends its 
 
 The remaining work, split into small tasks (bugs, accessibility checks, browser support, components, theme, tooling, release and the owner actions outside of the repository), is listed in [docs/backlog.md](docs/backlog.md), in French.
 
+## [0.2.0] - 2026-11-12
+
+The first release with its package attached (`dot-stash-0.2.0.tgz`, see [Install](README.md#install)): new components, the SCSS engine in the package, and the release workflow.
+
 ### Added
 
 - **`ds-range`**: enhances a native `<input type="range">` written in it, which stays the slider (its role, name, keys, value and form): a track filled up to the value, from the `--ds-range-fill` custom property (a percentage the component sets), and optionally up to a second value (`buffer`, `--ds-range-buffer`: the part of a video loaded already). It follows the user's events, the attributes of the input, a disabled fieldset and a form reset; `refresh()` reads a value set by a script. `labels.valueText` (a template: `{value}`, `{min}`, `{max}`, `{percent}`) or `formatter` (a function) give the input an `aria-valuetext`. A skin in the `default` theme (`scss/themes/default/components/_range.scss`), with its custom properties (`--ds-range-thumb-size`, `--ds-range-fill-color`…). See its [readme](components/core/range/readme.md).
@@ -150,5 +154,6 @@ Bugs of the original code, fixed in this release (the component readmes give the
 - The hard-coded keys and tokens of the original code are removed: a key of a map service, the webservice key of a shop, the key of a rich-text editor service, and an admin token and the name of an admin folder. The git history was purged of their values (they read `***REMOVED***`), but they were public before: rotate them, rename the admin folder, and check that no clone or fork of the former history remains (owner actions, outside of the repository).
 - No runtime dependency and no external service: the library loads nothing from a third-party host (the icons are in the stylesheets, no font file, no CDN, no service worker that would load Workbox from a CDN).
 
-[Unreleased]: https://github.com/jezoock/dot-stash/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/jezoock/dot-stash/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/jezoock/dot-stash/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jezoock/dot-stash/releases/tag/v0.1.0

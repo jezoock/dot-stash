@@ -1,6 +1,6 @@
 {
   "name": "dot-stash",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A standalone UI library: light-DOM web components (ds-* custom elements, Stencil) and a SCSS theming toolkit, with no runtime dependency.",
   "keywords": [
     "web-components",
